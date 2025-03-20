@@ -30,11 +30,12 @@ body {
 
 .header h1, .header h2, .header h3 {
   margin: 5px 0;
+  text-align: center;
 }
 
 .header h1 {
   font-size: 24px;
-  color: #32cd32; /* Green color for WELCOME TO */
+  color: #32cd32; /* Green color for WELCOME TO */;
 }
 
 .header h2 {

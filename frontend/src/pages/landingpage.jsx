@@ -1,28 +1,38 @@
 import React from 'react';
-import { useHistory} from 'react-router-dom';
 import './landingpage.css';
-import welcome from '../assets/welcome.png';
-import makerereLogo from '../assets/makerere.logo.png';
+import { useNavigate } from 'react-router-dom';
+import makererelogo from '../assets/makerere.logo.png';
+import landingimage from '../assets/landingimage.png';
 
 const LandingPage = () => {
-    const history = useHistory();
+    const navigate = useNavigate();
 
-    const handleSignIn = () => {
-        history.push('/signin');
+    const handlesignup = useNavigate();
+        function navigateToSignup() {
+            navigate('/signup');
     };
-    const handleSignUp = () => {
-        history.push('/signup');
-    };
-    return (
-        <div className='landing-page'>
-            <div className="logo">AITS</div>
-            <img src={welcome} alt='welcome' className='welcome-image' />
-            <img src={makerereLogo} alt="Makerere University Logo" className="makerere-logo" />
-            <div className="welcome-text"> WELCOME TO THE ACADEMIC ISSUE TRACKING SYSTEM</div>
-            <button onclick={handleSignIn} className="sign-in-button">Sign In</button>
-            <button onclick={handleSignUp} className='sign-up-button'>Sign Up</button> 
+
+        function navigateToSignnin() {
+            navigate('/signin');
+        };
+    return(
+        <div className="landingpage">
+            <img src={landingimage} alt="Landing Image" className="landing-image" />        
+            <div className="header">
+                <div className="buttons">
+                <button className='signup-button' onClick={navigateToSignup}>Sign Up</button>
+                <div className='separator'></div>
+                <button className='signin-button' onClick={navigateToSignnin}>Sign In</button>
+                <div clasName="logo">AITS</div>
+                </div>
+            </div>
+            <div className="overlay">
+                <img src={makererelogo} alt="Makerere University Logo" className="makerere-logo" />
+                <div className="welcome-text">WELCOME TO THE ISSUE ACADEMIC TRACKING SYSTEM</div>   
+            </div>
         </div>
     );
+
 };
 
 export default LandingPage;
