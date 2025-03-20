@@ -10,6 +10,8 @@ import Dashboard from "./pages/Dashboard"; // New component
 import ProfileSetup from "./pages/ProfileSetup";
 import ProfilePictureSetup from "./pages/profilepicture";
 import LandingPage from "./pages/landingpage";
+import SignUp from "./pages/singup";
+
 
 function App() {
   
@@ -19,6 +21,7 @@ function App() {
       <Routes>
         <Route path="/" index element={<Navigate to ="landingpage" />}/>
         <Route path="landingpage" element={<LandingPage />} />
+        <Route path="/signup" Component={SignUp} />
         <Route path="/signin" element={<Signin />} />
         <Route path="/verification" element={<EmailVerification />} />
         <Route path="/reset" element={<ResetPassword />} />
