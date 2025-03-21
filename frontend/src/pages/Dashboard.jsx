@@ -1,13 +1,16 @@
 import React from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 import libraryImage from '../assets/student.png'; // Import the library image (you'll need to add this)
 import dashboardIcon from '../assets/knowledge.png'; // Import dashboard icon (you'll need to add this)
 import './Dashboard.css';
 
+
 const DashboardSetup = () => {
+  const navigate = useNavigate();
   const handleStartSetup = () => {
-    // Handle the start setup logic here
-    console.log('Start Setup clicked');
+    navigate('/ProfileSetup');
   };
+ 
 
   return (
     <div className="dashboard-setup-container">
