@@ -1,8 +1,22 @@
 import React from 'react';
 import './signup.css';
 import introImage from '../assets/introimages.png';
+import mailIcon from '../assets/mail.png';
+import userIcon from '../assets/user.png';
+import hiddenIcon from '../assets/hidden.png';
+import visibleIcon from '../assets/visible.png';
 
 const SignUp = () => {
+    const [passwordVisible, setPasswordVisible] = useState(false);
+    const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+
+    const togglePasswordVisibility = () => {
+        setPasswordVisible(!passwordVisible);
+    };
+
+    const toggleConfirmPasswordVisibility = () => {
+        setConfirmPasswordVisible(!confirmPasswordVisible);
+    };
     return (
         <div className="signup-page">
             <div className="left-side">
@@ -14,29 +28,40 @@ const SignUp = () => {
                 <form>
                     <div className="form-group">
                         <label htmlFor="username">Full Name</label>
-                        <input type="text" id="username" name="username" required />
+                        <div className="input-container">
+                            <input type="text" id="username" name="username" required />
+                            <img src={userIcon} alt="User Icon" className="icon" />
+                        </div>
                     </div>
                     <div className="form-group">
                         <label htmlFor="email">Email Address</label>
-                        <input type="email" id="email" name="email" required />
+                        <div className="input-container">
+                            <input type="email" id="email" name="email" required />
+                            <img src={mailIcon} alt="Mail Icon" className="icon" />
+                        </div>
                     </div>
                     <div className="form-group">
                         <label htmlFor="password">Password</label>
-                        <input type="password" id="password" name="password" required />
+                        <div className="input-container">
+                            <input type="password" id="password" name="password" required />
+                            <img scr={hiddenIcon} alt="Hide Password" className="icon" />
+                        </div>
                     </div>
                     <div className="form-group">
-                        <label htmlFor="password">Confirm Password</label>
-                        <input type="password" id="password" name="password" required />
+                        <label htmlFor="confirm-password">Confirm Password</label>
+                        <div className="input-container">
+                            <input type="password" id="confirm-password" name="confirm-password" required />
+                        </div>
                     </div>
                     <div className="form-group">
                         <label htmlFor="role">Role</label>
-                        <input type="text" id="role" name="role" required />
-                        <select id="role" name='role' required>
-                            <option value="student">Student</option>
-                            <option value="teacher">Lecturer</option>
-                            <option value="other">Registrar</option>
-                        </select>
-                    
+                        <div className="input-container">
+                            <select id="role" name="role" required>
+                                <option value="student">Student</option>
+                                <option value="teacher">Lecturer</option>
+                                <option value="other">Registrar</option>
+                            </select>
+                        </div>
                     </div>
                     <button type="submit">Sign Up</button>
                 </form>
