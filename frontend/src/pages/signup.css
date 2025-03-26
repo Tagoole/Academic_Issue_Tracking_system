@@ -1,9 +1,35 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f0f0;
+    margin-left: 200px;
+}
+
 .signup-page {
     display: flex;
     height: 100vh;
+    width: 100%;
 }
 
 .left-side {
+    flex: 1;
+    display: flex;
+    max-width: 900%;
+;
+    flex-direction: column;
+    justify-content: center;
+    padding: 40px;
+    background-color: white;
+    background-position: center;
+    margin-left: 200px;
+}
+
+.right-side {
     flex: 1;
     display: flex;
     justify-content: center;
@@ -17,47 +43,54 @@
     object-fit: cover;
 }
 
-.right-side {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    background-color: white;
+h1 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    position: absolute;
 }
 
-h1, h2, label, .terms-group label {
-    color: rgb(14, 179, 14);
+h2 {
+    font-size: 18px;
+    margin-bottom: 20px;
+    position: center;
+    color: green;
+    font-size: 20px;
 }
 
 .form-group {
     margin-bottom: 15px;
-    width: 90%;
+    width: 100%;
     position: relative;
 }
 
 label {
     display: block;
     margin-bottom: 5px;
+    font-size: 14px;
 }
 
 .input-container {
     position: relative;
-
+    border: 2px solid green;
 }
 
 input, select {
     width: 100%;
-    padding: 15px;
-    border: 1px solid #ccc;
+    padding: 10px;
+    border: 2px solid green;
     border-radius: 5px;
-    background-color: #e0ffe0; 
+    background-color: #e0ffe0;
+    font-size: 16px;
+}
+
+input::placeholder, select::placeholder {
+    color: lightgray;
 }
 
 input:focus, select:focus {
     outline: none;
-    border-color:  rgb(14, 179, 14);
+    border-color: #007bff;
 }
 
 .icon {
@@ -70,25 +103,46 @@ input:focus, select:focus {
     cursor: pointer;
 }
 
-.signup-button {
-    width: 90%;
+.sign-up-button {
+    width: 35%;
     padding: 15px;
-    background-color:  rgb(14, 179, 14);;
+    background-color: green;
     color: white;
     border: none;
     border-radius: 5px;
+    font-size: 18px;
     cursor: pointer;
-    text-align: center;
+    margin-left: 2px;
+    position: absolute;
 }
 
-.signup-button:hover {
-    background-color:  rgb(14, 179, 14);
+.sign-up-button:hover {
+    background-color: darkgreen;
 }
 
 .terms-group {
     display: flex;
     align-items: center;
-    gap: 10px;
-    position: center;
-    color: black;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.terms-group input {
+    margin-right: 10px;
+}
+
+.bottom-text {
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+.bottom-text a {
+    color: green;
+    text-decoration: none;
+    position: absolute;
+    margin-top: 50px;
+}
+
+.bottom-text a:hover {
+    text-decoration: underline;
 }
