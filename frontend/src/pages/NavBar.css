@@ -1,0 +1,96 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background-color: hsl(0, 41%, 92%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+}
+
+.profile-container {
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+}
+
+.profile-image {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-right: 20px;
+}
+
+.profile-name {
+  font-weight: 500;
+}
+
+.search-container {
+  flex-grow: 1;
+  max-width: 600px;
+  margin: 0 20px;
+}
+
+.search-form {
+  width: 100%;
+}
+
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  border: 2px solid #e0e0e0;
+  border-radius: 25px;
+  overflow: hidden;
+}
+
+.search-input-icon {
+  width: 20px;
+  height: 20px;
+  margin: 0 10px;
+}
+
+.search-input {
+  flex-grow: 1;
+  border: none;
+  padding: 10px;
+  font-size: 16px;
+  outline: black;
+}
+
+.search-input::placeholder {
+  color: #888;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+}
+
+.mail-icon, 
+.notification-icon {
+  width: 25px;
+  height: 25px;
+  margin: 0 15px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.mail-icon:hover,
+.notification-icon:hover {
+  transform: scale(1.1);
+}
+
+.app-title {
+  font-weight: bold;
+  margin: 0 15px;
+  color: #333;
+}
+
+.logo-image {
+  width: 50px;
+  height: 50px;
+}

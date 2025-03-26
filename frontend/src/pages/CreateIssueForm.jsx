@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
-import profilePic from '../assets/profile.png';
-import settingsIcon from '../assets/settings.png';
-import makerereLogo from '../assets/makerere.logo.png';
-import issueIcon from '../assets/issue.png';
-import dashboardIcon from '../assets/dashboard.png';
+import NavBar from './NavBar';
+import HorizontalSidebar from './HorizontalSideBar';
 import './CreateIssueForm.css';
 
 const CreateIssueForm = () => {
@@ -81,17 +78,18 @@ const CreateIssueForm = () => {
 
   return (
     <div className="create-issue-page">
+      <NavBar />
+      <HorizontalSidebar />
       {/* Header Section */}
       <header className="header">
         <div className="header-left">
           <div className="user-profile">
             <div className="user-avatar">
-              <img src={profilePic} alt="User" />
+              <span className="avatar-placeholder">JD</span>
             </div>
             <span className="user-name">John</span>
           </div>
           <div className="search-container">
-            <i className="fas fa-search search-icon"></i>
             <input 
               type="text" 
               placeholder="Search for anything..." 
@@ -105,7 +103,7 @@ const CreateIssueForm = () => {
           </div>
           <div className="system-title">
             <span>Academic Issue Tracking System</span>
-            <img src={makerereLogo} alt="University Logo" className="university-logo" />
+            <span className="university-logo">MUK</span>
           </div>
         </div>
       </header>
@@ -114,19 +112,19 @@ const CreateIssueForm = () => {
       <nav className="main-navigation">
         <ul>
           <li>
-            <img src={dashboardIcon} alt="Dashboard" className="nav-icon" />
+            <i className="fas fa-chart-line nav-icon"></i>
             <span>Dashboard</span>
           </li>
           <li className="active">
-            <img src={issueIcon} alt="Issues" className="nav-icon" />
+            <i className="fas fa-exclamation-circle nav-icon"></i>
             <span>Issues</span>
           </li>
           <li>
-            <img src={profilePic} alt="Profile" className="nav-icon" />
+            <i className="fas fa-user nav-icon"></i>
             <span>Profile</span>
           </li>
           <li>
-            <img src={settingsIcon} alt="Settings" className="nav-icon" />
+            <i className="fas fa-cog nav-icon"></i>
             <span>Settings</span>
           </li>
           <li>
@@ -332,4 +330,3 @@ const CreateIssueForm = () => {
 };
 
 export default CreateIssueForm;
-
