@@ -17,17 +17,20 @@ const LandingPage = () => {
         };
     return(
         <div className="landingpage">
-            <img src={landingimage} alt="Landing Image" className="landing-image" />   
+            <img src={landingimage} alt="Landing Image" className="landing-image" />  
+            <div clasName="logo">
+                <h1 className='logo-name'>AITS</h1>
+            </div>  
             <div className="overlay">
                 <img src={makererelogo} alt="Makerere University Logo" className="makerere-logo" />
                 <div className="welcome-text">WELCOME TO THE ISSUE ACADEMIC TRACKING SYSTEM</div>   
-            </div>     
+            </div>   
+             
             <div className="header">
                 <div className="buttons">
                 <button className='signup-button' onClick={navigateToSignup}>Sign Up</button>
                 <div className='separator'></div>
                 <button className='signin-button' onClick={navigateToSignnin}>Sign In</button>
-                <div clasName="logo">AITS</div>
                 </div>
             </div>
            

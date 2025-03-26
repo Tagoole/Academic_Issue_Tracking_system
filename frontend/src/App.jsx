@@ -3,15 +3,15 @@ import { BrowserRouter as Router, Routes, Route , Navigate} from "react-router-d
 
 
 
-import Signin from "./pages/Signin"; // New component
-import EmailVerification from "./pages/verification"; // New component
-import ResetPassword from "./pages/reset"; // New component
-import Dashboard from "./pages/Dashboard"; // New component
+import Signin from "./pages/Signin"; 
+import EmailVerification from "./pages/verification"; 
+import ResetPassword from "./pages/reset"; 
+import Dashboard from "./pages/Dashboard"; 
 import ProfileSetup from "./pages/ProfileSetup";
 import ProfilePictureSetup from "./pages/profilepicture";
 import LandingPage from "./pages/landingpage";
 import SignUp from "./pages/singup";
-
+import AuthScreen from "./pages/authscreen";
 
 function App() {
   
@@ -28,6 +28,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/profilesetup" element={<ProfileSetup />} />
         <Route path="/profilepicture" element={<ProfilePictureSetup />} />
+        <Route path="/authscreen" element={<AuthScreen />} />
       </Routes>
     </Router>
   )

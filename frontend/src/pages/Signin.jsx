@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import mail from '../assets/mail.png';
 import hidden from '../assets/hidden.png';
-import './signin.css'; // Import the corresponding CSS file
+import './signin.css';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
