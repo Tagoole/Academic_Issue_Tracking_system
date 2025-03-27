@@ -10,6 +10,7 @@ import ProfilePictureSetup from "./pages/profilepicture";
 import LandingPage from "./pages/landingpage";
 import SignUp from "./pages/signup";
 import AuthScreen from "./pages/authscreen";
+import CONGS from "./pages/CONGS";
 
 function App() {
   
@@ -26,6 +27,7 @@ function App() {
         <Route path="/profilesetup" element={<ProfileSetup />} />
         <Route path="/profilepicture" element={<ProfilePictureSetup />} />
         <Route path="/authscreen" element={<AuthScreen />} />
+        <Route path="/congs" element={<CONGS />} />
       </Routes>
     </Router>
   )
