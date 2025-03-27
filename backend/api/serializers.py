@@ -33,7 +33,7 @@ class DepartmentSerializer(serializers.ModelSerializer):
 class IssueSerializer(serializers.ModelSerializer):
     student = serializers.StringRelatedField()
     registrar = serializers.StringRelatedField()
-    course_unit = Course_unitSerializer()
+    course_unit = Course_unitSerializer(read_only=True)
     #program = ProgramSerializer()
     class Meta:
         model = Issue

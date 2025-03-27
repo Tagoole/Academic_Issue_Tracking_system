@@ -6,7 +6,7 @@ from .models import *
 from rest_framework import status
 from .permissions import *
 from rest_framework.permissions import AllowAny,IsAuthenticated
-from django.core.mail import send_mail
+from django.core.mail import send_mail,EmailMessage
 from django.conf import settings
 from random import randint
 
@@ -59,7 +59,7 @@ class Lecturer_Issue_Manangement(ModelViewSet):
         instance.delete()
     
 class Student_Issue_ReadOnlyViewset(ReadOnlyModelViewSet):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     serializer_class = IssueSerializer
     
     def get_queryset(self):
@@ -175,14 +175,27 @@ class Student_Registration(APIView):
             verification.save()
             
             '''Sending the email...'''
-            subject = 'Email verification Code..'
+            '''subject = 'Email verification Code..'
             message = f"Hello, your Verification code is: {verification_code}"
             receipient_email= data.get('email')
             
             try:
                 send_mail(subject,message,settings.EMAIL_HOST_USER,[receipient_email],fail_silently=False)
             except Exception as e:
-                return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)'''
+                
+            subject = 'Email Verification Code'
+            message = f"Hello, your Verification code is: {verification_code}"
+            recipient_email = data.get('email')
+
+            email = EmailMessage(
+                subject,
+                message,
+                settings.EMAIL_HOST_USER,
+                [recipient_email]
+            )
+
+            email.send(fail_silently=False)
             return Response({
                     "message": "User Created Successfully, Token created and email sent!",
                     "user": {
