@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import RegistraDashboard from "./pages/RegistraDashboard";
 import Notifications from "./pages/Notifications";
 import Messages from "./pages/Messages";
-import NewChat from "./pages/New-chat";
+import NewChat from "./pages/New-Chat";
 
 function App() {
   return (
