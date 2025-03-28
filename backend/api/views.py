@@ -336,6 +336,7 @@ def resend_password_reset_code(request):
             return Response({'Message':f'Successfully Resent the Password Reset Code .....'},status=status.HTTP_200_OK)
         return Response({'Error':'Failure...........--'},status=status.HTTP_400_BAD_REQUEST)
     return Response(serializer.errors,status = status.HTTP_400_BAD_REQUEST)
+     
         
 @api_view(['POST'])
 def verify_password_reset_code(request):
@@ -343,13 +344,12 @@ def verify_password_reset_code(request):
     if serializer.is_valid():
         code = serializer.validated_data.get('code')
         user = serializer.validated_data.get('user')
-        
-        try:
-            get_code = Verification_code.objects.filter(user = user, code = code) 
-        except Exception as e:
-            return Response({'Error':str(e)},status= status.HTTP_400_BAD_REQUEST)
-        
-        if Verification_code.objects.get(code = code).is_verification_code_expired():
+        print(serializer.validated_data)
+        get_code = Verification_code.objects.filter(code=code).first()
+        if not get_code:
+            return Response({"error": "Invalid verification code or user."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if get_code.is_verification_code_expired():
             return Response({"error": "Verification code has expired"}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'Message':'Confirmed...'})
         
