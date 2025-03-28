@@ -125,7 +125,7 @@ class Verification_code(models.Model):
         return timezone.now() > expiration_time
     
     @classmethod
-    def resend_verification_code(cls,user):
+    def resend_verification_code(cls,user, subject):
         try:
             cls.objects.filter(user = user).delete()
     
@@ -135,7 +135,7 @@ class Verification_code(models.Model):
             return {'Error':e}
 
         try:
-            subject = 'Email verification Code Resend..'
+            subject = subject
             message = f"Hello, your Verification code that has been resent is: {new_verification_code}"
             receipient_email= user.email
             send_mail(subject,message,settings.EMAIL_HOST_USER,[receipient_email],fail_silently=False)

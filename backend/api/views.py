@@ -284,7 +284,7 @@ def resend_verification_code(request):
         except CustomUser.DoesNotExist:
             return Response({'Error':'No user found...'})
         
-        result = Verification_code.resend_verification_code(user = user)
+        result = Verification_code.resend_verification_code(user = user, subject= 'Email verification Code Resend..')
         if result:
             return Response({'Message':f'Successful.....'},status=status.HTTP_200_OK)
         return Response({'Error':'Failure...........--'},status=status.HTTP_400_BAD_REQUEST)
@@ -322,6 +322,22 @@ def password_reset_code(request):
     return Response(serializer.errors,status = status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
+def resend_password_reset_code(request):
+    serializer= Resend_Password_Reset_CodeSerializer(data = request.data)
+    if serializer.is_valid():
+        user_email = serializer.validated_data.get('email')
+        try:
+            user = CustomUser.objects.get(email = user_email)
+        except CustomUser.DoesNotExist:
+            return Response({'Error':'No user found...'})
+        """I am using the verification code model to rsend the password reset code.."""
+        result = Verification_code.resend_verification_code(user = user, subject= 'Reset Account Password...')
+        if result:
+            return Response({'Message':f'Successfully Resent the Password Reset Code .....'},status=status.HTTP_200_OK)
+        return Response({'Error':'Failure...........--'},status=status.HTTP_400_BAD_REQUEST)
+    return Response(serializer.errors,status = status.HTTP_400_BAD_REQUEST)
+        
+@api_view(['POST'])
 def verify_password_reset_code(request):
     serializer = Verify_Password_Reset_CodeSerializer(data = request.data)
     if serializer.is_valid():
@@ -329,11 +345,11 @@ def verify_password_reset_code(request):
         user = serializer.validated_data.get('user')
         
         try:
-            get_code = Verification_code.objects.get(user = user, code = code) 
+            get_code = Verification_code.objects.filter(user = user, code = code) 
         except Exception as e:
             return Response({'Error':str(e)},status= status.HTTP_400_BAD_REQUEST)
         
-        if get_code.is_verification_code_expired():
+        if Verification_code.objects.get(code = code).is_verification_code_expired():
             return Response({"error": "Verification code has expired"}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'Message':'Confirmed...'})
         
