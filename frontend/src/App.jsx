@@ -1,35 +1,57 @@
 import React from "react";
-import LandingPage from "./pages/Landingpage";  
-import StudentDashboard from "./pages/StudentDashboard";
-import IssueMgt from "./pages/IssueMgt";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+// Importing pages
+
+import Dashboard from "./pages/Dashboard";
+
+import Issues from "./pages/Issues";
 import CreateIssueForm from "./pages/CreateIssueForm";
-import Notification from "./pages/Notification";
+import IssueMgt from "./pages/IssueMgt";
+
 import NotificationSuccess from "./pages/NotificationSuccess";
-import Message from "./pages/Message";
+import Messages from "./pages/Messages";
 import MessageChat from "./pages/MessageChat";
-import Newchat from "./pages/Newchat";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Newchat from "./pages/New-Chat";
+import NewIssue from "./pages/New-Issue";
+import NewMessage from"./pages/New-Message";
+import Signin from "./pages/Signin";
+import EmailVerification from "./pages/verification";
+import ResetPassword from "./pages/reset";
+
+import ProfileSetup from "./pages/ProfileSetup";
+import ProfilePictureSetup from "./pages/profilepicture";
+import Congragulation from "./pages/congragulation";
 
 function App() {
   return (
-    <BrowserRouter>
+    <Router>
       <div className="App">
         <Routes>
-          <Route path="/" element={<LandingPage />} />
+          {/* Routes from both branches */}
           
+          <Route path="/dashboard" element={<Dashboard />} />
           
-      
-          <Route path="/studentdashboard" element={<StudentDashboard />} />
-          <Route path="/issuemgt" element={<IssueMgt />} />
-          <Route path="/createissueform" element={<CreateIssueForm />} /> 
-          <Route path="/notification" element={<Notification />} />
-          <Route path="/notificationsuccess"element={<NotificationSuccess/>}/>
-          <Route path="/message" element={<Message />} />\
+          <Route path="/createissueform" element={<CreateIssueForm />} />
+          
+          <Route path="/notificationsuccess" element={<NotificationSuccess />} />
+          <Route path="/messages" element={<Messages />} />
           <Route path="/messagechat" element={<MessageChat />} />
-          <Route path="/newchat" element={<Newchat />} />
+          <Route path="/new-chat" element={<Newchat />} />
+          <Route path="/signin" element={<Signin />} />
+          <Route path="/verification" element={<EmailVerification />} />
+          <Route path="/reset" element={<ResetPassword />} />
+          <Route path="/issues" element={<Issues />} />
+          <Route path="/issuemgt" element={<IssueMgt />} /> s
+          
+          <Route path="/profilesetup" element={<ProfileSetup />} />
+          <Route path="/profilepicture" element={<ProfilePictureSetup />} />
+          <Route path="/congragulation" element={<Congragulation />} />
+          <Route path="/new-issue" element={<NewIssue />} />
+          <Route path="/new-message"element={<NewMessage/>}/>
         </Routes>
       </div>
-    </BrowserRouter>
+    </Router>
   );
 }
 

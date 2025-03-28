@@ -1,30 +1,47 @@
 import React from 'react';
-import icon from '../assets/parcel-out 1.png';
+import { useNavigate } from 'react-router-dom'; 
+import NavBar from './NavBar';
+import HorizontalSideBar from './HorizontalSideBar';
+import uploadIcon from '../assets/box.png';
 import './New-Message.css';
 
 const NewMessage = () => {
+  const navigate = useNavigate(); 
+
+  const handleNewChatClick = () => {
+    navigate('/new-chat'); 
+  };
+
   return (
     <div className="messaging-container">
-      <div className="sidebar">
-        <div className="search-bar">
-          <input type="text" placeholder="Search something here..." />
-        </div>
-        <div className="start-chat-section">
-          <div className="upload-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
-            </svg>
+      <NavBar />
+      <HorizontalSideBar />
+      <div className="messaging-content">
+        <div className="messages-sidebar">
+          <div className="search-container">
+            <input 
+              type="text" 
+              placeholder="Search for anything..." 
+              className="search-input" 
+            />
           </div>
-          <p>Click on the button below to start a new chat.</p>
+          <div className="start-chat-section">
+            <div className="uploadicon">
+              <img src={uploadIcon} alt="Upload Icon" className="upload-icon-image" />
+            </div>
+            <p>Click on the button below to start a new chat.</p>
+            <button 
+              className="new-chat-button" 
+              onClick={handleNewChatClick} 
+            >
+              New Chat
+            </button>
+          </div>
         </div>
-        <button className="new-chat-button">
-          <span>+</span>
-        </button>
-      </div>
-      <div className="chat-area">
-        <div className="chat-placeholder">
-          <img src={icon} alt="Chat Placeholder Icon" className="chat-placeholder-icon" />
-          <p>Select a chat for it to appear here by clicking on it</p>
+        <div className="chat-area">
+          <div className="chat-placeholder">
+            <p>Select a chat for it to appear here by clicking on it</p>
+          </div>
         </div>
       </div>
     </div>

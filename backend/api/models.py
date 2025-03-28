@@ -19,12 +19,12 @@ class CustomUser(AbstractUser):
     username = models.CharField(max_length=100,unique=True,null=False,blank = False)
     email = models.EmailField(unique=True)
     confirm_password = models.CharField(max_length=50)
-    role = models.CharField(max_length=30, choices = ROLE_CHOICES, default = 'student')
+    role = models.CharField(max_length=30, choices = ROLE_CHOICES)
     image = models.ImageField(upload_to='profile_pictures/', null = True, blank = True)
     gender = models.CharField(max_length = 20,choices = GENDER_CHOICES,editable = True)
     program = models.ForeignKey('Program',on_delete= models.CASCADE, related_name='programs',null = True, blank=True)    
     city = models.CharField(max_length=30, editable = True)
-    token = models.CharField(max_length=50, null = True, blank = True)
+    token = models.CharField(max_length=50)
     
     def __str__(self):
         return self.username
@@ -49,7 +49,10 @@ class Course_unit(models.Model):
     
 class Program(models.Model):
     program_name = models.CharField(max_length=100)
-    course_units = models.ManyToManyField(Course_unit,related_name='course_units')
+    course_units = models.ManyToManyField(Course_unit,related_name='course_units', blank=True)
+    
+    def __str__(self):
+        return self.program_name
 
 class Issue(models.Model):
     ISSUE_CHOICES = [
@@ -96,3 +99,11 @@ class Issue(models.Model):
     def __str__(self):
         return self.issue_type
     
+class Registration_Token(models.Model):
+    ROLE_CHOICES = [
+        ('lecturer','lecturer'),
+        ('academic_registrar','academic_registrar'),
+    ]
+    role = models.CharField(max_length=20, choices = ROLE_CHOICES)
+    email = models.EmailField(unique=True)
+    token = models.CharField(default=shortuuid.uuid,max_length=50)

@@ -1,7 +1,7 @@
 import React from 'react';
 import profilePic from '../assets/profile.png';
 import settingsIcon from '../assets/settings.png';
-import makerereLogo from '../assets/makerere.logo.png';
+import makerereLogo from '../assets/makererelogo.png';
 import issueIcon from '../assets/issue.png';
 import dashboardIcon from '../assets/dashboard.png';
 import './MessageChat.css';

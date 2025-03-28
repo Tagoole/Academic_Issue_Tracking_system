@@ -1,46 +1,51 @@
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #f0f0f0;
-}
-
 .messaging-container {
   display: flex;
-  height: 100vh;
-  background-color: white;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: flex;
+  height: 600px;
+  width: 100%;
+  background-color: #f0f0f0;
+  box-shadow: #e0e0e0 0px 0px 10px;
+  gap: 50px;
 }
 
-.sidebar {
+.messaging-content {
+  display: flex;
+  margin-top: 40px;
+  flex-grow: 1;
+  background-color: white;
+  row-gap: 10px;
+}
+
+.messages-sidebar {
   width: 300px;
   border-right: 1px solid #e0e0e0;
+  background-color: white;
   display: flex;
   flex-direction: column;
-  background-color: white;
 }
 
-.search-bar {
+.search-container {
   padding: 15px;
   border-bottom: 1px solid #e0e0e0;
 }
 
-.search-bar input {
+.search-input {
   width: 100%;
   padding: 10px;
+  color: black;
   border: 1px solid #e0e0e0;
   border-radius: 5px;
   outline: none;
 }
 
 .start-chat-section {
-  flex-grow: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  flex-grow: 1;
   text-align: center;
   padding: 20px;
-  color: #888;
 }
 
 .upload-icon {
@@ -49,48 +54,41 @@ body {
   background-color: #f0f0f0;
   border-radius: 10px;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   margin-bottom: 15px;
 }
 
 .upload-icon svg {
   width: 40px;
   height: 40px;
+  color: #888;
+}
+
+.start-chat-section p {
   color: #666;
+  margin-bottom: 15px;
 }
 
 .new-chat-button {
-  width: 50px;
-  height: 50px;
   background-color: black;
   color: white;
   border: none;
-  border-radius: 50%;
-  font-size: 30px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 15px auto;
+  padding: 10px 20px;
+  border-radius: 5px;
   cursor: pointer;
 }
 
 .chat-area {
   flex-grow: 1;
-  background-color: #f9f9f9;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  background-color: #f9f9f9;
+  gap: 20px;
 }
 
 .chat-placeholder {
-  background-color: white;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-}
-
-.chat-placeholder p {
   color: #888;
-  margin: 0;
+  text-align: center;
 }

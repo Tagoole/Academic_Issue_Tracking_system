@@ -1,0 +1,44 @@
+.congratulations-container {
+    text-align: center;
+    padding: 20px;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    max-width: 400px;
+    margin: 50px auto;
+  }
+  
+  h1 {
+    color: hsl(0, 19%, 93%);
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  h2 {
+    color: #0d0e0d;
+    font-size: 20px;
+  }
+  
+  .message {
+    margin: 20px 0;
+  }
+  
+  .buttons {
+    margin-top: 20px;
+  }
+  
+  button {
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .back-button {
+    background-color: #ccc;
+  }
+  
+  .dashboard-button {
+    background-color: #4CAF50;
+    color: white;
+  }
