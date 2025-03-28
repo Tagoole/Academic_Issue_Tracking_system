@@ -173,3 +173,9 @@ class Final_Password_ResetSerializer(serializers.Serializer):
     def validate(self,validated_data):
         if self.password != self.confirm_password:
             raise serializers.ValidationError("Passowrds donot match....")
+        
+class Email_notificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model =Email_Notification
+        fields = '__all__'
+        

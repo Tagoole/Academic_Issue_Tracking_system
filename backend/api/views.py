@@ -1,7 +1,7 @@
 from rest_framework.viewsets import ModelViewSet,ReadOnlyModelViewSet
 from rest_framework.response import Response
 from .serializers import *
-from rest_framework.decorators import APIView,api_view
+from rest_framework.decorators import APIView,api_view,permission_classes
 from .models import *
 from rest_framework import status
 from .permissions import *
@@ -91,7 +91,13 @@ class Registrar_Issue_ManagementViewSet(ModelViewSet):
                            f'Current status: {issue.status}\n\n'
                            'Best regards,\nAITS')
             
-            send_mail(subject, message, settings.EMAIL_HOST_USER, [student.email], fail_silently=False)
+            send_success = send_mail(subject, message, settings.EMAIL_HOST_USER, [student.email], fail_silently=False)
+            if send_success > 0:
+                Email_Notification.objects.create(
+                    user = student, 
+                    issue = issue, 
+                    subject = subject, 
+                    message = message).save()
     
     def perform_update(self, serializer):
         issue = self.get_object()  # This retrieves the current issue instance
@@ -103,13 +109,13 @@ class Registrar_Issue_ManagementViewSet(ModelViewSet):
         # Send email with previous and current state
         self.send_email_on_update(updated_issue, "updated", previous_state)
         
+        
         return updated_issue
             
     def perform_destroy(self, instance):
         self.send_email_on_update(instance,"deleted")
         instance.delete()
-            
-    
+              
     
 class DepartmentViewSet(ModelViewSet):
     permission_classes = [AllowAny]
@@ -325,7 +331,7 @@ def verify_password_reset_code(request):
         try:
             get_code = Verification_code.objects.get(user = user, code = code) 
         except Exception as e:
-            return Response({'Error':e},status= status.HTTP_400_BAD_REQUEST)
+            return Response({'Error':str(e)},status= status.HTTP_400_BAD_REQUEST)
         
         if get_code.is_verification_code_expired():
             return Response({"error": "Verification code has expired"}, status=status.HTTP_400_BAD_REQUEST)
@@ -351,5 +357,15 @@ def final_password_reset(request):
         user.save()
         
         return Response({"message": "Password reset successful"}, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_email_notifications(request):
+    data = request.data
+    notifications = Email_Notification.objects.filter(user = data.get('user'))
+    number = notifications.count()
+    serializer = Email_notificationSerializer(notifications,many = True)
+    return Response ({'number':number,
+                      'data':serializer.data})
     
-        

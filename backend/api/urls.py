@@ -28,5 +28,6 @@ urlpatterns = [
     path('password_reset_code/',password_reset_code,name='password_reset_code'),
     path('verify_password_reset_code/',verify_password_reset_code,name='verify_password_reset_code'),
     path('final_password_reset/',final_password_reset,name='final_password_reset'),
+    path('user_email_notifications/',get_user_email_notifications,name = 'user_email_notifications'),
     
 ]
