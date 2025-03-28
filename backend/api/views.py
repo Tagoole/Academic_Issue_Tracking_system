@@ -361,18 +361,24 @@ def verify_password_reset_code(request):
 def final_password_reset(request):
     serializer = Final_Password_ResetSerializer(data = request.data)
     if serializer.is_valid():
-        password = serializer.validated_data.get('passsword')
+        password = serializer.validated_data.get('password')
         confirm_password = serializer.validated_data.get('confirm_password')
-        user = serializer.validated_data.get('user')
+        email = serializer.validated_data.get('email')
         
-        get_user = CustomUser.objects.get(user = user)
+        try:
+            get_user = CustomUser.objects.get(email=email)
+        except CustomUser.DoesNotExist:
+            return Response({"error": "User with this email does not exist"}, status=status.HTTP_400_BAD_REQUEST)
         
+        if password != confirm_password:
+            return Response({"error": "Passwords do not match"}, status=status.HTTP_400_BAD_REQUEST)
         get_user.set_password(password)
-        get_user.set_password(confirm_password)
+        #get_user.set_password(confirm_password)
         
-        user.save()
+        get_user.save()
         
         return Response({"message": "Password reset successful"}, status=status.HTTP_200_OK)
+    return Response(serializer.errors,status = status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])

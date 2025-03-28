@@ -169,12 +169,15 @@ class Verify_Password_Reset_CodeSerializer(serializers.Serializer):
     code = serializers.IntegerField()
 
 class Final_Password_ResetSerializer(serializers.Serializer):
-    password = serializers.CharField(max_length=50)
-    confirm_password = serializers.CharField(max_length=50)
+    password = serializers.CharField(max_length=50,write_only=True)
+    confirm_password = serializers.CharField(max_length=50,write_only=True)
+    email = serializers.EmailField()
     
     def validate(self,validated_data):
-        if self.password != self.confirm_password:
-            raise serializers.ValidationError("Passowrds donot match....")
+        if validated_data['password'] != validated_data['confirm_password']:
+            raise serializers.ValidationError("Passwords donot match....")
+        
+        return validated_data
         
 class Email_notificationSerializer(serializers.ModelSerializer):
     class Meta:
