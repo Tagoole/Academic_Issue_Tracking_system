@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 import './NavBar.css';
 import profilePic from '../assets/profile.png';
-import logo from '../assets/makererelogo.png';
-import searchbar from '../assets/searchbar.png';
-import notification from '../assets/notification.png';
-import mail from '../assets/mail.png';
+import logo from '../assets/makerere_logo.png';
 import { useNavigate } from "react-router-dom";
 
 const NavBar = () => {
@@ -40,11 +37,10 @@ const NavBar = () => {
       <div className="search-container">
         <form onSubmit={handleSearchSubmit} className="search-form">
           <div className="search-wrapper">
-            <img 
-              src={searchbar} 
-              alt="Search Icon" 
-              className="search-input-icon" 
-            />
+            
+    
+
+            
             <input
               type="text"
               placeholder="Search for anything..."
@@ -57,18 +53,8 @@ const NavBar = () => {
       </div>
 
       <div className="navbar-right">
-        <img
-          src={mail}
-          alt="Mail Icon"
-          className="mail-icon"
-          onClick={handleMailClick}
-        />
-        <img
-          src={notification}
-          alt="Notification Icon"
-          className="notification-icon"
-          onClick={handleNotificationClick}
-        />
+
+        
         <div className="app-title">Academic Issue Tracking System</div>
         <img src={logo} alt="Logo" className="logo-image" />
       </div>
