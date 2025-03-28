@@ -1,18 +1,18 @@
 import React from "react";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import RegistraDashboard from "./pages/RegistraDashboard";
-
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Notifications from "./pages/Notifications";
 
 function App() {
   return (
-    <BrowserRouter>
+    <Router>
       <div className="App">
         <Routes>
-    
           <Route path="/registradashboard" element={<RegistraDashboard />} />
+          <Route path="/notifications" element={<Notifications />} />
         </Routes>
       </div>
-    </BrowserRouter>
+    </Router>
   );
 }
 
