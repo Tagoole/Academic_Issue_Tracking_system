@@ -11,7 +11,7 @@ router.register(r'issues', IssueViewSet,'issues')
 router.register(r'department',DepartmentViewSet,'department')
 router.register(r'course_unit',Course_unitViewSet,'course_unit')
 router.register(r'program',ProgramViewSet,'program')
-
+router.register(r'registration_token',Registration_Token_viewset,'registration_token')
 
 urlpatterns = [
     path('',include(router.urls)),

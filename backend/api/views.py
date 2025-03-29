@@ -35,14 +35,20 @@ class ProgramViewSet(ModelViewSet):
     queryset = Program.objects.all()
     serializer_class = ProgramSerializer
     
-    
-'''
-registration token
-'''
 class Lecturer_and_Registrar_Registration(APIView):
     permission_classes = [AllowAny]
     def post(self,request):
-        serializer = Lecturer_and_Registrar_RegisterSerializer(data=request.data)
+        data = request.data.copy()
+        token_value = data['token']
+        email_value = data['email']
+        
+        token_object = Registration_Token.objects.filter(token=token_value, email=email_value).first()
+        if token_object:
+            data['role'] = token_object.role 
+            print("Updated data:", data)
+            
+            
+        serializer = Lecturer_and_Registrar_RegisterSerializer(data=data)
         if serializer.is_valid():
             user = serializer.save()  # Save user using serializer
             return Response({
@@ -54,6 +60,7 @@ class Lecturer_and_Registrar_Registration(APIView):
                     "username": user.username,
                     "email": user.email,
                     "gender": user.gender,
+                    "role":user.role,
                     "program": user.program.id if user.program else None,
                 }
             }, status=status.HTTP_201_CREATED)
@@ -95,5 +102,9 @@ class Student_Registration(APIView):
 
     '''
     
+class Registration_Token_viewset(ModelViewSet):
+    queryset = Registration_Token.objects.all()
+    serializer_class = Registration_Token_Serializer
+    http_method_names = ['get','post','delete']
 
     
