@@ -1,80 +1,94 @@
 import React from 'react';
-import NavBar from './NavBar';
-import SideBar from './SideBar';
 import './RegistraDashboard.css';
+import Navbar from './Navbar'; 
+import Sidebar from './Sidebar';
 
 const RegistraDashboard = () => {
-  const issueStats = [
-    { label: 'Total issues', value: 0 },
-    { label: 'Pending issues', value: 0 },
-    { label: 'In-progress issues', value: 0 },
-    { label: 'Resolved issues', value: 1 }
-  ];
 
-  const issueData = [
-    {
-      id: 1,
-      status: 'Resolved',
-      studentNo: '25/I/0000/PS',
-      category: 'Missing Mark',
-      date: '01/01/2025'
-    }
+  const issues = [
+    { id: 1, status: 'Resolved', studentNo: '25/U0000/PS', category: 'Missing Mark', date: '01/01/2025' }
   ];
 
   return (
-    <div className="dashboard-container">
-      <NavBar />
-      <div className="main-content">
-        <SideBar />
-        <div className="dashboard-content">
-          <div className="issue-stats-grid">
-            {issueStats.map((stat, index) => (
-              <div key={index} className="stat-card">
-                <h3>{stat.label}</h3>
-                <p>You currently have {stat.value} {stat.label.toLowerCase()}</p>
-                <span className="stat-value">{stat.value}</span>
-              </div>
-            ))}
+    <div className="app-container">
+      <Navbar />
+      <div className="content-container">
+        <Sidebar />
+        <main className="main-content">
+          <div className="dashboard-cards">
+            <DashboardCard 
+              title="Total issues" 
+              count={0} 
+              description="You currently have 0 issues" 
+            />
+            <DashboardCard 
+              title="Pending issues" 
+              count={0} 
+              description="You currently have 0 pending issues" 
+            />
+            <DashboardCard 
+              title="In-progress issues" 
+              count={0} 
+              description="You currently have 0 in-progress issues" 
+            />
+            <DashboardCard 
+              title="Resolved issues" 
+              count={1} 
+              description="You currently have 1 resolved issue" 
+            />
           </div>
           
-          <div className="issues-table-section">
+          <div className="issues-section">
             <div className="issues-header">
-              <h2> Issues</h2>
-              <div className="search-filter-container">
-                <input 
-                  type="text" 
-                  placeholder="Search for issues" 
-                  className="issues-search-input"
-                />
-                <button className="filter-button">Filter</button>
+              <h2>My issues</h2>
+              <div className="search-container">
+                <input type="text" placeholder="search for issues" className="search-input" />
+                <span className="search-icon">🔍</span>
               </div>
+              <button className="filter-button">
+                <span>Filter</span>
+                <span className="filter-icon">▼</span>
+              </button>
             </div>
             
-            <table className="issues-table">
-              <thead>
-                <tr>
-                  <th>Issue ID</th>
-                  <th>Status</th>
-                  <th>Student No</th>
-                  <th>Category</th>
-                  <th>Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {issueData.map((issue) => (
-                  <tr key={issue.id}>
-                    <td>{issue.id}</td>
-                    <td>{issue.status}</td>
-                    <td>{issue.studentNo}</td>
-                    <td>{issue.category}</td>
-                    <td>{issue.date}</td>
+            <div className="issues-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Issue ID</th>
+                    <th>Status</th>
+                    <th>Student No</th>
+                    <th>Category</th>
+                    <th>Date</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {issues.map(issue => (
+                    <tr key={issue.id}>
+                      <td>{issue.id}</td>
+                      <td>{issue.status}</td>
+                      <td>{issue.studentNo}</td>
+                      <td>{issue.category}</td>
+                      <td>{issue.date}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        </main>
       </div>
+    </div>
+  );
+};
+
+// Dashboard Card Component
+const DashboardCard = ({ title, count, description }) => {
+  return (
+    <div className="dashboard-card">
+      <h3>{title}</h3>
+      <div className="card-count">{count}</div>
+      <p>{description}</p>
     </div>
   );
 };

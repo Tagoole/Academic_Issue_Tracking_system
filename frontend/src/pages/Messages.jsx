@@ -2,8 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import './Messages.css';
 import icon from '../assets/box.png';
-import Navbar from './NavBar';
-import Sidebar from './SideBar';
+import NavBar from './Navbar';
+
 
 const Messages = () => {
   const navigate = useNavigate(); 
@@ -14,9 +14,9 @@ const Messages = () => {
 
   return (
     <div className="app-container">
-      <Navbar />
+      <NavBar />
       <div className="main-content">
-        <Sidebar />
+        
         <div className="messages-view">
           <div className="messages-empty-state">
             <h2>MESSAGES</h2>

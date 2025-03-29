@@ -1,66 +1,160 @@
 import React, { useState } from 'react';
-import Navbar from './NavBar'; 
-import './New-chat.css'; 
-
-const contacts = [
-  'Nimurungi Joy',
-  'Kato Jeromy',
-  'Rukindo John',
-  'Mwebaze Keith',
-  'Jemba Michelle',
-  'Kirabo Rose',
-  'Kimuli Jess',
-  'Akol Jasper'
-];
+import './New-chat.css';
+import Navbar from './Navbar'; // Import the Navbar component
 
 const Newchat = () => {
-  const [selectedContact, setSelectedContact] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const contacts = [
+    { id: 1, name: 'Nalwoga Ritah', avatar: '/avatar1.jpg' },
+    { id: 2, name: 'Richard M', avatar: '/avatar2.jpg' },
+    { id: 3, name: 'Musisi Deo', avatar: '/avatar3.jpg' },
+    { id: 4, name: 'Mary Jennifer', avatar: '/avatar4.jpg' },
+    { id: 5, name: 'Paul Victor', avatar: '/avatar5.jpg' },
+    { id: 6, name: 'Idhe Suhaila', avatar: '/avatar6.jpg' },
+    { id: 7, name: 'Benson G', avatar: '/avatar7.jpg' },
+    { id: 8, name: 'Adrian Mpilima', avatar: '/avatar8.jpg' },
+    { id: 9, name: 'Shadrack H', avatar: '/avatar9.jpg' },
+  ];
 
-  const filteredContacts = contacts.filter(contact => 
-    contact.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const [selectedContact, setSelectedContact] = useState(contacts[0]); // Default to the first contact
+
+  const handleContactClick = (contact) => {
+    setSelectedContact(contact); // Update the selected contact
+  };
 
   return (
-    <div className="container">
+    <div className="app-container">
+      {/* Navbar */}
       <Navbar />
-      <div className="main-content">
+
+      <div className="messaging-container">
+        {/* Sidebar */}
         <div className="sidebar">
-          <input 
-            type="text" 
-            placeholder="Search" 
-            className="search-input"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <div className="contact-list">
-            {filteredContacts.map((contact) => (
-              <div 
-                key={contact} 
-                className={`contact-item ${selectedContact === contact ? 'selected' : ''}`}
-                onClick={() => setSelectedContact(contact)}
+          <div className="sidebar-header">
+            <div className="back-button">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                <div className="contact-avatar"></div>
-                <span>{contact}</span>
+                <path
+                  d="M15 18L9 12L15 6"
+                  stroke="black"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+            <h1>Messages</h1>
+          </div>
+
+          <div className="search-bar">
+            <p>Search something here...</p>
+            <div className="search-icon">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"
+                  stroke="black"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+          </div>
+
+          <div className="contacts-list">
+            {contacts.map((contact) => (
+              <div
+                key={contact.id}
+                className={`contact-item ${
+                  selectedContact.id === contact.id ? 'active' : ''
+                }`}
+                onClick={() => handleContactClick(contact)} // Handle contact click
+              >
+                <div className="avatar">
+                  <img src={contact.avatar} alt={contact.name} />
+                </div>
+                <div className="contact-name">{contact.name}</div>
               </div>
             ))}
           </div>
-          <button className="new-chat-btn">NEW CHAT</button>
         </div>
+
+        {/* Main Chat Area */}
         <div className="chat-area">
-          {selectedContact && (
-            <div className="chat-header">
-              <h2>{selectedContact}</h2>
+          <div className="chat-header">
+            <div className="chat-user">
+              <div className="avatar">
+                <img src={selectedContact.avatar} alt={selectedContact.name} />
+              </div>
+              <div className="user-name">{selectedContact.name}</div>
             </div>
-          )}
-          <div className="chat-messages"></div>
+          </div>
+
+          <div className="chat-messages">
+            {/* Messages would go here */}
+            <p>Start a conversation with {selectedContact.name}!</p>
+          </div>
+
           <div className="message-input-container">
-            <input 
-              type="text" 
-              placeholder="Type here" 
-              className="message-input"
-            />
-            <button className="send-btn">Send</button>
+            <div className="message-input">
+              <p>Type here...</p>
+            </div>
+            <div className="attachment-button">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 12C12 11.4477 12.4477 11 13 11C13.5523 11 14 11.4477 14 12V16C14 16.5523 13.5523 17 13 17C12.4477 17 12 16.5523 12 16V12Z"
+                  fill="black"
+                />
+                <path
+                  d="M8 13C8.55228 13 9 13.4477 9 14V17C9 17.5523 8.55228 18 8 18C7.44772 18 7 17.5523 7 17V14C7 13.4477 7.44772 13 8 13Z"
+                  fill="black"
+                />
+                <path
+                  d="M18 14C18 13.4477 17.5523 13 17 13C16.4477 13 16 13.4477 16 14V16C16 16.5523 16.4477 17 17 17C17.5523 17 18 16.5523 18 16V14Z"
+                  fill="black"
+                />
+                <path
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                  d="M12 0C5.37258 0 0 5.37258 0 12C0 18.6274 5.37258 24 12 24C18.6274 24 24 18.6274 24 12C24 5.37258 18.6274 0 12 0ZM2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12Z"
+                  fill="black"
+                />
+              </svg>
+            </div>
+            <div className="send-button">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M22 2L2 11L22 20V2Z"
+                  fill="#00CC2D"
+                  stroke="#00CC2D"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
           </div>
         </div>
       </div>

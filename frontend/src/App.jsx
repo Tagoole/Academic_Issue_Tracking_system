@@ -3,7 +3,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import RegistraDashboard from "./pages/RegistraDashboard";
 import Notifications from "./pages/Notifications";
 import Messages from "./pages/Messages";
-import NewChat from "./pages/New-Chat";
+import Newchat from "./pages/New-Chat";
+import IssueManagement from "./pages/IssueManagement";
+import Viewdetails from "./pages/View-details";
 
 function App() {
   return (
@@ -13,8 +15,9 @@ function App() {
           <Route path="/registradashboard" element={<RegistraDashboard />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/messages" element={<Messages />} />
-          <Route path="/new-chat" element={<NewChat />} />
-        
+          <Route path="/new-chat" element={<Newchat />} />
+          <Route path="/issuemanagement" element={<IssueManagement />} />
+          <Route path="/view-details" element={<Viewdetails/>} />      
           
         </Routes>
       </div>

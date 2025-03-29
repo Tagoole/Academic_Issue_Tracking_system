@@ -1,0 +1,189 @@
+/* Base layout */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Use viewport height for proper sizing */
+    overflow: hidden; /* Prevent unwanted scrolling */
+  }
+  
+  .main-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+  }
+  
+  .content-container {
+    display: flex;
+    height: calc(100vh - 60px); /* Adjust based on your navbar height */
+    overflow: hidden;
+  }
+  
+  /* Sidebar styling */
+  .sidebar {
+    width: 250px;
+    height: 100%;
+    overflow-y: auto;
+  }
+  
+  /* Issue details container */
+  .issue-detail-container {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    height: 100%;
+  }
+  
+  /* Issue header */
+  .issue-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .back-button {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+  
+  .back-arrow {
+    margin-right: 5px;
+    font-size: 18px;
+  }
+  
+  .share-icon {
+    cursor: pointer;
+  }
+  
+  /* Issue content */
+  .issue-content {
+    display: flex;
+    gap: 30px;
+  }
+  
+  @media (max-width: 768px) {
+    .issue-content {
+      flex-direction: column;
+    }
+  }
+  
+  .left-panel {
+    flex: 3;
+  }
+  
+  .right-panel {
+    flex: 2;
+  }
+  
+  /* Field containers */
+  .field-container {
+    margin-bottom: 15px;
+  }
+  
+  .field-label {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 4px;
+  }
+  
+  .field-value {
+    font-size: 16px;
+  }
+  
+  /* Attachments section */
+  .attachments-section {
+    margin-bottom: 30px;
+  }
+  
+  .section-header {
+    font-weight: bold;
+    margin-bottom: 15px;
+  }
+  
+  .attachment-preview {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+  .attachment-image {
+    max-width: 100%;
+    display: block;
+  }
+  
+  /* Registrar section */
+  .registrar-section {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+  }
+  
+  .registrar-header {
+    font-weight: bold;
+    font-style: italic;
+    margin-bottom: 15px;
+  }
+  
+  .registrar-comment-container,
+  .status-container,
+  .attachments-upload {
+    margin-bottom: 20px;
+  }
+  
+  .comment-label,
+  .status-label,
+  .attachments-label {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  
+  .comment-input,
+  .status-dropdown {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .upload-container {
+    border: 2px dashed #ddd;
+    padding: 20px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    cursor: pointer;
+  }
+  
+  .upload-icon {
+    font-size: 24px;
+    color: #666;
+  }
+  
+  .upload-link {
+    color: blue;
+    text-decoration: underline;
+  }
+  
+  .file-types {
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+  }
+  
+  .save-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    width: 100%;
+  }
+  
+  .save-button:hover {
+    background-color: #45a049;
+  }

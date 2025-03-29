@@ -1,14 +1,13 @@
 import React from 'react';
 import './Notifications.css';
-import  NavBar  from './NavBar';
+import Navbar from './Navbar';
 
 const Notifications = () => {
   return (
     <div className="page-container">
-      <NavBar />
+      <Navbar /> 
       <div className="content-container">
         <div className="notification-card">
-          
           <div className="notification-content">
             <h2 className="notification-title">NOTIFICATIONS</h2>
             <p className="notification-text">
