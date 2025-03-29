@@ -39,7 +39,7 @@ const RegistraDashboard = () => {
           
           <div className="issues-table-section">
             <div className="issues-header">
-              <h2>My Issues</h2>
+              <h2> Issues</h2>
               <div className="search-filter-container">
                 <input 
                   type="text" 
