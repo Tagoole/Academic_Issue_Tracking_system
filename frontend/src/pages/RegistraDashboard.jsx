@@ -43,7 +43,7 @@ const RegistraDashboard = () => {
               <h2>My issues</h2>
               <div className="search-container">
                 <input type="text" placeholder="search for issues" className="search-input" />
-                <span className="search-icon">🔍</span>
+                <span className="search-icon"></span>
               </div>
               <button className="filter-button">
                 <span>Filter</span>
