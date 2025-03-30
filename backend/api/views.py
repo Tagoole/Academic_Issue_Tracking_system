@@ -119,7 +119,7 @@ class Registrar_Issue_ManagementViewSet(ModelViewSet):
         
         
     @action(detail = False, methods= ['get'])
-    def filter_by_status(self,request):
+    def filter_results(self,request):
         search_query = request.query_params.get('status','').strip()
         if search_query:
             issues = self.get_queryset().filter(
