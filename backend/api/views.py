@@ -1,7 +1,7 @@
 from rest_framework.viewsets import ModelViewSet,ReadOnlyModelViewSet
 from rest_framework.response import Response
 from .serializers import *
-from rest_framework.decorators import APIView,api_view,permission_classes
+from rest_framework.decorators import APIView,api_view,permission_classes,action
 from .models import *
 from rest_framework import status
 from .permissions import *
@@ -9,6 +9,7 @@ from rest_framework.permissions import AllowAny,IsAuthenticated
 from django.core.mail import send_mail,EmailMessage
 from django.conf import settings
 from random import randint
+from django.db.models import Q
 
 class IssueViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated,IsStudent]
@@ -115,6 +116,16 @@ class Registrar_Issue_ManagementViewSet(ModelViewSet):
     def perform_destroy(self, instance):
         self.send_email_on_update(instance,"deleted")
         instance.delete()
+        
+    @action(detail = False, methods= ['get'])
+    def filter_by_status(self,request):
+        search_query = request.query_params.get('status','').strip()
+        if search_query:
+            issues = self.get_queryset().filter(status__icontains = search_query)
+            serializer = self.get_serializer(issues, many = True)
+            return Response(serializer.data)
+        return Response({'error':'Status parameter required'})
+        
               
     
 class DepartmentViewSet(ModelViewSet):
