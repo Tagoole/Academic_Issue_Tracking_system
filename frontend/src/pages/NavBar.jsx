@@ -28,37 +28,73 @@ const NavBar = () => {
   };
 
   return (
-    <nav className="navbar">
-      <div className="navbar-left">
-        <div className="profile-container">
-          <img src={profilePic} alt="Profile" className="profile-image" />
-          <span className="profile-name">{'{First Name}'}</span>
+    <nav style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100%',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: '10px 20px',
+      backgroundColor: '#fff',
+      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+      zIndex: 1000
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <img 
+            src={profilePic} 
+            alt="Profile" 
+            style={{ width: '40px', height: '40px', borderRadius: '50%' }} 
+          />
+          <span style={{ fontWeight: 'bold' }}>{'{First Name}'}</span>
         </div>
       </div>
 
-      <div className="search-container">
-        <form onSubmit={handleSearchSubmit} className="search-form">
-          <div className="search-wrapper">
+      <div style={{ flex: 1, maxWidth: '500px', margin: '0 20px' }}>
+        <form onSubmit={handleSearchSubmit}>
+          <div style={{ position: 'relative' }}>
             <input
               type="text"
               placeholder="Search for anything..."
               value={searchQuery}
               onChange={handleSearchChange}
-              className="search-input global-search"
+              style={{
+                width: '100%',
+                padding: '10px 15px',
+                borderRadius: '20px',
+                border: '1px solid #ddd',
+                fontSize: '14px'
+              }}
             />
           </div>
         </form>
       </div>
 
-      <div className="navbar-right">
-        <div className="icon-container" onClick={handleNotificationClick}>
-          <img src={notification} alt="Notifications" className="icon" />
+      <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+        <div onClick={handleNotificationClick} style={{ cursor: 'pointer' }}>
+          <img 
+            src={notification} 
+            alt="Notifications" 
+            style={{ width: '24px', height: '24px' }} 
+          />
         </div>
-        <div className="icon-container" onClick={handleMailClick}>
-          <img src={mail} alt="Messages" className="icon" />
+        <div onClick={handleMailClick} style={{ cursor: 'pointer' }}>
+          <img 
+            src={mail} 
+            alt="Messages" 
+            style={{ width: '24px', height: '24px' }} 
+          />
         </div>
-        <div className="app-title">Academic Issue Tracking System</div>
-        <img src={logo} alt="Logo" className="logo-image" />
+        <div style={{ fontWeight: 'bold', marginLeft: '10px' }}>
+          Academic Issue Tracking System
+        </div>
+        <img 
+          src={logo} 
+          alt="Logo" 
+          style={{ width: '40px', height: '40px', marginLeft: '10px' }} 
+        />
       </div>
     </nav>
   );

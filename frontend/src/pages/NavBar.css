@@ -1,15 +1,15 @@
 .navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
   padding: 10px 20px;
-  background-color: hsl(0, 41%, 92%);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 1205px;
-  height: 35px;
-  margin: 0 auto;
-  border-radius: 5px; 
-  margin-top: 20px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 1000;
 }
 
 .navbar-left {
@@ -20,82 +20,59 @@
 .profile-container {
   display: flex;
   align-items: center;
-  
+  gap: 10px;
 }
 
 .profile-image {
   width: 40px;
-  height: 30px;
+  height: 40px;
   border-radius: 50%;
-  margin-right: 20px;
 }
 
 .profile-name {
-  font-weight: 500;
+  font-weight: bold;
 }
 
 .search-container {
-  flex-grow: 1;
-  max-width: 600px;
+  flex: 1;
+  max-width: 500px;
   margin: 0 20px;
 }
 
-.search-form {
-  width: 100%;
-}
-
 .search-wrapper {
-  display: flex;
-  align-items: center;
-  border: 2px solid #e0e0e0;
-  border-radius: 25px;
-  overflow: hidden;
-}
-
-.search-input-icon {
-  width: 20px;
-  height: 20px;
-  margin: 0 10px;
+  position: relative;
 }
 
 .search-input {
-  flex-grow: 1;
-  border: none;
-  padding: 10px;
-  font-size: 16px;
-  outline: black;
-}
-
-.search-input::placeholder {
-  color: #888;
+  width: 100%;
+  padding: 10px 15px;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  font-size: 14px;
 }
 
 .navbar-right {
   display: flex;
   align-items: center;
+  gap: 15px;
 }
 
-.mail-icon, 
-.notification-icon {
-  width: 10px;
-  height: 10px;
-  margin: 0 15px;
+.icon-container {
   cursor: pointer;
-  transition: transform 0.2s ease;
 }
 
-.mail-icon:hover,
-.notification-icon:hover {
-  transform: scale(1.1);
+.icon {
+  width: 24px;
+  height: 24px;
 }
 
 .app-title {
   font-weight: bold;
-  margin: 0 15px;
-  color: #333;
+  margin-left: 10px;
 }
 
 .logo-image {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
+  margin-left: 10px;
 }

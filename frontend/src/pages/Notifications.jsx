@@ -1,11 +1,19 @@
 import React from 'react';
 import './Notifications.css';
 import Navbar from './Navbar';
+import bakgroundImage from '../assets/backgroundimage.jpg';
 
 const Notifications = () => {
   return (
-    <div className="page-container">
-      <Navbar /> 
+    <div
+      className="page-container"
+      style={{
+        backgroundImage: `url(${bakgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    >
+      <Navbar />
       <div className="content-container">
         <div className="notification-card">
           <div className="notification-content">
