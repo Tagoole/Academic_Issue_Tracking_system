@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './Messages.css';
 import icon from '../assets/box.png';
 import NavBar from './Navbar';
-
+import backgroundImage from '../assets/backgroundimage.jpg';
 
 const Messages = () => {
   const navigate = useNavigate(); 
@@ -13,16 +13,21 @@ const Messages = () => {
   };
 
   return (
-    <div className="app-container">
+    <div
+      className="app-container"
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    >
       <NavBar />
       <div className="main-content">
-        
         <div className="messages-view">
           <div className="messages-empty-state">
             <h2>MESSAGES</h2>
             <p>There are no new messages. You will be notified if any</p>
             <div className="icon-container">
-              
               <img src={icon} alt="No messages icon" className="icon" />
             </div>
             <button 
