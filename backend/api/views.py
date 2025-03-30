@@ -117,11 +117,16 @@ class Registrar_Issue_ManagementViewSet(ModelViewSet):
         self.send_email_on_update(instance,"deleted")
         instance.delete()
         
+        
     @action(detail = False, methods= ['get'])
     def filter_by_status(self,request):
         search_query = request.query_params.get('status','').strip()
         if search_query:
-            issues = self.get_queryset().filter(status__icontains = search_query)
+            issues = self.get_queryset().filter(
+                Q(status__icontains = search_query) | 
+                Q(student__username__icontains = search_query) |
+                Q(issue_type__icontains = search_query)
+                )
             serializer = self.get_serializer(issues, many = True)
             return Response(serializer.data)
         return Response({'error':'Status parameter required'})
