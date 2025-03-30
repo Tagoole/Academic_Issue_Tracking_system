@@ -1,14 +1,15 @@
 from rest_framework.viewsets import ModelViewSet,ReadOnlyModelViewSet
 from rest_framework.response import Response
 from .serializers import *
-from rest_framework.decorators import APIView,api_view
+from rest_framework.decorators import APIView,api_view,permission_classes,action
 from .models import *
 from rest_framework import status
 from .permissions import *
 from rest_framework.permissions import AllowAny,IsAuthenticated
-from django.core.mail import send_mail
+from django.core.mail import send_mail,EmailMessage
 from django.conf import settings
 from random import randint
+from django.db.models import Q
 
 class IssueViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated,IsStudent]
@@ -59,7 +60,7 @@ class Lecturer_Issue_Manangement(ModelViewSet):
         instance.delete()
     
 class Student_Issue_ReadOnlyViewset(ReadOnlyModelViewSet):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     serializer_class = IssueSerializer
     
     def get_queryset(self):
@@ -91,7 +92,13 @@ class Registrar_Issue_ManagementViewSet(ModelViewSet):
                            f'Current status: {issue.status}\n\n'
                            'Best regards,\nAITS')
             
-            send_mail(subject, message, settings.EMAIL_HOST_USER, [student.email], fail_silently=False)
+            send_success = send_mail(subject, message, settings.EMAIL_HOST_USER, [student.email], fail_silently=False)
+            if send_success > 0:
+                Email_Notification.objects.create(
+                    user = student, 
+                    issue = issue, 
+                    subject = subject, 
+                    message = message).save()
     
     def perform_update(self, serializer):
         issue = self.get_object()  # This retrieves the current issue instance
@@ -103,24 +110,14 @@ class Registrar_Issue_ManagementViewSet(ModelViewSet):
         # Send email with previous and current state
         self.send_email_on_update(updated_issue, "updated", previous_state)
         
+        
         return updated_issue
             
     def perform_destroy(self, instance):
         self.send_email_on_update(instance,"deleted")
         instance.delete()
             
-    @action(detail = False, methods= ['get'])
-    def filter_results(self,request):
-        search_query = request.query_params.get('status','').strip()
-        if search_query:
-            issues = self.get_queryset().filter(
-                Q(status__icontains = search_query) | 
-                Q(student__username__icontains = search_query) |
-                Q(issue_type__icontains = search_query)
-                )
-            serializer = self.get_serializer(issues, many = True)
-            return Response(serializer.data)
-        return Response({'error':'Status parameter required'})        
+    
     
 class DepartmentViewSet(ModelViewSet):
     permission_classes = [AllowAny]
@@ -186,14 +183,27 @@ class Student_Registration(APIView):
             verification.save()
             
             '''Sending the email...'''
-            subject = 'Email verification Code..'
+            '''subject = 'Email verification Code..'
             message = f"Hello, your Verification code is: {verification_code}"
             receipient_email= data.get('email')
             
             try:
                 send_mail(subject,message,settings.EMAIL_HOST_USER,[receipient_email],fail_silently=False)
             except Exception as e:
-                return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)'''
+                
+            subject = 'Email Verification Code'
+            message = f"Hello, your Verification code is: {verification_code}"
+            recipient_email = data.get('email')
+
+            email = EmailMessage(
+                subject,
+                message,
+                settings.EMAIL_HOST_USER,
+                [recipient_email]
+            )
+
+            email.send(fail_silently=False)
             return Response({
                     "message": "User Created Successfully, Token created and email sent!",
                     "user": {
@@ -276,7 +286,7 @@ def resend_verification_code(request):
         except CustomUser.DoesNotExist:
             return Response({'Error':'No user found...'})
         
-        result = Verification_code.resend_verification_code(user = user)
+        result = Verification_code.resend_verification_code(user = user, subject= 'Email verification Code Resend..')
         if result:
             return Response({'Message':f'Successful.....'},status=status.HTTP_200_OK)
         return Response({'Error':'Failure...........--'},status=status.HTTP_400_BAD_REQUEST)
@@ -314,17 +324,33 @@ def password_reset_code(request):
     return Response(serializer.errors,status = status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
+def resend_password_reset_code(request):
+    serializer= Resend_Password_Reset_CodeSerializer(data = request.data)
+    if serializer.is_valid():
+        user_email = serializer.validated_data.get('email')
+        try:
+            user = CustomUser.objects.get(email = user_email)
+        except CustomUser.DoesNotExist:
+            return Response({'Error':'No user found...'})
+        """I am using the verification code model to rsend the password reset code.."""
+        result = Verification_code.resend_verification_code(user = user, subject= 'Reset Account Password...')
+        if result:
+            return Response({'Message':f'Successfully Resent the Password Reset Code .....'},status=status.HTTP_200_OK)
+        return Response({'Error':'Failure...........--'},status=status.HTTP_400_BAD_REQUEST)
+    return Response(serializer.errors,status = status.HTTP_400_BAD_REQUEST)
+     
+        
+@api_view(['POST'])
 def verify_password_reset_code(request):
     serializer = Verify_Password_Reset_CodeSerializer(data = request.data)
     if serializer.is_valid():
         code = serializer.validated_data.get('code')
         user = serializer.validated_data.get('user')
-        
-        try:
-            get_code = Verification_code.objects.get(user = user, code = code) 
-        except Exception as e:
-            return Response({'Error':e},status= status.HTTP_400_BAD_REQUEST)
-        
+        print(serializer.validated_data)
+        get_code = Verification_code.objects.filter(code=code).first()
+        if not get_code:
+            return Response({"error": "Invalid verification code or user."}, status=status.HTTP_400_BAD_REQUEST)
+
         if get_code.is_verification_code_expired():
             return Response({"error": "Verification code has expired"}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'Message':'Confirmed...'})
@@ -337,17 +363,33 @@ def verify_password_reset_code(request):
 def final_password_reset(request):
     serializer = Final_Password_ResetSerializer(data = request.data)
     if serializer.is_valid():
-        password = serializer.validated_data.get('passsword')
+        password = serializer.validated_data.get('password')
         confirm_password = serializer.validated_data.get('confirm_password')
-        user = serializer.validated_data.get('user')
+        email = serializer.validated_data.get('email')
         
-        get_user = CustomUser.objects.get(user = user)
+        try:
+            get_user = CustomUser.objects.get(email=email)
+        except CustomUser.DoesNotExist:
+            return Response({"error": "User with this email does not exist"}, status=status.HTTP_400_BAD_REQUEST)
         
+        if password != confirm_password:
+            return Response({"error": "Passwords do not match"}, status=status.HTTP_400_BAD_REQUEST)
         get_user.set_password(password)
-        get_user.set_password(confirm_password)
+        #get_user.set_password(confirm_password)
         
-        user.save()
+        get_user.save()
         
         return Response({"message": "Password reset successful"}, status=status.HTTP_200_OK)
+    return Response(serializer.errors,status = status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_email_notifications(request):
+    data = request.data
+    notifications = Email_Notification.objects.filter(user = data.get('user'))
+    number = notifications.count()
+    serializer = Email_notificationSerializer(notifications,many = True)
+    return Response ({'number':number,
+                      'data':serializer.data})
     
-        
