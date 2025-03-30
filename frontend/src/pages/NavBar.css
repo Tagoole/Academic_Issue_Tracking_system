@@ -9,6 +9,7 @@
   height: 35px;
   margin: 0 auto;
   border-radius: 5px; 
+  margin-top: 20px;
 }
 
 .navbar-left {
@@ -19,7 +20,7 @@
 .profile-container {
   display: flex;
   align-items: center;
-  margin-right: 20px;
+  
 }
 
 .profile-image {
@@ -76,8 +77,8 @@
 
 .mail-icon, 
 .notification-icon {
-  width: 25px;
-  height: 25px;
+  width: 10px;
+  height: 10px;
   margin: 0 15px;
   cursor: pointer;
   transition: transform 0.2s ease;
