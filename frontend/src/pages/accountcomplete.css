@@ -1,0 +1,111 @@
+.account-setup-complete-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100%;
+    background-image: url('/images/green-leaves-background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+  }
+  
+  .account-setup-complete-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: inherit;
+    filter: blur(8px);
+    z-index: 0;
+  }
+  
+  .glassmorphic-modal {
+    position: relative;
+    width: 90%;
+    max-width: 450px;
+    padding: 40px 30px;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    z-index: 1;
+    text-align: center;
+  }
+  
+  .completion-header {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 700;
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #222;
+    letter-spacing: 1px;
+  }
+  
+  .completion-subtext {
+    font-size: 16px;
+    color: #444;
+    margin-bottom: 24px;
+    line-height: 1.5;
+    font-weight: 400;
+  }
+  
+  .continue-button {
+    background-color: #000;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 14px 40px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  
+  .continue-button:hover {
+    background-color: #333;
+    transform: translateY(-2px);
+  }
+  
+  .continue-button:active {
+    transform: translateY(0);
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .glassmorphic-modal {
+      padding: 30px 20px;
+    }
+    
+    .completion-header {
+      font-size: 20px;
+    }
+    
+    .completion-subtext {
+      font-size: 14px;
+    }
+    
+    .continue-button {
+      padding: 12px 30px;
+      font-size: 14px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .glassmorphic-modal {
+      width: 85%;
+      padding: 25px 15px;
+    }
+    
+    .completion-header {
+      font-size: 18px;
+    }
+  }
+  
