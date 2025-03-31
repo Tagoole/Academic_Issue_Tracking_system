@@ -11,39 +11,47 @@ import helpIcon from "../assets/help.png";
 const Sidebar = () => {
   return (
     <div className="sidebar">
+      {/* Student Dashboard Link */}
       <div className="sidebar-item">
-        <Link to="/registradashboard" className="sidebar-link">
+        <Link to="/Studentdashboard" className="sidebar-link">
           <img src={dashboardIcon} alt="Dashboard Icon" className="sidebar-icon" />
-          <span>RegistraDashboard</span>
+          <span>Student Dashboard</span>
         </Link>
       </div>
+
+      {/* Issues Link */}
       <div className="sidebar-item">
-        <Link to="/issuemanagement" className="sidebar-link">
-          <img src={issueIcon} alt="Issue Management Icon" className="sidebar-icon" />
-          <span>Issue Management</span>
+        <Link to="/issues" className="sidebar-link">
+          <img src={issueIcon} alt="Issue Icon" className="sidebar-icon" />
+          <span>Issues</span>
         </Link>
       </div>
+
+      {/* Profile Link */}
       <div className="sidebar-item">
         <Link to="/profile" className="sidebar-link">
           <img src={profileIcon} alt="Profile Icon" className="sidebar-icon" />
           <span>Profile</span>
         </Link>
       </div>
+
+      {/* Settings Link */}
       <div className="sidebar-item">
         <Link to="/settings" className="sidebar-link">
           <img src={settingsIcon} alt="Settings Icon" className="sidebar-icon" />
-          <img src={settingsIcon} alt="Settings Icon" className="sidebar-icon" /> 
-
           <span>Settings</span>
         </Link>
       </div>
+
+      {/* Help and Support Link */}
       <div className="sidebar-item">
         <Link to="/help" className="sidebar-link">
-          <img src={helpIcon} alt="Help Icon" className="sidebar-icon" /> 
           <img src={helpIcon} alt="Help Icon" className="sidebar-icon" />
           <span>Help and Support</span>
         </Link>
       </div>
+
+      {/* Logout Link */}
       <div className="sidebar-item logout">
         <Link to="/logout" className="sidebar-link">
           <img src={logoutIcon} alt="Logout Icon" className="sidebar-icon" />

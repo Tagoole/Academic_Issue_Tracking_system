@@ -1,15 +1,15 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Single import for Router, Routes, and Route
-import RegistraDashboard from "./pages/RegistraDashboard";
-import Notifications from "./pages/Notifications";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import StudentDashboard from "./pages/StudentDashboard";
+import Issues from "./pages/Issues";
+import CreateIssueForm from "./pages/CreateIssueForm";
+import NotificationSuccess from "./pages/NotificationSuccess";
 import Messages from "./pages/Messages";
 import Newchat from "./pages/New-Chat";
-import IssueManagement from "./pages/IssueManagement";
-import Viewdetails from "./pages/View-details";
+import NewIssue from "./pages/New-Issue";
 import Signin from "./pages/Signin";
 import EmailVerification from "./pages/verification";
 import ResetPassword from "./pages/reset";
-import Dashboard from "./pages/Dashboard";
 import ProfileSetup from "./pages/ProfileSetup";
 import ProfilePictureSetup from "./pages/profilepicture";
 import Congragulation from "./pages/congragulation";
@@ -19,22 +19,27 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-          {/* Main Routes */}
-          <Route path="/registradashboard" element={<RegistraDashboard />} />
-          <Route path="/notifications" element={<Notifications />} />
+          {/* Routes from both branches */}
+          
+          <Route path="/studentdashboard" element={<StudentDashboard />} />
+          
+          <Route path="/createissueform" element={<CreateIssueForm />} />
+          
+          <Route path="/notificationsuccess" element={<NotificationSuccess />} />
           <Route path="/messages" element={<Messages />} />
+          
           <Route path="/new-chat" element={<Newchat />} />
-          <Route path="/issuemanagement" element={<IssueManagement />} />
-          <Route path="/view-details" element={<Viewdetails />} />
-
-          {/* Authentication and Setup Routes */}
           <Route path="/signin" element={<Signin />} />
           <Route path="/verification" element={<EmailVerification />} />
           <Route path="/reset" element={<ResetPassword />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/issues" element={<Issues />} />
+          
+          
           <Route path="/profilesetup" element={<ProfileSetup />} />
           <Route path="/profilepicture" element={<ProfilePictureSetup />} />
           <Route path="/congragulation" element={<Congragulation />} />
+          <Route path="/new-issue" element={<NewIssue />} />
+          
         </Routes>
       </div>
     </Router>

@@ -3,9 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './Messages.css';
 import icon from '../assets/box.png';
 import NavBar from './Navbar';
-import backgroundimage from "../assets/backgroundimage.jpg"; 
-
-import backgroundImage from '../assets/backgroundimage.jpg';
+import backgroundimage from '../assets/pexels-olia-danilevich-5088017.jpg';
 
 
 const Messages = () => {

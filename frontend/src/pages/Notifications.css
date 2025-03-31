@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-
-=======
->>>>>>> 99ba97078354b345e3421662e44bf4a80c67e2d4
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -13,20 +9,12 @@ body {
 .page-container {
     display: flex;
     flex-direction: column;
-<<<<<<< HEAD
     min-height: 100vh;
     background-image: url('../assets/background.jpg'); 
     background-size: cover; 
     background-position: center; 
     background-repeat: no-repeat; 
     min-height: 100vh; 
-=======
-    height: 100vh; 
-    width: 100%; 
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
->>>>>>> 99ba97078354b345e3421662e44bf4a80c67e2d4
 }
 
 .content-container {

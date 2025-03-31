@@ -1,110 +1,217 @@
-import React from 'react';
-
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
+import React, { useState, useRef, useEffect } from 'react';
+import profilePic from '../assets/profile.png';
+import NavBar from './NavBar';
+import Sidebar from './SideBar';
 import './New-chat.css';
-import Navbar from './Navbar'; 
+import backgroundimage from '../assets/pexels-olia-danilevich-5088017.jpg';
+
 
 const Newchat = () => {
-  const navigate = useNavigate()
-
+  const [selectedContact, setSelectedContact] = useState('Dennu Jennifer');
+  const [messages, setMessages] = useState({});
+  const [newMessage, setNewMessage] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
+  const fileInputRef = useRef(null);
+  const chatContentRef = useRef(null);
+  
   const contacts = [
-    { id: 1, name: 'Nalwoga Ritah', avatar: '/avatar1.jpg' },
-    { id: 2, name: 'Richard M', avatar: '/avatar2.jpg' },
-    { id: 3, name: 'Musisi Deo', avatar: '/avatar3.jpg' },
-    { id: 4, name: 'Mary Jennifer', avatar: '/avatar4.jpg' },
-    { id: 5, name: 'Paul Victor', avatar: '/avatar5.jpg' },
-    { id: 6, name: 'Idhe Suhaila', avatar: '/avatar6.jpg' },
-    { id: 7, name: 'Benson G', avatar: '/avatar7.jpg' },
-    { id: 8, name: 'Adrian Mpilima', avatar: '/avatar8.jpg' },
-    { id: 9, name: 'Shadrack H', avatar: '/avatar9.jpg' },
+    'Rinah N',
+    'Ssentumbwe J',
+    'Mark Musisi',
+    'Dennu Jennifer',
+    'Larrie Adrine',
+    'Idhe Suhaila',
+    'Nathan A',
+    'Ampumuzza',
+    'Igonga R',
   ];
 
-  const handleBackClick = () => {
-    navigate(-1); 
+  
+  useEffect(() => {
+    const initialMessages = {};
+    contacts.forEach(contact => {
+      initialMessages[contact] = [];
+    });
+    setMessages(initialMessages);
+  }, []);
+
+  
+  useEffect(() => {
+    if (chatContentRef.current) {
+      chatContentRef.current.scrollTop = chatContentRef.current.scrollHeight;
+    }
+  }, [messages, selectedContact]);
+
+  const handleSendMessage = () => {
+    if (newMessage.trim() || selectedFile) {
+      const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      
+      const newMessageObj = {
+        text: newMessage.trim(),
+        time: currentTime,
+        sender: 'me',
+        file: selectedFile,
+      };
+
+      setMessages(prevMessages => ({
+        ...prevMessages,
+        [selectedContact]: [...(prevMessages[selectedContact] || []), newMessageObj]
+      }));
+
+      // Simulate reply after 1 second
+      setTimeout(() => {
+        const replyMessage = {
+          text: `This is a reply from ${selectedContact}`,
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          sender: 'contact'
+        };
+
+        setMessages(prevMessages => ({
+          ...prevMessages,
+          [selectedContact]: [...(prevMessages[selectedContact] || []), replyMessage]
+        }));
+      }, 1000);
+
+      setNewMessage('');
+      setSelectedFile(null);
+    }
   };
 
-  const handleContactClick = (contactId) => {
-    navigate(`/chat/${contactId}`);
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
   };
+
+  const handleFileSelect = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = (e) => {
+    if (e.target.files.length > 0) {
+      setSelectedFile(e.target.files[0]);
+    }
+  };
+
   return (
-        <div className="app-container">
-          {/* Navbar */}
-          <Navbar />
-          
-          <div className="messaging-container">
-            {/* Sidebar */}
-            <div className="sidebar">
-              <div className="sidebar-header">
-                <div className="back-button" onClick={handleBackClick}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M15 18L9 12L15 6" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </div>
-                <h1>Messages</h1>
-              </div>
-              
-              <div className="search-bar">
-                <p>Search something here...</p>
-                <div className="search-icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </div>
-              </div>
-              
-              <div className="contacts-list">
-                {contacts.map((contact) => (
-                  <div 
-                    key={contact.id} 
-                    className={`contact-item ${contact.id === 1 ? 'active' : ''}`}
-                    onClick={() => handleContactClick(contact.id)} 
-                  >
-                    <div className="avatar">
-                      <img src={contact.avatar} alt={contact.name} />
-                    </div>
-                    <div className="contact-name">{contact.name}</div>
-                  </div>
-                ))}
-              </div>
+    <div className="newchat-page">
+      <NavBar />
+      <Sidebar />
+      <main className="main-content">
+        <div className="content-header">
+          <div className="back-button">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M19 12H5M12 19L5 12L12 5"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
+          <h2>Messages</h2>
+        </div>
+        <div className="content-body">
+          <div className="messages-sidebar">
+            <div className="sidebar-search">
+              <input type="text" placeholder="Search something here..." />
             </div>
-            
-            {/* Main Chat Area */}
-            <div className="chat-area">
-              <div className="chat-header">
-                <div className="chat-user">
-                  <div className="avatar">
-                    <img src="/avatar1.jpg" alt="Nalwoga Ritah" />
+            <div className="contacts-list">
+              {contacts.map((name) => (
+                <div
+                  className={`contact-item ${selectedContact === name ? 'selected' : ''}`}
+                  key={name}
+                  onClick={() => setSelectedContact(name)}
+                >
+                  <img src={profilePic} alt={name} className="contact-avatar" />
+                  <div className="contact-info">
+                    <span className="contact-name">{name}</span>
+                    <span className="contact-preview">
+                      {messages[name] && messages[name].length > 0 
+                        ? messages[name][messages[name].length - 1].text.substring(0, 25) + (messages[name][messages[name].length - 1].text.length > 25 ? '...' : '') 
+                        : 'No messages yet'}
+                    </span>
                   </div>
-                  <div className="user-name">Nalwoga Ritah</div>
                 </div>
-              </div>
-              
-              <div className="chat-messages">
-                {/* Messages would go here */}
-              </div>
-              
-              <div className="message-input-container">
-                <div className="message-input">
-                  <p>Type here...</p>
+              ))}
+            </div>
+          </div>
+          <div className="chat-area">
+            <div className="chat-header">
+              <img src={profilePic} alt={selectedContact} className="chat-header-avatar" />
+              <span className="chat-header-name">{selectedContact}</span>
+            </div>
+            <div className="chat-content" ref={chatContentRef}>
+              {messages[selectedContact] && messages[selectedContact].length > 0 ? (
+                messages[selectedContact].map((msg, index) => (
+                  <div 
+                    className={`message ${msg.sender === 'me' ? 'sent' : 'received'}`} 
+                    key={index}
+                  >
+                    {msg.file && (
+                      <div className="message-file">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M14 2V8H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        <span>{msg.file.name}</span>
+                      </div>
+                    )}
+                    <div className="message-content">
+                      <div className="message-text">{msg.text}</div>
+                      <div className="message-time">{msg.time}</div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="no-messages">No messages yet</div>
+              )}
+              {selectedFile && (
+                <div className="selected-file-preview">
+                  <span>{selectedFile.name}</span>
+                  <button onClick={() => setSelectedFile(null)} className="remove-file">×</button>
                 </div>
-                <div className="attachment-button">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 12C12 11.4477 12.4477 11 13 11C13.5523 11 14 11.4477 14 12V16C14 16.5523 13.5523 17 13 17C12.4477 17 12 16.5523 12 16V12Z" fill="black"/>
-                    <path d="M8 13C8.55228 13 9 13.4477 9 14V17C9 17.5523 8.55228 18 8 18C7.44772 18 7 17.5523 7 17V14C7 13.4477 7.44772 13 8 13Z" fill="black"/>
-                    <path d="M18 14C18 13.4477 17.5523 13 17 13C16.4477 13 16 13.4477 16 14V16C16 16.5523 16.4477 17 17 17C17.5523 17 18 16.5523 18 16V14Z" fill="black"/>
-                    <path fillRule="evenodd" clipRule="evenodd" d="M12 0C5.37258 0 0 5.37258 0 12C0 18.6274 5.37258 24 12 24C18.6274 24 24 18.6274 24 12C24 5.37258 18.6274 0 12 0ZM2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12Z" fill="black"/>
-                  </svg>
-                </div>
-                <div className="send-button">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M22 2L2 11L22 20V2Z" fill="#00CC2D" stroke="#00CC2D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </div>
-              </div>
+              )}
+            </div>
+            <div className="chat-input-container">
+              <input 
+                type="text" 
+                placeholder="Type here..." 
+                className="chat-input" 
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                onKeyPress={handleKeyPress}
+              />
+              <input
+                type="file"
+                ref={fileInputRef}
+                style={{ display: 'none' }}
+                onChange={handleFileChange}
+              />
+              <button className="attachment-button" onClick={handleFileSelect}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M21.44 11.05L12.25 20.24C11.1242 21.3658 9.59723 21.9983 8.005 21.9983C6.41277 21.9983 4.88584 21.3658 3.76 20.24C2.63416 19.1142 2.00166 17.5872 2.00166 15.995C2.00166 14.4028 2.63416 12.8758 3.76 11.75L12.33 3.17997C13.0806 2.42808 14.0991 2.00515 15.16 2.00515C16.2209 2.00515 17.2394 2.42808 17.99 3.17997C18.7419 3.93062 19.1648 4.94916 19.1648 5.99997C19.1648 7.05079 18.7419 8.06933 17.99 8.81997L9.41 17.41C9.03472 17.7853 8.52573 17.9961 7.995 17.9961C7.46427 17.9961 6.95528 17.7853 6.58 17.41C6.20472 17.0347 5.99389 16.5257 5.99389 15.995C5.99389 15.4643 6.20472 14.9553 6.58 14.58L13.07 8.09998" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+              <button className="send-button" onClick={handleSendMessage}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
             </div>
           </div>
         </div>
-      );
-    };
+      </main>
+    </div>
+  );
+};
 
-
+export default Newchat;
