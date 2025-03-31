@@ -43,10 +43,15 @@
 }
 
 .form-container {
-  padding: 30px;
+  border: 1px solid black;
+  padding: 10px;
   max-width: 500px;
-  margin: 0 auto;
+  margin: auto;
   width: 100%;
+  border-radius: 5px;
+  box-shadow: 1 0 5px rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9; /* Light gray background for the form */
+  
 }
 
 .setup-title {
