@@ -1,0 +1,120 @@
+/* Navbar container */
+.navbar {
+  display: flex;
+  width: 1250px; 
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff; /* White background */
+  padding: 10px 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  position: sticky;
+  top: 0;
+  z-index: 1000; /* Ensure the navbar stays on top */
+}
+
+/* Left section: Profile */
+.navbar-left {
+  display: flex;
+  align-items: center;
+}
+
+.profile-container {
+  display: flex;
+  align-items: center;
+}
+
+.profile-image {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.profile-name {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333333;
+}
+
+/* Center section: Search bar */
+.search-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.search-form {
+  width: 100%;
+  max-width: 400px;
+}
+
+.search-wrapper {
+  position: relative;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #cccccc;
+  border-radius: 20px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.search-input:focus {
+  border-color: #007bff; 
+}
+
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+}
+
+.icon-container {
+  cursor: pointer;
+  position: relative;
+}
+
+.icon {
+  width: 70px;
+  height: 70px;
+}
+
+
+.icon-container:not(:last-child) {
+  margin-right: 40px; 
+}
+
+.icon-container:hover .icon {
+  transform: scale(1.1); 
+  transition: transform 0.2s;
+}
+
+.app-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333333;
+  margin-right: 20px;
+}
+
+.logo-image {
+  width: 50px;
+  height: auto;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .search-container {
+    display: none; /* Hide search bar on smaller screens */
+  }
+
+  .app-title {
+    font-size: 16px;
+  }
+
+  .profile-name {
+    display: none; /* Hide profile name on smaller screens */
+  }
+}
