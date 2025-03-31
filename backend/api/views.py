@@ -80,6 +80,21 @@ class Student_Issue_ReadOnlyViewset(ReadOnlyModelViewSet):
         user = self.request.user
         return Issue.objects.filter(student = user)
     
+        
+    @action(detail = False, methods= ['get'])
+    def filter_results(self,request):
+        search_query = request.query_params.get('status','').strip()
+        if search_query:
+            issues = self.get_queryset().filter(
+                Q(status__icontains = search_query) | 
+                Q(issue_type__icontains = search_query)
+                )
+            serializer = self.get_serializer(issues, many = True)
+            return Response(serializer.data)
+        return Response({'error':'Status parameter required'})
+    
+    
+    
 class Registrar_Issue_ManagementViewSet(ModelViewSet):
     permission_classes = [AllowAny]
     serializer_class = IssueSerializer
