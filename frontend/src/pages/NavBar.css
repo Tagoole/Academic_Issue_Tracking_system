@@ -1,16 +1,18 @@
+/* Navbar container */
 .navbar {
   display: flex;
-  align-items: center;
+  width: 1250px; 
   justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff; /* White background */
   padding: 10px 20px;
-  background-color: hsl(0, 41%, 92%);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 1205px;
-  height: 35px;
-  margin: 0 auto;
-  border-radius: 5px; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  position: sticky;
+  top: 0;
+  z-index: 1000; /* Ensure the navbar stays on top */
 }
 
+/* Left section: Profile */
 .navbar-left {
   display: flex;
   align-items: center;
@@ -19,82 +21,100 @@
 .profile-container {
   display: flex;
   align-items: center;
-  margin-right: 20px;
 }
 
 .profile-image {
   width: 40px;
-  height: 30px;
+  height: 40px;
   border-radius: 50%;
-  margin-right: 20px;
+  margin-right: 10px;
 }
 
 .profile-name {
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333333;
 }
 
+/* Center section: Search bar */
 .search-container {
-  flex-grow: 1;
-  max-width: 600px;
-  margin: 0 20px;
+  flex: 1;
+  display: flex;
+  justify-content: center;
 }
 
 .search-form {
   width: 100%;
+  max-width: 400px;
 }
 
 .search-wrapper {
-  display: flex;
-  align-items: center;
-  border: 2px solid #e0e0e0;
-  border-radius: 25px;
-  overflow: hidden;
-}
-
-.search-input-icon {
-  width: 20px;
-  height: 20px;
-  margin: 0 10px;
+  position: relative;
 }
 
 .search-input {
-  flex-grow: 1;
-  border: none;
-  padding: 10px;
-  font-size: 16px;
-  outline: black;
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #cccccc;
+  border-radius: 20px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.3s;
 }
 
-.search-input::placeholder {
-  color: #888;
+.search-input:focus {
+  border-color: #007bff; 
 }
+
 
 .navbar-right {
   display: flex;
   align-items: center;
 }
 
-.mail-icon, 
-.notification-icon {
-  width: 25px;
-  height: 25px;
-  margin: 0 15px;
+.icon-container {
   cursor: pointer;
-  transition: transform 0.2s ease;
+  position: relative;
 }
 
-.mail-icon:hover,
-.notification-icon:hover {
-  transform: scale(1.1);
+.icon {
+  width: 70px;
+  height: 70px;
+}
+
+
+.icon-container:not(:last-child) {
+  margin-right: 40px; 
+}
+
+.icon-container:hover .icon {
+  transform: scale(1.1); 
+  transition: transform 0.2s;
 }
 
 .app-title {
+  font-size: 18px;
   font-weight: bold;
-  margin: 0 15px;
-  color: #333;
+  color: #333333;
+  margin-right: 20px;
 }
 
 .logo-image {
   width: 50px;
-  height: 50px;
+  height: auto;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .search-container {
+    display: none; /* Hide search bar on smaller screens */
+  }
+
+  .app-title {
+    font-size: 16px;
+  }
+
+  .profile-name {
+    display: none; /* Hide profile name on smaller screens */
+  }
 }

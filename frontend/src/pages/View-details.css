@@ -1,189 +1,227 @@
-/* Base layout */
-.app-container {
-    display: flex;
+/* Global Styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
+}
+
+/* Page Background */
+.page-background {
+  background-image: url('/path/to/your/background-image.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+/* Navbar Styles */
+.navbar {
+  background-color: #333;
+  color: white;
+  padding: 15px 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.navbar-menu {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-item {
+  color: white;
+  text-decoration: none;
+}
+
+/* Main Container */
+.issue-container {
+  max-width: 650px;
+  margin: 20px auto;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
+
+/* Header Bar */
+.header-bar {
+  display: flex;
+  align-items: center;
+  background-color: white;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 10px;
+  position: relative;
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  font-size: 18px;
+  color: black;
+  text-decoration: none;
+  padding-right: 15px;
+  border-right: 1px solid #e0e0e0;
+}
+
+.back-arrow {
+  color: green;
+  font-size: 24px;
+  margin-right: 5px;
+}
+
+.escalation-notice {
+  margin-left: 15px;
+  font-size: 14px;
+}
+
+.share-icon {
+  margin-left: auto;
+  font-size: 24px;
+  color: #666;
+}
+
+/* Left Column - Issue Details */
+.issue-details {
+  flex: 1;
+  padding: 15px;
+  border-right: 1px solid #e0e0e0;
+}
+
+.field-container {
+  margin-bottom: 15px;
+}
+
+.field-label {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.field-value {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 14px;
+  background: white;
+}
+
+.issue-description {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 14px;
+  background: white;
+  min-height: 60px;
+}
+
+/* Right Column - Registrar Section */
+.registrar-section {
+  flex: 1;
+  padding: 15px;
+}
+
+.attachment-preview {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  overflow: hidden;
+}
+
+.attachment-preview img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.registrar-header {
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #666;
+}
+
+.comment-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 15px;
+  resize: none;
+}
+
+.status-label {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.status-dropdown {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  background-color: white;
+}
+
+.upload-container {
+  border: 1px dashed #ddd;
+  border-radius: 5px;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.upload-icon {
+  font-size: 24px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.upload-text {
+  font-size: 12px;
+  color: red;
+  margin-bottom: 5px;
+}
+
+.upload-format {
+  font-size: 10px;
+  color: #999;
+}
+
+.save-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #4cd137;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.save-button:hover {
+  background-color: #44bd32;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .issue-container {
     flex-direction: column;
-    height: 100vh; /* Use viewport height for proper sizing */
-    overflow: hidden; /* Prevent unwanted scrolling */
   }
   
-  .main-content {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    overflow: hidden;
+  .issue-details {
+    border-right: none;
+    border-bottom: 1px solid #e0e0e0;
   }
-  
-  .content-container {
-    display: flex;
-    height: calc(100vh - 60px); /* Adjust based on your navbar height */
-    overflow: hidden;
-  }
-  
-  /* Sidebar styling */
-  .sidebar {
-    width: 250px;
-    height: 100%;
-    overflow-y: auto;
-  }
-  
-  /* Issue details container */
-  .issue-detail-container {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-    height: 100%;
-  }
-  
-  /* Issue header */
-  .issue-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-  }
-  
-  .back-button {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-  }
-  
-  .back-arrow {
-    margin-right: 5px;
-    font-size: 18px;
-  }
-  
-  .share-icon {
-    cursor: pointer;
-  }
-  
-  /* Issue content */
-  .issue-content {
-    display: flex;
-    gap: 30px;
-  }
-  
-  @media (max-width: 768px) {
-    .issue-content {
-      flex-direction: column;
-    }
-  }
-  
-  .left-panel {
-    flex: 3;
-  }
-  
-  .right-panel {
-    flex: 2;
-  }
-  
-  /* Field containers */
-  .field-container {
-    margin-bottom: 15px;
-  }
-  
-  .field-label {
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 4px;
-  }
-  
-  .field-value {
-    font-size: 16px;
-  }
-  
-  /* Attachments section */
-  .attachments-section {
-    margin-bottom: 30px;
-  }
-  
-  .section-header {
-    font-weight: bold;
-    margin-bottom: 15px;
-  }
-  
-  .attachment-preview {
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    overflow: hidden;
-  }
-  
-  .attachment-image {
-    max-width: 100%;
-    display: block;
-  }
-  
-  /* Registrar section */
-  .registrar-section {
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 8px;
-  }
-  
-  .registrar-header {
-    font-weight: bold;
-    font-style: italic;
-    margin-bottom: 15px;
-  }
-  
-  .registrar-comment-container,
-  .status-container,
-  .attachments-upload {
-    margin-bottom: 20px;
-  }
-  
-  .comment-label,
-  .status-label,
-  .attachments-label {
-    font-size: 14px;
-    margin-bottom: 8px;
-  }
-  
-  .comment-input,
-  .status-dropdown {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-  }
-  
-  .upload-container {
-    border: 2px dashed #ddd;
-    padding: 20px;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-    cursor: pointer;
-  }
-  
-  .upload-icon {
-    font-size: 24px;
-    color: #666;
-  }
-  
-  .upload-link {
-    color: blue;
-    text-decoration: underline;
-  }
-  
-  .file-types {
-    font-size: 12px;
-    color: #666;
-    margin-top: 5px;
-  }
-  
-  .save-button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    width: 100%;
-  }
-  
-  .save-button:hover {
-    background-color: #45a049;
-  }
+}

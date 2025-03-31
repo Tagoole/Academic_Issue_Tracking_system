@@ -1,67 +1,96 @@
 .app-container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    width: 100%;
-  }
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.messages-view {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 600px;
+  padding: 30px;
+  text-align: center;
+}
+
+.messages-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.messages-empty-state h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.messages-empty-state p {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.icon-container {
+  margin: 20px 0;
+}
+
+.icon {
+  width: 100px;
+  height: 100px;
   
-  .main-content {
-    display: flex;
-    position: flex;
-    flex: 1;
-    overflow: hidden;
-  }
-  
+}
+
+.new-chat-button {
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.new-chat-button:hover {
+  background-color: #3a7bc8;
+}
+
+@media (max-width: 768px) {
   .messages-view {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f4f4f4;
-  }
-  
-  .messages-empty-state {
-    text-align: center;
-    max-width: 400px;
+    width: 95%;
     padding: 20px;
   }
   
   .messages-empty-state h2 {
-    font-size: 24px;
-    margin-bottom: 15px;
-    color: #333;
+    font-size: 20px;
   }
   
   .messages-empty-state p {
-    color: #666;
-    margin-bottom: 30px;
+    font-size: 14px;
   }
   
-  .empty-icon-container {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 30px;
-  }
-  
-  .open-box-icon {
-    width: 100px;
-    height: 100px;
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23666" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>');
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
+  .icon {
+    width: 80px;
+    height: 80px;
   }
   
   .new-chat-button {
-    background-color: black;
-    color: white;
-    border: none;
     padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+    font-size: 14px;
   }
-  
-  .new-chat-button:hover {
-    background-color: #333;
-  }
+}

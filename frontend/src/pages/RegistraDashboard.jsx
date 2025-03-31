@@ -2,6 +2,7 @@ import React from 'react';
 import './RegistraDashboard.css';
 import Navbar from './Navbar'; 
 import Sidebar from './Sidebar';
+import backgroundimage from "../assets/backgroundimage.jpg"; 
 
 const RegistraDashboard = () => {
 
@@ -14,7 +15,10 @@ const RegistraDashboard = () => {
       <Navbar />
       <div className="content-container">
         <Sidebar />
-        <main className="main-content">
+        <main 
+          className="main-content" 
+          style={{ backgroundImage: `url(${backgroundimage})`, backgroundSize: 'cover', backgroundPosition: 'center' }} // Added background image
+        >
           <div className="dashboard-cards">
             <DashboardCard 
               title="Total issues" 
@@ -43,7 +47,7 @@ const RegistraDashboard = () => {
               <h2>My issues</h2>
               <div className="search-container">
                 <input type="text" placeholder="search for issues" className="search-input" />
-                <span className="search-icon">🔍</span>
+                <span className="search-icon"></span>
               </div>
               <button className="filter-button">
                 <span>Filter</span>
