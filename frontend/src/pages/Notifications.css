@@ -1,38 +1,48 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> 99ba97078354b345e3421662e44bf4a80c67e2d4
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
     background-color: #f4f4f4;
+    overflow: hidden;
 }
 
 .page-container {
     display: flex;
     flex-direction: column;
+<<<<<<< HEAD
     min-height: 100vh;
     background-image: url('../assets/background.jpg'); 
     background-size: cover; 
     background-position: center; 
     background-repeat: no-repeat; 
     min-height: 100vh; 
+=======
+    height: 100vh; 
+    width: 100%; 
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+>>>>>>> 99ba97078354b345e3421662e44bf4a80c67e2d4
 }
 
 .content-container {
-    flex-grow: 1;
-    padding: 20px;
+    flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
-    
 }
 
 .notification-card {
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background for readability */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     width: 100%;
     max-width: 500px;
-    padding: 20px;
 }
 
 .card-header {
@@ -49,13 +59,18 @@ body {
     ;
 }
 
+.notification-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
 .notification-text {
-    color: #666;
-    margin-bottom: 15px;
+    font-size: 16px;
+    margin-bottom: 20px;
 }
 
 .notification-timestamp {
-    text-align: right;
-    color: #999;
-    font-size: 12px;
+    font-size: 14px;
+    color: #555;
 }

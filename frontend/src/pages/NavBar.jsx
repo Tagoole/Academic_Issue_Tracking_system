@@ -20,16 +20,16 @@ const NavBar = () => {
   };
 
   const handleMailClick = () => {
-    navigate('/messages'); 
+    navigate('/messages');
   };
 
   const handleNotificationClick = () => {
-    navigate('/notifications'); 
+    navigate('/notifications');
   };
 
   return (
     <nav className="navbar">
-      
+      {/* Left Section: Profile */}
       <div className="navbar-left">
         <div className="profile-container">
           <img src={profilePic} alt="Profile" className="profile-image" />
@@ -37,7 +37,7 @@ const NavBar = () => {
         </div>
       </div>
 
-      
+      {/* Center Section: Search Bar */}
       <div className="search-container">
         <form onSubmit={handleSearchSubmit} className="search-form">
           <div className="search-wrapper">
@@ -46,7 +46,7 @@ const NavBar = () => {
               placeholder="Search for anything..."
               value={searchQuery}
               onChange={handleSearchChange}
-              className="search-input global-search"
+              className="search-input"
             />
           </div>
         </form>

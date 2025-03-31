@@ -6,7 +6,7 @@ import issueIcon from "../assets/issue.png";
 import profileIcon from "../assets/profile.png";
 import settingsIcon from "../assets/settings.png";
 import logoutIcon from "../assets/logout.png";
-import helpIcon from "../assets/help.png"; 
+import helpIcon from "../assets/help.png";
 
 const Sidebar = () => {
   return (
@@ -32,12 +32,15 @@ const Sidebar = () => {
       <div className="sidebar-item">
         <Link to="/settings" className="sidebar-link">
           <img src={settingsIcon} alt="Settings Icon" className="sidebar-icon" />
+          <img src={settingsIcon} alt="Settings Icon" className="sidebar-icon" /> 
+
           <span>Settings</span>
         </Link>
       </div>
       <div className="sidebar-item">
         <Link to="/help" className="sidebar-link">
           <img src={helpIcon} alt="Help Icon" className="sidebar-icon" /> 
+          <img src={helpIcon} alt="Help Icon" className="sidebar-icon" />
           <span>Help and Support</span>
         </Link>
       </div>

@@ -3,15 +3,23 @@ import './RegistraDashboard.css';
 import Navbar from './Navbar'; 
 import Sidebar from './Sidebar';
 import backgroundimage from "../assets/backgroundimage.jpg"; 
+import backgroundImage from '../assets/backgroundimage.jpg'; 
+
 
 const RegistraDashboard = () => {
-
   const issues = [
     { id: 1, status: 'Resolved', studentNo: '25/U0000/PS', category: 'Missing Mark', date: '01/01/2025' }
   ];
 
   return (
-    <div className="app-container">
+    <div
+      className="app-container"
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    >
       <Navbar />
       <div className="content-container">
         <Sidebar />
@@ -20,28 +28,28 @@ const RegistraDashboard = () => {
           style={{ backgroundImage: `url(${backgroundimage})`, backgroundSize: 'cover', backgroundPosition: 'center' }} // Added background image
         >
           <div className="dashboard-cards">
-            <DashboardCard 
-              title="Total issues" 
-              count={0} 
-              description="You currently have 0 issues" 
+            <DashboardCard
+              title="Total issues"
+              count={0}
+              description="You currently have 0 issues"
             />
-            <DashboardCard 
-              title="Pending issues" 
-              count={0} 
-              description="You currently have 0 pending issues" 
+            <DashboardCard
+              title="Pending issues"
+              count={0}
+              description="You currently have 0 pending issues"
             />
-            <DashboardCard 
-              title="In-progress issues" 
-              count={0} 
-              description="You currently have 0 in-progress issues" 
+            <DashboardCard
+              title="In-progress issues"
+              count={0}
+              description="You currently have 0 in-progress issues"
             />
-            <DashboardCard 
-              title="Resolved issues" 
-              count={1} 
-              description="You currently have 1 resolved issue" 
+            <DashboardCard
+              title="Resolved issues"
+              count={1}
+              description="You currently have 1 resolved issue"
             />
           </div>
-          
+
           <div className="issues-section">
             <div className="issues-header">
               <h2>My issues</h2>
@@ -54,7 +62,7 @@ const RegistraDashboard = () => {
                 <span className="filter-icon">▼</span>
               </button>
             </div>
-            
+
             <div className="issues-table">
               <table>
                 <thead>
