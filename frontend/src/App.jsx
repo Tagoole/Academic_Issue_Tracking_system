@@ -16,7 +16,10 @@ import Congragulation from "./pages/congragulation";
 import RegistraDashboard from "./pages/RegistraDashboard";
 //import IssueManagement  from "./pages/IssueManagement";
 import Viewdetails from "./pages/View-details";
-
+import Changepassword from "./pages/Changepassword";
+import Preferences from "./pages/Preferences";
+import Help from "./pages/Help";
+import Deleteaccount from "./pages/Deleteaccount";
 
 function App() {
   return (
@@ -37,8 +40,6 @@ function App() {
           <Route path="/verification" element={<EmailVerification />} />
           <Route path="/reset" element={<ResetPassword />} />
           <Route path="/issues" element={<Issues />} />
-          
-          
           <Route path="/profilesetup" element={<ProfileSetup />} />
           <Route path="/profilepicture" element={<ProfilePictureSetup />} />
           <Route path="/congragulation" element={<Congragulation />} />
@@ -46,6 +47,12 @@ function App() {
           <Route path="/registradashboard"element={<RegistraDashboard/>}/>
           {/*<Route path ="/issuemanagement"element={<IssueManagement/>}/>*/}
           <Route path ="/view-details"element={<Viewdetails/>}/>
+          <Route path="/changepassword"element={<Changepassword/>}/>
+          <Route path="/Preferences"element={<Preferences/>}/>
+          <Route path="/Help"element={<Help/>}/>
+          <Route path="/Deleteaccount"element={<Deleteaccount/>}/>
+          
+
           
         </Routes>
       </div>

@@ -22,11 +22,7 @@ const Messages = () => {
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
-        minHeight: '100vh', 
-
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
+        minHeight: '100vh',
 
       }}
     >
@@ -52,4 +48,4 @@ const Messages = () => {
   );
 };
 
-export default Messages;
+export default Messages;  
