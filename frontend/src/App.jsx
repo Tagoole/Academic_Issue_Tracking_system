@@ -34,7 +34,6 @@ function App() {
           
           <Route path="/notificationsuccess" element={<NotificationSuccess />} />
           <Route path="/messages" element={<Messages />} />
-          
           <Route path="/new-chat" element={<Newchat />} />
           <Route path="/signin" element={<Signin />} />
           <Route path="/verification" element={<EmailVerification />} />
