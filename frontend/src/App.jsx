@@ -13,6 +13,10 @@ import ResetPassword from "./pages/reset";
 import ProfileSetup from "./pages/ProfileSetup";
 import ProfilePictureSetup from "./pages/profilepicture";
 import Congragulation from "./pages/congragulation";
+import RegistraDashboard from "./pages/RegistraDashboard";
+//import IssueManagement  from "./pages/IssueManagement";
+import Viewdetails from "./pages/View-details";
+
 
 function App() {
   return (
@@ -39,6 +43,9 @@ function App() {
           <Route path="/profilepicture" element={<ProfilePictureSetup />} />
           <Route path="/congragulation" element={<Congragulation />} />
           <Route path="/new-issue" element={<NewIssue />} />
+          <Route path="/registradashboard"element={<RegistraDashboard/>}/>
+          {/*<Route path ="/issuemanagement"element={<IssueManagement/>}/>*/}
+          <Route path ="/view-details"element={<Viewdetails/>}/>
           
         </Routes>
       </div>
