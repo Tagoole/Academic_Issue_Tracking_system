@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import NavBar from './Navbar';
-import SideBar from './Sidebar';
+import SideBar from './Sidebar1';
 import './StudentDashboard.css'; 
 import backgroundimage from '../assets/pexels-olia-danilevich-5088017.jpg'; // Implementing the unused import
 

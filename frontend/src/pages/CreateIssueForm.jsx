@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import NavBar from "./NavBar"; 
-import SideBar from "./SideBar";
+import SideBar from "./Sidebar1";
 import "./CreateIssueForm.css";
 
 const CreateIssueForm= () => {

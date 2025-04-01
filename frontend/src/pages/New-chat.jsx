@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import profilePic from '../assets/profile.png';
 import NavBar from './NavBar';
-import Sidebar from './SideBar';
+import Sidebar from './Sidebar1';
 import './New-chat.css';
 import backgroundimage from '../assets/pexels-olia-danilevich-5088017.jpg';
 
