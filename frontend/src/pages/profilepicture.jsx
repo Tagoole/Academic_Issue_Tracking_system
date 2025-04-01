@@ -1,9 +1,17 @@
 import React, { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import libraryImage from '../assets/student.png'; // Import the library image (you'll need to add this)
 import uploadIcon from '../assets/upload.png'; // Import the upload icon
 import './profilepicture.css';
 
 const ProfilePictureSetup = () => {
+  const navigate = useNavigate();
+  const Back = () => {
+    navigate(-1);
+  };
+  const handleGoToCongragulation = () => {
+    navigate('/congragulation');
+  };
 
   // const currentPicture = libraryImage
   const [currentPicture, setCurrentPicture] = useState(null);
@@ -156,8 +164,8 @@ const ProfilePictureSetup = () => {
 
               <div className="navigation-container">
                 <div className="button-group">
-                  <button type="button" className="button back-button" onClick={handleBack}>Back</button>
-                  <button type="submit" className="button next-button">Next</button>
+                  <button type="button" className="button back-button" onClick={Back}>Back</button>
+                  <button type="submit" className="button next-button" onClick={handleGoToCongragulation}>Next</button>
                 </div>
                 <div className="page-indicator">2 of 2</div>
               </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom'; 
-import './Sidebar.css';
+import './Sidebar1.css';
 import dashboardIcon from "../assets/dashboard.png";
 import issueIcon from "../assets/issue.png";
 import profileIcon from "../assets/profile.png";
