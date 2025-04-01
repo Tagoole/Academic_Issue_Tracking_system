@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import makererelogo from '../assets/makererelogo.png'; // Import the Makerere logo
-import Vector from '../assets/Vector.png'; // Import the vector image
-import './profilepicture.css'; // Import the corresponding CSS file
+import makererelogo from '../assets/makererelogo.png'; 
+import Vector from '../assets/Vector.png'; 
+import './profilepicture.css'; 
 
 const ProfilePictureSetup = () => {
   const [currentPicture, setCurrentPicture] = useState(null);

@@ -10,8 +10,8 @@ import ProfilePictureSetup from "./pages/profilepicture";
 import LandingPage from "./pages/landingpage";
 import SignUp from "./pages/signup";
 import AuthScreen from "./pages/authscreen";
-import CONGS from "./pages/CONGS";
-
+import CONGS from "./pages/congs";
+import StudentsProfile from "./pages/studentsprofile";
 function App() {
   
 
@@ -28,6 +28,7 @@ function App() {
         <Route path="/profilepicture" element={<ProfilePictureSetup />} />
         <Route path="/authscreen" element={<AuthScreen />} />
         <Route path="/congs" element={<CONGS />} />
+        <Route path="/StudentsProfile" element={<StudentsProfile />} />
       </Routes>
     </Router>
   )
