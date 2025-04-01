@@ -11,11 +11,11 @@ import helpIcon from "../assets/help.png";
 const Sidebar = () => {
   return (
     <div className="sidebar">
-      {/* Student Dashboard Link */}
+      {/* Registra Dashboard Link */}
       <div className="sidebar-item">
-        <Link to="/Studentdashboard" className="sidebar-link">
+        <Link to="/RegistraDasboard" className="sidebar-link">
           <img src={dashboardIcon} alt="Dashboard Icon" className="sidebar-icon" />
-          <span>Student Dashboard</span>
+          <span>RegistraDashboard</span>
         </Link>
       </div>
 
@@ -23,7 +23,7 @@ const Sidebar = () => {
       <div className="sidebar-item">
         <Link to="/issues" className="sidebar-link">
           <img src={issueIcon} alt="Issue Icon" className="sidebar-icon" />
-          <span>Issues</span>
+          <span>IssueManagement</span>
         </Link>
       </div>
 
