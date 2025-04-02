@@ -13,15 +13,18 @@ function Changepasswordconfirmation() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSaveChanges = () => {
+    // Open the confirmation modal
     setIsModalOpen(true);
   };
 
   const handleCancel = () => {
+    // Close the modal without saving changes
     setIsModalOpen(false);
   };
 
-  const handleNext = () => {
-    console.log('Changes saved!');
+  const handleConfirmChange = () => {
+    // Logic to save the password changes
+    console.log('Password changed successfully!');
     setIsModalOpen(false);
   };
 
@@ -97,13 +100,13 @@ function Changepasswordconfirmation() {
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h2 className="modal-message">Are you sure you want to save the changes?</h2>
+            <h2 className="modal-message">Are you sure you want to change your password?</h2>
             <div className="modal-actions">
               <button className="cancel-button" onClick={handleCancel}>
                 Cancel
               </button>
-              <button className="next-button" onClick={handleNext}>
-                Next
+              <button className="confirm-button" onClick={handleConfirmChange}>
+                Confirm
               </button>
             </div>
           </div>

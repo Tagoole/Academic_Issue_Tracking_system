@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import makerereLogo from '../assets/makererelogo.png';
-import hidden from '../assets/hidden.png';
+import hidden from '../assets/hidden.png'
 import './Changepassword.css';
 
 function Changepassword() {
