@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import NotificationSuccess from "./pages/NotificationSuccess";
 import Messages from "./pages/Messages";
-import NewIssue from "./pages/New-Issue";
+import NewIssue from "./pages/New-issue";
 import Signin from "./pages/Signin";
 import EmailVerification from "./pages/verification";
 import ResetPassword from "./pages/reset";
@@ -11,12 +11,14 @@ import ProfileSetup from "./pages/ProfileSetup";
 import ProfilePictureSetup from "./pages/profilepicture";
 import Congragulation from "./pages/congragulation";
 import RegistraDashboard from "./pages/RegistraDashboard";
-//import IssueManagement  from "./pages/IssueManagement";
+import IssueManagement  from "./pages/IssueManagement";
 import Viewdetails from "./pages/View-details";
 import Changepassword from "./pages/Changepassword";
 import Preferences from "./pages/Preferences";
 import Help from "./pages/Help";
 import Deleteaccount from "./pages/Deleteaccount";
+import Issues from "./pages/Issues";
+import StudentDashboard from "./pages/StudentDashboard";
 
 function App() {
   return (
@@ -25,7 +27,7 @@ function App() {
         <Routes>
           
           
-          <Route path="/createissueform" element={<CreateIssueForm />} />
+          
           <Route path="/notificationsuccess" element={<NotificationSuccess />} />
           <Route path="/messages" element={<Messages />} />
           <Route path="/signin" element={<Signin />} />
@@ -37,12 +39,13 @@ function App() {
           <Route path="/congragulation" element={<Congragulation />} />
           <Route path="/new-issue" element={<NewIssue />} />
           <Route path="/RegistraDashboard"element={<RegistraDashboard/>}/>
-          {/*<Route path ="/issuemanagement"element={<IssueManagement/>}/>*/}
+          {<Route path ="/issuemanagement"element={<IssueManagement/>}/>}
           <Route path ="/view-details"element={<Viewdetails/>}/>
           <Route path="/changepassword"element={<Changepassword/>}/>
           <Route path="/Preferences"element={<Preferences/>}/>
           <Route path="/Help"element={<Help/>}/>
           <Route path="/Deleteaccount"element={<Deleteaccount/>}/>
+          <Route path="/studentdashboard"element={<StudentDashboard/>}/>
           
 
           
