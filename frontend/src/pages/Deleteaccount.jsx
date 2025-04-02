@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'; // Import Link for navigation
 import makerereLogo from '../assets/makererelogo.png'; // Add the logo if needed
 import './Deleteaccount.css';
 import NavBar from './Navbar';
+import backgroundimage from '../assets/backgroundimage.jpg'; // Background image
+
 
 const Deleteaccount = () => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -22,7 +24,16 @@ const Deleteaccount = () => {
   };
 
   return (
-    <div className="settings-container">
+    <div
+      className="settings-container"
+      style={{
+        backgroundImage: `url(${backgroundimage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        minHeight: '100vh',
+      }}
+    >
       {/* NavBar */}
       <NavBar />
 
