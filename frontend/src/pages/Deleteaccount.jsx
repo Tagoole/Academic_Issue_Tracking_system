@@ -37,8 +37,18 @@ const DeleteAccount = () => {
       {/* NavBar */}
       <NavBar />
 
-      {/* Sidebar */}
-      <div className="settings-sidebar">
+      {/* Sidebar with glassmorphism effect */}
+      <div
+        className="settings-sidebar"
+        style={{
+          background: 'rgba(0, 0, 0, 0.6)', // Black with 60% opacity for glassmorphism
+          backdropFilter: 'blur(6px)', // Blur effect
+          WebkitBackdropFilter: 'blur(6px)', // For Safari support
+          borderRadius: '10px',
+          border: '1px solid rgba(255, 255, 255, 0.1)', // Subtle border
+          boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)', // Enhanced shadow
+        }}
+      >
         <div className="university-logo-sidebar">
           <img src={makerereLogo} alt="University Logo" className="logo-sidebar" />
         </div>
@@ -72,8 +82,18 @@ const DeleteAccount = () => {
         </Link>
       </div>
 
-      {/* Main Content */}
-      <div className="main-content">
+      {/* Main Content with glassmorphism effect */}
+      <div
+        className="main-content"
+        style={{
+          background: 'rgba(255, 255, 255, 0.2)', // Semi-transparent white background
+          backdropFilter: 'blur(12px)', // Blur effect
+          WebkitBackdropFilter: 'blur(12px)', // For Safari support
+          borderRadius: '10px',
+          border: '1px solid rgba(255, 255, 255, 0.18)', // Subtle border
+          boxShadow: '0 8px 32px 0 rgba(5, 5, 5, 0.37)', // Enhanced shadow
+        }}
+      >
         <div className="delete-account-title">Delete Account</div>
 
         <div className="delete-account-description">
@@ -81,7 +101,7 @@ const DeleteAccount = () => {
         </div>
 
         <div className="delete-account-button-container">
-          <button 
+          <button
             className="delete-account-button"
             onClick={handleDeleteClick}
           >
@@ -95,13 +115,13 @@ const DeleteAccount = () => {
               <h2>Confirm Deletion</h2>
               <p>Are you sure you want to delete your account? This action is irreversible.</p>
               <div className="modal-buttons">
-                <button 
+                <button
                   className="cancel-btn"
                   onClick={handleCancelDelete}
                 >
                   Cancel
                 </button>
-                <button 
+                <button
                   className="confirm-delete-btn"
                   onClick={handleConfirmDelete}
                 >
