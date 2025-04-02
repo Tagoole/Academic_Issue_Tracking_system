@@ -5,7 +5,6 @@ import Issues from "./pages/Issues";
 import CreateIssueForm from "./pages/CreateIssueForm";
 import NotificationSuccess from "./pages/NotificationSuccess";
 import Messages from "./pages/Messages";
-import Newchat from "./pages/New-Chat";
 import NewIssue from "./pages/New-Issue";
 import Signin from "./pages/Signin";
 import EmailVerification from "./pages/verification";
@@ -33,7 +32,6 @@ function App() {
           <Route path="/createissueform" element={<CreateIssueForm />} />
           <Route path="/notificationsuccess" element={<NotificationSuccess />} />
           <Route path="/messages" element={<Messages />} />
-          <Route path="/new-chat" element={<Newchat />} />
           <Route path="/signin" element={<Signin />} />
           <Route path="/verification" element={<EmailVerification />} />
           <Route path="/reset" element={<ResetPassword />} />
@@ -42,7 +40,7 @@ function App() {
           <Route path="/profilepicture" element={<ProfilePictureSetup />} />
           <Route path="/congragulation" element={<Congragulation />} />
           <Route path="/new-issue" element={<NewIssue />} />
-          <Route path="/registradashboard"element={<RegistraDashboard/>}/>
+          <Route path="/RegistraDashboard"element={<RegistraDashboard/>}/>
           {/*<Route path ="/issuemanagement"element={<IssueManagement/>}/>*/}
           <Route path ="/view-details"element={<Viewdetails/>}/>
           <Route path="/changepassword"element={<Changepassword/>}/>

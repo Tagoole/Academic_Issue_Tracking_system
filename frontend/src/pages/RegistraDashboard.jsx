@@ -1,7 +1,7 @@
 import React from 'react';
 import './RegistraDashboard.css';
 import Navbar from './Navbar'; 
-import Sidebar from './Sidebar';
+import Sidebar from './sidebar';
 import backgroundimage from "../assets/backgroundimage.jpg"; 
 import backgroundImage from '../assets/backgroundimage.jpg'; 
 
