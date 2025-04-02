@@ -15,12 +15,26 @@ function Changepassword() {
   const [showConfirmation, setShowConfirmation] = useState(false); // State to show confirmation modal
   const [successMessage, setSuccessMessage] = useState(false); // State to show success message
 
+  const validatePassword = (password) => {
+    if (password.length < 6) {
+      return "Password must be at least 6 characters long";
+    }
+    return "";
+  };
+
   const handleSaveChanges = () => {
     // Add validation here before showing confirmation
     if (!oldPassword || !newPassword || !confirmPassword) {
       alert("Please fill in all password fields");
       return;
     }
+
+    // Validation for password length
+    if (newPassword.length <= 6) {
+      alert("New password must be more than 6 characters");
+      return;
+    }
+
     if (newPassword !== confirmPassword) {
       alert("New passwords don't match");
       return;
