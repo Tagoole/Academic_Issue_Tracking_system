@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import libraryImage from '../assets/student.png'; // Import the library image (you'll need to add this)
 import name from '../assets/name.png'; // Import the name image
 import './ProfileSetup.css';
@@ -28,6 +29,13 @@ const ProfileSetup = () => {
   const handleBack = () => {
     // Handle back button click
     console.log('Back button clicked');
+  };
+  const navigate = useNavigate();
+  const handleprofilepicture = () => {
+    navigate('/profilepicture');
+  };
+  const Back = () => {
+    navigate(-1);
   };
 
   return (
@@ -121,8 +129,8 @@ const ProfileSetup = () => {
 
               <div className="navigation-container">
                 <div className="button-group">
-                  <button type="button" className="button back-button" onClick={handleBack}>Back</button>
-                  <button type="submit" className="button next-button">Next</button>
+                  <button type="button" className="button back-button" onClick={Back}>Back</button>
+                  <button type="submit" className="button next-button" onClick={handleprofilepicture}>Next</button>
                 </div>
                 <div className="page-indicator">1 of 2</div>
               </div>

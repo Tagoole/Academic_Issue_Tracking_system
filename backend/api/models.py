@@ -5,6 +5,8 @@ from random import randint
 from django.utils import timezone
 from django.conf import settings
 from django.core.mail import send_mail
+
+
 # add other option in issue dropdown
 class CustomUser(AbstractUser):
     GENDER_CHOICES = [
