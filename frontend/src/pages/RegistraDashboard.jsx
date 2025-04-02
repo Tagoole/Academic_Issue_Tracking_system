@@ -28,11 +28,8 @@ const RegistraDashboard = () => {
           style={{ backgroundImage: `url(${backgroundimage})`, backgroundSize: 'cover', backgroundPosition: 'center' }} // Added background image
         >
           <div className="dashboard-cards">
-            <DashboardCard
-              title="Total issues"
-              count={0}
-              description="You currently have 0 issues"
-            />
+            
+            
             <DashboardCard
               title="Pending issues"
               count={0}

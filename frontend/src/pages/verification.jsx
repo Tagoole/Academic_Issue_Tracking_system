@@ -1,14 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import emailIcon from '../assets/mailbulk.png'; // You'll need to add this icon
-import helpIcon from '../assets/help-icon.png'; // You'll need to add this icon
+import emailIcon from '../assets/mailbulk.png';
+import helpIcon from '../assets/help-icon.png';
 import './verification.css';
 
 const EmailVerification = () => {
-  const [verificationCode, setVerificationCode] = useState(['', '', '', '']);
+  const [verificationCode, setVerificationCode] = useState(['', '', '', '', '']);
   const [email, setEmail] = useState('user@example.com'); // Replace with the actual email
   const [error, setError] = useState('');
-  const inputRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
+  const [resendStatus, setResendStatus] = useState('');
+  const [resendDisabled, setResendDisabled] = useState(false);
+  const [countdown, setCountdown] = useState(0);
+  const inputRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
   
   // Check if all digits are entered to enable the Next button
   const isCodeComplete = verificationCode.every(digit => digit !== '');
@@ -27,7 +30,7 @@ const EmailVerification = () => {
     if (error) setError('');
     
     // Auto-focus next input if current input is filled
-    if (value && index < 3) {
+    if (value && index < 4) {
       inputRefs[index + 1].current.focus();
     }
   };
@@ -47,13 +50,46 @@ const EmailVerification = () => {
     const code = verificationCode.join('');
     
     // Simulate verification check
-    if (code === '1234') { // Replace with actual verification logic
+    if (code === '12345') { // Replace with actual verification logic
       console.log('Verification successful');
       // Redirect to next page or perform necessary action
     } else {
       setError('Invalid verification code. Please try again.');
     }
   };
+
+  // Handle resending the verification code
+  const handleResendCode = () => {
+    // Simulate API call to resend code
+    console.log('Resending verification code to:', email);
+    
+    // Show success message
+    setResendStatus('Verification code resent!');
+    
+    // Disable the button temporarily and start countdown
+    setResendDisabled(true);
+    setCountdown(30); // 30 second cooldown
+    
+    // Clear any previous errors
+    if (error) setError('');
+  };
+
+  // Handle countdown timer for resend button
+  useEffect(() => {
+    let timer;
+    if (countdown > 0) {
+      timer = setTimeout(() => {
+        setCountdown(countdown - 1);
+      }, 1000);
+    } else if (countdown === 0 && resendDisabled) {
+      setResendDisabled(false);
+      setResendStatus('');
+    }
+    
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [countdown, resendDisabled]);
   
   // Focus the first input field on component mount
   useEffect(() => {
@@ -100,13 +136,25 @@ const EmailVerification = () => {
           </div>
           
           {error && <p className="error-message">{error}</p>}
+          {resendStatus && <p className="success-message">{resendStatus}</p>}
           
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="next-button"
             disabled={!isCodeComplete}
           >
             Next
+          </button>
+
+          <button
+            type="button"
+            className="resend-button"
+            onClick={handleResendCode}
+            disabled={resendDisabled}
+          >
+            {resendDisabled 
+              ? `Resend Code (${countdown}s)` 
+              : 'Resend Code'}
           </button>
         </form>
         

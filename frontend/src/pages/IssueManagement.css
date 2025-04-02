@@ -1,177 +1,167 @@
-/* Layout containers */
-.app-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+/* Add these styles to your IssueManagement.css file */
+
+/* Actions dropdown container */
+.actions-dropdown-container {
+  position: relative;
+  display: inline-block;
 }
 
-.content-wrapper {
-  display: flex;
-  flex: 1;
-}
-
-/* Issue tracker specific styles */
-.issue-tracker-container {
-  flex: 1;
-  padding: 20px;
-  font-family: Arial, sans-serif;
-  color: #000;
-  background-color: #f5f5f5;
-}
-
-.issue-title {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 16px;
-}
-
-.issue-subtitle {
-  font-size: 16px;
-  font-weight: normal;
-}
-
-/* Tab styling */
-.tab-container {
-  display: flex;
-  border: 1px solid #ccc;
-  border-radius: 25px;
-  overflow: hidden;
-  width: fit-content;
-  margin-bottom: 24px;
-  background-color: white;
-}
-
-.tab-button {
-  background: none;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  font-size: 14px;
-  outline: none;
-}
-
-.tab-button.active {
-  background-color: #000;
+/* Actions dropdown toggle button */
+.actions-dropdown-toggle {
+  background-color: #4a90e2;
   color: white;
-  border-radius: 25px;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
 }
 
-/* Issues container styling */
-.issues-container {
+.actions-dropdown-toggle:hover {
+  background-color: #3a7bc8;
+}
+
+.dropdown-arrow {
+  margin-left: 6px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  display: inline-block;
+  padding: 3px;
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+  transition: transform 0.2s;
+}
+
+.actions-dropdown-toggle:hover .dropdown-arrow {
+  transform: rotate(-135deg);
+}
+
+/* Dropdown menu */
+.actions-dropdown-menu {
+  position: absolute;
   background-color: white;
-  border-radius: 10px;
-  padding: 16px;
-  border: 1px solid #eee;
-}
-
-.issues-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.issues-title {
-  font-size: 18px;
-  margin: 0;
-}
-
-.search-filter-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.search-container {
-  position: relative;
-}
-
-.search-input {
-  padding: 8px 12px;
-  padding-right: 35px;
-  border: 1px solid #ccc;
-  border-radius: 25px;
-  width: 200px;
-  font-size: 14px;
-}
-
-.search-icon {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #666;
-}
-
-.filter-button {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 8px 16px;
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-/* Table styling */
-.issues-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.issues-table th {
-  text-align: left;
-  font-size: 12px;
-  color: #333;
-  padding: 12px 8px;
-  border-bottom: 1px solid #eee;
-}
-
-.issues-table td {
-  padding: 16px 8px;
-  border-bottom: 1px solid #eee;
-}
-
-.issue-row {
-  cursor: pointer;
-}
-
-.actions-cell {
-  position: relative;
-}
-
-.more-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #666;
-}
-
-/* Dropdown menu styling */
-.dropdown-menu {
-  position: absolute;
-  right: 0;
-  top: 100%;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  width: 160px;
+  min-width: 180px;
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
   z-index: 10;
+  border-radius: 4px;
+  top: 40px;
+  right: 0;
+  overflow: hidden;
+  animation: fadeIn 0.2s ease-in-out;
 }
 
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Dropdown items */
 .dropdown-item {
+  color: #333;
+  padding: 12px 16px;
+  text-decoration: none;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 12px;
   width: 100%;
   border: none;
-  background: none;
   text-align: left;
+  background-color: transparent;
   cursor: pointer;
+  transition: background-color 0.2s;
+  font-size: 14px;
 }
 
 .dropdown-item:hover {
   background-color: #f5f5f5;
+  color: #4a90e2;
 }
+
+.dropdown-item.danger {
+  color: #e74c3c;
+}
+
+.dropdown-item.danger:hover {
+  background-color: #fde8e6;
+}
+
+/* Icons in dropdown */
+.dropdown-item i {
+  margin-right: 10px;
+  font-size: 16px;
+}
+
+.view-icon::before {
+  content: "👁";
+}
+
+.escalate-icon::before {
+  content: "⬆️";
+}
+
+.edit-icon::before {
+  content: "✏️";
+}
+
+.delete-icon::before {
+  content: "🗑️";
+}
+
+/* Existing lecturers dropdown styling - enhanced */
+.lecturers-dropdown {
+  position: absolute;
+  background-color: white;
+  min-width: 250px;
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+  z-index: 11; /* Higher than actions dropdown */
+  border-radius: 4px;
+  top: 40px;
+  right: 0;
+  overflow: hidden;
+}
+
+.dropdown-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.dropdown-header h4 {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.close-dropdown {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #6c757d;
+}
+
+.lecturers-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.lecturers-list li {
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.lecturers-list li:hover {
+  background-color: #f8f9fa;
+  color: #4a90e2;
+}
+

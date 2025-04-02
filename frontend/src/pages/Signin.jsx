@@ -29,9 +29,9 @@ const SignIn = () => {
       <div className="split-layout">
         <div className="left-section">
           <div className="header">
-            <h1 className="green-text">WELCOME TO</h1>
-            <h2 className="green-text">THE ACADEMIC TRACKING SYSTEM</h2>
-            <h3 className="green-text">(ATIS)</h3>
+            <h1 className="green-text">WELCOME TO THE ACADEMIC TRACKING SYSTEM</h1>
+            
+            <h2 className="green-text">(ATIS)</h2>
           </div>
 
           <div className="content">
