@@ -13,15 +13,34 @@ function Changepassword() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false); // State to show confirmation modal
+  const [successMessage, setSuccessMessage] = useState(false); // State to show success message
 
   const handleSaveChanges = () => {
+    // Add validation here before showing confirmation
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      alert("Please fill in all password fields");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      alert("New passwords don't match");
+      return;
+    }
     setShowConfirmation(true); // Show confirmation modal
   };
 
   const confirmChangePassword = () => {
     setShowConfirmation(false); // Close confirmation modal
+    setSuccessMessage(true); // Show success message
     // Add logic to handle password change here
     console.log('Password changed successfully!');
+    
+    // Reset form fields after successful change
+    setOldPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
+    
+    // Hide success message after 3 seconds
+    setTimeout(() => setSuccessMessage(false), 3000);
   };
 
   const cancelChangePassword = () => {
@@ -225,7 +244,7 @@ function Changepassword() {
         <div className="modal-overlay">
           <div className="modal-content">
             <h2>Confirm Password Change</h2>
-            <p>Are you sure you want to change your password?</p>
+            <p>Are you sure you want to le change your password?</p>
             <div className="modal-buttons">
               <button className="cancel-btn" onClick={cancelChangePassword}>
                 Cancel
@@ -234,6 +253,56 @@ function Changepassword() {
                 Confirm
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Enhanced Success Message */}
+      {successMessage && (
+        <div className="success-message-overlay">
+          <div 
+            className="success-message-content"
+            style={{
+              background: 'rgba(0, 150, 0, 0.9)',
+              color: 'white',
+              padding: '20px 30px',
+              borderRadius: '10px',
+              boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
+              backdropFilter: 'blur(4px)',
+              WebkitBackdropFilter: 'blur(4px)',
+              border: '1px solid rgba(255, 255, 255, 0.18)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              animation: 'fadeInOut 3s ease',
+              maxWidth: '400px',
+              textAlign: 'center'
+            }}
+          >
+            <div 
+              className="success-icon"
+              style={{
+                width: '60px',
+                height: '60px',
+                background: 'white',
+                borderRadius: '50%',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginBottom: '15px'
+              }}
+            >
+              <svg 
+                viewBox="0 0 24 24" 
+                width="40" 
+                height="40" 
+                fill="rgba(0, 150, 0, 1)"
+              >
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
+              </svg>
+            </div>
+            <h3 style={{ margin: '0 0 10px 0', fontSize: '20px' }}>Success!</h3>
+            <p style={{ margin: '0', fontSize: '16px' }}>Your password has been changed successfully.</p>
           </div>
         </div>
       )}
