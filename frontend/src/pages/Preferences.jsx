@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import makerereLogo from '../assets/makererelogo.png';
 import './Preferences.css';
 import NavBar from './Navbar';
-import backgroundimage from '../assets/backgroundimage.jpg'; // Background image
+import backgroundimage from '../assets/pexels-olia-danilevich-5088017.jpg'; // Updated background image
 
 const Preferences = () => {
   const [inAppMessaging, setInAppMessaging] = useState(true);
@@ -20,7 +20,7 @@ const Preferences = () => {
     <div
       className="settings-container"
       style={{
-        backgroundImage: `url(${backgroundimage})`,
+        backgroundImage: `url(${backgroundimage})`, // Updated background image
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
