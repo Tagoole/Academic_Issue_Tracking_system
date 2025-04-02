@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import makerereLogo from '../assets/makererelogo.png';
 import hidden from '../assets/hidden.png';
 import './Changepassword.css';
-import NavBar from './Navbar';
-import backgroundimage from '../assets/backgroundimage.jpg';
+import NavBar from './Navbar'; // Implemented NavBar
+import backgroundimage from '../assets/backgroundimage.jpg'; // Background image
 
 function Changepassword() {
   const [oldPassword, setOldPassword] = useState('');
@@ -16,33 +16,36 @@ function Changepassword() {
   return (
     <div
       style={{
-        backgroundImage: `url(${backgroundimage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        minHeight: '100vh',
-        width: '100%',
+        backgroundImage: `url(${backgroundimage})`, // Set the background image
+        backgroundSize: 'cover', // Ensure the image covers the entire screen
+        backgroundPosition: 'center', // Center the image
+        backgroundRepeat: 'no-repeat', // Prevent the image from repeating
+        minHeight: '100vh', // Ensure the background covers the full viewport height
+        width: '100%', // Ensure the background covers the full viewport width
       }}
     >
+      {/* Add the NavBar */}
       <NavBar />
 
+      {/* Main content container */}
       <div className="settings-container">
         {/* Glassmorphism applied to sidebar */}
         <div
           className="settings-sidebar"
           style={{
-            background: 'rgba(255, 255, 255, 0.25)',
-            backdropFilter: 'blur(10px)',
-            WebkitBackdropFilter: 'blur(10px)',
+            background: 'rgba(0, 0, 0, 0.6)', // Black with 60% opacity for glassmorphism
+            backdropFilter: 'blur(6px)', // Reduced blur effect
+            WebkitBackdropFilter: 'blur(6px)', // For Safari support
             borderRadius: '10px',
-            border: '1px solid rgba(255, 255, 255, 0.18)',
-            boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
+            border: '1px solid rgba(255, 255, 255, 0.1)', // Subtle border
+            boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)', // Enhanced shadow
           }}
         >
           <div className="university-logo-sidebar">
             <img src={makerereLogo} alt="University Logo" className="logo-sidebar" />
           </div>
 
+          {/* Sidebar menu items */}
           <a href="/changepassword" className="menu-item active">
             Change Password
             <svg viewBox="0 0 24 24" className="arrow-icon">
@@ -81,7 +84,7 @@ function Changepassword() {
             WebkitBackdropFilter: 'blur(12px)',
             borderRadius: '10px',
             border: '1px solid rgba(255, 255, 255, 0.18)',
-            boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
+            boxShadow: '0 8px 32px 0 rgba(5, 5, 5, 0.37)',
           }}
         >
           <div className="password-change-form">
@@ -183,11 +186,11 @@ function Changepassword() {
             <button
               className="save-changes"
               style={{
-                background: 'rgba(70, 130, 180, 0.7)',
+                background: 'rgba(11, 11, 11, 0.7)',
                 backdropFilter: 'blur(4px)',
                 WebkitBackdropFilter: 'blur(4px)',
                 border: '1px solid rgba(255, 255, 255, 0.18)',
-                boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
+                boxShadow: '0 8px 32px 0 rgba(6, 6, 6, 0.37)',
                 color: 'white',
                 padding: '10px 25px',
                 borderRadius: '5px',
