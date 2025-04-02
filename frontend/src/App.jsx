@@ -3,11 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import NotificationSuccess from "./pages/NotificationSuccess";
 import Messages from "./pages/Messages";
-<<<<<<< HEAD
-import NewIssue from "./pages/New-issue";
-=======
 //import NewIssue from "./pages/New-Issue";
->>>>>>> origin/main
 import Signin from "./pages/Signin";
 import EmailVerification from "./pages/verification";
 import ResetPassword from "./pages/reset";
@@ -21,14 +17,9 @@ import Changepassword from "./pages/Changepassword";
 import Preferences from "./pages/Preferences";
 import Help from "./pages/Help";
 import Deleteaccount from "./pages/Deleteaccount";
-<<<<<<< HEAD
 import Issues from "./pages/Issues";
 import StudentDashboard from "./pages/StudentDashboard";
-=======
-import StudentsProfile from "./pages/StudentsProfile";
-import Sidebar1 from "./pages/Sidebar1";
-import Sidebar from "./pages/Sidebar";
->>>>>>> origin/main
+import Signup from "./pages/signup";
 
 function App() {
   return (
@@ -56,7 +47,7 @@ function App() {
           <Route path="/Help"element={<Help/>}/>
           <Route path="/Deleteaccount"element={<Deleteaccount/>}/>
           <Route path="/studentdashboard"element={<StudentDashboard/>}/>
-          
+          <Route path="signup" element={<Signup/>}/>
 
           
         </Routes>
