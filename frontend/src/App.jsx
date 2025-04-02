@@ -17,7 +17,7 @@ import Changepassword from "./pages/Changepassword";
 import Preferences from "./pages/Preferences";
 import Help from "./pages/Help";
 import Deleteaccount from "./pages/Deleteaccount";
-import StudentsProfile from "./pages/StudentsProfile";
+//import StudentsProfile from "./pages/StudentsProfile";
 import Sidebar1 from "./pages/Sidebar1";
 import Sidebar from "./pages/Sidebar";
 
@@ -46,6 +46,8 @@ function App() {
           <Route path="/Preferences"element={<Preferences/>}/>
           <Route path="/Help"element={<Help/>}/>
           <Route path="/Deleteaccount"element={<Deleteaccount/>}/>
+          <Route path="/Sidebar1"element={<Sidebar1/>}/>
+          <Route path="/Sidebar"element={<Sidebar/>}/>
           
 
           
