@@ -1,0 +1,98 @@
+.landingpage {
+    background-image: url('../assets/WELCOME PAGE.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    color: white;
+}
+
+.header {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.logo {
+    display: flex;
+    position: absolute;
+}
+
+.logo-name {
+    position: absolute;
+    left: 100px;
+    top: 3px;
+    color: white;
+}
+
+.buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 10px;
+}
+
+.signup-button {
+    margin-left: 1200px;
+    color: white;
+    border: none;
+    padding: 10px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    background-color: black;
+    font-weight: bold;
+    font-size: 20px;
+}
+.signin-button {
+    color: white;
+    border: none;
+    padding: 10px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    background-color: black;
+    font-weight: bold;
+    font-size: 20px;
+
+}
+
+.signup-button:hover, .signin-button:hover {
+    background-color: #0000;
+}
+
+.separator {
+    width: 1px;
+    height: 30px;
+    background-color: white;
+}
+.overlay {
+    text-align: center;
+    color: white; 
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+}
+
+.makerere-logo {
+    width: 200px;
+    height: auto;
+    display: block;
+    margin-bottom: 0 auto;
+    position: center;
+}
+
+.welcome-text {
+    font-size: 50px;
+    font-weight: bold
+    
+}

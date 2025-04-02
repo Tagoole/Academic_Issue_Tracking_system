@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom'; 
 import './Sidebar1.css';
-import dashboardIcon from "../assets/dashboard.png";
+import dashboardIcon from "../assets/dash.png";
 import issueIcon from "../assets/issue.png";
 import profileIcon from "../assets/profile.png";
 import settingsIcon from "../assets/settings.png";
@@ -14,7 +14,7 @@ const Sidebar1 = () => {
       {/* Registra Dashboard Link */}
       <div className="sidebar-item">
         <Link to="/StudentDasboard" className="sidebar-link">
-          <img src={dashboardIcon} alt="Dashboard Icon" className="sidebar-icon" />
+          <img src={dashboardIcon} alt="Dash Icon" className="sidebar-icon" />
           <span>StudentDashboard</span>
         </Link>
       </div>
