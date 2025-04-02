@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Navbar from './Navbar';
+import Navbar from './NavBar';
 import Sidebar from "./Sidebar";
 import './IssueManagement.css';
 import backgroundimage from '../assets/backgroundimage.jpg';
