@@ -8,7 +8,6 @@ const ResetPassword = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle the reset password logic here
     console.log('Email submitted:', email);
   };
 

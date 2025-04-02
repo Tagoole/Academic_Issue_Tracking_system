@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import name from '../assets/name.png'; // Import the name image
-import makererelogo from '../assets/makererelogo.png'; // Import the Makerere logo
-import './ProfileSetup.css'; // Import the corresponding CSS file
+import name from '../assets/name.png'; 
+import makererelogo from '../assets/makererelogo.png'; 
+import './ProfileSetup.css'; 
 
 const ProfileSetup = () => {
   const [formData, setFormData] = useState({
@@ -21,7 +21,7 @@ const ProfileSetup = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission, e.g., send data to an API
+
     console.log(formData);
   };
 

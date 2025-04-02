@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import './verification.css'; // Import the corresponding CSS file
+import './verification.css'; 
 
 const EmailVerification = () => {
   const [verificationCode, setVerificationCode] = useState('');
-  const [email, setEmail] = useState('user@example.com'); // Replace with the actual email
+  const [email, setEmail] = useState('user@example.com'); 
 
   const handleVerificationCodeChange = (e) => {
     setVerificationCode(e.target.value);
@@ -11,7 +11,6 @@ const EmailVerification = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle the verification logic here
     console.log('Verification Code:', verificationCode);
   };
 

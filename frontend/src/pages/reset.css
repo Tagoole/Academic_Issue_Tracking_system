@@ -1,4 +1,4 @@
-/* General Styles */
+
 body {
   font-family: Arial, sans-serif;
   background-color: #f9f9f9;
@@ -9,7 +9,7 @@ body {
   margin: 0;
 }
 
-/* Reset Password Container */
+
 .reset-password-container {
   padding: 20px;
   max-width: 400px;
@@ -21,13 +21,13 @@ body {
   text-align: center;
 }
 
-/* Header Image */
+
 .reset-password-container .w-16 {
   width: 4rem;
   height: 4rem;
 }
 
-/* Heading */
+
 .reset-password-container h2 {
   font-size: 24px;
   margin-bottom: 10px;
@@ -35,20 +35,20 @@ body {
   color: black;
 }
 
-/* Paragraph */
+
 .reset-password-container p {
   font-size: 14px;
   color: #666;
   margin-bottom: 20px;
 }
 
-/* Form */
+
 .reset-password-form {
   display: flex;
   flex-direction: column;
 }
 
-/* Form Group */
+
 .form-group {
   margin-bottom: 20px;
   position: relative;

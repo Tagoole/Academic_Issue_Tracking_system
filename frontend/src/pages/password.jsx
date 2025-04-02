@@ -20,14 +20,14 @@ export const Frame = () => {
           placeholder="Enter your Email Address"
           className="email-input"
         />
-        {/* <img className="mail-icon" alt="Mail Icon" src={mail} /> */}
+
       </div>
 
       <button className="next-btn">Next</button>
 
       <p className="sign-in">Sign In</p>
 
-      {/* <img className="group-img" alt="Illustration" src={group} /> */}
+
     </div>
   );
 };

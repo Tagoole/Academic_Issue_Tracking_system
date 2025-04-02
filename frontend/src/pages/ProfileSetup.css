@@ -1,4 +1,4 @@
-/* General Styles */
+
 body {
   font-family: Arial, sans-serif;
   background-color: #f9f9f9;
@@ -9,7 +9,7 @@ body {
   margin: 0;
 }
 
-/* Profile Setup Container */
+
 .profile-setup {
   display: flex;
   flex-direction: column;
@@ -23,7 +23,7 @@ body {
   text-align: center;
 }
 
-/* Profile Picture Setup Container */
+
 .profile-picture-setup {
   display: flex;
   flex-direction: column;
@@ -37,7 +37,7 @@ body {
   text-align: center;
 }
 
-/* Title Container */
+
 .title-container {
   display: flex;
   align-items: center;
@@ -45,44 +45,44 @@ body {
   margin-bottom: 20px;
 }
 
-/* Logo */
+
 .logo {
   width: 50px;
   height: auto;
   margin-right: 10px;
 }
 
-/* Title */
+
 h1.title {
   font-size: 2rem;
   color: #333;
 }
 
-/* Subtitle */
+
 h2 {
   font-size: 1.5rem;
   color: #333;
   margin-bottom: 10px;
 }
 
-/* Description */
+
 p.description {
   font-size: 1rem;
   color: #666;
   margin-bottom: 20px;
 }
 
-/* Current Picture */
+
 .current-picture {
   margin-bottom: 20px;
 }
 
-/* New Picture */
+
 .new-picture {
   margin-bottom: 20px;
 }
 
-/* Profile Image */
+
 .profile-image {
   width: 100px;
   height: 100px;
@@ -91,7 +91,7 @@ p.description {
   margin-top: 10px;
 }
 
-/* Input Group */
+
 .input-group {
   margin-bottom: 20px;
   width: 100%;
@@ -112,7 +112,7 @@ p.description {
 .input {
   width: 100%;
   padding: 10px;
-  padding-right: 40px; /* Add padding to the right to make space for the icon */
+  padding-right: 40px; 
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -128,7 +128,7 @@ p.description {
   height: 20px;
 }
 
-/* Button Group */
+
 .button-group {
   display: flex;
   justify-content: space-between;
