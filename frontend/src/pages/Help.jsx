@@ -1,6 +1,7 @@
 import React from 'react';
 import makerereLogo from '../assets/makererelogo.png';
-import './Help.css';
+import './Help.css'; 
+import NavBar from './Navbar';
 
 const Help = () => {
   const handleEmailCopy = () => {
@@ -15,6 +16,9 @@ const Help = () => {
 
   return (
     <div className="settings-container">
+      {/* NavBar */}
+      <NavBar />
+
       {/* Sidebar */}
       <div className="settings-sidebar">
         <div className="university-logo-sidebar">
