@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import profilePic from '../assets/profile.png'; 
-import NavBar from './NavBar'; 
+//import NavBar from './NavBar'; 
 import HorizontalSidebar from './HorizontalSideBar'; 
 import './New-chat.css';
 
