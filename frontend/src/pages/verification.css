@@ -127,6 +127,12 @@
   font-size: 14px;
 }
 
+.success-message {
+  color: #00a651; /* Green color */
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
 .next-button {
   background-color: #00a651; /* Green color */
   color: white;
@@ -139,6 +145,7 @@
   transition: background-color 0.2s, transform 0.2s;
   width: 100%;
   max-width: 200px;
+  margin-top: 10px;
 }
 
 .next-button:hover:not(:disabled) {
@@ -151,17 +158,44 @@
   cursor: not-allowed;
 }
 
+.resend-button {
+  background-color: transparent;
+  color: #00a651;
+  border: 1px solid #00a651;
+  border-radius: 25px;
+  padding: 12px 40px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+  max-width: 200px;
+  margin: 15px 0;
+}
+
+.resend-button:hover:not(:disabled) {
+  background-color: rgba(0, 166, 81, 0.1);
+}
+
+.resend-button:disabled {
+  color: #999;
+  border-color: #ccc;
+  cursor: not-allowed;
+}
+
 .signin-link {
   margin-top: 20px;
   color: #00a651; /* Green color */
-  text-decoration: underline;
+  text-decoration: none;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
+  transition: color 0.2s;
 }
 
 .signin-link:hover {
   color: #008c44;
+  text-decoration: underline;
 }
 
 /* Responsive styles */
@@ -183,5 +217,11 @@
   .verification-instruction,
   .verification-email {
     font-size: 14px;
+  }
+
+  .next-button,
+  .resend-button {
+    padding: 10px 30px;
+    font-size: 15px;
   }
 }

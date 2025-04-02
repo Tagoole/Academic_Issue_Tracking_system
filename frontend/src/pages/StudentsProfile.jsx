@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Navbar from './Navbar';
-import Sidebar from './sidebar';
+import Navbar from './NavBar';
+import Sidebar from './Sidebar';
 import './StudentsProfile.css';
 
 const StudentsProfile = ({ userData }) => {

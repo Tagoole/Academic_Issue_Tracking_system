@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; // Import Link for navigation
-import makerereLogo from '../assets/makererelogo.png'; // Add the logo if needed
+import { Link } from 'react-router-dom'; 
+import makerereLogo from '../assets/makererelogo.png'; 
 import './Deleteaccount.css';
 
 const Deleteaccount = () => {

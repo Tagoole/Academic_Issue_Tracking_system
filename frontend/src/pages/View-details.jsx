@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
-import Navbar from './Navbar'; 
+import Navbar from './NavBar'; 
 
 const Viewdetails = () => {
   const [comment, setComment] = useState('');

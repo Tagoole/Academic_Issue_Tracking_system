@@ -1,7 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router-dom'; 
-import './Sidebar1.css';
-import dashboardIcon from "../assets/dash.png";
+import './Sidebar.css';
+import dashboardIcon from "../assets/dashboard.png";
 import issueIcon from "../assets/issue.png";
 import profileIcon from "../assets/profile.png";
 import settingsIcon from "../assets/settings.png";
@@ -9,54 +8,58 @@ import logoutIcon from "../assets/logout.png";
 import helpIcon from "../assets/help.png";
 
 const Sidebar = () => {
+  const handleNavigation = (path) => {
+    window.location.href = path;
+  };
+
   return (
     <div className="sidebar">
       {/* Registra Dashboard Link */}
       <div className="sidebar-item">
-        <Link to="/RegistraDasboard" className="sidebar-link">
+        <div className="sidebar-link" onClick={() => handleNavigation('/RegistraDashboard')}>
           <img src={dashboardIcon} alt="Dashboard Icon" className="sidebar-icon" />
           <span>RegistraDashboard</span>
-        </Link>
+        </div>
       </div>
 
       {/* Issues Link */}
       <div className="sidebar-item">
-        <Link to="/issues" className="sidebar-link">
+        <div className="sidebar-link" onClick={() => handleNavigation('/IssueManagement')}>
           <img src={issueIcon} alt="Issue Icon" className="sidebar-icon" />
           <span>IssueManagement</span>
-        </Link>
+        </div>
       </div>
 
       {/* Profile Link */}
       <div className="sidebar-item">
-        <Link to="/profile" className="sidebar-link">
+        <div className="sidebar-link" onClick={() => handleNavigation('/Registraprofile')}>
           <img src={profileIcon} alt="Profile Icon" className="sidebar-icon" />
-          <span>Profile</span>
-        </Link>
+          <span>Registraprofile</span>
+        </div>
       </div>
 
       {/* Settings Link */}
       <div className="sidebar-item">
-        <Link to="/settings" className="sidebar-link">
+        <div className="sidebar-link" onClick={() => handleNavigation('/settings')}>
           <img src={settingsIcon} alt="Settings Icon" className="sidebar-icon" />
           <span>Settings</span>
-        </Link>
+        </div>
       </div>
 
       {/* Help and Support Link */}
       <div className="sidebar-item">
-        <Link to="/help" className="sidebar-link">
+        <div className="sidebar-link" onClick={() => handleNavigation('/help')}>
           <img src={helpIcon} alt="Help Icon" className="sidebar-icon" />
           <span>Help and Support</span>
-        </Link>
+        </div>
       </div>
 
       {/* Logout Link */}
       <div className="sidebar-item logout">
-        <Link to="/logout" className="sidebar-link">
+        <div className="sidebar-link" onClick={() => handleNavigation('/logout')}>
           <img src={logoutIcon} alt="Logout Icon" className="sidebar-icon" />
           <span>Log Out</span>
-        </Link>
+        </div>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import React from 'react';
 import './RegistraDashboard.css';
-import Navbar from './Navbar'; 
-import Sidebar from './sidebar';
+import Navbar from './NavBar'; 
+import Sidebar from './Sidebar';
 import backgroundimage from "../assets/backgroundimage.jpg"; 
 import backgroundImage from '../assets/backgroundimage.jpg'; 
 
@@ -28,11 +28,8 @@ const RegistraDashboard = () => {
           style={{ backgroundImage: `url(${backgroundimage})`, backgroundSize: 'cover', backgroundPosition: 'center' }} // Added background image
         >
           <div className="dashboard-cards">
-            <DashboardCard
-              title="Total issues"
-              count={0}
-              description="You currently have 0 issues"
-            />
+            
+            
             <DashboardCard
               title="Pending issues"
               count={0}
