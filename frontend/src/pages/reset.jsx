@@ -1,50 +1,72 @@
 import React, { useState } from 'react';
-import group from '../assets/group.png';
-import mail from '../assets/mail.png';
+import { Link } from 'react-router-dom'; 
 import './reset.css';
+import keyIcon from '../assets/group.png';
+import mailIcon from '../assets/mail.png';
+import helpIcon from '../assets/question.png'
+
 
 const ResetPassword = () => {
   const [email, setEmail] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
+<<<<<<< HEAD
     console.log('Email submitted:', email);
+=======
+    // Handle password reset logic here
+    console.log('Password reset requested for:', email);
+>>>>>>> origin/main
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-2xl shadow-md w-96 text-center">
-        <div className="flex justify-center mb-4">
-          <img src={group} alt="Group" className="w-16 h-16" />
+    <div className="reset-password-container">
+      {/* Header Section */}
+      <nav className="header-nav">
+        <div className="nav-brand">
+          <strong>AITS</strong>
         </div>
-        <h2 className="text-2xl font-bold mb-2">Reset Password</h2>
-        <p className="text-gray-600 mb-4">
+        <div className="nav-help">
+          <img src={helpIcon} alt="Help" className="help-icon" />
+          <span>Help?</span>
+        </div>
+      </nav>
+
+      {/* Main Content Section */}
+      <div className="reset-password-card">
+        <div className="key-icon-container">
+          <img src={keyIcon} alt="Key" className="key-icon" />
+        </div>
+
+        <h1 className="reset-title">Reset Password</h1>
+
+        <p className="reset-instructions">
           Enter your registered Email Address below to reset your password.
         </p>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="relative">
+
+        <form onSubmit={handleSubmit}>
+          <div className="input-container">
             <input
               type="email"
-              placeholder="Enter your Email Address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              placeholder="Enter your Email Address"
               required
+              className="email-input"
             />
-            <img src={mail} alt="Mail Icon" className="absolute right-3 top-2.5 w-6 h-6" />
+            <img src={mailIcon} alt="Email" className="email-icon" />
           </div>
-          <button
-            type="submit"
-            className="w-full bg-green-500 text-white py-2 rounded-md text-lg font-semibold hover:bg-green-600"
-          >
+
+          <button type="submit" className="next-button">
             Next
           </button>
         </form>
-        <p className="mt-4">
-          <a href="/signin" className="text-green-500 hover:underline">
+
+        <div className="sign-in-link-container">
+          <Link to="/login" className="sign-in-link">
             Sign In
-          </a>
-        </p>
+          </Link>
+        </div>
       </div>
     </div>
   );

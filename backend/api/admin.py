@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CustomUser, Department,Issue,Course_unit,Program
+from .models import *
 from django.contrib.auth.admin import UserAdmin
 
 
@@ -26,17 +26,15 @@ class CustomUserAdmin(UserAdmin):
         ('Role Information', {'fields': ('role',)}),  # Add 'role' separately
     )
 
-class CourseUnitInline(admin.TabularInline):  # or admin.StackedInline
-    model = Program.course_units.through  # ManyToMany intermediate table
-    extra = 1  # Number of blank entries shown
 
+@admin.register(Program)
 class ProgramAdmin(admin.ModelAdmin):
-    inlines = [CourseUnitInline]
-
-admin.site.register(Program, ProgramAdmin)
+    filter_horizontal = ('course_units',)  
 
 admin.site.register(CustomUser)    
-#admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Issue, IssueAdmin)
 admin.site.register(Department)
 admin.site.register(Course_unit)
+admin.site.register(Registration_Token)
+admin.site.register(Verification_code)
+admin.site.register(Email_Notification)
