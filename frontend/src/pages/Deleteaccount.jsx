@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom'; // Import Link for navigation
 import makerereLogo from '../assets/makererelogo.png'; // Add the logo if needed
 import './Deleteaccount.css';
+import NavBar from './Navbar';
 
 const Deleteaccount = () => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -22,6 +23,9 @@ const Deleteaccount = () => {
 
   return (
     <div className="settings-container">
+      {/* NavBar */}
+      <NavBar />
+
       {/* Sidebar */}
       <div className="settings-sidebar">
         <div className="university-logo-sidebar">
