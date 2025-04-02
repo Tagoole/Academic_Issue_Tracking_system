@@ -29,9 +29,9 @@ const Sidebar1 = () => {
 
       {/* Profile Link */}
       <div className="sidebar-item">
-        <Link to="/profile" className="sidebar-link">
+        <Link to="/studentprofile" className="sidebar-link">
           <img src={profileIcon} alt="Profile Icon" className="sidebar-icon" />
-          <span>Profile</span>
+          <span>Studentprofile</span>
         </Link>
       </div>
 
