@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'; // Import Link for navigation
 import makerereLogo from '../assets/makererelogo.png'; // Add the logo if needed
 import './Deleteaccount.css';
 import NavBar from './Navbar';
-import backgroundimage from '../assets/backgroundimage.jpg'; // Background image
+import backgroundimage from '../assets/pexels-olia-danilevich-5088017.jpg'; // Background image
 
 const DeleteAccount = () => {
   const [showModal, setShowModal] = useState(false);
