@@ -1,21 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Navbar from './Navbar';
 import Sidebar from './sidebar';
 import './StudentsProfile.css';
 
 const StudentsProfile = ({ userData }) => {
-  
-  const {
-    fullName = '[Full Name]',
-    role = '[Role]',
-    phoneNumber = '[Phone Number]',
-    email = '[Email Address]',
-    gender = '[Gender]',
-    registrationNumber = '[Registration]',
-    studentNumber = '[Student Number]',
-    course = '[Course]',
-    semester = '[Semester]'
-  } = userData || {};
+  const [profile, setProfile] = useState({
+    fullName: userData?.fullName || '[Full Name]',
+    role: userData?.role || '[Role]',
+    phoneNumber: userData?.phoneNumber || '[Phone Number]',
+    email: userData?.email || '[Email Address]',
+    gender: userData?.gender || '[Gender]',
+    registrationNumber: userData?.registrationNumber || '[Registration]',
+    studentNumber: userData?.studentNumber || '[Student Number]',
+    course: userData?.course || '[Course]',
+    semester: userData?.semester || '[Semester]',
+  });
+
+  const [editableField, setEditableField] = useState(null);
+
+  const handleEditClick = (field) => {
+    setEditableField(field);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setProfile((prevProfile) => ({
+      ...prevProfile,
+      [name]: value,
+    }));
+  };
+
+  const handleSave = () => {
+    setEditableField(null);
+    console.log('Profile updated:', profile);
+    // Add API call to save updated profile data
+  };
 
   return (
     <div className="app-container">
@@ -24,69 +43,73 @@ const StudentsProfile = ({ userData }) => {
         <Sidebar />
         <main className="main-content">
           <div className="profile-container">
-            <section className="profile-header">
-              <h2>Profile</h2>
-              <div className="profile-card">
-                <div className="profile-image-container">
-                  <img src="/avatar-placeholder.png" alt="Profile" className="profile-image" />
+            {/* Header Section */}
+            <div className="profile-card">
+              <div className="profile-header">
+                <img src="/avatar-placeholder.png" alt="Profile" className="profile-image" />
+                <div className="profile-details">
+                  <h2>{profile.fullName}</h2>
+                  <p>{profile.role}</p>
                 </div>
-                <div className="profile-info">
-                  <div className="profile-name">{fullName}</div>
-                  <div className="profile-role">{role}</div>
-                </div>
-                <button className="edit-button">Edit</button>
+                <button className="edit-btn" onClick={() => handleEditClick('profile')}>
+                  Edit ✏️
+                </button>
               </div>
-            </section>
+            </div>
 
-            <section className="info-section">
-              <div className="section-header">
-                <h3>Personal Information</h3>
-                <button className="edit-button">Edit</button>
-              </div>
-              <div className="info-grid">
-                <div className="info-item">
-                  <label>Full Name</label>
-                  <div className="info-value">{fullName}</div>
+            {/* Personal Information Section */}
+            <div className="info-card">
+              <h3>Personal Information</h3>
+              {['fullName', 'phoneNumber', 'email', 'gender'].map((field) => (
+                <div key={field} className="info-item">
+                  <label>{field.replace(/([A-Z])/g, ' $1')}:</label>
+                  {editableField === field ? (
+                    <input
+                      type="text"
+                      name={field}
+                      value={profile[field]}
+                      onChange={handleInputChange}
+                    />
+                  ) : (
+                    <span>{profile[field]}</span>
+                  )}
+                  <button className="edit-btn" onClick={() => handleEditClick(field)}>
+                    Edit ✏️
+                  </button>
                 </div>
-                <div className="info-item">
-                  <label>Phone Number</label>
-                  <div className="info-value">{phoneNumber}</div>
-                </div>
-                <div className="info-item">
-                  <label>Email Address</label>
-                  <div className="info-value">{email}</div>
-                </div>
-                <div className="info-item">
-                  <label>Gender</label>
-                  <div className="info-value">{gender}</div>
-                </div>
-              </div>
-            </section>
+              ))}
+            </div>
 
-            <section className="info-section">
-              <div className="section-header">
-                <h3>Academic Information</h3>
-                <button className="edit-button">Edit</button>
-              </div>
-              <div className="info-grid">
-                <div className="info-item">
-                  <label>Registration Number</label>
-                  <div className="info-value">{registrationNumber}</div>
+            {/* Academic Information Section */}
+            <div className="info-card">
+              <h3>Academic Information</h3>
+              {['registrationNumber', 'studentNumber', 'course', 'semester'].map((field) => (
+                <div key={field} className="info-item">
+                  <label>{field.replace(/([A-Z])/g, ' $1')}:</label>
+                  {editableField === field && field !== 'registrationNumber' && field !== 'studentNumber' ? (
+                    <input
+                      type="text"
+                      name={field}
+                      value={profile[field]}
+                      onChange={handleInputChange}
+                    />
+                  ) : (
+                    <span>{profile[field]}</span>
+                  )}
+                  {field !== 'registrationNumber' && field !== 'studentNumber' && (
+                    <button className="edit-btn" onClick={() => handleEditClick(field)}>
+                      Edit ✏️
+                    </button>
+                  )}
                 </div>
-                <div className="info-item">
-                  <label>Course</label>
-                  <div className="info-value">{course}</div>
-                </div>
-                <div className="info-item">
-                  <label>Student Number</label>
-                  <div className="info-value">{studentNumber}</div>
-                </div>
-                <div className="info-item">
-                  <label>Semester</label>
-                  <div className="info-value">{semester}</div>
-                </div>
-              </div>
-            </section>
+              ))}
+            </div>
+
+            {editableField && (
+              <button className="save-btn" onClick={handleSave}>
+                Save Changes
+              </button>
+            )}
           </div>
         </main>
       </div>

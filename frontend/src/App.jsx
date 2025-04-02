@@ -19,6 +19,9 @@ import Changepassword from "./pages/Changepassword";
 import Preferences from "./pages/Preferences";
 import Help from "./pages/Help";
 import Deleteaccount from "./pages/Deleteaccount";
+import StudentsProfile from "./pages/StudentsProfile";
+import Sidebar1 from "./pages/Sidebar1";
+import Sidebar from "./pages/sidebar";
 
 function App() {
   return (
@@ -28,6 +31,9 @@ function App() {
           {/* Routes from both branches */}
           
           <Route path="/studentdashboard" element={<StudentDashboard />} />
+          <Route path="/StudentsProfile" element={<StudentsProfile />} />
+          <Route path="/sidebar1" element={<Sidebar1 />} />
+          <Route path="/sidebar" element={<Sidebar />} />
           
           <Route path="/createissueform" element={<CreateIssueForm />} />
           <Route path="/notificationsuccess" element={<NotificationSuccess />} />

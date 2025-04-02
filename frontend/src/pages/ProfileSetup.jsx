@@ -1,14 +1,8 @@
-import React, { useState } from 'react';
-<<<<<<< HEAD
-import name from '../assets/name.png'; 
-import makererelogo from '../assets/makererelogo.png'; 
-import './ProfileSetup.css'; 
-=======
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import libraryImage from '../assets/student.png'; // Import the library image (you'll need to add this)
 import name from '../assets/name.png'; // Import the name image
 import './ProfileSetup.css';
->>>>>>> origin/main
 
 const ProfileSetup = () => {
   const [formData, setFormData] = useState({

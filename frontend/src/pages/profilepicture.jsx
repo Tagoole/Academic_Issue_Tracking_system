@@ -1,16 +1,7 @@
-<<<<<<< HEAD
 import React, { useState } from 'react';
 import makererelogo from '../assets/makererelogo.png'; 
-import Vector from '../assets/Vector.png'; 
-import './profilepicture.css'; 
-=======
-import React, { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import libraryImage from '../assets/student.png'; // Import the library image (you'll need to add this)
-import uploadIcon from '../assets/upload.png'; // Import the upload icon
+import Vector from '../assets/upload.png'; 
 import './profilepicture.css';
->>>>>>> origin/main
-
 const ProfilePictureSetup = () => {
   const navigate = useNavigate();
   const Back = () => {

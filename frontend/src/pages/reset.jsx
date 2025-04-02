@@ -11,12 +11,8 @@ const ResetPassword = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-<<<<<<< HEAD
-    console.log('Email submitted:', email);
-=======
     // Handle password reset logic here
     console.log('Password reset requested for:', email);
->>>>>>> origin/main
   };
 
   return (
