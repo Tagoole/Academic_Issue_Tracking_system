@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import makerereLogo from '../assets/makererelogo.png';
-import hidden from '../assets/hidden.png'
+import hidden from '../assets/hidden.png';
 import './Changepassword.css';
+import NavBar from './Navbar'; // Implemented NavBar
+import backgroundimage from '../assets/backgroundimage.jpg'; // Background image
 
 function Changepassword() {
   const [oldPassword, setOldPassword] = useState('');
@@ -12,104 +14,116 @@ function Changepassword() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   return (
-    <div className="settings-container">
-      <div className="settings-sidebar">
-        <div className="university-logo-sidebar">
-          <img src={makerereLogo} alt="University Logo" className="logo-sidebar" />
+    <div
+      style={{
+        backgroundImage: `url(${backgroundimage})`, // Set the background image
+        backgroundSize: 'cover', // Ensure the image covers the entire screen
+        backgroundPosition: 'center', // Center the image
+        backgroundRepeat: 'no-repeat', // Prevent the image from repeating
+        minHeight: '100vh', // Ensure the background covers the full viewport height
+        width: '100%', // Ensure the background covers the full viewport width
+      }}
+    >
+      {/* Add the NavBar */}
+      <NavBar />
+
+      {/* Main content container */}
+      <div className="settings-container">
+        <div className="settings-sidebar">
+          <div className="university-logo-sidebar">
+            <img src={makerereLogo} alt="University Logo" className="logo-sidebar" />
+          </div>
+
+          {/* Sidebar menu items */}
+          <a href="/changepassword" className="menu-item active">
+            Change Password
+            <svg viewBox="0 0 24 24" className="arrow-icon">
+              <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+            </svg>
+          </a>
+
+          <a href="/preferences" className="menu-item">
+            Preferences
+            <svg viewBox="0 0 24 24" className="arrow-icon">
+              <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+            </svg>
+          </a>
+
+          <a href="/support" className="menu-item">
+            Support/Help
+            <svg viewBox="0 0 24 24" className="arrow-icon">
+              <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+            </svg>
+          </a>
+
+          <a href="/delete-account" className="delete-account">
+            Delete Account
+            <svg viewBox="0 0 24 24" className="arrow-icon">
+              <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+            </svg>
+          </a>
         </div>
 
-        {/* Change Password */}
-        <a href="/changepassword" className="menu-item active">
-          Change Password
-          <svg viewBox="0 0 24 24" className="arrow-icon">
-            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
-          </svg>
-        </a>
+        <div className="main-content">
+          <div className="password-change-form">
+            <h2>Settings</h2>
 
-        {/* Preferences */}
-        <a href="/preferences" className="menu-item">
-          Preferences
-          <svg viewBox="0 0 24 24" className="arrow-icon">
-            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
-          </svg>
-        </a>
-
-        {/* Support/Help */}
-        <a href="/support" className="menu-item">
-          Support/Help
-          <svg viewBox="0 0 24 24" className="arrow-icon">
-            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
-          </svg>
-        </a>
-
-        {/* Delete Account */}
-        <a href="/delete-account" className="delete-account">
-          Delete Account
-          <svg viewBox="0 0 24 24" className="arrow-icon">
-            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
-          </svg>
-        </a>
-      </div>
-
-      <div className="main-content">
-        <div className="password-change-form">
-          <h2>Settings</h2>
-
-          <div className="form-group">
-            <label>Old Password</label>
-            <div className="input-wrapper">
-              <input
-                type={showOldPassword ? 'text' : 'password'}
-                value={oldPassword}
-                onChange={(e) => setOldPassword(e.target.value)}
-                placeholder="Enter your Old password"
-              />
-              <button
-                className="toggle-password"
-                onClick={() => setShowOldPassword(!showOldPassword)}
-              >
-                <img src={hidden} alt="Toggle visibility" />
-              </button>
+            <div className="form-group">
+              <label>Old Password</label>
+              <div className="input-wrapper">
+                <input
+                  type={showOldPassword ? 'text' : 'password'}
+                  value={oldPassword}
+                  onChange={(e) => setOldPassword(e.target.value)}
+                  placeholder="Enter Old password"
+                />
+                <button
+                  className="toggle-password"
+                  onClick={() => setShowOldPassword(!showOldPassword)}
+                >
+                  <img src={hidden} alt="Toggle visibility" />
+                </button>
+              </div>
             </div>
-          </div>
 
-          <div className="form-group">
-            <label>New Password</label>
-            <div className="input-wrapper">
-              <input
-                type={showNewPassword ? 'text' : 'password'}
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="Enter your New password"
-              />
-              <button
-                className="toggle-password"
-                onClick={() => setShowNewPassword(!showNewPassword)}
-              >
-                <img src={hidden} alt="Toggle visibility" />
-              </button>
+            <div className="form-group">
+              <label>New Password</label>
+              <div className="input-wrapper">
+                <input
+                  type={showNewPassword ? 'text' : 'password'}
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Enter New password"
+                />
+                <button
+                  className="toggle-password"
+                  onClick={() => setShowNewPassword(!showNewPassword)}
+                >
+                  <img src={hidden} alt="Toggle visibility" />
+                </button>
+              </div>
             </div>
-          </div>
 
-          <div className="form-group">
-            <label>Confirm New Password</label>
-            <div className="input-wrapper">
-              <input
-                type={showConfirmPassword ? 'text' : 'password'}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Confirm your New password"
-              />
-              <button
-                className="toggle-password"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              >
-                <img src={hidden} alt="Toggle visibility" />
-              </button>
+            <div className="form-group">
+              <label>Confirm New Password</label>
+              <div className="input-wrapper">
+                <input
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Confirm New password"
+                />
+                <button
+                  className="toggle-password"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  <img src={hidden} alt="Toggle visibility" />
+                </button>
+              </div>
             </div>
-          </div>
 
-          <button className="save-changes">Save Changes</button>
+            <button className="save-changes">Save Changes</button>
+          </div>
         </div>
       </div>
     </div>
