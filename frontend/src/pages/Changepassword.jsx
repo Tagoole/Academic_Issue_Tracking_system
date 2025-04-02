@@ -12,6 +12,21 @@ function Changepassword() {
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false); // State to show confirmation modal
+
+  const handleSaveChanges = () => {
+    setShowConfirmation(true); // Show confirmation modal
+  };
+
+  const confirmChangePassword = () => {
+    setShowConfirmation(false); // Close confirmation modal
+    // Add logic to handle password change here
+    console.log('Password changed successfully!');
+  };
+
+  const cancelChangePassword = () => {
+    setShowConfirmation(false); // Close confirmation modal
+  };
 
   return (
     <div
@@ -197,12 +212,31 @@ function Changepassword() {
                 cursor: 'pointer',
                 transition: 'all 0.3s ease',
               }}
+              onClick={handleSaveChanges}
             >
               Save Changes
             </button>
           </div>
         </div>
       </div>
+
+      {/* Confirmation Modal */}
+      {showConfirmation && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Confirm Password Change</h2>
+            <p>Are you sure you want to change your password?</p>
+            <div className="modal-buttons">
+              <button className="cancel-btn" onClick={cancelChangePassword}>
+                Cancel
+              </button>
+              <button className="confirm-btn" onClick={confirmChangePassword}>
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
