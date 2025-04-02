@@ -3,7 +3,7 @@ import makerereLogo from '../assets/makererelogo.png';
 import hidden from '../assets/hidden.png';
 import './Changepassword.css';
 import NavBar from './Navbar'; // Implemented NavBar
-import backgroundimage from '../assets/backgroundimage.jpg'; // Background image
+import backgroundimage from '../assets/pexels-olia-danilevich-5088017.jpg'; // Updated background image
 
 function Changepassword() {
   const [oldPassword, setOldPassword] = useState('');
@@ -16,7 +16,7 @@ function Changepassword() {
   return (
     <div
       style={{
-        backgroundImage: `url(${backgroundimage})`, // Set the background image
+        backgroundImage: `url(${backgroundimage})`, // Set the updated background image
         backgroundSize: 'cover', // Ensure the image covers the entire screen
         backgroundPosition: 'center', // Center the image
         backgroundRepeat: 'no-repeat', // Prevent the image from repeating
