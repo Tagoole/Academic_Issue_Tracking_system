@@ -31,7 +31,6 @@ function App() {
           <Route path="/studentdashboard" element={<StudentDashboard />} />
           
           <Route path="/createissueform" element={<CreateIssueForm />} />
-          
           <Route path="/notificationsuccess" element={<NotificationSuccess />} />
           <Route path="/messages" element={<Messages />} />
           <Route path="/new-chat" element={<Newchat />} />
