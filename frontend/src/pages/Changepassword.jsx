@@ -14,6 +14,7 @@ function Changepassword() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false); // State to show confirmation modal
   const [successMessage, setSuccessMessage] = useState(false); // State to show success message
+  const [passwordError, setPasswordError] = useState(''); // State to show password error
 
   const validatePassword = (password) => {
     if (password.length < 6) {
@@ -59,6 +60,18 @@ function Changepassword() {
 
   const cancelChangePassword = () => {
     setShowConfirmation(false); // Close confirmation modal
+  };
+
+  const handleNewPasswordChange = (e) => {
+    const newPass = e.target.value;
+    setNewPassword(newPass);
+    
+    // Only validate if there's something to validate
+    if (newPass) {
+      setPasswordError(validatePassword(newPass));
+    } else {
+      setPasswordError('');
+    }
   };
 
   return (
@@ -184,7 +197,7 @@ function Changepassword() {
                 <input
                   type={showNewPassword ? 'text' : 'password'}
                   value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
+                  onChange={handleNewPasswordChange}
                   placeholder="Enter New password"
                   style={{
                     background: 'transparent',
@@ -198,6 +211,11 @@ function Changepassword() {
                   <img src={hidden} alt="Toggle visibility" />
                 </button>
               </div>
+              {passwordError && (
+                <div className="error-message" style={{ color: '#ff3333', fontSize: '0.8rem', marginTop: '5px' }}>
+                  {passwordError}
+                </div>
+              )}
             </div>
 
             <div className="form-group">
@@ -229,6 +247,11 @@ function Changepassword() {
                   <img src={hidden} alt="Toggle visibility" />
                 </button>
               </div>
+              {newPassword && confirmPassword && newPassword !== confirmPassword && (
+                <div className="error-message" style={{ color: '#ff3333', fontSize: '0.8rem', marginTop: '5px' }}>
+                  Passwords don't match
+                </div>
+              )}
             </div>
 
             <button
