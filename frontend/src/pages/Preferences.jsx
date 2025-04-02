@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import makerereLogo from '../assets/makererelogo.png';
 import './Preferences.css';
 import NavBar from './Navbar';
+import backgroundimage from '../assets/backgroundimage.jpg'; // Background image
 
 const Preferences = () => {
   const [inAppMessaging, setInAppMessaging] = useState(true);
@@ -16,7 +17,16 @@ const Preferences = () => {
   };
 
   return (
-    <div className="settings-container">
+    <div
+      className="settings-container"
+      style={{
+        backgroundImage: `url(${backgroundimage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        minHeight: '100vh',
+      }}
+    >
       {/* NavBar */}
       <NavBar />
 
