@@ -5,22 +5,22 @@ import './Deleteaccount.css';
 import NavBar from './Navbar';
 import backgroundimage from '../assets/backgroundimage.jpg'; // Background image
 
+const DeleteAccount = () => {
+  const [showModal, setShowModal] = useState(false);
 
-const Deleteaccount = () => {
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
-
-  const handleDeleteAccount = () => {
-    setShowConfirmModal(true);
+  const handleDeleteClick = () => {
+    setShowModal(true); // Show the confirmation modal
   };
 
-  const confirmDeleteAccount = () => {
-    // Implement actual account deletion logic here
+  const handleConfirmDelete = () => {
+    setShowModal(false); // Close the modal
+    alert('Your account has been deleted successfully!');
+    // Add logic to delete the account here (e.g., API call)
     console.log('Account deleted');
-    setShowConfirmModal(false);
   };
 
-  const cancelDeleteAccount = () => {
-    setShowConfirmModal(false);
+  const handleCancelDelete = () => {
+    setShowModal(false); // Close the modal
   };
 
   return (
@@ -77,35 +77,35 @@ const Deleteaccount = () => {
         <div className="delete-account-title">Delete Account</div>
 
         <div className="delete-account-description">
-          You are about to delete your account permanently.
+          Are you sure you want to delete your account? This action cannot be undone.
         </div>
 
         <div className="delete-account-button-container">
           <button 
             className="delete-account-button"
-            onClick={handleDeleteAccount}
+            onClick={handleDeleteClick}
           >
             Delete Account
           </button>
         </div>
 
-        {showConfirmModal && (
+        {showModal && (
           <div className="modal-overlay">
             <div className="modal-content">
-              <h2>Are you absolutely sure?</h2>
-              <p>This action cannot be undone. This will permanently delete your account.</p>
+              <h2>Confirm Deletion</h2>
+              <p>Are you sure you want to delete your account? This action is irreversible.</p>
               <div className="modal-buttons">
                 <button 
                   className="cancel-btn"
-                  onClick={cancelDeleteAccount}
+                  onClick={handleCancelDelete}
                 >
                   Cancel
                 </button>
                 <button 
                   className="confirm-delete-btn"
-                  onClick={confirmDeleteAccount}
+                  onClick={handleConfirmDelete}
                 >
-                  I understand, delete my account
+                  Confirm
                 </button>
               </div>
             </div>
@@ -116,4 +116,4 @@ const Deleteaccount = () => {
   );
 };
 
-export default Deleteaccount;
+export default DeleteAccount;
