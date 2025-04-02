@@ -146,3 +146,23 @@ input:focus, select:focus {
 .bottom-text a:hover {
     text-decoration: underline;
 }
+
+.form-group {
+    margin-bottom: 15px;
+    width: 100%;
+    position: relative;
+}
+
+.input-container {
+    position: relative;
+    border: 2px solid green;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid green;
+    border-radius: 5px;
+    background-color: #e0ffe0;
+    font-size: 16px;
+}

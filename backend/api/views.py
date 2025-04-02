@@ -210,6 +210,7 @@ class Student_Registration(APIView):
     permission_classes = [AllowAny]
     def post(self, request):
         data=request.data
+        print(data)
         serializer = Student_RegisterSerializer(data=data)
         if serializer.is_valid():
             user = serializer.save()  # Save user using serializer
@@ -246,6 +247,7 @@ class Student_Registration(APIView):
             )
 
             email.send(fail_silently=False)
+            print(serializer.validated_data)
             return Response({
                     "message": "User Created Successfully, Token created and email sent!",
                     "user": {

@@ -8,6 +8,8 @@ import API from '../api.js';
 
 const SignUp = () => {
     const [formData, setFormData] = useState({
+        first_name: '',
+        last_name: '',
         username: '',
         email: '',
         password: '',
@@ -35,14 +37,18 @@ const SignUp = () => {
             return;
         }
         setError(null);
-        
+        console.log("Form Data Submitted:", formData);
+        console.log("Form Data Submitted:", JSON.stringify(formData, null, 2));
+    
         try {
-            const response = await fetch(`${API}/register_student_user/`, {
+            const response = await fetch(`${API}register_student_user/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
+                    first_name: formData.first_name,
+                    last_name: formData.last_name,
                     username: formData.username,
                     email: formData.email,
                     password: formData.password,
@@ -52,7 +58,7 @@ const SignUp = () => {
 
             const data = await response.json();
             if (response.ok) {
-                alert("User registered successfully! Check your email for verification.");
+                alert("User  registered successfully! Check your email for verification.");
             } else {
                 setError(data.error || "Something went wrong");
             }
@@ -68,10 +74,22 @@ const SignUp = () => {
                 <h2>Please fill up this form</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
-                        <label htmlFor="username">Full Name</label>
+                        <label htmlFor="first_name">First Name</label>
                         <div className="input-container">
-                            <input type="text" id="username" name="username" value={formData.username} onChange={handleChange} placeholder="Enter your Full name" required />
-                            <img src={userIcon} alt="User Icon" className="icon" />
+                            <input type="text" id="first_name" name="first_name" value={formData.first_name} onChange={handleChange} placeholder="Enter your First Name" required />
+                        </div>
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="last_name">Last Name</label>
+                        <div className="input-container">
+                            <input type="text" id="last_name" name="last_name" value={formData.last_name} onChange={handleChange} placeholder="Enter your Last Name" required />
+                        </div>
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="username">Username</label>
+                        <div className="input-container">
+                            <input type="text" id="username" name="username" value={formData.username} onChange={handleChange} placeholder="Enter your Username" required />
+                            <img src={userIcon} alt="User  Icon" className="icon" />
                         </div>
                     </div>
                     <div className="form-group">
