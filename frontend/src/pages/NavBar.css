@@ -1,0 +1,164 @@
+/* Navbar container */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+
+  width: 1250px; 
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff; /* White background */
+  padding: 10px 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  position: sticky;
+  top: 0;
+  z-index: 1000; /* Ensure the navbar stays on top */
+
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 1000;
+}
+
+/* Left section: Profile */
+.navbar-left {
+  display: flex;
+  align-items: center;
+}
+
+.profile-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+}
+
+.profile-image {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+
+  margin-right: 10px;
+}
+
+.profile-name {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333333;
+
+}
+
+.profile-name {
+  font-weight: bold;
+}
+
+/* Center section: Search bar */
+.search-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.search-form {
+  width: 100%;
+  max-width: 400px;
+  max-width: 500px;
+  margin: 0 20px;
+}
+
+.search-wrapper {
+  position: relative;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 15px;
+
+  border: 1px solid #cccccc;
+  border-radius: 20px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.search-input:focus {
+  border-color: #007bff; 
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.icon-container {
+  cursor: pointer;
+
+  position: relative;
+}
+
+.icon {
+  width: 70px;
+  height: 70px;
+}
+
+
+.icon-container:not(:last-child) {
+  margin-right: 40px; 
+}
+
+.icon-container:hover .icon {
+  transform: scale(1.1); 
+  transition: transform 0.2s;
+
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+
+}
+
+.app-title {
+  font-size: 18px;
+  font-weight: bold;
+
+  color: #333333;
+  margin-right: 20px;
+}
+
+.logo-image {
+  width: 50px;
+  height: auto;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .search-container {
+    display: none; 
+  }
+
+  .app-title {
+    font-size: 16px;
+  }
+
+  .profile-name {
+    display: none; /* Hide profile name on smaller screens */
+  
+  margin-left: 10px;
+}
+
+.logo-image {
+  width: 40px;
+  height: 40px;
+  margin-left: 10px;
+}
+}
