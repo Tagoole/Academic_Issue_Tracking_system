@@ -2,7 +2,7 @@ import React from 'react';
 import makerereLogo from '../assets/makererelogo.png';
 import './Help.css'; 
 import NavBar from './Navbar';
-import backgroundimage from '../assets/backgroundimage.jpg'; // Background image
+import backgroundimage from '../assets/pexels-olia-danilevich-5088017.jpg'; // Background image
 
 const Help = () => {
   const handleEmailCopy = () => {
