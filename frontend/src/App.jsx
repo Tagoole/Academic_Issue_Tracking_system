@@ -19,6 +19,7 @@ import Changepassword from "./pages/Changepassword";
 import Preferences from "./pages/Preferences";
 import Help from "./pages/Help";
 import Deleteaccount from "./pages/Deleteaccount";
+import Studentsprofile from "./pages/Studentsprofile";
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
           <Route path="/Preferences"element={<Preferences/>}/>
           <Route path="/Help"element={<Help/>}/>
           <Route path="/Deleteaccount"element={<Deleteaccount/>}/>
+          <Route path="/Studentsprofile"element={<Studentsprofile/>}/>
           
 
           
