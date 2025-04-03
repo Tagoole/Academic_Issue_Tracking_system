@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
-import NavBar from './Navbar';
+import NavBar from './NavBar';
 import SideBar from './Sidebar1';
 import './Issues.css';
 import backgroundimage from '../assets/pexels-olia-danilevich-5088017.jpg'; // Implementing the unused import
