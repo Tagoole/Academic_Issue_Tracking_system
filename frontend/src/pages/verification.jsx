@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import API from '../api'; // Import API instance
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import API from '../api.js'; // Import API instance
 import emailIcon from '../assets/mailbulk.png';
 import helpIcon from '../assets/help-icon.png';
 import './verification.css';
@@ -14,19 +14,30 @@ const EmailVerification = () => {
   const [countdown, setCountdown] = useState(0);
   const inputRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    const storedEmail = localStorage.getItem('userEmail');
-    if (storedEmail) {
-      setEmail(storedEmail);
+    // First check if email was passed via location state (from signup redirect)
+    if (location.state && location.state.email) {
+      setEmail(location.state.email);
+      // Optionally store in localStorage as backup
+      localStorage.setItem('userEmail', location.state.email);
     } else {
-      const urlParams = new URLSearchParams(window.location.search);
-      const emailParam = urlParams.get('email');
-      if (emailParam) {
-        setEmail(emailParam);
+      // Fall back to localStorage or URL parameter
+      const storedEmail = localStorage.getItem('userEmail');
+      if (storedEmail) {
+        setEmail(storedEmail);
+      } else {
+        const urlParams = new URLSearchParams(window.location.search);
+        const emailParam = urlParams.get('email');
+        if (emailParam) {
+          setEmail(emailParam);
+          // Store in localStorage for persistence
+          localStorage.setItem('userEmail', emailParam);
+        }
       }
     }
-  }, []);
+  }, [location]);
 
   const isCodeComplete = verificationCode.every(digit => digit !== '');
 
@@ -55,21 +66,27 @@ const EmailVerification = () => {
     const code = verificationCode.join('');
 
     try {
-      const response = await API.post('/verify_email/', { email, code });
+      // Make sure API endpoint starts without a slash if your base URL already has one
+      const response = await API.post('verify_email/', { 
+        email, 
+        code 
+      });
       
       console.log('Verification successful:', response.data);
-      setResendStatus('Email verified successfully!');
+      setResendStatus('Email verified successfully! Redirecting to sign in...');
 
+      // Clear the stored email from localStorage after successful verification
       setTimeout(() => {
+        localStorage.removeItem('userEmail');
         navigate('/signin');
       }, 2000);
       
-    } catch (error) {
-      console.error('Verification error:', error);
+    } catch (err) {
+      console.error('Verification error:', err);
       
-      if (error.response) {
-        setError(error.response.data.error || 'Verification failed. Please try again.');
-      } else if (error.request) {
+      if (err.response) {
+        setError(err.response.data.error || 'Verification failed. Please try again.');
+      } else if (err.request) {
         setError('No response from server. Please check your connection.');
       } else {
         setError('Error submitting verification code. Please try again.');
@@ -79,7 +96,7 @@ const EmailVerification = () => {
 
   const handleResendCode = async () => {
     try {
-      const response = await API.post('/resend_verification_code/', { email });
+      const response = await API.post('resend_verification_code/', { email });
 
       setResendStatus('Verification code resent! Please check your email.');
       setResendDisabled(true);
@@ -87,12 +104,12 @@ const EmailVerification = () => {
 
       if (error) setError('');
       
-    } catch (error) {
-      console.error('Error resending code:', error);
+    } catch (err) {
+      console.error('Error resending code:', err);
       
-      if (error.response) {
-        setError(error.response.data.Error || 'Failed to resend code. Please try again.');
-      } else if (error.request) {
+      if (err.response) {
+        setError(err.response.data.Error || 'Failed to resend code. Please try again.');
+      } else if (err.request) {
         setError('No response from server. Please check your connection.');
       } else {
         setError('Error submitting request. Please try again.');
