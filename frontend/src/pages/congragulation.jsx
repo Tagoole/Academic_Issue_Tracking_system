@@ -28,7 +28,7 @@ const  Congragulation = () => {
       <div className="main-content">
         <p className="description">Track and manage your academic issues.</p>
         <div className="status-message">SUCCESS!</div>
-      </div>
+      </div> 
       
       <div className="navigation-buttons">
         <button 

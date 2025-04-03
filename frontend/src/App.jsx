@@ -17,9 +17,15 @@ import Changepassword from "./pages/Changepassword";
 import Preferences from "./pages/Preferences";
 import Help from "./pages/Help";
 import Deleteaccount from "./pages/Deleteaccount";
+<<<<<<< HEAD
 import Issues from "./pages/Issues";
 import StudentDashboard from "./pages/StudentDashboard";
 import Signup from "./pages/signup";
+=======
+import Studentsprofile from "./pages/Studentsprofile";
+import Notifications from "./pages/Notifications";
+
+>>>>>>> julianah
 
 function App() {
   return (
@@ -46,8 +52,16 @@ function App() {
           <Route path="/Preferences"element={<Preferences/>}/>
           <Route path="/Help"element={<Help/>}/>
           <Route path="/Deleteaccount"element={<Deleteaccount/>}/>
+<<<<<<< HEAD
           <Route path="/studentdashboard"element={<StudentDashboard/>}/>
           <Route path="signup" element={<Signup/>}/>
+=======
+          <Route path="/Studentsprofile"element={<Studentsprofile/>}/>
+          <Route path="/Notifications" element={<Notifications />} />
+       
+          {/* Add more routes as needed */}
+          
+>>>>>>> julianah
 
           
         </Routes>
