@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-79&fi0tp(_k99tyzr3)t0p*zh^jix&=@7t*_hmrxqbw^6z2%2@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1','deployappd-947412c051a5.herokuapp.com']
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
