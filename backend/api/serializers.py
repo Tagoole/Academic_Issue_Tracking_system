@@ -2,7 +2,8 @@ from .models import *
 from rest_framework import serializers
 from api import models
 from django.contrib.auth.models import Group
-
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -39,6 +40,17 @@ class IssueSerializer(serializers.ModelSerializer):
         model = Issue
         fields = ['id','student','issue_type','course_unit','description','image','status','created_at','updated_at','registrar','year_of_study','semester']
 
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def get_token(self, user):
+        token = super().get_token(user)
+        
+        # Add custom claims
+        token['email'] = user.email  
+        token['role'] = user.role  
+        token['username'] = user.username
+
+        return token
 class Student_RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser

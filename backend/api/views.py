@@ -10,6 +10,11 @@ from django.core.mail import send_mail,EmailMessage
 from django.conf import settings
 from random import randint
 from django.db.models import Q
+from .serializers import CustomTokenObtainPairSerializer
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+
 
 class IssueViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated,IsStudent]
