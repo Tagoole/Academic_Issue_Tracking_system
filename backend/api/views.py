@@ -213,6 +213,7 @@ class Student_Registration(APIView):
         serializer = Student_RegisterSerializer(data=data)
         if serializer.is_valid():
             user = serializer.save()  # Save user using serializer
+            print(serializer.validated_data)
             '''Creating and saving the verification code object..'''
             
             verification_code = randint(10000,99999)

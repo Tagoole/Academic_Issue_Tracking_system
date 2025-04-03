@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import NotificationSuccess from "./pages/NotificationSuccess";
 import Messages from "./pages/Messages";
-//import NewIssue from "./pages/New-Issue";
+import NewIssue from "./pages/New-issue";
 import Signin from "./pages/Signin";
 import EmailVerification from "./pages/verification";
 import ResetPassword from "./pages/reset";
@@ -38,7 +38,7 @@ function App() {
           <Route path="/profilesetup" element={<ProfileSetup />} />
           <Route path="/profilepicture" element={<ProfilePictureSetup />} />
           <Route path="/congragulation" element={<Congragulation />} />
-          {/*<Route path="/new-issue" element={<NewIssue />} />*/}
+          {<Route path="/new-issue" element={<NewIssue />} />}
           <Route path="/RegistraDashboard"element={<RegistraDashboard/>}/>
           {<Route path ="/issuemanagement"element={<IssueManagement/>}/>}
           <Route path ="/view-details"element={<Viewdetails/>}/>

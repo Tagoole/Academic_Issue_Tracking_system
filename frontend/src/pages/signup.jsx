@@ -4,10 +4,14 @@ import userIcon from '../assets/user.png';
 import hiddenIcon from '../assets/hidden.png';
 import visibleIcon from '../assets/visible.png';
 import mailIcon from '../assets/mail.png';
-import API from '../api.js'; 
+
+// Updated API URL
+const API_URL = 'http://127.0.0.1:8000/api';
 
 const SignUp = () => {
     const [formData, setFormData] = useState({
+        first_name:'a',
+        last_name:'a',
         username: '',
         email: '',
         password: '',
@@ -19,6 +23,7 @@ const SignUp = () => {
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
     const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(null);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -35,9 +40,13 @@ const SignUp = () => {
             return;
         }
         setError(null);
+        setSuccess(null);
+        
+        // Add this line here
+        console.log("Submitting form data:", { username: formData.username, email: formData.email, password: formData.password, role: formData.role });
         
         try {
-            const response = await fetch(`${API}/register_student_user/`, {
+            const response = await fetch(`${API_URL}/register_student_user/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -52,12 +61,22 @@ const SignUp = () => {
 
             const data = await response.json();
             if (response.ok) {
-                alert("User registered successfully! Check your email for verification.");
+                setSuccess("User registered successfully! Check your email for verification.");
+                // Reset form after successful registration
+                setFormData({
+                    username: '',
+                    email: '',
+                    password: '',
+                    confirmPassword: '',
+                    role: '',
+                    agreeToTerms: false,
+                });
             } else {
-                setError(data.error || "Something went wrong");
+                setError(data.error || "Registration failed. Please try again.");
             }
         } catch (err) {
-            setError("Failed to connect to server");
+            console.error("API Error:", err);
+            setError("Failed to connect to server. Please check your internet connection.");
         }
     };
 
@@ -111,6 +130,7 @@ const SignUp = () => {
                         <label htmlFor="terms">I have read and understood the ATIS terms and conditions.</label>
                     </div>
                     {error && <p className="error-message">{error}</p>}
+                    {success && <p className="success-message">{success}</p>}
                     <button type="submit" className="sign-up-button">Sign Up</button>
                 </form>
             </div>
