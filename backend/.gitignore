@@ -26,7 +26,6 @@ __pycache__/
 
 # Build files
 dist/
-build/
 
 db.sqlite3
 
@@ -38,7 +37,6 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-build/
 develop-eggs/
 dist/
 downloads/
