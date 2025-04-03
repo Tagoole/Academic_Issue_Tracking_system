@@ -67,7 +67,7 @@ const EmailVerification = () => {
 
     try {
       // Make sure API endpoint starts without a slash if your base URL already has one
-      const response = await API.post('verify_email/', { 
+      const response = await API.post('/api/verify_email/', { 
         email, 
         code 
       });
@@ -96,7 +96,7 @@ const EmailVerification = () => {
 
   const handleResendCode = async () => {
     try {
-      const response = await API.post('resend_verification_code/', { email });
+      const response = await API.post('/api/resend_verification_code/', { email });
 
       setResendStatus('Verification code resent! Please check your email.');
       setResendDisabled(true);

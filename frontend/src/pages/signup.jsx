@@ -91,7 +91,7 @@ const SignUp = () => {
 
         try {
             // Use a single registration endpoint
-            const endpoint = 'register_student_user/';
+            const endpoint = '/api/register_student_user/';
 
             // Create the data object to be sent
             const registrationData = {

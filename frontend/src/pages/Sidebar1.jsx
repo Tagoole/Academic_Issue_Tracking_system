@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom'; 
+import { Link, useNavigate } from 'react-router-dom';
 import './Sidebar1.css';
 import dashboardIcon from "../assets/dashboard.png";
 import issueIcon from "../assets/issue.png";
@@ -9,6 +9,22 @@ import logoutIcon from "../assets/logout.png";
 import helpIcon from "../assets/help.png";
 
 const Sidebar1 = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = (e) => {
+    e.preventDefault(); // Prevent default link behavior
+    
+    // Clear tokens from localStorage
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    
+    // Clear any session storage
+    sessionStorage.clear();
+    
+    // Redirect to signin page
+    navigate('/signin');
+  };
+
   return (
     <div className="sidebar">
       {/* Registra Dashboard Link */}
@@ -18,7 +34,7 @@ const Sidebar1 = () => {
           <span>StudentDashboard</span>
         </Link>
       </div>
-
+      
       {/* Issues Link */}
       <div className="sidebar-item">
         <Link to="/issues" className="sidebar-link">
@@ -26,7 +42,7 @@ const Sidebar1 = () => {
           <span>Issues</span>
         </Link>
       </div>
-
+      
       {/* Profile Link */}
       <div className="sidebar-item">
         <Link to="/studentprofile" className="sidebar-link">
@@ -34,7 +50,7 @@ const Sidebar1 = () => {
           <span>Studentprofile</span>
         </Link>
       </div>
-
+      
       {/* Settings Link */}
       <div className="sidebar-item">
         <Link to="/settings" className="sidebar-link">
@@ -42,7 +58,7 @@ const Sidebar1 = () => {
           <span>Settings</span>
         </Link>
       </div>
-
+      
       {/* Help and Support Link */}
       <div className="sidebar-item">
         <Link to="/help" className="sidebar-link">
@@ -50,13 +66,13 @@ const Sidebar1 = () => {
           <span>Help and Support</span>
         </Link>
       </div>
-
-      {/* Logout Link */}
+      
+      {/* Logout Link - Now with onClick handler */}
       <div className="sidebar-item logout">
-        <Link to="/logout" className="sidebar-link">
+        <a href="#" className="sidebar-link" onClick={handleLogout}>
           <img src={logoutIcon} alt="Logout Icon" className="sidebar-icon" />
           <span>Log Out</span>
-        </Link>
+        </a>
       </div>
     </div>
   );

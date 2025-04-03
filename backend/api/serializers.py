@@ -5,10 +5,10 @@ from django.contrib.auth.models import Group
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-class UserSerializer(serializers.ModelSerializer):
+class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['id','first_name','last_name','username','email','password','role']
+        fields = ['id','first_name','last_name','username','email','role']
         
 class Course_unitSerializer(serializers.ModelSerializer):
     class Meta:

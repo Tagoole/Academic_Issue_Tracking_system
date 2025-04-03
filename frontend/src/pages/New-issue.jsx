@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import API from '../api.js';
 import Navbar from './NavBar';
 import Sidebar from './Sidebar1';
 import './New-Issue.css';
@@ -7,57 +9,85 @@ import backgroundimage from "../assets/backgroundimage.jpg";
 
 const NewIssue = () => {
   const navigate = useNavigate();
-  const [registrarName, setRegistrarName] = useState('Nassuna Annet');
-  const [issueCategory, setIssueCategory] = useState('Missing marks');
-  const [issueDescription, setIssueDescription] = useState('I have no marks for OS test yet I merged 86% in it.');
-  const [attachment, setAttachment] = useState(null);
+  const [formData, setFormData] = useState({
+    student: '',
+    issue_type: 'Missing marks',
+    course_unit: 'CSS 11001 - Operating Systems',
+    description: '',
+    status: 'Pending',
+    registrar: '',
+    year_of_study: '3',
+    semester: '2'
+  });
+  const [image, setImage] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [registrars, setRegistrars] = useState([{ name: 'a1', id: 27 }]);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [registrarsRes, userRes] = await Promise.all([
+          axios.get(`${API}/get_academic_registrars/`),
+          axios.get(`${API}/current_user/`, {
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+          })
+        ]);
+
+        const registrarList = Array.isArray(registrarsRes.data) ? registrarsRes.data : [];
+        if (!registrarList.some(reg => reg.id === 27)) {
+          registrarList.push({ name: 'a1', id: 27 });
+        }
+        setRegistrars(registrarList);
+        setFormData(prev => ({ ...prev, registrar: registrarList[0]?.name || 'a1' }));
+
+        const user = userRes.data;
+        if (user) {
+          setCurrentUser(user);
+          setFormData(prev => ({ ...prev, student: user.full_name || user.username || '' }));
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setErrorMessage("Failed to load data. Please refresh the page.");
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    setAttachment(file ? URL.createObjectURL(file) : null);
+    setImage(e.target.files[0]);
   };
 
-  const handleRemoveAttachment = () => {
-    setAttachment(null);
-  };
+  const handleSubmit = async () => {
+    setErrorMessage('');
+    if (!formData.student || !formData.description || !formData.course_unit || !formData.registrar) {
+      setErrorMessage('All fields are required.');
+      return;
+    }
 
-  const handleSubmit = () => {
-    // Set submitting state to show loading indicator
     setIsSubmitting(true);
-    
-    // Create issue object with all form data
-    const issueData = {
-      registrarName,
-      issueCategory,
-      issueDescription,
-      attachment,
-      issueTitle: document.querySelector('input[defaultValue="Wrong Marks"]').value,
-      courseUnitCode: document.querySelector('input[defaultValue="CSS 11001"]').value,
-      courseUnitName: document.querySelector('input[defaultValue="Operating Systems"]').value,
-      lecturerName: document.querySelector('input[placeholder=""]').value,
-      studentName: document.querySelector('input[placeholder="Enter your full name"]').value,
-      status: "Submitted"
-    };
-    
-    // Simulate API call to send data to the registrar
-    setTimeout(() => {
-      console.log("Issue submitted to registrar:", issueData);
+    const apiFormData = new FormData();
+    Object.keys(formData).forEach(key => apiFormData.append(key, formData[key]));
+    if (image) apiFormData.append('image', image);
+
+    try {
+      const response = await axios.post(`${API}/api/issues/`, apiFormData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      console.log("Issue submitted successfully:", response.data);
       setIsSubmitting(false);
-      setSubmitStatus("success");
-      
-      // Navigate to success page after brief delay
-      setTimeout(() => {
-        navigate('/success', { 
-          state: { 
-            registrarName,
-            issueTitle: issueData.issueTitle,
-            courseUnitName: issueData.courseUnitName
-          } 
-        });
-      }, 1500);
-    }, 1500);
+      navigate('/success', { state: { registrarName: formData.registrar, issueType: formData.issue_type, courseUnit: formData.course_unit } });
+    } catch (error) {
+      setIsSubmitting(false);
+      console.error("Error submitting issue:", error);
+      setErrorMessage(error.response?.data?.detail || 'An error occurred. Please try again.');
+    }
   };
 
   return (
@@ -67,107 +97,38 @@ const NewIssue = () => {
         <Sidebar />
         <div className="issue-form-container">
           <h1>Create New Issue</h1>
-          <div className="form-row">
-            <div className="form-group">
-              <label>Registrar's Name</label>
-              <input 
-                type="text" 
-                value={registrarName} 
-                onChange={(e) => setRegistrarName(e.target.value)}
-              />
-              <span className="clear-icon">×</span>
-            </div>
-            <div className="form-group">
-              <label>Lecturer's Name</label>
-              <input type="text" placeholder="" />
-            </div>
+          {errorMessage && <div className="error-message">{errorMessage}</div>}
+          <div className="form-group">
+            <label>Registrar's Name<span>*</span></label>
+            <select name="registrar" value={formData.registrar} onChange={handleChange} required>
+              {registrars.map((reg, index) => <option key={index} value={reg.name}>{reg.name}</option>)}
+            </select>
           </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label>Issue Category</label>
-              <input 
-                type="text" 
-                value={issueCategory} 
-                onChange={(e) => setIssueCategory(e.target.value)}
-              />
-              <span className="clear-icon">×</span>
-            </div>
-            <div className="form-group">
-              <label>Student's Name</label>
-              <input type="text" placeholder="Enter your full name" />
-            </div>
+          <div className="form-group">
+            <label>Student's Name<span>*</span></label>
+            <input type="text" name="student" value={formData.student} onChange={handleChange} required />
           </div>
-
-          <div className="form-row">
-            <div className="form-group full-width">
-              <label>Issue Description</label>
-              <textarea 
-                value={issueDescription} 
-                onChange={(e) => setIssueDescription(e.target.value)}
-              />
-            </div>
+          <div className="form-group">
+            <label>Issue Type</label>
+            <select name="issue_type" value={formData.issue_type} onChange={handleChange}>
+              <option value="Missing marks">Missing marks</option>
+              <option value="Wrong marks">Wrong marks</option>
+              <option value="Registration issue">Registration issue</option>
+              <option value="Other">Other</option>
+            </select>
           </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label>Attachments</label>
-              <div className="attachment-area">
-                {attachment ? (
-                  <div className="attachment-preview">
-                    <img src={attachment} alt="Attachment" />
-                    <span className="clear-icon" onClick={handleRemoveAttachment}>×</span>
-                  </div>
-                ) : (
-                  <div className="attachment-placeholder">
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      onChange={handleFileUpload}
-                    />
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="form-group">
-              <label>Issue Title</label>
-              <input type="text" defaultValue="Wrong Marks" />
-            </div>
+          <div className="form-group">
+            <label>Issue Description<span>*</span></label>
+            <textarea name="description" value={formData.description} onChange={handleChange} required />
           </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label>Course Unit Code</label>
-              <input type="text" defaultValue="CSS 11001" />
-            </div>
-            <div className="form-group">
-              <label>Course Unit Name</label>
-              <input type="text" defaultValue="Operating Systems" />
-            </div>
+          <div className="form-group">
+            <label>Attachment</label>
+            <input type="file" accept="image/*" onChange={handleFileUpload} />
           </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label className='status'>Status</label>
-              <input type="text" defaultValue="Pending ......." />
-            </div>
-          </div>
-
-          {/* Submit Button Section */}
-          <div className="form-row submit-row">
-            <button 
-              className="submit-button" 
-              onClick={handleSubmit}
-              disabled={isSubmitting}
-            >
+          <div className="form-group">
+            <button onClick={handleSubmit} disabled={isSubmitting}>
               {isSubmitting ? 'Submitting...' : 'Submit Issue'}
             </button>
-            
-            {submitStatus === 'success' && (
-              <div className="submit-status success">
-                Issue successfully sent to {registrarName}!
-              </div>
-            )}
           </div>
         </div>
       </div>

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; 
-import NavBar from './Navbar';
+import NavBar from './NavBar';
 import SideBar from './Sidebar1';
 import './StudentDashboard.css'; 
-import backgroundimage from '../assets/pexels-olia-danilevich-5088017.jpg'; // Implementing the unused import
+import backgroundimage from '../assets/pexels-olia-danilevich-5088017.jpg';
 
 const StudentDashboard = () => {
   const [activeTab, setActiveTab] = useState('Pending');
@@ -23,14 +23,27 @@ const StudentDashboard = () => {
   );
 
   const handleNewIssueClick = () => {
-    navigate('/new-issue'); // Navigate to the new issue page
+    navigate('/new-issue');
+  };
+
+  // Implement logout functionality
+  const handleLogout = () => {
+    // Clear all tokens from localStorage
+    localStorage.removeItem('token'); // Remove the auth token
+    localStorage.removeItem('user'); // Remove user data if stored
+    
+    // You can also clear session storage if you're using it
+    sessionStorage.clear();
+    
+    // Redirect to signin page
+    navigate('/signin');
   };
 
   return (
     <div 
       className="dashboard-container"
       style={{
-        backgroundImage: `url(${backgroundimage})`, // Use the imported background image
+        backgroundImage: `url(${backgroundimage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -38,9 +51,9 @@ const StudentDashboard = () => {
         width:'1205px'
       }}
     >
-      <SideBar />
+      <SideBar onLogout={handleLogout} />
       <div className="dashboard-wrapper">
-        <NavBar />
+        <NavBar onLogout={handleLogout} />
         
         {/* Dashboard Panels */}
         <div className="dashboard-panels">

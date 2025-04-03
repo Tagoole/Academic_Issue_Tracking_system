@@ -37,7 +37,7 @@ const SignIn = () => {
     
     try {
       // Call the token endpoint
-      const response = await API.post('access_token/', {
+      const response = await API.post('/api/access_token/', {
         username,
         password
       });
