@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import NotificationSuccess from "./pages/NotificationSuccess";
 import Messages from "./pages/Messages";
+import SignUp from "./pages/signup";
 //import NewIssue from "./pages/New-Issue";
 import Signin from "./pages/Signin";
 import EmailVerification from "./pages/verification";
@@ -18,8 +19,9 @@ import Preferences from "./pages/Preferences";
 import Help from "./pages/Help";
 import Deleteaccount from "./pages/Deleteaccount";
 import StudentsProfile from "./pages/StudentsProfile";
-import Sidebar1 from "./pages/Sidebar1";
 import Sidebar from "./pages/Sidebar";
+import NavBar from "./pages/NavBar";
+
 
 function App() {
   return (
@@ -28,13 +30,14 @@ function App() {
         <Routes>
           
           
-          <Route path="/createissueform" element={<CreateIssueForm />} />
+          {/*<Route path="/createissueform" element={<CreateIssueForm />} />*/}
           <Route path="/notificationsuccess" element={<NotificationSuccess />} />
           <Route path="/messages" element={<Messages />} />
+          <Route path="/signup" element={<SignUp />} />
           <Route path="/signin" element={<Signin />} />
           <Route path="/verification" element={<EmailVerification />} />
           <Route path="/reset" element={<ResetPassword />} />
-          <Route path="/issues" element={<Issues />} />
+          {/*<Route path="/issues" element={<Issues />} />*/}
           <Route path="/profilesetup" element={<ProfileSetup />} />
           <Route path="/profilepicture" element={<ProfilePictureSetup />} />
           <Route path="/congragulation" element={<Congragulation />} />
@@ -46,6 +49,13 @@ function App() {
           <Route path="/Preferences"element={<Preferences/>}/>
           <Route path="/Help"element={<Help/>}/>
           <Route path="/Deleteaccount"element={<Deleteaccount/>}/>
+          <Route path="/StudentsProfile"element={<StudentsProfile/>}/>
+          <Route path="/sidebar1" element={<sidebar1 />} />
+          <Route path="/sidebar" element={<Sidebar />} />
+          <Route path="/NavBar" element={< NavBar/>} />
+
+          
+
           
 
           
