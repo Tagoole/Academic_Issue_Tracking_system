@@ -49,7 +49,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['email'] = user.email  
         token['role'] = user.role  
         token['username'] = user.username
-
+        print(token)
         return token
 class Student_RegisterSerializer(serializers.ModelSerializer):
     class Meta:

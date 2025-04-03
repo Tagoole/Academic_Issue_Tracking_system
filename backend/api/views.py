@@ -14,7 +14,17 @@ from .serializers import CustomTokenObtainPairSerializer
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
 
+        # Extract validated data
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)  # Validate data
+        validated_data = serializer.validated_data
+
+        print("Validated Data:", validated_data)  # Print validated data in the console
+
+        return response
 
 class IssueViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated,IsStudent]
