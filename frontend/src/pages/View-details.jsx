@@ -1,11 +1,40 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom'; // Added useParams to get the issue ID from URL
 import Navbar from './NavBar'; 
+import API from '../api.js'; // Assuming you have an API service similar to the signup component
 
 const Viewdetails = () => {
+  const { id } = useParams(); // Get the issue ID from URL params
   const [comment, setComment] = useState('');
   const [status, setStatus] = useState('In-Progress');
-  const navigate = useNavigate(); // Initialize useNavigate for navigation
+  const [isLoading, setIsLoading] = useState(false);
+  const [issueDetails, setIssueDetails] = useState({
+    id: '1',
+    studentName: 'Kibuka Mark',
+    issueTitle: 'Wrong Marks',
+    issueCategory: 'Missing Marks',
+    courseUnitCode: 'CS 1100',
+    courseUnitName: 'Software Development Project',
+    description: 'You recorded an 80% yet I got a 95% in the operating systems test.',
+    lecturerName: 'Dr. Sarah Johnson',
+    attachment: null
+  });
+  const navigate = useNavigate();
+
+  // Fetch issue details on component mount
+  useEffect(() => {
+    // This would be implemented to fetch actual data from your backend
+    // const fetchIssueDetails = async () => {
+    //   try {
+    //     const response = await API.get(`/api/issues/${id}`);
+    //     setIssueDetails(response.data);
+    //   } catch (error) {
+    //     console.error("Error fetching issue details:", error);
+    //   }
+    // };
+    
+    // fetchIssueDetails();
+  }, [id]);
 
   const backgroundStyle = {
     backgroundImage: "url('../assets/backgroundimage.jpg')", 
@@ -20,9 +49,32 @@ const Viewdetails = () => {
     navigate(-1); // Navigate back to the previous page
   };
 
-  const handleSaveClick = () => {
-    alert('Details saved successfully!');
-    navigate('/dashboard'); // Navigate to the dashboard or another page after saving
+  const handleSaveClick = async () => {
+    setIsLoading(true);
+    try {
+      // Prepare the update data
+      const updateData = {
+        id: issueDetails.id, // Include the issue ID
+        status: status,
+        registrarComment: comment
+        // Include any attachment data if implemented
+      };
+
+      // Make API call to update the issue
+      const response = await API.put(`/api/issues/${issueDetails.id}`, updateData);
+      
+      if (response.status === 200) {
+        alert('Issue details updated successfully!');
+        navigate('/dashboard'); // Navigate to the dashboard after saving
+      } else {
+        alert('Failed to update issue. Please try again.');
+      }
+    } catch (error) {
+      console.error("Error updating issue:", error);
+      alert('An error occurred while updating the issue.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -42,7 +94,7 @@ const Viewdetails = () => {
         <div style={{ display: 'flex', width: '100%', borderBottom: '1px solid #e0e0e0', alignItems: 'center', padding: '10px' }}>
           <div 
             style={{ display: 'flex', alignItems: 'center', borderRight: '1px solid #e0e0e0', paddingRight: '15px', cursor: 'pointer' }}
-            onClick={handleBackClick} // Navigate back when clicked
+            onClick={handleBackClick}
           >
             <span style={{ color: 'green', fontSize: '20px', marginRight: '5px' }}>←</span>
             <span style={{ fontWeight: 'bold', fontSize: '18px' }}>Back</span>
@@ -61,49 +113,57 @@ const Viewdetails = () => {
             <div style={{ marginBottom: '15px' }}>
               <div style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '5px' }}>Issue ID</div>
               <div style={{ border: '1px solid #ddd', borderRadius: '5px', padding: '10px', fontSize: '14px' }}>
-                1
+                {issueDetails.id}
               </div>
             </div>
 
             <div style={{ marginBottom: '15px' }}>
               <div style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '5px' }}>Student's Name</div>
               <div style={{ border: '1px solid #ddd', borderRadius: '5px', padding: '10px', fontSize: '14px' }}>
-                Kibuka Mark
+                {issueDetails.studentName}
+              </div>
+            </div>
+
+            {/* New field for Lecturer's Name */}
+            <div style={{ marginBottom: '15px' }}>
+              <div style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '5px' }}>Lecturer's Name</div>
+              <div style={{ border: '1px solid #ddd', borderRadius: '5px', padding: '10px', fontSize: '14px' }}>
+                {issueDetails.lecturerName}
               </div>
             </div>
 
             <div style={{ marginBottom: '15px' }}>
               <div style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '5px' }}>Issue Title</div>
               <div style={{ border: '1px solid #ddd', borderRadius: '5px', padding: '10px', fontSize: '14px' }}>
-                Wrong Marks
+                {issueDetails.issueTitle}
               </div>
             </div>
 
             <div style={{ marginBottom: '15px' }}>
               <div style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '5px' }}>Issue Category</div>
               <div style={{ border: '1px solid #ddd', borderRadius: '5px', padding: '10px', fontSize: '14px' }}>
-                Missing Marks
+                {issueDetails.issueCategory}
               </div>
             </div>
 
             <div style={{ marginBottom: '15px' }}>
               <div style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '5px' }}>Course Unit Code</div>
               <div style={{ border: '1px solid #ddd', borderRadius: '5px', padding: '10px', fontSize: '14px' }}>
-                CS 1100
+                {issueDetails.courseUnitCode}
               </div>
             </div>
 
             <div style={{ marginBottom: '15px' }}>
               <div style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '5px' }}>Course Unit Name</div>
               <div style={{ border: '1px solid #ddd', borderRadius: '5px', padding: '10px', fontSize: '14px' }}>
-                Software Development Project
+                {issueDetails.courseUnitName}
               </div>
             </div>
 
             <div style={{ marginBottom: '15px' }}>
               <div style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '5px' }}>Issue Description</div>
               <div style={{ border: '1px solid #ddd', borderRadius: '5px', padding: '10px', fontSize: '14px', minHeight: '60px' }}>
-                You recorded an 80% yet I got a 95% in the operating systems test.
+                {issueDetails.description}
               </div>
             </div>
           </div>
@@ -137,7 +197,8 @@ const Viewdetails = () => {
                   border: '1px solid #ddd', 
                   borderRadius: '8px', 
                   fontSize: '14px', 
-                  resize: 'none' 
+                  resize: 'none',
+                  minHeight: '100px'
                 }}
               />
             </div>
@@ -182,7 +243,8 @@ const Viewdetails = () => {
             </div>
 
             <button
-              onClick={handleSaveClick} // Navigate to another page when clicked
+              onClick={handleSaveClick}
+              disabled={isLoading}
               style={{ 
                 width: '100%', 
                 padding: '12px', 
@@ -192,10 +254,11 @@ const Viewdetails = () => {
                 borderRadius: '25px', 
                 fontSize: '16px', 
                 fontWeight: 'bold', 
-                cursor: 'pointer' 
+                cursor: isLoading ? 'not-allowed' : 'pointer',
+                opacity: isLoading ? 0.7 : 1
               }}
             >
-              Save
+              {isLoading ? 'Updating...' : 'Save'}
             </button>
           </div>
         </div>

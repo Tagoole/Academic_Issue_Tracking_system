@@ -19,6 +19,7 @@ const SignUp = () => {
         role: '',
         gender: '',
         program: '',
+        city: '',
         token: '',
         agreeToTerms: false,
     });
@@ -39,6 +40,9 @@ const SignUp = () => {
 
     // Determine if token field should be displayed
     const showTokenField = formData.role === 'teacher' || formData.role === 'other' || formData.role === 'registrar';
+
+    // Determine if program field should be displayed
+    const showProgramField = formData.role === 'student' || formData.role === '';
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -90,8 +94,10 @@ const SignUp = () => {
         setIsLoading(true);
 
         try {
-            // Use a single registration endpoint
-            const endpoint = '/api/register_student_user/';
+            // Choose endpoint based on role
+            const endpoint = formData.role === 'student' 
+                ? '/api/register_student_user/' 
+                : '/api/register_lect_and_registrar/';
 
             // Create the data object to be sent
             const registrationData = {
@@ -101,10 +107,15 @@ const SignUp = () => {
                 email: formData.email,
                 password: formData.password,
                 confirm_password: formData.confirmPassword,
-                role: formData.role, // Ensure role is included
+                role: formData.role,
                 gender: formData.gender,
-                program: formData.program,
+                city: formData.city,
             };
+
+            // Add program field only for students
+            if (formData.role === 'student') {
+                registrationData.program = formData.program;
+            }
 
             // Add token field only when needed
             if (showTokenField) {
@@ -120,7 +131,16 @@ const SignUp = () => {
 
             // Check if the response is successful
             if (response.status === 200 || response.status === 201) {
-                setSuccessMessage("User registered successfully! Redirecting to verification page...");
+                // Save the current role before clearing the form
+                const currentRole = formData.role;
+                const currentEmail = formData.email;
+                
+                // Set different success messages based on role
+                if (currentRole === 'student') {
+                    setSuccessMessage("Registration successful! Redirecting to verification page...");
+                } else {
+                    setSuccessMessage("Registration successful! Redirecting to login page...");
+                }
                 
                 // Clear the form after successful registration
                 setFormData({
@@ -133,20 +153,30 @@ const SignUp = () => {
                     role: '',
                     gender: '',
                     program: '',
+                    city: '',
                     token: '',
                     agreeToTerms: false,
                 });
                 
-                // Set a short timeout before redirecting to the verification page
-                // This gives users a moment to see the success message
+                // Set a short timeout before redirecting
                 setTimeout(() => {
-                    // Redirect to verification page, optionally passing the email and role as state
-                    navigate('/verification', { 
-                        state: { 
-                            email: registrationData.email,
-                            role: registrationData.role 
-                        } 
-                    });
+                    // Redirect based on role
+                    if (currentRole === 'student') {
+                        // Students go to verification page
+                        navigate('/verification', { 
+                            state: { 
+                                email: currentEmail,
+                                role: currentRole 
+                            } 
+                        });
+                    } else {
+                        // Teachers and registrars go straight to login
+                        navigate('/signin', {
+                            state: {
+                                message: "Your account has been created. Please login with your credentials."
+                            }
+                        });
+                    }
                 }, 2000);
             } else {
                 setErrors(response.data || {});
@@ -270,6 +300,22 @@ const SignUp = () => {
                     </div>
 
                     <div className="form-group">
+                        <label htmlFor="city">City</label>
+                        <div className="input-container">
+                            <input
+                                type="text"
+                                id="city"
+                                name="city"
+                                value={formData.city}
+                                onChange={handleChange}
+                                placeholder="Enter your City"
+                                required
+                            />
+                        </div>
+                        {errors.city && <p className="error-message">{errors.city.join(', ')}</p>}
+                    </div>
+
+                    <div className="form-group">
                         <label htmlFor="gender">Gender</label>
                         <div className="input-container">
                             <select
@@ -290,27 +336,6 @@ const SignUp = () => {
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="program">Program</label>
-                        <div className="input-container">
-                            <select
-                                id="program"
-                                name="program"
-                                value={formData.program}
-                                onChange={handleChange}
-                                required
-                            >
-                                <option value="" disabled>Select your Program</option>
-                                {programOptions.map(program => (
-                                    <option key={program.id} value={program.id}>
-                                        {program.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                        {errors.program && <p className="error-message">{errors.program.join(', ')}</p>}
-                    </div>
-
-                    <div className="form-group">
                         <label htmlFor="role">Role</label>
                         <div className="input-container">
                             <select
@@ -328,6 +353,30 @@ const SignUp = () => {
                         </div>
                         {errors.role && <p className="error-message">{errors.role.join(', ')}</p>}
                     </div>
+
+                    {/* Program field that appears only for students */}
+                    {showProgramField && (
+                        <div className="form-group">
+                            <label htmlFor="program">Program</label>
+                            <div className="input-container">
+                                <select
+                                    id="program"
+                                    name="program"
+                                    value={formData.program}
+                                    onChange={handleChange}
+                                    required={formData.role === 'student'}
+                                >
+                                    <option value="" disabled>Select your Program</option>
+                                    {programOptions.map(program => (
+                                        <option key={program.id} value={program.id}>
+                                            {program.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            {errors.program && <p className="error-message">{errors.program.join(', ')}</p>}
+                        </div>
+                    )}
 
                     {/* Token field that appears only for lecturer/registrar */}
                     {showTokenField && (

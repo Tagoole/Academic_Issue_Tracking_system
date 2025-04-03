@@ -185,7 +185,7 @@ const SignIn = () => {
       navigate('/studentdashboard');
     } else if (roleLower === 'teacher' || roleLower === 'lecturer') {
       navigate('/lecturerdashboard');
-    } else if (roleLower === 'registrar' || roleLower === 'admin') {
+    } else if (roleLower === 'academic_registrar' || roleLower === 'admin') {
       navigate('/registradashboard');
     } else {
       // Default dashboard for other roles
