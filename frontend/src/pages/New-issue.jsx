@@ -4,7 +4,7 @@ import axios from 'axios';
 import API from '../api.js';
 import Navbar from './NavBar';
 import Sidebar from './Sidebar1';
-import './New-Issue.css';
+import './New-issue.css';
 import backgroundimage from "../assets/backgroundimage.jpg";
 
 const NewIssue = () => {
