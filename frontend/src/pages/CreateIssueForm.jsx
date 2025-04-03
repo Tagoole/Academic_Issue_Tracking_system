@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import NavBar from "./NavBar"; 
+
 import SideBar from "./Sidebar1";
 import "./CreateIssueForm.css";
 

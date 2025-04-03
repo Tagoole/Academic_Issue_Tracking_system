@@ -21,6 +21,7 @@ import Help from "./pages/Help";
 import Deleteaccount from "./pages/Deleteaccount";
 import Studentsprofile from "./pages/Studentsprofile";
 
+
 function App() {
   return (
     <Router>
@@ -49,6 +50,8 @@ function App() {
           <Route path="/Help"element={<Help/>}/>
           <Route path="/Deleteaccount"element={<Deleteaccount/>}/>
           <Route path="/Studentsprofile"element={<Studentsprofile/>}/>
+       
+          {/* Add more routes as needed */}
           
 
           

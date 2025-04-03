@@ -47,6 +47,15 @@ const Preferences = () => {
           <img src={makerereLogo} alt="University Logo" className="logo-sidebar" />
         </div>
 
+        {/* Back to Dashboard Button */}
+        <a href="/dashboard" className="menu-item back-to-dashboard">
+          Back to Dashboard
+          <svg viewBox="0 0 24 24" className="arrow-icon">
+            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+          </svg>
+        </a>
+
+        {/* Change Password Button */}
         <a href="/changepassword" className="menu-item">
           Change Password
           <svg viewBox="0 0 24 24" className="arrow-icon">
