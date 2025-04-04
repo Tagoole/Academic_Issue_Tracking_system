@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './Studentsprofile.css';
-import NavBar from './Navbar'; // Imported NavBar component
+import NavBar from './NavBar'; // Imported NavBar component
 
 function ProfileScreen() {
   const [profileImage, setProfileImage] = useState('/api/placeholder/80/80'); // Default profile image
