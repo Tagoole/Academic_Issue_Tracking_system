@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import './Messages.css';
 import icon from '../assets/box.png';
-import NavBar from './Navbar';
+import NavBar from './NavBar';
 import backgroundimage from '../assets/pexels-olia-danilevich-5088017.jpg';
 
 
