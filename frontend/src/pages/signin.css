@@ -153,3 +153,16 @@ h3.green-text {
   text-decoration: none;
   font-weight: bold;
 }
+.error-message {
+  color: #e74c3c;
+  background-color: #fde2e2;
+  border: 1px solid #e74c3c;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.icon.clickable {
+  cursor: pointer;
+}

@@ -10,11 +10,34 @@ from django.core.mail import send_mail,EmailMessage
 from django.conf import settings
 from random import randint
 from django.db.models import Q
+from .serializers import CustomTokenObtainPairSerializer
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+
+        # Extract validated data
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)  # Validate data
+        validated_data = serializer.validated_data
+
+        print("Validated Data:", validated_data)  # Print validated data in the console
+
+        return response
 
 class IssueViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated,IsStudent]
     queryset = Issue.objects.all()
     serializer_class = IssueSerializer
+    def create(self, request, *args, **kwargs):
+        print("Incoming request data (CREATE):", request.data)  # Print request payload
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
     
 class Lecturer_Issue_Manangement(ModelViewSet):
     serializer_class = IssueSerializer
@@ -210,6 +233,7 @@ class Student_Registration(APIView):
     permission_classes = [AllowAny]
     def post(self, request):
         data=request.data
+        print(data)
         serializer = Student_RegisterSerializer(data=data)
         if serializer.is_valid():
             user = serializer.save()  # Save user using serializer
@@ -246,6 +270,7 @@ class Student_Registration(APIView):
             )
 
             email.send(fail_silently=False)
+            print(serializer.validated_data)
             return Response({
                     "message": "User Created Successfully, Token created and email sent!",
                     "user": {
@@ -434,4 +459,21 @@ def get_user_email_notifications(request):
     serializer = Email_notificationSerializer(notifications,many = True)
     return Response ({'number':number,
                       'data':serializer.data})
+    
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_academic_registrars(request):
+    registrars = CustomUser.objects.filter(role = 'academic_registrar')
+    serializer = UserProfileSerializer(registrars, many=True)  
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_lecturers(request):
+    lecturers = CustomUser.objects.filter(role = 'lecturer')
+    serializer = UserProfileSerializer(lecturers, many=True)  
+    return Response(serializer.data)
+
     

@@ -21,7 +21,7 @@ urlpatterns = [
     path('',include(router.urls)),
     path('register_student_user/',Student_Registration.as_view(),name = 'register_student_user'),
     path('register_lect_and_registrar/',Lecturer_and_Registrar_Registration.as_view(),name='register_lect_and_registrar'),
-    path("access_token/",TokenObtainPairView.as_view(),name = "access_token"),
+    path("access_token/",CustomTokenObtainPairView.as_view(),name = "access_token"),
     path("refresh_token/",TokenRefreshView.as_view(),name = "refresh_token"),
     path("verify_email/",verify_email,name='verify_email'),
     path('resend_verify_code/',resend_verification_code,name='resend_verify_code'),
@@ -30,5 +30,6 @@ urlpatterns = [
     path('final_password_reset/',final_password_reset,name='final_password_reset'),
     path('user_email_notifications/',get_user_email_notifications,name = 'user_email_notifications'),
     path('resend_password_reset_code/',resend_password_reset_code,name = 'resend_password_reset_code'),
-    
+    path('get_academic_registrars/',get_academic_registrars,name = 'get_academic_registrars'),
+    path('get_lecturers/',get_lecturers,name = 'get_lecturers'),
 ]
