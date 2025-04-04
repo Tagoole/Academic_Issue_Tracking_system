@@ -1,6 +1,6 @@
 import React from 'react';
 import './Notifications.css';
-import Navbar from './Navbar';
+import Navbar from './NavBar';
 import backgroundimage from "../assets/backgroundimage.jpg"; 
 
 const Notifications = () => {

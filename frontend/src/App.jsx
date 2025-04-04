@@ -19,7 +19,10 @@ import Help from "./pages/Help";
 import Deleteaccount from "./pages/Deleteaccount";
 import Issues from "./pages/Issues";
 import StudentDashboard from "./pages/StudentDashboard";
-import Signup from "./pages/signup";
+import SignUp from "./pages/signup";
+import ProfileScreen from "./pages/Studentprofile";
+import Notifications from "./pages/Notifications";
+
 
 function App() {
   return (
@@ -47,7 +50,12 @@ function App() {
           <Route path="/Help"element={<Help/>}/>
           <Route path="/Deleteaccount"element={<Deleteaccount/>}/>
           <Route path="/studentdashboard"element={<StudentDashboard/>}/>
-          <Route path="signup" element={<Signup/>}/>
+          <Route path="signup" element={<SignUp/>}/>
+          <Route path="/Studentsprofile"element={<ProfileScreen/>}/>
+          <Route path="/Notifications" element={<Notifications />} />
+       
+          {/* Add more routes as needed */}
+          
 
           
         </Routes>
