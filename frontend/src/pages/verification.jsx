@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import API from '../api.js'; // Import API instance
+import { Link, useNavigate } from 'react-router-dom';
+import API from '../api'; // Import the API instance from api.js
 import emailIcon from '../assets/mailbulk.png';
 import helpIcon from '../assets/help-icon.png';
 import './verification.css';
@@ -14,102 +14,118 @@ const EmailVerification = () => {
   const [countdown, setCountdown] = useState(0);
   const inputRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
   const navigate = useNavigate();
-  const location = useLocation();
-
+  
+  // Get email from localStorage or URL params when component mounts
   useEffect(() => {
-    // First check if email was passed via location state (from signup redirect)
-    if (location.state && location.state.email) {
-      setEmail(location.state.email);
-      // Optionally store in localStorage as backup
-      localStorage.setItem('userEmail', location.state.email);
+    // You can get the email from localStorage if you saved it during registration
+    const storedEmail = localStorage.getItem('userEmail');
+    if (storedEmail) {
+      setEmail(storedEmail);
     } else {
-      // Fall back to localStorage or URL parameter
-      const storedEmail = localStorage.getItem('userEmail');
-      if (storedEmail) {
-        setEmail(storedEmail);
-      } else {
-        const urlParams = new URLSearchParams(window.location.search);
-        const emailParam = urlParams.get('email');
-        if (emailParam) {
-          setEmail(emailParam);
-          // Store in localStorage for persistence
-          localStorage.setItem('userEmail', emailParam);
-        }
+      // Or from URL params if passed that way
+      const urlParams = new URLSearchParams(window.location.search);
+      const emailParam = urlParams.get('email');
+      if (emailParam) {
+        setEmail(emailParam);
       }
     }
-  }, [location]);
-
+  }, []);
+  
+  // Check if all digits are entered to enable the Next button
   const isCodeComplete = verificationCode.every(digit => digit !== '');
-
+  
+  // Handle input change for each digit
   const handleDigitChange = (index, value) => {
+    // Only allow numbers
     if (value && !/^\d+$/.test(value)) return;
     
+    // Update the verification code array
     const newCode = [...verificationCode];
     newCode[index] = value;
     setVerificationCode(newCode);
     
+    // Clear any previous errors
     if (error) setError('');
     
+    // Auto-focus next input if current input is filled
     if (value && index < 4) {
       inputRefs[index + 1].current.focus();
     }
   };
-
+  
+  // Handle key press for backspace to go to previous input
   const handleKeyDown = (index, e) => {
     if (e.key === 'Backspace' && !verificationCode[index] && index > 0) {
       inputRefs[index - 1].current.focus();
     }
   };
-
+  
+  // Handle form submission - verify email with backend
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Combine the digits into a single code
     const code = verificationCode.join('');
-
+    
     try {
-      // Make sure API endpoint starts without a slash if your base URL already has one
-      const response = await API.post('/api/verify_email/', { 
-        email, 
-        code 
+      const response = await API.post('/verify_email/', {
+        email: email,
+        code: code
       });
       
+      // Handle successful verification
       console.log('Verification successful:', response.data);
-      setResendStatus('Email verified successfully! Redirecting to sign in...');
-
-      // Clear the stored email from localStorage after successful verification
+      // Show success message before redirecting
+      setResendStatus('Email verified successfully!');
+      
+      // Redirect to sign-in page or dashboard after short delay
       setTimeout(() => {
         localStorage.removeItem('userEmail');
         navigate('/signin');
       }, 2000);
       
-    } catch (err) {
-      console.error('Verification error:', err);
+    } catch (error) {
+      // Handle verification error
+      console.error('Verification error:', error);
       
-      if (err.response) {
-        setError(err.response.data.error || 'Verification failed. Please try again.');
-      } else if (err.request) {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        setError(error.response.data.error || 'Verification failed. Please try again.');
+      } else if (error.request) {
+        // The request was made but no response was received
         setError('No response from server. Please check your connection.');
       } else {
+        // Something happened in setting up the request that triggered an Error
         setError('Error submitting verification code. Please try again.');
       }
     }
   };
 
+  // Handle resending the verification code
   const handleResendCode = async () => {
     try {
-      const response = await API.post('/api/resend_verification_code/', { email });
-
+      // Call the backend API to resend verification code
+      const response = await API.post("http://127.0.0.1:8000/api/", {
+        email: email
+      });
+      
+      // Show success message
       setResendStatus('Verification code resent! Please check your email.');
+      
+      // Disable the button temporarily and start countdown
       setResendDisabled(true);
-      setCountdown(30);
-
+      setCountdown(30); // 30 second cooldown
+      
+      // Clear any previous errors
       if (error) setError('');
       
     } catch (err) {
       console.error('Error resending code:', err);
       
-      if (err.response) {
-        setError(err.response.data.Error || 'Failed to resend code. Please try again.');
-      } else if (err.request) {
+      if (error.response) {
+        setError(error.response.data.error || 'Failed to resend code. Please try again.');
+      } else if (error.request) {
         setError('No response from server. Please check your connection.');
       } else {
         setError('Error submitting request. Please try again.');
@@ -117,6 +133,7 @@ const EmailVerification = () => {
     }
   };
 
+  // Handle countdown timer for resend button
   useEffect(() => {
     let timer;
     if (countdown > 0) {
@@ -132,13 +149,14 @@ const EmailVerification = () => {
       if (timer) clearTimeout(timer);
     };
   }, [countdown, resendDisabled]);
-
+  
+  // Focus the first input field on component mount
   useEffect(() => {
     if (inputRefs[0].current) {
       inputRefs[0].current.focus();
     }
   }, []);
-
+  
   return (
     <div className="verification-container">
       <header className="verification-header">

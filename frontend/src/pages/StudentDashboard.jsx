@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import NavBar from './NavBar';
 import SideBar from './Sidebar1';
 import './StudentDashboard.css'; 
-import backgroundimage from '../assets/pexels-olia-danilevich-5088017.jpg';
+import backgroundimage from '../assets/pexels-olia-danilevich-5088017.jpg'; 
 
 const StudentDashboard = () => {
   const [activeTab, setActiveTab] = useState('Pending');

@@ -104,6 +104,7 @@ const RegistraDashboard = () => {
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
+        width:'1000px',
       }}
     >
       <Navbar />

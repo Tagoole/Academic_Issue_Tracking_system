@@ -29,7 +29,7 @@ const Sidebar1 = () => {
     <div className="sidebar">
       {/* Registra Dashboard Link */}
       <div className="sidebar-item">
-        <Link to="/StudentDasboard" className="sidebar-link">
+        <Link to="/StudentDashboard" className="sidebar-link">
           <img src={dashboardIcon} alt="Dash Icon" className="sidebar-icon" />
           <span>StudentDashboard</span>
         </Link>

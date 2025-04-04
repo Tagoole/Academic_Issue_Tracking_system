@@ -5,13 +5,15 @@ import userIcon from '../assets/user.png';
 import hiddenIcon from '../assets/hidden.png';
 import visibleIcon from '../assets/visible.png';
 import mailIcon from '../assets/mail.png';
-import API from '../api.js';
+
+// Updated API URL
+const API_URL = 'http://127.0.0.1:8000/api';
 
 const SignUp = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
-        first_name: '',
-        last_name: '',
+        first_name:'a',
+        last_name:'a',
         username: '',
         email: '',
         password: '',
@@ -26,23 +28,8 @@ const SignUp = () => {
 
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
-    const [errors, setErrors] = useState({});
-    const [successMessage, setSuccessMessage] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [debugResponse, setDebugResponse] = useState(null);
-
-    // Define the program options directly in the component
-    const programOptions = [
-        { id: 5, name: 'Software' },
-        { id: 4, name: 'Computer Science' },
-        { id: 3, name: 'Nutrition' }
-    ];
-
-    // Determine if token field should be displayed
-    const showTokenField = formData.role === 'teacher' || formData.role === 'other' || formData.role === 'registrar';
-
-    // Determine if program field should be displayed
-    const showProgramField = formData.role === 'student' || formData.role === '';
+    const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(null);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -87,113 +74,44 @@ const SignUp = () => {
             setErrors({confirmPassword: ['Passwords do not match']});
             return;
         }
-
-        // Reset errors and success message
-        setErrors({});
-        setSuccessMessage('');
-        setIsLoading(true);
-
+        setError(null);
+        setSuccess(null);
+        
+        // Add this line here
+        console.log("Submitting form data:", { username: formData.username, email: formData.email, password: formData.password, role: formData.role });
+        
         try {
-            // Choose endpoint based on role
-            const endpoint = formData.role === 'student' 
-                ? '/api/register_student_user/' 
-                : '/api/register_lect_and_registrar/';
+            const response = await fetch(`${API_URL}/register_student_user/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: formData.username,
+                    email: formData.email,
+                    password: formData.password,
+                    role: formData.role,
+                }),
+            });
 
-            // Create the data object to be sent
-            const registrationData = {
-                first_name: formData.first_name,
-                last_name: formData.last_name,
-                username: formData.username,
-                email: formData.email,
-                password: formData.password,
-                confirm_password: formData.confirmPassword,
-                role: formData.role,
-                gender: formData.gender,
-                city: formData.city,
-            };
-
-            // Add program field only for students
-            if (formData.role === 'student') {
-                registrationData.program = formData.program;
-            }
-
-            // Add token field only when needed
-            if (showTokenField) {
-                registrationData.token = formData.token;
-            }
-
-            console.log("Sending registration data:", JSON.stringify(registrationData, null, 2));
-            const response = await API.post(endpoint, registrationData);
-            
-            // Store the response for debugging
-            setDebugResponse(response.data);
-            console.log("Registration response:", JSON.stringify(response.data, null, 2));
-
-            // Check if the response is successful
-            if (response.status === 200 || response.status === 201) {
-                // Save the current role before clearing the form
-                const currentRole = formData.role;
-                const currentEmail = formData.email;
-                
-                // Set different success messages based on role
-                if (currentRole === 'student') {
-                    setSuccessMessage("Registration successful! Redirecting to verification page...");
-                } else {
-                    setSuccessMessage("Registration successful! Redirecting to login page...");
-                }
-                
-                // Clear the form after successful registration
+            const data = await response.json();
+            if (response.ok) {
+                setSuccess("User registered successfully! Check your email for verification.");
+                // Reset form after successful registration
                 setFormData({
-                    first_name: '',
-                    last_name: '',
                     username: '',
                     email: '',
                     password: '',
                     confirmPassword: '',
                     role: '',
-                    gender: '',
-                    program: '',
-                    city: '',
-                    token: '',
                     agreeToTerms: false,
                 });
-                
-                // Set a short timeout before redirecting
-                setTimeout(() => {
-                    // Redirect based on role
-                    if (currentRole === 'student') {
-                        // Students go to verification page
-                        navigate('/verification', { 
-                            state: { 
-                                email: currentEmail,
-                                role: currentRole 
-                            } 
-                        });
-                    } else {
-                        // Teachers and registrars go straight to login
-                        navigate('/signin', {
-                            state: {
-                                message: "Your account has been created. Please login with your credentials."
-                            }
-                        });
-                    }
-                }, 2000);
             } else {
-                setErrors(response.data || {});
+                setError(data.error || "Registration failed. Please try again.");
             }
         } catch (err) {
-            if (err.response && err.response.data) {
-                console.error("Error during API call:", JSON.stringify(err.response.data, null, 2));
-                setErrors(err.response.data);
-            } else if (err.request) {
-                console.error("No response received:", err.request);
-                setErrors({general: ['No response from server']});
-            } else {
-                console.error("Error:", err.message);
-                setErrors({general: ['Failed to connect to server']});
-            }
-        } finally {
-            setIsLoading(false);
+            console.error("API Error:", err);
+            setError("Failed to connect to server. Please check your internet connection.");
         }
     };
 
@@ -452,13 +370,9 @@ const SignUp = () => {
                         />
                         <label htmlFor="terms" className="terms-text">I have read and understood the ATIS terms and conditions.</label>
                     </div>
-
-                    {/* Display general errors */}
-                    {errors.general && <p className="error-message">{errors.general.join(', ')}</p>}
-
-                    <button type="submit" className="sign-up-button" disabled={isLoading}>
-                        {isLoading ? 'Please wait...' : 'Sign Up'}
-                    </button>
+                    {error && <p className="error-message">{error}</p>}
+                    {success && <p className="success-message">{success}</p>}
+                    <button type="submit" className="sign-up-button">Sign Up</button>
                 </form>
                 
                 {/* Debug view in development mode */}

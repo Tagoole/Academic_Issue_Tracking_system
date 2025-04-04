@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import mail from '../assets/mail.png';
-import hidden from '../assets/hidden.png';
-import visible from '../assets/visible.png';
-import codeIcon from '../assets/code-icon.png';
-import graduateImage from '../assets/congragulation.png';
-import API from '../api';
+import hidden from '../assets/hidden.png'
+import codeIcon from '../assets/code-icon.png'; // You'll need to add this image
+import graduateImage from '../assets/congragulation.png'; // You'll ne
 import './signin.css';
 
 const SignIn = () => {
