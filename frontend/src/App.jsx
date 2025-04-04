@@ -20,7 +20,7 @@ import Deleteaccount from "./pages/Deleteaccount";
 import Issues from "./pages/Issues";
 import StudentDashboard from "./pages/StudentDashboard";
 import Signup from "./pages/signup";
-import Studentsprofile from "./pages/Studentsprofile";
+import Studentsprofile from "./pages/StudentsProfile";
 import Notifications from "./pages/Notifications";
 
 
