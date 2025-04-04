@@ -20,7 +20,7 @@ import Deleteaccount from "./pages/Deleteaccount";
 import Issues from "./pages/Issues";
 import StudentDashboard from "./pages/StudentDashboard";
 import Signup from "./pages/signup";
-import Studentsprofile from "./pages/StudentsProfile";
+import ProfileScreen from "./pages/StudentProfile";
 import Notifications from "./pages/Notifications";
 
 
@@ -52,7 +52,7 @@ function App() {
           <Route path="/Deleteaccount"element={<Deleteaccount/>}/>
           <Route path="/studentdashboard"element={<StudentDashboard/>}/>
           <Route path="signup" element={<Signup/>}/>
-          <Route path="/Studentsprofile"element={<Studentsprofile/>}/>
+          <Route path="/studentsprofile"element={<ProfileScreen/>}/>
           <Route path="/Notifications" element={<Notifications />} />
        
           {/* Add more routes as needed */}
