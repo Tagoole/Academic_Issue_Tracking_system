@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavBar from './NavBar';
 import Sidebar from './Sidebar1';
-import './New-Issue.css';
+import './New-issue.css';
 import backgroundimage from "../assets/backgroundimage.jpg";
 import axios from 'axios'; // Import axios for API calls
 
