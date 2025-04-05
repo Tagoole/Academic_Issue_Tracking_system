@@ -236,28 +236,10 @@ class Student_Registration(APIView):
         print(data)
         serializer = Student_RegisterSerializer(data=data)
         if serializer.is_valid():
-            user = serializer.save()  # Save user using serializer
             '''Creating and saving the verification code object..'''
             
             verification_code = randint(10000,99999)
-            verification,created = Verification_code.objects.get_or_create(
-                user = user,
-                defaults={"code": verification_code})
             
-            verification.code = verification_code
-            #verification_code.created_at = timezone.now()
-            verification.save()
-            
-            '''Sending the email...'''
-            '''subject = 'Email verification Code..'
-            message = f"Hello, your Verification code is: {verification_code}"
-            receipient_email= data.get('email')
-            
-            try:
-                send_mail(subject,message,settings.EMAIL_HOST_USER,[receipient_email],fail_silently=False)
-            except Exception as e:
-                return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)'''
-                
             subject = 'Email Verification Code'
             message = f"Hello, your Verification code is: {verification_code}"
             recipient_email = data.get('email')
@@ -270,6 +252,14 @@ class Student_Registration(APIView):
             )
 
             email.send(fail_silently=False)
+            user = serializer.save()
+            verification,created = Verification_code.objects.get_or_create(
+                user = user,
+                defaults={"code": verification_code})
+            
+            verification.code = verification_code
+            verification.save()
+            
             print(serializer.validated_data)
             return Response({
                     "message": "User Created Successfully, Token created and email sent!",
