@@ -312,6 +312,8 @@ def verify_email(request):
             return Response({'error':'Verification Code doesnot exist..'},status = status.HTTP_400_BAD_REQUEST)
     return Response(serializer.errors,status = status.HTTP_400_BAD_REQUEST)
     
+    
+    
 @api_view(['POST'])
 def resend_verification_code(request):
     data = request.data
