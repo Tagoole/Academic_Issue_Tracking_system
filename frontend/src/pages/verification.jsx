@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import API from '../api'; // Import the API instance from api.js
 import emailIcon from '../assets/mailbulk.png';
 import helpIcon from '../assets/help-icon.png';
@@ -14,22 +14,34 @@ const EmailVerification = () => {
   const [countdown, setCountdown] = useState(0);
   const inputRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
   const navigate = useNavigate();
+  const location = useLocation();
   
-  // Get email from localStorage or URL params when component mounts
+  // Get email from different sources when component mounts
   useEffect(() => {
-    // You can get the email from localStorage if you saved it during registration
-    const storedEmail = localStorage.getItem('userEmail');
-    if (storedEmail) {
-      setEmail(storedEmail);
-    } else {
-      // Or from URL params if passed that way
+    // First priority: Check if email was passed via location state (from signup page)
+    if (location.state && location.state.email) {
+      setEmail(location.state.email);
+      // Optionally save to localStorage for persistence
+      localStorage.setItem('userEmail', location.state.email);
+    } 
+    // Second priority: Check localStorage
+    else if (localStorage.getItem('userEmail')) {
+      setEmail(localStorage.getItem('userEmail'));
+    } 
+    // Third priority: Check URL params
+    else {
       const urlParams = new URLSearchParams(window.location.search);
       const emailParam = urlParams.get('email');
       if (emailParam) {
         setEmail(emailParam);
+        // Optionally save to localStorage for persistence
+        localStorage.setItem('userEmail', emailParam);
+      } else {
+        // If no email is found, redirect to signup or show error
+        setError('No email address found. Please sign up first.');
       }
     }
-  }, []);
+  }, [location]);
   
   // Check if all digits are entered to enable the Next button
   const isCodeComplete = verificationCode.every(digit => digit !== '');
@@ -68,7 +80,7 @@ const EmailVerification = () => {
     const code = verificationCode.join('');
     
     try {
-      const response = await API.post('/verify_email/', {
+      const response = await API.post('/api/verify_email/', {
         email: email,
         code: code
       });
@@ -103,9 +115,15 @@ const EmailVerification = () => {
 
   // Handle resending the verification code
   const handleResendCode = async () => {
+    if (!email) {
+      setError('Email address is missing. Please go back to signup.');
+      return;
+    }
+    
     try {
       // Call the backend API to resend verification code
-      const response = await API.post("http://127.0.0.1:8000/api/", {
+      // Fixed: Use the correct endpoint and include email in the request body
+      const response = await API.post("/api/resend_verification/", {
         email: email
       });
       
@@ -173,10 +191,18 @@ const EmailVerification = () => {
         
         <h2 className="verification-title">Email Verification</h2>
         
-        <p className="verification-instruction">
-          Enter the verification code we sent to you on
-        </p>
-        <p className="verification-email">{email}</p>
+        {email ? (
+          <>
+            <p className="verification-instruction">
+              Enter the verification code we sent to you on
+            </p>
+            <p className="verification-email">{email}</p>
+          </>
+        ) : (
+          <p className="verification-instruction error-message">
+            Email address not found. Please return to signup.
+          </p>
+        )}
         
         <form onSubmit={handleSubmit} className="verification-form">
           <div className="code-inputs">
@@ -191,6 +217,7 @@ const EmailVerification = () => {
                 onKeyDown={(e) => handleKeyDown(index, e)}
                 className="code-input"
                 aria-label={`Digit ${index + 1}`}
+                disabled={!email}
               />
             ))}
           </div>
@@ -201,7 +228,7 @@ const EmailVerification = () => {
           <button
             type="submit"
             className="next-button"
-            disabled={!isCodeComplete}
+            disabled={!isCodeComplete || !email}
           >
             Next
           </button>
@@ -210,7 +237,7 @@ const EmailVerification = () => {
             type="button"
             className="resend-button"
             onClick={handleResendCode}
-            disabled={resendDisabled}
+            disabled={resendDisabled || !email}
           >
             {resendDisabled 
               ? `Resend Code (${countdown}s)` 

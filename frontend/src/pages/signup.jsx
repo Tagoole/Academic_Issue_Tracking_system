@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'; // Import axios
 import API from '../api.js'; // Import API from your api.js file
@@ -28,26 +28,55 @@ const SignUp = () => {
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
     const [error, setError] = useState(null);
+    const [errorFields, setErrorFields] = useState({});
     const [success, setSuccess] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [programs, setPrograms] = useState([]);
+    const [isLoadingPrograms, setIsLoadingPrograms] = useState(true);
+    const [showAlert, setShowAlert] = useState(false);
+    const [alertType, setAlertType] = useState(''); // 'success' or 'error'
+    const [alertMessage, setAlertMessage] = useState('');
 
-    // List of available programs for the dropdown
-    const programs = [
-        "BSc Computer Science",
-        "BSc Information Technology",
-        "BSc Software Engineering",
-        "BSc Data Science",
-        "BSc Cybersecurity",
-        "BSc Artificial Intelligence",
-        "BA Business Information Systems",
-        "BSc Computer Engineering",
-        "BSc Network Administration",
-        "MSc Computer Science",
-        "MSc Information Technology",
-        "MSc Data Science",
-        "MSc Cybersecurity",
-        "PhD Computer Science"
-    ];
+    // Fetch programs from backend when component mounts
+    useEffect(() => {
+        const fetchPrograms = async () => {
+            try {
+                setIsLoadingPrograms(true);
+                const response = await API.get('api/program/');
+                setPrograms(response.data);
+                setIsLoadingPrograms(false);
+            } catch (error) {
+                console.error("Failed to fetch programs:", error);
+                showErrorAlert("Failed to load programs. Please refresh the page.");
+                setIsLoadingPrograms(false);
+            }
+        };
+
+        fetchPrograms();
+    }, []);
+
+    // Hide alert after 5 seconds
+    useEffect(() => {
+        if (showAlert) {
+            const timer = setTimeout(() => {
+                setShowAlert(false);
+            }, 5000);
+            
+            return () => clearTimeout(timer);
+        }
+    }, [showAlert]);
+
+    const showSuccessAlert = (message) => {
+        setAlertType('success');
+        setAlertMessage(message);
+        setShowAlert(true);
+    };
+
+    const showErrorAlert = (message) => {
+        setAlertType('error');
+        setAlertMessage(message);
+        setShowAlert(true);
+    };
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -55,23 +84,73 @@ const SignUp = () => {
             ...formData,
             [name]: type === 'checkbox' ? checked : value,
         });
+        
+        // Clear errors for this field when user makes changes
+        if (errorFields[name]) {
+            setErrorFields({
+                ...errorFields,
+                [name]: null
+            });
+        }
+    };
+
+    const validateForm = () => {
+        const errors = {};
+        
+        // Password validation
+        if (formData.password !== formData.confirm_password) {
+            errors.confirm_password = "Passwords do not match";
+        }
+        
+        if (formData.password.length < 8) {
+            errors.password = "Password must be at least 8 characters long";
+        }
+        
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+            errors.email = "Please enter a valid email address";
+        }
+        
+        // Username validation
+        if (formData.username.length < 3) {
+            errors.username = "Username must be at least 3 characters long";
+        }
+        
+        // Program validation for students
+        if (formData.role === 'student' && !formData.program) {
+            errors.program = "Please select a program";
+        }
+        
+        // Registration token validation for non-students
+        if (formData.role !== 'student' && !formData.registration_token) {
+            errors.registration_token = "Registration token is required";
+        }
+        
+        return errors;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (formData.password !== formData.confirm_password) {
-            setError("Passwords do not match");
+        
+        // Validate form
+        const validationErrors = validateForm();
+        if (Object.keys(validationErrors).length > 0) {
+            setErrorFields(validationErrors);
+            const firstError = Object.values(validationErrors)[0];
+            showErrorAlert(firstError);
             return;
         }
         
         setError(null);
+        setErrorFields({});
         setSuccess(null);
         setIsSubmitting(true);
         
         // Determine which endpoint to use based on role
         const endpoint = formData.role === 'student' 
-            ? `${API}/api/register_student_user/` 
-            : `${API}/register_lect_and_registrar/`;
+            ? '/api/register_student_user/' 
+            : '/api/register_lect_and_registrar/';
         
         // Prepare the form data based on role
         const submitData = {
@@ -95,19 +174,26 @@ const SignUp = () => {
         console.log("Submitting form data to:", endpoint);
         
         try {
-            const response = await axios.post(endpoint, submitData);
+            const response = await API.post(endpoint, submitData);
             
             setSuccess("User registered successfully!");
+            showSuccessAlert("Registration successful! Redirecting...");
+            
+            // Save email to localStorage for verification page
+            localStorage.setItem('userEmail', formData.email);
             
             // Handle role-based redirection after successful registration
             if (formData.role === 'student') {
                 setTimeout(() => {
-                    navigate('/verification');
-                }, 1500);
+                    // Pass email in navigation state for verification page
+                    navigate('/verification', { 
+                        state: { email: formData.email }
+                    });
+                }, 2000);
             } else {
                 setTimeout(() => {
                     navigate('/signin');
-                }, 1500);
+                }, 2000);
             }
             
             // Reset form after successful registration
@@ -126,10 +212,61 @@ const SignUp = () => {
             });
         } catch (error) {
             console.error("API Error:", error);
-            if (error.response && error.response.data) {
-                setError(error.response.data.error || "Registration failed. Please try again.");
+            
+            // Handle different types of API error responses
+            if (error.response) {
+                if (error.response.data) {
+                    const serverErrors = error.response.data;
+                    
+                    // Check if the error is a detailed validation error object
+                    if (typeof serverErrors === 'object' && !Array.isArray(serverErrors)) {
+                        const fieldErrors = {};
+                        let generalError = "";
+                        
+                        // Process each field error
+                        Object.keys(serverErrors).forEach(key => {
+                            if (key === 'error' || key === 'detail' || key === 'non_field_errors') {
+                                generalError = serverErrors[key];
+                            } else {
+                                fieldErrors[key] = Array.isArray(serverErrors[key]) 
+                                    ? serverErrors[key][0] 
+                                    : serverErrors[key];
+                            }
+                        });
+                        
+                        if (Object.keys(fieldErrors).length > 0) {
+                            setErrorFields(fieldErrors);
+                            const firstFieldError = Object.values(fieldErrors)[0];
+                            showErrorAlert(firstFieldError);
+                        } else if (generalError) {
+                            setError(generalError);
+                            showErrorAlert(generalError);
+                        } else {
+                            setError("Registration failed. Please check your information and try again.");
+                            showErrorAlert("Registration failed. Please check your information and try again.");
+                        }
+                    } else if (typeof serverErrors === 'string') {
+                        setError(serverErrors);
+                        showErrorAlert(serverErrors);
+                    } else if (serverErrors.error) {
+                        setError(serverErrors.error);
+                        showErrorAlert(serverErrors.error);
+                    } else {
+                        setError("Registration failed. Please try again.");
+                        showErrorAlert("Registration failed. Please try again.");
+                    }
+                } else {
+                    setError(`Server error: ${error.response.status}`);
+                    showErrorAlert(`Server error (${error.response.status}). Please try again later.`);
+                }
+            } else if (error.request) {
+                // Request was made but no response received
+                setError("No response from server. Please check your internet connection.");
+                showErrorAlert("No response from server. Please check your internet connection.");
             } else {
-                setError("Failed to connect to server. Please check your internet connection.");
+                // Something happened in setting up the request
+                setError("Request error. Please try again.");
+                showErrorAlert("Request error. Please try again.");
             }
         } finally {
             setIsSubmitting(false);
@@ -141,6 +278,19 @@ const SignUp = () => {
 
     return (
         <div className="signup-page">
+            {/* Alert popup */}
+            {showAlert && (
+                <div className={`alert alert-${alertType}`}>
+                    <span className="alert-message">{alertMessage}</span>
+                    <button 
+                        className="alert-close-btn" 
+                        onClick={() => setShowAlert(false)}
+                    >
+                        &times;
+                    </button>
+                </div>
+            )}
+            
             <div className="left-side">
                 <h2>Create an Account</h2>
                 <h2>Please fill up this form</h2>
@@ -156,9 +306,13 @@ const SignUp = () => {
                                 onChange={handleChange} 
                                 placeholder="Enter your first name" 
                                 required 
+                                className={errorFields.first_name ? 'input-error' : ''}
                             />
                             <img src={userIcon} alt="User Icon" className="icon" />
                         </div>
+                        {errorFields.first_name && (
+                            <p className="field-error-message">{errorFields.first_name}</p>
+                        )}
                     </div>
                     
                     <div className="form-group">
@@ -172,9 +326,13 @@ const SignUp = () => {
                                 onChange={handleChange} 
                                 placeholder="Enter your last name" 
                                 required 
+                                className={errorFields.last_name ? 'input-error' : ''}
                             />
                             <img src={userIcon} alt="User Icon" className="icon" />
                         </div>
+                        {errorFields.last_name && (
+                            <p className="field-error-message">{errorFields.last_name}</p>
+                        )}
                     </div>
                     
                     <div className="form-group">
@@ -188,9 +346,13 @@ const SignUp = () => {
                                 onChange={handleChange} 
                                 placeholder="Choose a username" 
                                 required 
+                                className={errorFields.username ? 'input-error' : ''}
                             />
                             <img src={userIcon} alt="User Icon" className="icon" />
                         </div>
+                        {errorFields.username && (
+                            <p className="field-error-message">{errorFields.username}</p>
+                        )}
                     </div>
                     
                     <div className="form-group">
@@ -204,9 +366,13 @@ const SignUp = () => {
                                 onChange={handleChange} 
                                 placeholder="Enter your Email" 
                                 required 
+                                className={errorFields.email ? 'input-error' : ''}
                             />
                             <img src={mailIcon} alt="Mail Icon" className="icon" />
                         </div>
+                        {errorFields.email && (
+                            <p className="field-error-message">{errorFields.email}</p>
+                        )}
                     </div>
                     
                     <div className="form-group">
@@ -220,6 +386,7 @@ const SignUp = () => {
                                 onChange={handleChange} 
                                 placeholder="Enter your password" 
                                 required 
+                                className={errorFields.password ? 'input-error' : ''}
                             />
                             <img 
                                 src={passwordVisible ? visibleIcon : hiddenIcon} 
@@ -228,6 +395,9 @@ const SignUp = () => {
                                 onClick={() => setPasswordVisible(!passwordVisible)} 
                             />
                         </div>
+                        {errorFields.password && (
+                            <p className="field-error-message">{errorFields.password}</p>
+                        )}
                     </div>
                     
                     <div className="form-group">
@@ -241,6 +411,7 @@ const SignUp = () => {
                                 onChange={handleChange} 
                                 placeholder="Confirm your password" 
                                 required 
+                                className={errorFields.confirm_password ? 'input-error' : ''}
                             />
                             <img 
                                 src={confirmPasswordVisible ? visibleIcon : hiddenIcon} 
@@ -249,6 +420,9 @@ const SignUp = () => {
                                 onClick={() => setConfirmPasswordVisible(!confirmPasswordVisible)} 
                             />
                         </div>
+                        {errorFields.confirm_password && (
+                            <p className="field-error-message">{errorFields.confirm_password}</p>
+                        )}
                     </div>
                     
                     <div className="form-group">
@@ -260,12 +434,16 @@ const SignUp = () => {
                                 value={formData.gender} 
                                 onChange={handleChange} 
                                 required
+                                className={errorFields.gender ? 'input-error' : ''}
                             >
                                 <option value="" disabled>Select your gender</option>
                                 <option value="male">Male</option>
                                 <option value="female">Female</option>
                             </select>
                         </div>
+                        {errorFields.gender && (
+                            <p className="field-error-message">{errorFields.gender}</p>
+                        )}
                     </div>
                     
                     <div className="form-group">
@@ -277,12 +455,16 @@ const SignUp = () => {
                                 value={formData.role} 
                                 onChange={handleChange} 
                                 required
+                                className={errorFields.role ? 'input-error' : ''}
                             >
                                 <option value="student">Student</option>
                                 <option value="lecturer">Lecturer</option>
                                 <option value="academic_registrar">Academic Registrar</option>
                             </select>
                         </div>
+                        {errorFields.role && (
+                            <p className="field-error-message">{errorFields.role}</p>
+                        )}
                     </div>
                     
                     {/* Program dropdown for students only */}
@@ -296,15 +478,22 @@ const SignUp = () => {
                                     value={formData.program} 
                                     onChange={handleChange} 
                                     required
+                                    disabled={isLoadingPrograms}
+                                    className={errorFields.program ? 'input-error' : ''}
                                 >
-                                    <option value="" disabled>Select your program</option>
+                                    <option value="" disabled>
+                                        {isLoadingPrograms ? "Loading programs..." : "Select your program"}
+                                    </option>
                                     {programs.map((program, index) => (
-                                        <option key={index} value={program}>
-                                            {program}
+                                        <option key={index} value={program.id || ''}>
+                                            {program.program_name || 'Unknown Program'}
                                         </option>
                                     ))}
                                 </select>
                             </div>
+                            {errorFields.program && (
+                                <p className="field-error-message">{errorFields.program}</p>
+                            )}
                         </div>
                     )}
                     
@@ -321,8 +510,12 @@ const SignUp = () => {
                                     onChange={handleChange} 
                                     placeholder="Enter registration token" 
                                     required 
+                                    className={errorFields.registration_token ? 'input-error' : ''}
                                 />
                             </div>
+                            {errorFields.registration_token && (
+                                <p className="field-error-message">{errorFields.registration_token}</p>
+                            )}
                         </div>
                     )}
                     
@@ -334,8 +527,12 @@ const SignUp = () => {
                             checked={formData.agreeToTerms} 
                             onChange={handleChange} 
                             required 
+                            className={errorFields.agreeToTerms ? 'input-error' : ''}
                         />
                         <label htmlFor="terms">I have read and understood the ATIS terms and conditions.</label>
+                        {errorFields.agreeToTerms && (
+                            <p className="field-error-message">{errorFields.agreeToTerms}</p>
+                        )}
                     </div>
                     
                     {error && <p className="error-message">{error}</p>}
@@ -344,7 +541,7 @@ const SignUp = () => {
                     <button 
                         type="submit" 
                         className="sign-up-button" 
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || (isStudent && isLoadingPrograms)}
                     >
                         {isSubmitting ? 'Signing Up...' : 'Sign Up'}
                     </button>

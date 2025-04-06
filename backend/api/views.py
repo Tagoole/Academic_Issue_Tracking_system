@@ -209,6 +209,7 @@ class Lecturer_and_Registrar_Registration(APIView):
 class Student_Registration(APIView):
     permission_classes = [AllowAny]
     def post(self, request):
+        print(request.data)
         data=request.data
         serializer = Student_RegisterSerializer(data=data)
         if serializer.is_valid():
@@ -224,16 +225,6 @@ class Student_Registration(APIView):
             verification.code = verification_code
             #verification_code.created_at = timezone.now()
             verification.save()
-            
-            '''Sending the email...'''
-            '''subject = 'Email verification Code..'
-            message = f"Hello, your Verification code is: {verification_code}"
-            receipient_email= data.get('email')
-            
-            try:
-                send_mail(subject,message,settings.EMAIL_HOST_USER,[receipient_email],fail_silently=False)
-            except Exception as e:
-                return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)'''
                 
             subject = 'Email Verification Code'
             message = f"Hello, your Verification code is: {verification_code}"
@@ -245,22 +236,25 @@ class Student_Registration(APIView):
                 settings.EMAIL_HOST_USER,
                 [recipient_email]
             )
-
-            email.send(fail_silently=False)
-            return Response({
-                    "message": "User Created Successfully, Token created and email sent!",
-                    "user": {
-                    "id": user.id,
-                    "first_name": user.first_name,
-                    "last_name": user.last_name,
-                    "username": user.username,
-                    "email": user.email,
-                    "role":user.role,
-                    "gender": user.gender,
-                    "program": user.program.id if user.program else None,
-                    "is_email_verified": user.is_email_verified,
-                
-                    }}, status=status.HTTP_201_CREATED)
+            try:
+                email.send(fail_silently=False)
+                return Response({
+                        "message": "User Created Successfully, Token created and email sent!",
+                        "user": {
+                        "id": user.id,
+                        "first_name": user.first_name,
+                        "last_name": user.last_name,
+                        "username": user.username,
+                        "email": user.email,
+                        "role":user.role,
+                        "gender": user.gender,
+                        "program": user.program.id if user.program else None,
+                        "is_email_verified": user.is_email_verified,
+                    
+                        }}, status=status.HTTP_201_CREATED)
+            except Exception as e:
+                print(f"Email sending failed: {str(e)}")
+        print(serializer.errors)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
     
 class Registration_Token_viewset(ModelViewSet):

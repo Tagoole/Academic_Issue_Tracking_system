@@ -146,3 +146,93 @@ input:focus, select:focus {
 .bottom-text a:hover {
     text-decoration: underline;
 }
+
+/* Alert styles */
+.alert {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 15px 20px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    animation: slideDown 0.3s ease-out forwards;
+    min-width: 300px;
+    max-width: 90%;
+  }
+  
+  .alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+  }
+  
+  .alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+  
+  .alert-message {
+    flex-grow: 1;
+    margin-right: 15px;
+  }
+  
+  .alert-close-btn {
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: inherit;
+    padding: 0;
+    line-height: 1;
+  }
+  
+  @keyframes slideDown {
+    from {
+      top: -50px;
+      opacity: 0;
+    }
+    to {
+      top: 20px;
+      opacity: 1;
+    }
+  }
+  
+  /* Field error styles */
+  .field-error-message {
+    color: #dc3545;
+    font-size: 0.8rem;
+    margin-top: 5px;
+    margin-bottom: 0;
+  }
+  
+  .input-error {
+    border: 1px solid #dc3545 !important;
+    background-color: rgba(220, 53, 69, 0.05);
+  }
+  
+  /* Enhance error and success messages */
+  .error-message, .success-message {
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin: 15px 0;
+    text-align: center;
+    font-weight: 500;
+  }
+  
+  .error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+  
+  .success-message {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+  }
