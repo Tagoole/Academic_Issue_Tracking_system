@@ -1,22 +1,91 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import mail from '../assets/mail.png';
-import hidden from '../assets/hidden.png'
-import codeIcon from '../assets/code-icon.png'; // You'll need to add this image
-import graduateImage from '../assets/congragulation.png'; // You'll ne
+import hidden from '../assets/hidden.png';
+import codeIcon from '../assets/code-icon.png';
+import graduateImage from '../assets/congragulation.png';
 import './signin.css';
 
 const SignIn = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle the sign-in logic here
-    console.log('Email:', email);
-    console.log('Password:', password);
-    console.log('Agreed to terms:', agreeToTerms);
+    setError('');
+    setIsLoading(true);
+    
+    try {
+      // Make API call to authenticate user
+      const response = await fetch('/api/access_token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      // Check if response is empty
+      const responseText = await response.text();
+      if (!responseText) {
+        throw new Error('Server returned empty response');
+      }
+
+      // Try to parse the response as JSON
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (jsonError) {
+        console.error('JSON parse error:', jsonError);
+        console.error('Response text:', responseText);
+        throw new Error('Invalid response format from server');
+      }
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to sign in');
+      }
+      
+      // Store tokens in localStorage
+      if (data.accessToken) {
+        localStorage.setItem('accessToken', data.accessToken);
+      } else {
+        console.warn('No access token in response');
+      }
+      
+      if (data.refreshToken) {
+        localStorage.setItem('refreshToken', data.refreshToken);
+      }
+      
+      // Check user role and redirect accordingly
+      if (data.user && data.user.role) {
+        switch (data.user.role.toLowerCase()) {
+          case 'student':
+            navigate('/studentdashboard');
+            break;
+          case 'academic_registrar':
+            navigate('/registrardashboard');
+            break;
+          default:
+            navigate('/dashboard'); // Default dashboard if role is not recognized
+            break;
+        }
+      } else {
+        // If no role is provided, redirect to a default page
+        console.warn('No user role found in response');
+        navigate('/dashboard');
+      }
+      
+    } catch (err) {
+      setError(err.message || 'An error occurred during sign in');
+      console.error('Sign in error:', err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -30,24 +99,24 @@ const SignIn = () => {
         <div className="left-section">
           <div className="header">
             <h1 className="green-text">WELCOME TO THE ACADEMIC TRACKING SYSTEM</h1>
-            
             <h2 className="green-text">(ATIS)</h2>
           </div>
 
           <div className="content">
             <h4 className="sign-in-heading">Sign in</h4>
+            {error && <div className="error-message">{error}</div>}
             <form className="sign-in-form" onSubmit={handleSubmit}>
               <div className="form-group">
                 <div className="input-container">
                   <input
-                    type="email"
-                    id="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your Email here"
+                    type="text"
+                    id="username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="Enter your Username"
                     required
                   />
-                  <img src={mail} alt="Mail Icon" className="icon" />
+                  <img src={mail} alt="User Icon" className="icon" />
                 </div>
               </div>
 
@@ -66,6 +135,7 @@ const SignIn = () => {
                     alt="Toggle Password"
                     className="icon"
                     onClick={() => setPasswordVisible(!passwordVisible)}
+                    style={{ cursor: 'pointer' }}
                   />
                 </div>
               </div>
@@ -83,8 +153,12 @@ const SignIn = () => {
                 <label htmlFor="terms">I have read and understood the terms and conditions of the ATIS.</label>
               </div>
 
-              <button type="submit" className="submit-button">
-                Sign In
+              <button 
+                type="submit" 
+                className="submit-button"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Signing In...' : 'Sign In'}
               </button>
             </form>
 
