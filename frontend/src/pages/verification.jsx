@@ -10,6 +10,7 @@ const EmailVerification = () => {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [resendStatus, setResendStatus] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [resendDisabled, setResendDisabled] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const inputRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
@@ -21,7 +22,7 @@ const EmailVerification = () => {
     // First priority: Check if email was passed via location state (from signup page)
     if (location.state && location.state.email) {
       setEmail(location.state.email);
-      // Optionally save to localStorage for persistence
+      // Save to localStorage for persistence
       localStorage.setItem('userEmail', location.state.email);
     } 
     // Second priority: Check localStorage
@@ -34,10 +35,10 @@ const EmailVerification = () => {
       const emailParam = urlParams.get('email');
       if (emailParam) {
         setEmail(emailParam);
-        // Optionally save to localStorage for persistence
+        // Save to localStorage for persistence
         localStorage.setItem('userEmail', emailParam);
       } else {
-        // If no email is found, redirect to signup or show error
+        // If no email is found, show error
         setError('No email address found. Please sign up first.');
       }
     }
@@ -72,12 +73,66 @@ const EmailVerification = () => {
     }
   };
   
+  // Parse and extract error message from various response formats
+  const extractErrorMessage = (error) => {
+    if (!error) return 'An unknown error occurred';
+    
+    if (error.response) {
+      // Handle different error response formats
+      const responseData = error.response.data;
+      
+      // If the error is a simple string
+      if (typeof responseData === 'string') {
+        return responseData;
+      }
+      
+      // If error is in 'error' field
+      if (responseData.error) {
+        return responseData.error;
+      }
+      
+      // If error is in 'Error' field
+      if (responseData.Error) {
+        return responseData.Error;
+      }
+      
+      // If error response contains multiple field errors
+      if (typeof responseData === 'object' && Object.keys(responseData).length > 0) {
+        // Join all error messages
+        const errorMessages = Object.values(responseData)
+          .flat()
+          .filter(val => val)
+          .join('. ');
+          
+        if (errorMessages) return errorMessages;
+      }
+      
+      return `Server error: ${error.response.status}`;
+    } else if (error.request) {
+      return 'No response from server. Please check your connection.';
+    } else {
+      return error.message || 'Error submitting request. Please try again.';
+    }
+  };
+  
   // Handle form submission - verify email with backend
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // Validation check
+    if (!email) {
+      setError('Email address is missing. Please go back to signup.');
+      return;
+    }
+    
+    if (!isCodeComplete) {
+      setError('Please enter the complete 5-digit verification code.');
+      return;
+    }
+    
     // Combine the digits into a single code
     const code = verificationCode.join('');
+    setIsLoading(true);
     
     try {
       const response = await API.post('/api/verify_email/', {
@@ -88,7 +143,8 @@ const EmailVerification = () => {
       // Handle successful verification
       console.log('Verification successful:', response.data);
       // Show success message before redirecting
-      setResendStatus('Email verified successfully!');
+      setResendStatus(response.data.Message || 'Email verified successfully!');
+      setError(''); // Clear any existing errors
       
       // Redirect to sign-in page or dashboard after short delay
       setTimeout(() => {
@@ -98,18 +154,9 @@ const EmailVerification = () => {
     } catch (error) {
       // Handle verification error
       console.error('Verification error:', error);
-      
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        setError(error.response.data.error || 'Verification failed. Please try again.');
-      } else if (error.request) {
-        // The request was made but no response was received
-        setError('No response from server. Please check your connection.');
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        setError('Error submitting verification code. Please try again.');
-      }
+      setError(extractErrorMessage(error));
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -120,33 +167,29 @@ const EmailVerification = () => {
       return;
     }
     
+    setIsLoading(true);
+    setResendStatus('Sending verification code...');
+    
     try {
       // Call the backend API to resend verification code
-      // Fixed: Use the correct endpoint and include email in the request body
-      const response = await API.post("/api/resend_verification/", {
+      const response = await API.post("/api/resend_verify_code/", {
         email: email
       });
       
       // Show success message
-      setResendStatus('Verification code resent! Please check your email.');
+      setResendStatus(response.data.Message || 'Verification code resent! Please check your email.');
+      setError(''); // Clear any previous errors
       
       // Disable the button temporarily and start countdown
       setResendDisabled(true);
       setCountdown(30); // 30 second cooldown
       
-      // Clear any previous errors
-      if (error) setError('');
-      
     } catch (error) {
       console.error('Error resending code:', error);
-      
-      if (error.response) {
-        setError(error.response.data.error || 'Failed to resend code. Please try again.');
-      } else if (error.request) {
-        setError('No response from server. Please check your connection.');
-      } else {
-        setError('Error submitting request. Please try again.');
-      }
+      setError(extractErrorMessage(error));
+      setResendStatus(''); // Clear any success message
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -217,7 +260,7 @@ const EmailVerification = () => {
                 onKeyDown={(e) => handleKeyDown(index, e)}
                 className="code-input"
                 aria-label={`Digit ${index + 1}`}
-                disabled={!email}
+                disabled={!email || isLoading}
               />
             ))}
           </div>
@@ -228,20 +271,20 @@ const EmailVerification = () => {
           <button
             type="submit"
             className="next-button"
-            disabled={!isCodeComplete || !email}
+            disabled={!isCodeComplete || !email || isLoading}
           >
-            Next
+            {isLoading ? 'Verifying...' : 'Next'}
           </button>
 
           <button
             type="button"
             className="resend-button"
             onClick={handleResendCode}
-            disabled={resendDisabled || !email}
+            disabled={resendDisabled || !email || isLoading}
           >
-            {resendDisabled 
-              ? `Resend Code (${countdown}s)` 
-              : 'Resend Code'}
+            {isLoading && !resendDisabled ? 'Sending...' : 
+             resendDisabled ? `Resend Code (${countdown}s)` : 
+             'Resend Code'}
           </button>
         </form>
         
