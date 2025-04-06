@@ -23,6 +23,7 @@ import SignUp from "./pages/signup";
 import ProfileScreen from "./pages/StudentsProfile";
 import Notifications from "./pages/Notifications";
 import LandingPage from "./pages/landingpage";
+import CONGS from "./pages/congs";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
         <Route path="/verification" element={<EmailVerification />} />
         <Route path="/resetpassword" element={<ResetPassword />} />
         <Route path="/changepassword" element={<Changepassword />} />
+        <Route path="/congs" element={<CONGS />} />
         
         {/* Profile setup routes */}
         <Route path="/profilesetup" element={<ProfileSetup />} />

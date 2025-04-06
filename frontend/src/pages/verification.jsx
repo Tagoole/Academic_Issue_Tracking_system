@@ -142,14 +142,19 @@ const EmailVerification = () => {
       
       // Handle successful verification
       console.log('Verification successful:', response.data);
-      // Show success message before redirecting
+      
+      // Show success message briefly
       setResendStatus(response.data.Message || 'Email verified successfully!');
       setError(''); // Clear any existing errors
       
-      // Redirect to sign-in page or dashboard after short delay
-      setTimeout(() => {
-        navigate('/signin');
-      }, 2000);
+      // Navigate to congratulations page with the email as state
+      // This allows the congratulations page to know who to congratulate
+      navigate('/congratulations', { 
+        state: { 
+          email: email,
+          message: response.data.Message || 'Email verified successfully!'
+        } 
+      });
       
     } catch (error) {
       // Handle verification error
