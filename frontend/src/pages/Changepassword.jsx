@@ -84,23 +84,43 @@ function ChangePassword() {
         backgroundAttachment: 'fixed',
         minHeight: '100vh',
         width: '100%',
+        position: 'relative',
       }}
     >
-      {/* NavBar Component */}
-      <NavBar />
+      {/* NavBar Component with white glassmorphism */}
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 100,
+        background: 'rgba(255, 255, 255, 0.7)',
+        backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.3)',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+      }}>
+        <NavBar />
+      </div>
 
       {/* Main content container */}
       <div className="settings-container">
-        {/* Glassmorphism applied to sidebar */}
+        {/* Glassmorphism applied to sidebar - moved to left margin with more intense effect */}
         <div
           className="settings-sidebar"
           style={{
-            background: 'rgba(0, 0, 0, 0.8)',
-            backdropFilter: 'blur(8px)',
-            WebkitBackdropFilter: 'blur(8px)',
+            background: 'rgba(0, 0, 0, 0.85)',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
             borderRadius: '0 10px 10px 0',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+            border: '1px solid rgba(255, 255, 255, 0.15)',
+            boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.5)',
+            left: 0, // Ensure it's at the left margin
+            width: '250px',
+            position: 'fixed',
+            height: '100vh',
+            zIndex: 90,
+            paddingTop: '80px', // Space for the navbar
           }}
         >
           <div className="university-logo-sidebar">
@@ -157,6 +177,7 @@ function ChangePassword() {
             marginLeft: '250px',
             padding: '30px',
             flex: '1',
+            paddingTop: '90px', // Increased to accommodate fixed navbar
           }}
         >
           <div className="password-change-form">
@@ -167,7 +188,7 @@ function ChangePassword() {
               <div
                 className="input-wrapper"
                 style={{
-                  background: 'rgba(255, 255, 255, 0.3)',
+                  background: 'rgba(100, 100, 100, 0.3)', // Grey search bar
                   backdropFilter: 'blur(4px)',
                   WebkitBackdropFilter: 'blur(4px)',
                   borderRadius: '5px',
@@ -220,7 +241,7 @@ function ChangePassword() {
               <div
                 className="input-wrapper"
                 style={{
-                  background: 'rgba(255, 255, 255, 0.3)',
+                  background: 'rgba(100, 100, 100, 0.3)', // Grey search bar
                   backdropFilter: 'blur(4px)',
                   WebkitBackdropFilter: 'blur(4px)',
                   borderRadius: '5px',
@@ -278,7 +299,7 @@ function ChangePassword() {
               <div
                 className="input-wrapper"
                 style={{
-                  background: 'rgba(255, 255, 255, 0.3)',
+                  background: 'rgba(100, 100, 100, 0.3)', // Grey search bar
                   backdropFilter: 'blur(4px)',
                   WebkitBackdropFilter: 'blur(4px)',
                   borderRadius: '5px',
