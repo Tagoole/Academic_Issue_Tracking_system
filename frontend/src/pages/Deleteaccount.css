@@ -1,194 +1,70 @@
+/* Reset some basic elements */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin-left: 100px;
-  }
-  
-  .delete-account-container {
-    width: 375px;
-    height: 812px;
-    background-color: white;
-    position: relative;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    overflow: hidden;
-  }
-  
-  .app-icon {
-    width: 60px;
-    height: 60px;
-    background-color: #e0e0e0;
-    border-radius: 12px;
-    position: absolute;
-    top: 50px;
-    left: 20px;
-  }
-  
-  .delete-account-title {
-    position: absolute;
-    top: 120px;
-    left: 20px;
-    font-size: 34px;
-    font-weight: bold;
-    color: red;
-  }
-  
-  .delete-account-description {
-    position: absolute;
-    top: 180px;
-    left: 20px;
-    right: 20px;
-    font-size: 16px;
-    color: #666;
-    text-align: center;
-  }
-  
-  .delete-account-button-container {
-    position: absolute;
-    top: 50%; /* Center vertically */
-    left: 50%; /* Center horizontally */
-    transform: translate(-50%, -50%); /* Adjust for the button's size */
-    display: flex;
-    justify-content: center;
-  }
-  
-  .delete-account-button {
-    background-color: #ff0000;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    border-radius: 5px;
-    cursor: pointer;
-    max-width: 400px; /* Restrict the button width */
-    width: 100%; /* Ensure it stays within the container */
-  }
-  
-  .delete-account-button:hover {
-    background-color: #cc0000;
-  }
-  
-  .trash-icon {
-    position: absolute;
-    top: 350px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100px;
-    height: 120px;
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><path d="M9 3v18"></path><path d="M15 3v18"></path></svg>');
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
-  }
-  
-  .menu-options {
-    position: absolute;
-    bottom: 50px;
-    width: 100%;
-    padding: 0 20px;
-  }
-  
-  .menu-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 50px;
-    border-bottom: 1px solid #e0e0e0;
-    font-size: 16px;
-  }
-  
-  .menu-item .arrow {
-    color: #a0a0a0;
-  }
-  
-  .menu-item.active {
-    color: red;
-  }
-  
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  }
-  
-  .modal-content {
-    background-color: white;
-    width: 300px;
-    padding: 30px;
-    border-radius: 15px;
-    text-align: center;
-  }
-  
-  .modal-content h2 {
-    margin-bottom: 15px;
-    color: red;
-  }
-  
-  .modal-content p {
-    margin-bottom: 30px;
-    color: #666;
-  }
-  
-  .modal-buttons {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .modal-buttons button {
-    height: 50px;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    cursor: pointer;
-    margin-bottom: 10px;
-  }
-  
-  .cancel-btn {
-    background-color: #f0f0f0;
-    color: #333;
-  }
-  
-  .confirm-delete-btn {
-    background-color: red;
-    color: white;
-  }
+  font-family: 'Arial', sans-serif;
+  color: #333;
+  overflow-x: hidden;
+}
+
+.settings-container {
+  display: flex;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Background image */
+.background-image {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('../assets/pexels-olia-danilevich-5088017.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: -1;
+}
+
+/* Glass morphism effect */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
 
 /* Sidebar Styles */
 .settings-sidebar {
-  width: 250px;
-  background-color: #000;
-  color: #fff;
-  padding: 20px;
+  width: 280px;
+  padding: 30px 20px;
   display: flex;
   flex-direction: column;
-  border-top-right-radius: 12px;
-  border-bottom-right-radius: 12px;
-  height: 100vh; /* Full height of the viewport */
+  height: 100vh;
   position: fixed;
-  top: 0; /* Align with the top of the viewport */
+  top: 0;
+  left: 0;
+  z-index: 10;
+  transition: all 0.3s ease;
+  border-radius: 0 20px 20px 0;
 }
 
 .university-logo-sidebar {
   display: flex;
   justify-content: center;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
 }
 
 .logo-sidebar {
-  width: 100px;
+  width: 120px;
   height: auto;
+  filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 /* Sidebar Menu Items */
@@ -196,88 +72,154 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 20px;
+  padding: 15px 20px;
   font-size: 16px;
-  font-weight: bold;
+  font-weight: 500;
   cursor: pointer;
-  color: #fff;
+  color: #333;
   text-decoration: none;
-  border-radius: 8px;
-  margin-bottom: 10px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
 }
 
 .menu-item:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.4);
+  transform: translateX(5px);
 }
 
 .menu-item.active {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.5);
+  color: #ff3333;
+  font-weight: 600;
 }
 
 .arrow-icon {
-  width: 16px;
-  height: 16px;
-  fill: #fff;
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+  transition: transform 0.3s ease;
+}
+
+.menu-item:hover .arrow-icon {
+  transform: translateX(3px);
 }
 
 /* Main Content */
 .main-content {
-  margin-left: 270px; /* Adjust for the sidebar width */
-  padding: 20px;
-  background-color: #fff;
-  height: auto;
-  min-height: 100vh; /* Ensure it spans the full height of the viewport */
-  overflow-y: auto;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-left: 300px;
+  padding: 30px;
+  flex-grow: 1;
+  min-height: 100vh;
+  border-radius: 20px 0 0 20px;
+  margin-right: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* Delete Account Title */
 .delete-account-title {
-  font-size: 24px;
-  font-weight: bold;
+  font-size: 32px;
+  font-weight: 700;
   text-align: center;
-  margin: 0 auto; /* Center the title horizontally */
-  padding: 10px 0; /* Add padding for spacing */
-  background-color: #fff; /* Match the white area background */
+  color: #ff3333;
+  margin-bottom: 40px;
   position: relative;
-  top: 0; /* Position the title at the top of the white area */
-  width: 100%; /* Ensure it spans the full width of the white area */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
-  z-index: 1; /* Ensure it appears above other elements */
+  padding-bottom: 15px;
+}
+
+.delete-account-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background-color: #ff3333;
+  border-radius: 3px;
+}
+
+.delete-account-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+}
+
+/* Trash Icon */
+.trash-icon {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 30px;
+}
+
+.trash-icon svg {
+  width: 100%;
+  height: 100%;
 }
 
 /* Delete Account Description */
 .delete-account-description {
   font-size: 16px;
-  margin-bottom: 30px;
+  line-height: 1.6;
   text-align: center;
+  margin-bottom: 40px;
+}
+
+.delete-account-description p {
+  margin-bottom: 15px;
 }
 
 /* Delete Account Button */
 .delete-account-button-container {
-  position: absolute;
-  top: 50%; /* Center vertically */
-  left: 50%; /* Center horizontally */
-  transform: translate(-50%, -50%); /* Adjust for the button's size */
   display: flex;
   justify-content: center;
+  width: 100%;
+  margin-top: 20px;
 }
 
 .delete-account-button {
-  background-color: #ff0000;
-  color: #fff;
+  background-color: #ff3333;
+  color: white;
   border: none;
-  padding: 10px 20px;
-  font-size: 16px;
-  font-weight: bold;
-  border-radius: 5px;
+  padding: 15px 30px;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 8px;
   cursor: pointer;
-  max-width: 400px; /* Restrict the button width */
-  width: 100%; /* Ensure it stays within the container */
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(255, 51, 51, 0.2);
 }
 
 .delete-account-button:hover {
-  background-color: #cc0000;
+  background-color: #e60000;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(255, 51, 51, 0.3);
+}
+
+.delete-account-button:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px rgba(255, 51, 51, 0.3);
+}
+
+/* Pulse animation */
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 51, 51, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 51, 51, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 51, 51, 0);
+  }
 }
 
 /* Modal Styles */
@@ -287,20 +229,53 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .modal-content {
-  background-color: #fff;
-  padding: 20px 30px;
-  border-radius: 10px;
+  padding: 30px;
+  border-radius: 16px;
   text-align: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-  width: 400px;
+  width: 90%;
+  max-width: 500px;
+  animation: scaleIn 0.3s ease;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-content h2 {
+  color: #ff3333;
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+.modal-content p {
+  margin-bottom: 30px;
+  color: #333;
+  line-height: 1.5;
 }
 
 .modal-buttons {
@@ -310,29 +285,118 @@ body {
 }
 
 .cancel-btn {
-  background: none;
-  border: none;
-  color: #000;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #333;
   font-size: 16px;
+  font-weight: 500;
+  padding: 12px 24px;
+  border-radius: 8px;
   cursor: pointer;
-  text-decoration: underline;
+  transition: all 0.3s ease;
 }
 
 .cancel-btn:hover {
-  color: #555;
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .confirm-delete-btn {
-  background-color: #ff0000;
-  color: #fff;
+  background-color: #ff3333;
+  color: white;
   border: none;
-  padding: 10px 20px;
+  padding: 12px 24px;
   font-size: 16px;
-  font-weight: bold;
-  border-radius: 5px;
+  font-weight: 600;
+  border-radius: 8px;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .confirm-delete-btn:hover {
-  background-color: #cc0000;
+  background-color: #e60000;
+}
+
+/* Success Modal */
+.success-modal {
+  text-align: center;
+}
+
+.success-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 20px;
+}
+
+.success-icon svg {
+  width: 100%;
+  height: 100%;
+  animation: checkmark 0.8s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+@keyframes checkmark {
+  0% {
+    stroke-dashoffset: 100;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.success-modal h2 {
+  color: #4CAF50;
+}
+
+/* Responsive styles */
+@media (max-width: 992px) {
+  .settings-sidebar {
+    width: 250px;
+  }
+  
+  .main-content {
+    margin-left: 270px;
+  }
+}
+
+@media (max-width: 768px) {
+  .settings-container {
+    flex-direction: column;
+  }
+  
+  .settings-sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    border-radius: 0 0 20px 20px;
+    padding: 20px;
+  }
+  
+  .university-logo-sidebar {
+    margin-bottom: 20px;
+  }
+  
+  .main-content {
+    margin-left: 0;
+    margin-right: 0;
+    border-radius: 20px 20px 0 0;
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 576px) {
+  .delete-account-title {
+    font-size: 28px;
+  }
+  
+  .modal-content {
+    padding: 20px;
+  }
+  
+  .modal-buttons {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+  
+  .cancel-btn, .confirm-delete-btn {
+    width: 100%;
+  }
 }
