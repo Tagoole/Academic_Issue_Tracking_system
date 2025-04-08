@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import API from '../api';
 import mail from '../assets/mail.png';
 import hidden from '../assets/hidden.png';
 import codeIcon from '../assets/code-icon.png';
@@ -21,34 +22,14 @@ const SignIn = () => {
     setIsLoading(true);
     
     try {
-      // Make API call to authenticate user
-      const response = await fetch('/api/access_token', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
+      // Make API call to authenticate user using your API instance
+      const response = await API.post('/api/access_token/', {
+        username,
+        password
       });
 
-      // Check if response is empty
-      const responseText = await response.text();
-      if (!responseText) {
-        throw new Error('Server returned empty response');
-      }
-
-      // Try to parse the response as JSON
-      let data;
-      try {
-        data = JSON.parse(responseText);
-      } catch (jsonError) {
-        console.error('JSON parse error:', jsonError);
-        console.error('Response text:', responseText);
-        throw new Error('Invalid response format from server');
-      }
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to sign in');
-      }
+      // API response is automatically parsed by axios
+      const data = response.data;
       
       // Store tokens in localStorage
       if (data.accessToken) {
@@ -81,8 +62,21 @@ const SignIn = () => {
       }
       
     } catch (err) {
-      setError(err.message || 'An error occurred during sign in');
-      console.error('Sign in error:', err);
+      // Axios error handling
+      if (err.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        setError(err.response.data.message || `Error: ${err.response.status}`);
+        console.error('Response error:', err.response.data);
+      } else if (err.request) {
+        // The request was made but no response was received
+        setError('No response received from server. Please try again later.');
+        console.error('Request error:', err.request);
+      } else {
+        // Something happened in setting up the request
+        setError(err.message || 'An error occurred during sign in');
+        console.error('Sign in error:', err);
+      }
     } finally {
       setIsLoading(false);
     }

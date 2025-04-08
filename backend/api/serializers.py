@@ -2,6 +2,20 @@ from .models import *
 from rest_framework import serializers
 from api import models
 from django.contrib.auth.models import Group
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def get_token(self, user):
+        token = super().get_token(user)
+        
+        # Add custom claims
+        token['email'] = user.email  
+        token['role'] = user.role  
+        token['username'] = user.username
+        print(token)
+        return token
+
 
 
 class UserSerializer(serializers.ModelSerializer):
