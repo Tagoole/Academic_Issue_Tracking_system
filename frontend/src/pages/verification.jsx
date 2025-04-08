@@ -149,7 +149,7 @@ const EmailVerification = () => {
       
       // Navigate to congratulations page with the email as state
       // This allows the congratulations page to know who to congratulate
-      navigate('/congratulations', { 
+      navigate('/congs', { 
         state: { 
           email: email,
           message: response.data.Message || 'Email verified successfully!'
