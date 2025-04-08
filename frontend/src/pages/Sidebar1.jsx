@@ -18,8 +18,15 @@ const Sidebar1 = () => {
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('userRole');
     
-    // Redirect to landing page
-    navigate('/'); // Assuming '/' is your landing page route
+    // Clear session storage as well (if you're using it)
+    sessionStorage.clear();
+    
+    // Replace current history entry with the landing page
+    // This prevents going back to the dashboard with the back button
+    navigate('/', { replace: true });
+    
+    // For extra security, reload the page to clear any in-memory state
+    window.location.reload();
   };
 
   return (
@@ -64,7 +71,7 @@ const Sidebar1 = () => {
         </Link>
       </div>
       
-      {/* Logout Button (not a Link) */}
+      {/* Logout Button */}
       <div className="sidebar-item logout">
         <div 
           className="sidebar-link" 
