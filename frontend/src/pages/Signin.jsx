@@ -42,9 +42,13 @@ const SignIn = () => {
         localStorage.setItem('refreshToken', data.refreshToken);
       }
       
-      // Check user role and redirect accordingly
-      if (data.user && data.user.role) {
-        switch (data.user.role.toLowerCase()) {
+      // Check the role directly from the response
+      // (Modified to check for role directly in response instead of nested in user object)
+      if (data.role) {
+        // Store role in localStorage for future use if needed
+        localStorage.setItem('userRole', data.role);
+        
+        switch (data.role.toLowerCase()) {
           case 'student':
             navigate('/studentdashboard');
             break;
@@ -52,13 +56,14 @@ const SignIn = () => {
             navigate('/registrardashboard');
             break;
           default:
-            navigate('/dashboard'); // Default dashboard if role is not recognized
+            navigate('/landingpage'); 
             break;
         }
       } else {
-        // If no role is provided, redirect to a default page
-        console.warn('No user role found in response');
-        navigate('/dashboard');
+        // If no role is provided, show warning and redirect to default dashboard
+        console.warn('No role found in response');
+        setError('Login successful but role information is missing. Contact administrator.');
+        navigate('/landingpage');
       }
       
     } catch (err) {

@@ -25,6 +25,12 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         validated_data = serializer.validated_data
 
         print("Validated Data:", validated_data)  # Print validated data in the console
+        # Get the user
+        user = serializer.user
+        
+        # Add role to the response
+        response.data['role'] = user.role
+        
 
         return response
 
