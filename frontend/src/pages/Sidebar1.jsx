@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom'; 
+import { Link, useNavigate } from 'react-router-dom';
 import './Sidebar1.css';
 import dashboardIcon from "../assets/dash.png";
 import issueIcon from "../assets/issue.png";
@@ -9,54 +9,63 @@ import logoutIcon from "../assets/logout.png";
 import helpIcon from "../assets/help.png";
 
 const Sidebar1 = () => {
+  const navigate = useNavigate();
+  
+  const handleLogout = () => {
+    // Clear all tokens from localStorage
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('userRole');
+    
+    // Clear session storage as well
+    sessionStorage.clear();
+    
+    // Replace current history entry with the landing page
+    // This prevents going back to the dashboard with the back button
+    navigate('/', { replace: true });
+    
+    // For extra security, reload the page to clear any in-memory state
+    window.location.reload();
+  };
+
   return (
     <div className="sidebar">
-      {/* Registra Dashboard Link */}
-      <div className="sidebar-item">
-        <Link to="/StudentDashboard" className="sidebar-link">
-          <img src={dashboardIcon} alt="Dash Icon" className="sidebar-icon" />
+      <div className="sidebar-menu">
+        {/* Student Dashboard Link */}
+        <Link to="/dashboard" className="sidebar-item">
+          <img src={dashboardIcon} alt="Dashboard" className="sidebar-icon" />
           <span>StudentDashboard</span>
         </Link>
-      </div>
-
-      {/* Issues Link */}
-      <div className="sidebar-item">
-        <Link to="/issues" className="sidebar-link">
-          <img src={issueIcon} alt="Issue Icon" className="sidebar-icon" />
+        
+        {/* Issues Link */}
+        <Link to="/issues" className="sidebar-item">
+          <img src={issueIcon} alt="Issues" className="sidebar-icon" />
           <span>Issues</span>
         </Link>
-      </div>
-
-      {/* Profile Link */}
-      <div className="sidebar-item">
-        <Link to="/studentprofile" className="sidebar-link">
-          <img src={profileIcon} alt="Profile Icon" className="sidebar-icon" />
+        
+        {/* Profile Link */}
+        <Link to="/profile" className="sidebar-item">
+          <img src={profileIcon} alt="Profile" className="sidebar-icon" />
           <span>Studentprofile</span>
         </Link>
-      </div>
-
-      {/* Settings Link */}
-      <div className="sidebar-item">
-        <Link to="/settings" className="sidebar-link">
-          <img src={settingsIcon} alt="Settings Icon" className="sidebar-icon" />
+        
+        {/* Settings Link */}
+        <Link to="/settings" className="sidebar-item">
+          <img src={settingsIcon} alt="Settings" className="sidebar-icon" />
           <span>Settings</span>
         </Link>
-      </div>
-
-      {/* Help and Support Link */}
-      <div className="sidebar-item">
-        <Link to="/help" className="sidebar-link">
-          <img src={helpIcon} alt="Help Icon" className="sidebar-icon" />
+        
+        {/* Help and Support Link */}
+        <Link to="/help" className="sidebar-item">
+          <img src={helpIcon} alt="Help" className="sidebar-icon" />
           <span>Help and Support</span>
         </Link>
-      </div>
-
-      {/* Logout Link */}
-      <div className="sidebar-item logout">
-        <Link to="/logout" className="sidebar-link">
-          <img src={logoutIcon} alt="Logout Icon" className="sidebar-icon" />
+        
+        {/* Logout Button */}
+        <button onClick={handleLogout} className="sidebar-item logout-btn">
+          <img src={logoutIcon} alt="Logout" className="sidebar-icon" />
           <span>Log Out</span>
-        </Link>
+        </button>
       </div>
     </div>
   );
