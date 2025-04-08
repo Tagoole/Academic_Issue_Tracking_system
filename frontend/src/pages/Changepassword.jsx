@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 import makerereLogo from '../assets/makererelogo.png';
 import hidden from '../assets/hidden.png';
-import './Changepassword.css';
+import './ChangePassword.css';
 import NavBar from './NavBar'; // Implemented NavBar
-import backgroundimage from '../assets/pexels-olia-danilevich-5088017.jpg'; // Updated background image
+import backgroundImage from '../assets/pexels-olia-danilevich-5088017.jpg'; // Background image
 
-function Changepassword() {
+function ChangePassword() {
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [showConfirmation, setShowConfirmation] = useState(false); // State to show confirmation modal
-  const [successMessage, setSuccessMessage] = useState(false); // State to show success message
-  const [passwordError, setPasswordError] = useState(''); // State to show password error
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [successMessage, setSuccessMessage] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
 
   const validatePassword = (password) => {
     if (password.length < 6) {
@@ -31,8 +31,8 @@ function Changepassword() {
     }
 
     // Validation for password length
-    if (newPassword.length <= 6) {
-      alert("New password must be more than 6 characters");
+    if (newPassword.length < 6) {
+      alert("New password must be at least 6 characters");
       return;
     }
 
@@ -77,15 +77,16 @@ function Changepassword() {
   return (
     <div
       style={{
-        backgroundImage: `url(${backgroundimage})`, // Fixed: Using template literals for string interpolation
-        backgroundSize: 'cover', // Ensure the image covers the entire screen
-        backgroundPosition: 'center', // Center the image
-        backgroundRepeat: 'no-repeat', // Prevent the image from repeating
-        minHeight: '100vh', // Ensure the background covers the full viewport height
-        width: '100%', // Ensure the background covers the full viewport width
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed',
+        minHeight: '100vh',
+        width: '100%',
       }}
     >
-      {/* Add the NavBar */}
+      {/* NavBar Component */}
       <NavBar />
 
       {/* Main content container */}
@@ -94,12 +95,12 @@ function Changepassword() {
         <div
           className="settings-sidebar"
           style={{
-            background: 'rgba(0, 0, 0, 0.6)', // Black with 60% opacity for glassmorphism
-            backdropFilter: 'blur(6px)', // Reduced blur effect
-            WebkitBackdropFilter: 'blur(6px)', // For Safari support
-            borderRadius: '10px',
-            border: '1px solid rgba(255, 255, 255, 0.1)', // Subtle border
-            boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)', // Enhanced shadow
+            background: 'rgba(0, 0, 0, 0.8)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            borderRadius: '0 10px 10px 0',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
           }}
         >
           <div className="university-logo-sidebar">
@@ -135,7 +136,7 @@ function Changepassword() {
             </svg>
           </a>
 
-          <a href="/delete-account" className="delete-account">
+          <a href="/delete-account" className="menu-item delete-account">
             Delete Account
             <svg viewBox="0 0 24 24" className="arrow-icon">
               <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
@@ -153,10 +154,13 @@ function Changepassword() {
             borderRadius: '10px',
             border: '1px solid rgba(255, 255, 255, 0.18)',
             boxShadow: '0 8px 32px 0 rgba(5, 5, 5, 0.37)',
+            marginLeft: '250px',
+            padding: '30px',
+            flex: '1',
           }}
         >
           <div className="password-change-form">
-            <h2>Settings</h2>
+            <h2>Change Password</h2>
 
             <div className="form-group">
               <label>Old Password</label>
@@ -168,6 +172,7 @@ function Changepassword() {
                   WebkitBackdropFilter: 'blur(4px)',
                   borderRadius: '5px',
                   border: '1px solid rgba(255, 255, 255, 0.18)',
+                  position: 'relative',
                 }}
               >
                 <input
@@ -178,13 +183,34 @@ function Changepassword() {
                   style={{
                     background: 'transparent',
                     color: '#333',
+                    width: '100%',
+                    padding: '12px 40px 12px 15px',
+                    border: 'none',
+                    outline: 'none',
                   }}
                 />
                 <button
                   className="toggle-password"
                   onClick={() => setShowOldPassword(!showOldPassword)}
+                  style={{
+                    position: 'absolute',
+                    right: '10px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '5px',
+                  }}
                 >
-                  <img src={hidden} alt="Toggle visibility" />
+                  <img 
+                    src={hidden} 
+                    alt="Toggle visibility" 
+                    style={{ width: '20px', height: '20px' }} 
+                  />
                 </button>
               </div>
             </div>
@@ -199,6 +225,7 @@ function Changepassword() {
                   WebkitBackdropFilter: 'blur(4px)',
                   borderRadius: '5px',
                   border: '1px solid rgba(255, 255, 255, 0.18)',
+                  position: 'relative',
                 }}
               >
                 <input
@@ -209,13 +236,34 @@ function Changepassword() {
                   style={{
                     background: 'transparent',
                     color: '#333',
+                    width: '100%',
+                    padding: '12px 40px 12px 15px',
+                    border: 'none',
+                    outline: 'none',
                   }}
                 />
                 <button
                   className="toggle-password"
                   onClick={() => setShowNewPassword(!showNewPassword)}
+                  style={{
+                    position: 'absolute',
+                    right: '10px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '5px',
+                  }}
                 >
-                  <img src={hidden} alt="Toggle visibility" />
+                  <img 
+                    src={hidden} 
+                    alt="Toggle visibility" 
+                    style={{ width: '20px', height: '20px' }} 
+                  />
                 </button>
               </div>
               {passwordError && (
@@ -235,6 +283,7 @@ function Changepassword() {
                   WebkitBackdropFilter: 'blur(4px)',
                   borderRadius: '5px',
                   border: '1px solid rgba(255, 255, 255, 0.18)',
+                  position: 'relative',
                 }}
               >
                 <input
@@ -245,13 +294,34 @@ function Changepassword() {
                   style={{
                     background: 'transparent',
                     color: '#333',
+                    width: '100%',
+                    padding: '12px 40px 12px 15px',
+                    border: 'none',
+                    outline: 'none',
                   }}
                 />
                 <button
                   className="toggle-password"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  style={{
+                    position: 'absolute',
+                    right: '10px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '5px',
+                  }}
                 >
-                  <img src={hidden} alt="Toggle visibility" />
+                  <img 
+                    src={hidden} 
+                    alt="Toggle visibility" 
+                    style={{ width: '20px', height: '20px' }} 
+                  />
                 </button>
               </div>
               {newPassword && confirmPassword && newPassword !== confirmPassword && (
@@ -264,16 +334,20 @@ function Changepassword() {
             <button
               className="save-changes"
               style={{
-                background: 'rgba(11, 11, 11, 0.7)',
+                background: 'rgba(11, 11, 11, 0.8)',
                 backdropFilter: 'blur(4px)',
                 WebkitBackdropFilter: 'blur(4px)',
                 border: '1px solid rgba(255, 255, 255, 0.18)',
                 boxShadow: '0 8px 32px 0 rgba(6, 6, 6, 0.37)',
                 color: 'white',
-                padding: '10px 25px',
+                padding: '12px 25px',
                 borderRadius: '5px',
                 cursor: 'pointer',
                 transition: 'all 0.3s ease',
+                width: '100%',
+                fontSize: '16px',
+                fontWeight: 'bold',
+                marginTop: '20px',
               }}
               onClick={handleSaveChanges}
             >
@@ -354,4 +428,4 @@ function Changepassword() {
   );
 }
 
-export default Changepassword;
+export default ChangePassword;
