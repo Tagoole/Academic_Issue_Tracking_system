@@ -2,7 +2,7 @@ import React from 'react';
 import makerereLogo from '../assets/makererelogo.png';
 import './Help.css'; 
 import NavBar from './Navbar';
-import backgroundimage from '../assets/pexels-olia-danilevich-5088017.jpg'; // Background image
+import backgroundImage from '../assets/pexels-olia-danilevich-5088017.jpg'; // Background image
 
 const Help = () => {
   const handleEmailCopy = () => {
@@ -19,11 +19,15 @@ const Help = () => {
     <div
       className="settings-container"
       style={{
-        backgroundImage: "url(${backgroundimage})",
+        backgroundImage: `url(${backgroundImage})`, // Fixed template literal syntax
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
         minHeight: '100vh',
+        width: '100%', // Ensure it spans the full width
+        position: 'absolute', // Position absolute to cover the entire viewport
+        top: 0,
+        left: 0,
       }}
     >
       {/* NavBar */}
@@ -33,12 +37,14 @@ const Help = () => {
       <div
         className="settings-sidebar"
         style={{
-          background: 'rgba(0, 0, 0, 0.6)', // Black with 60% opacity for glassmorphism
-          backdropFilter: 'blur(6px)', // Blur effect
-          WebkitBackdropFilter: 'blur(6px)', // For Safari support
-          borderRadius: '10px',
-          border: '1px solid rgba(255, 255, 255, 0.1)', // Subtle border
+          background: 'rgba(0, 0, 0, 0.7)', // Increased opacity for better visibility
+          backdropFilter: 'blur(10px)', // Enhanced blur effect
+          WebkitBackdropFilter: 'blur(10px)', // For Safari support
+          borderRadius: '12px',
+          border: '1px solid rgba(255, 255, 255, 0.18)', // More visible border
           boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)', // Enhanced shadow
+          padding: '25px 20px', // Improved padding
+          zIndex: 10, // Ensure sidebar is above background
         }}
       >
         <div className="university-logo-sidebar">
@@ -86,12 +92,17 @@ const Help = () => {
       <div
         className="main-content"
         style={{
-          background: 'rgba(255, 255, 255, 0.2)', // Semi-transparent white background
-          backdropFilter: 'blur(12px)', // Blur effect
-          WebkitBackdropFilter: 'blur(12px)', // For Safari support
-          borderRadius: '10px',
-          border: '1px solid rgba(255, 255, 255, 0.18)', // Subtle border
+          background: 'rgba(255, 255, 255, 0.15)', // More transparent to enhance glassmorphism
+          backdropFilter: 'blur(15px)', // Increased blur for more glassmorphism effect
+          WebkitBackdropFilter: 'blur(15px)', // For Safari support
+          borderRadius: '15px',
+          border: '1px solid rgba(255, 255, 255, 0.2)', // More visible border
           boxShadow: '0 8px 32px 0 rgba(5, 5, 5, 0.37)', // Enhanced shadow
+          padding: '30px', // Increased padding for better spacing
+          marginTop: '20px', // Add some space from the top
+          maxWidth: '800px', // Limit width for better readability
+          width: '100%', // Take full width up to max-width
+          zIndex: 5, // Ensure content is above background
         }}
       >
         <div className="support-help-title">Support/Help</div>
@@ -109,6 +120,10 @@ const Help = () => {
               value="jjulianahmuhindo@gmail.com"
               readOnly
               onClick={handleEmailCopy}
+              style={{ 
+                background: 'rgba(255, 255, 255, 0.6)', // Semi-transparent input
+                border: '1px solid rgba(255, 255, 255, 0.3)'
+              }}
             />
           </div>
         </div>
@@ -122,6 +137,10 @@ const Help = () => {
               value="MTN; +256 764671815"
               readOnly
               onClick={() => handlePhoneCopy('+256 764671815')}
+              style={{ 
+                background: 'rgba(255, 255, 255, 0.6)', // Semi-transparent input
+                border: '1px solid rgba(255, 255, 255, 0.3)'
+              }}
             />
           </div>
           <div className="contact-input-container">
@@ -130,6 +149,10 @@ const Help = () => {
               value="AIRTEL; +256 704671815"
               readOnly
               onClick={() => handlePhoneCopy('+256 704671815')}
+              style={{ 
+                background: 'rgba(255, 255, 255, 0.6)', // Semi-transparent input
+                border: '1px solid rgba(255, 255, 255, 0.3)'
+              }}
             />
           </div>
         </div>
@@ -138,4 +161,4 @@ const Help = () => {
   );
 };
 
-export default Help;
+export default Help;
