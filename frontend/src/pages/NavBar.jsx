@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import './NavBar.css';
 import profilePic from '../assets/profile.png';
 import logo from '../assets/makererelogo.png';
@@ -8,6 +8,9 @@ import { useNavigate } from "react-router-dom";
 
 const NavBar = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [profileImage, setProfileImage] = useState(profilePic);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
   const handleSearchChange = (e) => {
@@ -27,12 +30,37 @@ const NavBar = () => {
     navigate('/notifications');
   };
 
+  const openFileSelector = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleProfileClick = () => {
+    setShowProfileModal(!showProfileModal);
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setProfileImage(event.target.result);
+        setShowProfileModal(false);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <nav className="navbar">
       {/* Left Section: Profile */}
       <div className="navbar-left">
         <div className="profile-container">
-          <img src={profilePic} alt="Profile" className="profile-image" />
+          <div className="profile-image-container" onClick={handleProfileClick}>
+            <img src={profileImage} alt="Profile" className="profile-image" />
+            <div className="profile-image-overlay">
+              <span className="change-text">Change</span>
+            </div>
+          </div>
           <span className="profile-name">{'{First Name}'}</span>
         </div>
       </div>
@@ -63,6 +91,33 @@ const NavBar = () => {
         <div className="app-title">Academic Issue Tracking System</div>
         <img src={logo} alt="Logo" className="logo-image" />
       </div>
+
+      {/* Hidden file input */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleImageChange}
+        accept="image/*"
+        style={{ display: 'none' }}
+      />
+
+      {/* Profile Picture Change Modal */}
+      {showProfileModal && (
+        <div className="profile-modal">
+          <div className="profile-modal-content">
+            <h3>Change Profile Picture</h3>
+            <div className="modal-profile-preview">
+              <img src={profileImage} alt="Current profile" />
+            </div>
+            <button onClick={openFileSelector} className="upload-btn">
+              Upload New Picture
+            </button>
+            <button onClick={() => setShowProfileModal(false)} className="cancel-btn">
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
     </nav>
   );
 };
