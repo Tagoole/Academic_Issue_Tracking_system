@@ -37,7 +37,7 @@ const Help = () => {
       <div
         className="settings-sidebar"
         style={{
-          background: 'rgba(0, 0, 0, 0.7)', // Increased opacity for better visibility
+          background: 'rgba(0, 0, 0, 0.4)', // Increased opacity for better visibility
           backdropFilter: 'blur(10px)', // Enhanced blur effect
           WebkitBackdropFilter: 'blur(10px)', // For Safari support
           borderRadius: '12px',
