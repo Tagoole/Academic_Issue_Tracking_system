@@ -16,6 +16,7 @@ const Sidebar1 = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('userRole');
+    localStorage.removeItem('userEmail');
     
     // Clear session storage as well
     sessionStorage.clear();

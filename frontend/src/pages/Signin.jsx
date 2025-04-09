@@ -10,7 +10,6 @@ import './signin.css';
 const SignIn = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -100,7 +99,7 @@ const SignIn = () => {
         <div className="left-section">
           <div className="header">
             <h1 className="green-text">WELCOME TO THE ACADEMIC TRACKING SYSTEM</h1>
-            <h2 className="green-text">(ATIS)</h2>
+            <h2 className="green-text">(AITS)</h2>
           </div>
 
           <div className="content">
@@ -142,17 +141,6 @@ const SignIn = () => {
               </div>
               
               <a href="/forgot-password" className="forgot-password-text">Forgot the password?</a>
-
-              <div className="terms-group">
-                <input
-                  type="checkbox"
-                  id="terms"
-                  checked={agreeToTerms}
-                  onChange={(e) => setAgreeToTerms(e.target.checked)}
-                  required
-                />
-                <label htmlFor="terms">I have read and understood the terms and conditions of the ATIS.</label>
-              </div>
 
               <button 
                 type="submit" 
