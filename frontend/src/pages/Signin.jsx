@@ -30,16 +30,18 @@ const SignIn = () => {
 
       // API response is automatically parsed by axios
       const data = response.data;
+      // Add this right after getting the response
+      console.log('API Response:', response.data);
       
       // Store tokens in localStorage
-      if (data.accessToken) {
-        localStorage.setItem('accessToken', data.accessToken);
+      if (data.access) {
+        localStorage.setItem('accessToken', data.access);
       } else {
         console.warn('No access token in response');
       }
       
-      if (data.refreshToken) {
-        localStorage.setItem('refreshToken', data.refreshToken);
+      if (data.refresh) {
+        localStorage.setItem('refreshToken', data.refresh);
       }
       
       // Check the role directly from the response

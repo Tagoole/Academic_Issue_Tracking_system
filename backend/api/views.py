@@ -30,6 +30,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         
         # Add role to the response
         response.data['role'] = user.role
+        print(user.role)
         
 
         return response

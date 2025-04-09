@@ -291,10 +291,11 @@ const SignUp = () => {
                 </div>
             )}
             
-            <div className="left-side">
-                <h2>Create an Account</h2>
-                <h2>Please fill up this form</h2>
-                <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="signup-form">
+                <div className="left-side">
+                    <h2>Create an Account</h2>
+                    <h2>Please fill up this form</h2>
+                    
                     <div className="form-group">
                         <label htmlFor="first_name">First Name</label>
                         <div className="input-container">
@@ -374,7 +375,9 @@ const SignUp = () => {
                             <p className="field-error-message">{errorFields.email}</p>
                         )}
                     </div>
-                    
+                </div>
+                
+                <div className="right-side">
                     <div className="form-group">
                         <label htmlFor="password">Password</label>
                         <div className="input-container">
@@ -518,7 +521,9 @@ const SignUp = () => {
                             )}
                         </div>
                     )}
-                    
+                </div>
+                
+                <div className="form-footer">
                     <div className="form-group terms-group">
                         <input 
                             type="checkbox" 
@@ -545,8 +550,12 @@ const SignUp = () => {
                     >
                         {isSubmitting ? 'Signing Up...' : 'Sign Up'}
                     </button>
-                </form>
-            </div>
+                    
+                    <div className="bottom-text">
+                        <p>Already have an account? <a href="/signin">Sign In</a></p>
+                    </div>
+                </div>
+            </form>
         </div>
     );
 };

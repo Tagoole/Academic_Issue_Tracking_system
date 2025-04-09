@@ -1,238 +1,266 @@
 html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f0f0f0;
-    margin-left: 200px;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
 }
 
 .signup-page {
-    display: flex;
-    height: 100vh;
-    width: 100%;
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.signup-form {
+  display: flex;
+  flex-wrap: wrap;
+  width: 80%;
+  max-width: 1200px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.left-side, .right-side {
+  flex: 1;
+  min-width: 300px;
+  padding: 30px;
 }
 
 .left-side {
-    flex: 1;
-    display: flex;
-    max-width: 900%;
-;
-    flex-direction: column;
-    justify-content: center;
-    padding: 40px;
-    background-color: white;
-    background-position: center;
-    margin-left: 200px;
+  background-color: white;
 }
 
 .right-side {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f0f0f0;
-}
-
-.intro-image {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
+  background-color: #f8f8f8;
+  border-left: 1px solid #e0e0e0;
 }
 
 h1 {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 10px;
-    position: absolute;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
 }
 
 h2 {
-    font-size: 18px;
-    margin-bottom: 20px;
-    position: center;
-    color: green;
-    font-size: 20px;
+  font-size: 18px;
+  margin-bottom: 20px;
+  color: green;
 }
 
 .form-group {
-    margin-bottom: 15px;
-    width: 100%;
-    position: relative;
+  margin-bottom: 20px;
+  width: 100%;
+  position: relative;
 }
 
 label {
-    display: block;
-    margin-bottom: 5px;
-    font-size: 14px;
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
 }
 
 .input-container {
-    position: relative;
-    border: 2px solid green;
+  position: relative;
 }
 
 input, select {
-    width: 100%;
-    padding: 10px;
-    border: 2px solid green;
-    border-radius: 5px;
-    background-color: #e0ffe0;
-    font-size: 16px;
-}
-
-input::placeholder, select::placeholder {
-    color: lightgray;
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
+  font-size: 16px;
+  transition: all 0.3s ease;
 }
 
 input:focus, select:focus {
-    outline: none;
-    border-color: #007bff;
+  outline: none;
+  border-color: green;
+  background-color: #e0ffe0;
 }
 
-.icon {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
+.input-container .icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
 }
 
-.sign-up-button {
-    width: 35%;
-    padding: 15px;
-    background-color: green;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 18px;
-    cursor: pointer;
-    margin-left: 2px;
-    position: absolute;
-}
-
-.sign-up-button:hover {
-    background-color: darkgreen;
+.form-footer {
+  width: 100%;
+  padding: 20px 30px;
+  background-color: #f0f0f0;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .terms-group {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-    font-size: 14px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  font-size: 14px;
+  width: auto;
 }
 
 .terms-group input {
-    margin-right: 10px;
+  width: auto;
+  margin-right: 10px;
+}
+
+.sign-up-button {
+  width: 200px;
+  padding: 12px 15px;
+  background-color: green;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin: 15px 0;
+}
+
+.sign-up-button:hover {
+  background-color: darkgreen;
+}
+
+.sign-up-button:disabled {
+  background-color: #7eb67e;
+  cursor: not-allowed;
 }
 
 .bottom-text {
-    margin-top: 20px;
-    font-size: 14px;
+  margin-top: 20px;
+  font-size: 14px;
+  text-align: center;
 }
 
 .bottom-text a {
-    color: green;
-    text-decoration: none;
-    position: absolute;
-    margin-top: 50px;
+  color: green;
+  text-decoration: none;
 }
 
 .bottom-text a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 /* Alert styles */
 .alert {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 15px 20px;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    z-index: 1000;
-    animation: slideDown 0.3s ease-out forwards;
-    min-width: 300px;
-    max-width: 90%;
-  }
-  
-  .alert-success {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-  }
-  
-  .alert-error {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-  }
-  
-  .alert-message {
-    flex-grow: 1;
-    margin-right: 15px;
-  }
-  
-  .alert-close-btn {
-    background: transparent;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    color: inherit;
-    padding: 0;
-    line-height: 1;
-  }
-  
-  @keyframes slideDown {
-    from {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 15px 20px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  animation: slideDown 0.3s ease-out forwards;
+  min-width: 300px;
+  max-width: 90%;
+}
+
+.alert-success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.alert-error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.alert-message {
+  flex-grow: 1;
+  margin-right: 15px;
+}
+
+.alert-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: inherit;
+  padding: 0;
+  line-height: 1;
+}
+
+@keyframes slideDown {
+  from {
       top: -50px;
       opacity: 0;
-    }
-    to {
+  }
+  to {
       top: 20px;
       opacity: 1;
-    }
+  }
+}
+
+/* Field error styles */
+.field-error-message {
+  color: #dc3545;
+  font-size: 0.8rem;
+  margin-top: 5px;
+  margin-bottom: 0;
+}
+
+.input-error {
+  border: 1px solid #dc3545 !important;
+  background-color: rgba(220, 53, 69, 0.05);
+}
+
+/* Enhance error and success messages */
+.error-message, .success-message {
+  padding: 10px 15px;
+  border-radius: 4px;
+  margin: 15px 0;
+  text-align: center;
+  font-weight: 500;
+  width: 100%;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.success-message {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .signup-form {
+      flex-direction: column;
+      width: 95%;
   }
   
-  /* Field error styles */
-  .field-error-message {
-    color: #dc3545;
-    font-size: 0.8rem;
-    margin-top: 5px;
-    margin-bottom: 0;
+  .left-side, .right-side {
+      width: 100%;
   }
   
-  .input-error {
-    border: 1px solid #dc3545 !important;
-    background-color: rgba(220, 53, 69, 0.05);
+  .right-side {
+      border-left: none;
+      border-top: 1px solid #e0e0e0;
   }
-  
-  /* Enhance error and success messages */
-  .error-message, .success-message {
-    padding: 10px 15px;
-    border-radius: 4px;
-    margin: 15px 0;
-    text-align: center;
-    font-weight: 500;
-  }
-  
-  .error-message {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-  }
-  
-  .success-message {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-  }
+}

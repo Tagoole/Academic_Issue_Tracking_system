@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import makerereLogo from '../assets/makererelogo.png';
 import hidden from '../assets/hidden.png';
 import './ChangePassword.css';
-import NavBar from './Navbar';
+import NavBar from './NavBar';
 import backgroundImage from '../assets/pexels-olia-danilevich-5088017.jpg'; // Background image
 
 function ChangePassword() {
@@ -156,7 +156,7 @@ function ChangePassword() {
             </svg>
           </a>
 
-          <a href="/delete-account" className="menu-item delete-account">
+          <a href="/deleteaccount" className="menu-item delete-account">
             Delete Account
             <svg viewBox="0 0 24 24" className="arrow-icon">
               <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
