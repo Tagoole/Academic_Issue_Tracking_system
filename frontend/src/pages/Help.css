@@ -1,228 +1,228 @@
 body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin-left: 100px;
-  }
-  
-  .support-help-container {
-    width: 375px;
-    height: 812px;
-    background-color: white;
-    position: relative;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    overflow: hidden;
-    padding: 20px;
-    font-family: Arial, sans-serif;
-  }
-  
-  .app-icon {
-    width: 60px;
-    height: 60px;
-    background-color: #e0e0e0;
-    border-radius: 12px;
-    position: absolute;
-    top: 50px;
-    left: 20px;
-  }
-  
-  .support-help-title {
-    position: absolute;
-    top: 120px;
-    left: 20px;
-    font-size: 24px;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 20px;
-    margin-top: 0;
-  }
-  
-  .support-description {
-    position: absolute;
-    top: 180px;
-    left: 20px;
-    right: 20px;
-    font-size: 16px;
-    color: #666;
-    text-align: center;
-    margin-bottom: 30px;
-  }
-  
-  .contact-section {
-    position: absolute;
-    left: 20px;
-    right: 20px;
-    margin-bottom: 20px;
-  }
-  
-  .contact-type {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-  
-  .contact-input-container {
-    margin-bottom: 10px;
-  }
-  
-  .contact-input-container input {
-    width: 100%;
-    height: 50px;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 0 15px;
-    font-size: 14px;
-    background-color: #f9f9f9;
-    cursor: pointer;
-  }
-  
-  .contact-input-container input:focus {
-    outline: none;
-    border-color: #000;
-  }
-  
-  .contact-section:nth-child(3) {
-    top: 300px;
-  }
-  
-  .contact-section:nth-child(4) {
-    top: 450px;
-  }
-  
-  .menu-options {
-    position: absolute;
-    bottom: 50px;
-    width: 100%;
-    padding: 0 20px;
-    margin-top: 30px;
-  }
-  
-  .menu-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 8px;
-    margin-bottom: 10px;
-  }
-  
-  .menu-item:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-  }
-  
-  .menu-item.active {
-    background-color: rgba(255, 255, 255, 0.2);
-  }
-  
-  .arrow {
-    font-size: 18px;
-    color: #888;
-  }
-  
-  .delete-account {
-    color: #ff0000;
-  }
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin-left: 100px;
+}
 
-  /* Sidebar Styles */
-  .settings-sidebar {
-    width: 250px;
-    background-color: #000;
-    color: #fff;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    border-top-right-radius: 12px;
-    border-bottom-right-radius: 12px;
-    height: 100vh; /* Restore the sidebar to span the full height of the viewport */
-    position: fixed;
-    top: 0; /* Align with the top of the viewport */
-  }
-  
-  .university-logo-sidebar {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 30px;
-  }
-  
-  .logo-sidebar {
-    width: 100px;
-    height: auto;
-  }
-  
-  .arrow-icon {
-    width: 16px;
-    height: 16px;
-    fill: #fff;
-  }
-  
-  /* Main Content */
-  .main-content {
-    margin-left: 270px; /* Adjust for the sidebar width */
-    padding: 20px;
-    background-color: #fff;
-    height: auto;
-    min-height: calc(100vh - 60px); /* Ensure it aligns with the sidebar */
-    overflow-y: auto;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
+.support-help-container {
+  width: 375px;
+  height: 812px;
+  background-color: white;
+  position: relative;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  overflow: hidden;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
 
-  .support-help-title {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    text-align: center;
-    margin: 20px 0; /* Add spacing above and below */
-    position: relative;
-    top: 20px; /* Position the title above the white area */
-  }
-  
-  .support-description {
-    font-size: 16px;
-    margin-bottom: 30px;
-    text-align: center;
-  }
-  
-  .contact-section {
-    margin-bottom: 20px;
-    padding: 10px; /* Add padding to ensure spacing */
-    background-color: #fff; /* Ensure it matches the main content */
-    border-radius: 8px; /* Optional: Add rounded corners */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
-    max-width: 600px; /* Restrict the width of the contact section */
-    margin-left: auto; /* Center align */
-    margin-right: auto; /* Center align */
-  }
-  
-  .contact-type {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-  
-  .contact-input-container {
-    margin-bottom: 10px;
-  }
-  
-  .contact-input-container input {
-    width: 100%;
-    padding: 10px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-    cursor: pointer;
-  }
-  
-  .contact-input-container input:focus {
-    outline: none;
-    border-color: #000;
-  }
+.app-icon {
+  width: 60px;
+  height: 60px;
+  background-color: #e0e0e0;
+  border-radius: 12px;
+  position: absolute;
+  top: 50px;
+  left: 20px;
+}
+
+.support-help-title {
+  position: absolute;
+  top: 120px;
+  left: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+  margin-top: 0;
+}
+
+.support-description {
+  position: absolute;
+  top: 180px;
+  left: 20px;
+  right: 20px;
+  font-size: 16px;
+  color: #666;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.contact-section {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  margin-bottom: 20px;
+}
+
+.contact-type {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.contact-input-container {
+  margin-bottom: 10px;
+}
+
+.contact-input-container input {
+  width: 100%;
+  height: 50px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 0 15px;
+  font-size: 14px;
+  background-color: #f9f9f9;
+  cursor: pointer;
+}
+
+.contact-input-container input:focus {
+  outline: none;
+  border-color: #000;
+}
+
+.contact-section:nth-child(3) {
+  top: 300px;
+}
+
+.contact-section:nth-child(4) {
+  top: 450px;
+}
+
+.menu-options {
+  position: absolute;
+  bottom: 50px;
+  width: 100%;
+  padding: 0 20px;
+  margin-top: 30px;
+}
+
+.menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.menu-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.menu-item.active {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.arrow {
+  font-size: 18px;
+  color: #888;
+}
+
+.delete-account {
+  color: #ff0000;
+}
+
+/* Sidebar Styles */
+.settings-sidebar {
+  width: 250px;
+  background-color: #000;
+  color: #fff;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+  height: 100vh; /* Restore the sidebar to span the full height of the viewport */
+  position: fixed;
+  top: 0; /* Align with the top of the viewport */
+}
+
+.university-logo-sidebar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.logo-sidebar {
+  width: 100px;
+  height: auto;
+}
+
+.arrow-icon {
+  width: 16px;
+  height: 16px;
+  fill: #fff;
+}
+
+/* Main Content */
+.main-content {
+  margin-left: 270px; /* Adjust for the sidebar width */
+  padding: 20px;
+  background-color: #fff;
+  height: auto;
+  min-height: calc(100vh - 60px); /* Ensure it aligns with the sidebar */
+  overflow-y: auto;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.support-help-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+  margin: 20px 0; /* Add spacing above and below */
+  position: relative;
+  top: 20px; /* Position the title above the white area */
+}
+
+.support-description {
+  font-size: 16px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.contact-section {
+  margin-bottom: 20px;
+  padding: 10px; /* Add padding to ensure spacing */
+  background-color: #fff; /* Ensure it matches the main content */
+  border-radius: 8px; /* Optional: Add rounded corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+  max-width: 600px; /* Restrict the width of the contact section */
+  margin-left: auto; /* Center align */
+  margin-right: auto; /* Center align */
+}
+
+.contact-type {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.contact-input-container {
+  margin-bottom: 10px;
+}
+
+.contact-input-container input {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  cursor: pointer;
+}
+
+.contact-input-container input:focus {
+  outline: none;
+  border-color: #000;
+}
