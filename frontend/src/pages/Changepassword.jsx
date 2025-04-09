@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import makerereLogo from '../assets/makererelogo.png';
 import hidden from '../assets/hidden.png';
 import './ChangePassword.css';
-import NavBar from './NavBar'; // Implemented NavBar
+import NavBar from './Navbar';
 import backgroundImage from '../assets/pexels-olia-danilevich-5088017.jpg'; // Background image
 
 function ChangePassword() {
@@ -94,7 +94,7 @@ function ChangePassword() {
         left: 0,
         right: 0,
         zIndex: 100,
-        background: 'rgba(255, 255, 255, 0.7)',
+        background: 'rgba(255, 255, 255, 0.4)',
         backdropFilter: 'blur(10px)',
         WebkitBackdropFilter: 'blur(10px)',
         borderBottom: '1px solid rgba(255, 255, 255, 0.3)',
@@ -109,7 +109,7 @@ function ChangePassword() {
         <div
           className="settings-sidebar"
           style={{
-            background: 'rgba(0, 0, 0, 0.85)',
+            background: 'rgba(0, 0, 0, 0.4)',
             backdropFilter: 'blur(12px)',
             WebkitBackdropFilter: 'blur(12px)',
             borderRadius: '0 10px 10px 0',
