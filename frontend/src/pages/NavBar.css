@@ -5,22 +5,12 @@
   left: 0;
   width: 100%;
   display: flex;
-  width: 1000px; 
   justify-content: space-between;
   align-items: center;
-  background-color: #ffffff; /* White background */
+  background-color: #ffffff;
   padding: 10px 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-  position: sticky;
-  top: 0;
-  z-index: 1000; /* Ensure the navbar stays on top */
-
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 20px;
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
 }
 
 /* Left section: Profile */
@@ -33,26 +23,51 @@
   display: flex;
   align-items: center;
   gap: 10px;
+}
 
+/* Profile image container with hover effect */
+.profile-image-container {
+  position: relative;
+  cursor: pointer;
 }
 
 .profile-image {
-  width: 20px;
-  height: 20px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #eee;
+}
 
-  margin-right: 10px;
+.profile-image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.profile-image-container:hover .profile-image-overlay {
+  opacity: 1;
+}
+
+.change-text {
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
 }
 
 .profile-name {
   font-size: 16px;
   font-weight: bold;
   color: #333333;
-
-}
-
-.profile-name {
-  font-weight: bold;
 }
 
 /* Center section: Search bar */
@@ -65,7 +80,6 @@
 .search-form {
   width: 100%;
   max-width: 400px;
-  max-width: 500px;
   margin: 0 20px;
 }
 
@@ -76,22 +90,20 @@
 .search-input {
   width: 100%;
   padding: 10px 15px;
-
   border: 1px solid #cccccc;
   border-radius: 20px;
   font-size: 14px;
   outline: none;
   transition: border-color 0.3s;
+  background-color: #f5f5f5;
 }
 
 .search-input:focus {
-  border-color: #007bff; 
-  border-radius: 20px;
-  border: 1px solid #ddd;
-  font-size: 14px;
+  border-color: #e4e5e7;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
 }
 
-
+/* Right section: Icons */
 .navbar-right {
   display: flex;
   align-items: center;
@@ -100,36 +112,26 @@
 
 .icon-container {
   cursor: pointer;
-
   position: relative;
 }
 
-.icon {
-  width: 70px;
-  height: 70px;
-}
-
-
 .icon-container:not(:last-child) {
-  margin-right: 40px; 
+  margin-right: 20px;
 }
 
 .icon-container:hover .icon {
-  transform: scale(1.1); 
+  transform: scale(1.1);
   transition: transform 0.2s;
-
 }
 
 .icon {
   width: 24px;
   height: 24px;
-
 }
 
 .app-title {
   font-size: 18px;
   font-weight: bold;
-
   color: #333333;
   margin-right: 20px;
 }
@@ -139,10 +141,64 @@
   height: auto;
 }
 
+/* Profile Modal */
+.profile-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.profile-modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.modal-profile-preview {
+  margin: 20px 0;
+}
+
+.modal-profile-preview img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #eee;
+}
+
+.upload-btn, .cancel-btn {
+  padding: 10px 20px;
+  margin: 5px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.upload-btn {
+  background-color: #4a86e8;
+  color: white;
+}
+
+.cancel-btn {
+  background-color: #f1f1f1;
+  color: #333;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .search-container {
-    display: none; 
+    display: none;
   }
 
   .app-title {
@@ -150,14 +206,16 @@
   }
 
   .profile-name {
-    display: none; /* Hide profile name on smaller screens */
-  
-  margin-left: 10px;
-}
+    display: none;
+  }
 
-.logo-image {
-  width: 40px;
-  height: 40px;
-  margin-left: 10px;
-}
+  .logo-image {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .profile-modal-content {
+    width: 90%;
+    max-width: 300px;
+  }
 }
