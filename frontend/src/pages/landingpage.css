@@ -58,7 +58,7 @@
   /* Welcome text styling with animation */
   .welcome-text {
     text-align: center;
-    font-size: 32px;
+    font-size: 50px;
     font-weight: bold;
     margin: 20px 0 40px;
     color: white;
@@ -95,17 +95,17 @@
   }
   
   .signup-btn {
-    background-color: #2a52be;
+    background-color: #289f48;
     color: white;
   }
   
   .signin-btn {
     background-color: white;
-    color: #2a52be;
+    color: #259732;
   }
   .signup-btn:hover, .signin-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 6px 12px rgba(8, 81, 191, 0.3);
   }
   
   /* Responsive adjustments */

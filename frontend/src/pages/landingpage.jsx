@@ -7,7 +7,7 @@ import landingimage from '../assets/landingimage.png';
 const LandingPage = () => {
   const navigate = useNavigate();
   const [showWelcome, setShowWelcome] = useState(false);
-  
+  const [showButtons, setShowButtons] = useState(false);
   useEffect(() => {
     // Trigger welcome message animation after a short delay
     const timer = setTimeout(() => {
@@ -46,7 +46,8 @@ const LandingPage = () => {
         </div>
         
         {/* Button container */}
-        <div className="button-container">
+        <div className={`button-container ${showButtons ? 'show-buttons' : ''}`}>
+          <div className="separator"></div>
           <button className="signup-btn" onClick={navigateToSignup}>Sign Up</button>
           <button className="signin-btn" onClick={navigateToSignin}>Sign In</button>
         </div>
