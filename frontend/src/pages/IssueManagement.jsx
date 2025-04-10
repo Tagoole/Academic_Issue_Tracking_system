@@ -4,7 +4,7 @@ import Navbar from './NavBar';
 import Sidebar from './Sidebar';
 import './IssueManagement.css';
 import backgroundimage from '../assets/backgroundimage.jpg';
-import axios from 'axios'; // Import axios for API calls
+import axios from 'axios'; 
 
 const IssueManagement = () => {
   const [issueStatus, setIssueStatus] = useState('Pending');
@@ -12,13 +12,12 @@ const IssueManagement = () => {
   const [showLecturersDropdown, setShowLecturersDropdown] = useState(false);
   const [activeIssueId, setActiveIssueId] = useState(null);
   const [showActionsDropdown, setShowActionsDropdown] = useState(null);
-  const [issues, setIssues] = useState([]); // Initialize as empty array to be populated by API
+  const [issues, setIssues] = useState([]); 
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
 
-  const API_URL = 'http://127.0.0.1:8000/api/'; // Django API base URL
+  const API_URL = 'http://127.0.0.1:8000/api/'; 
 
-  // Sample lecturers data (static for now, could also be fetched from API if needed)
   const lecturers = [
     { id: 1, name: 'Dr. Sarah Johnson' },
     { id: 2, name: 'Prof. Michael Brown' },
@@ -31,13 +30,13 @@ const IssueManagement = () => {
     axios
       .get(`${API_URL}registrar_issue_management/`)
       .then((response) => {
-        setIssues(response.data); // Set the fetched issues data
+        setIssues(response.data); 
         console.log('Issues fetched successfully:', response.data);
       })
       .catch((error) => {
         console.error('Error fetching issues:', error);
       });
-  }, []); // Empty dependency array means it runs once on mount
+  }, []); 
 
   const filteredIssues = issues.filter((issue) =>
     issue.status === issueStatus &&
@@ -61,7 +60,7 @@ const IssueManagement = () => {
   const handleEscalateIssue = (issueId) => {
     setActiveIssueId(issueId);
     setShowLecturersDropdown(true);
-    setShowActionsDropdown(null); // Close actions dropdown
+    setShowActionsDropdown(null); 
   };
 
   const handleLecturerSelect = (lecturerId) => {

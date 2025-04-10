@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
+import { useNavigate } from 'react-router-dom'; 
 import NavBar from './NavBar';
 import SideBar from './Sidebar1';
 import './Issues.css';
-import backgroundimage from '../assets/pexels-olia-danilevich-5088017.jpg'; // Implementing the unused import
+import backgroundimage from '../assets/pexels-olia-danilevich-5088017.jpg'; 
 
 const Issues = () => {
   const [activeTab, setActiveTab] = useState('Pending');
@@ -13,14 +13,14 @@ const Issues = () => {
   ]);
 
   const tabs = ['Pending', 'In-progress', 'Resolved'];
-  const navigate = useNavigate(); // Initialize useNavigate for navigation
+  const navigate = useNavigate(); 
 
   const handleNewIssueClick = () => {
-    navigate('/new-issue'); // Navigate to the new issue page
+    navigate('/new-issue'); 
   };
 
   const handleViewDetailsClick = (issueId) => {
-    navigate(`/view-details/${issueId}`); // Navigate to the view details page for the specific issue
+    navigate(`/view-details/${issueId}`); 
   };
 
   return (

@@ -1,8 +1,8 @@
 import React from 'react';
-import './IssueSummary.css'; // Import the corresponding CSS file
+import './IssueSummary.css'; 
 
 const IssueSummary = ({ issue }) => {
-  if (!issue) return null; // If no issue is passed, return nothing
+  if (!issue) return null; 
 
   return (
     <div className="issue-summary-container">
