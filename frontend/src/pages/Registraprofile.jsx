@@ -79,7 +79,7 @@ const PersonalProfile = () => {
                     />
                     <img src={name} alt="Phone Number Icon" className="icon" />
                   </div>
-                </div>
+                </div> {/* /Phone Number Input Group */}
 
                 <div className="input-group">
                   <label htmlFor="college" className="label red-text">College</label>
@@ -97,7 +97,7 @@ const PersonalProfile = () => {
                     <option value="college 3">College of Arts</option>
                     <option value="college 4">College of Business</option>
                   </select>
-                </div>
+                </div>{/* /College Input Group */}
 
                 <div className="input-group">
                   <label htmlFor="department" className="label red-text">Department</label>
@@ -133,7 +133,7 @@ const PersonalProfile = () => {
                     <option value="office 3">Physics</option>
                     <option value="office 4">Chemistry</option>
                   </select>
-                </div>
+                </div>{/* /Department Input Group */}
 
                 <div className="navigation-container">
                   <div className="button-group">
