@@ -24,6 +24,7 @@ import ProfileScreen from "./pages/StudentsProfile";
 import Notifications from "./pages/Notifications";
 import LandingPage from "./pages/landingpage";
 import CONGS from "./pages/congs";
+import Lecturerdashboard from "./pages/Lecturerdashboard";
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
         {/* Dashboard routes */}
         <Route path="/studentdashboard" element={<StudentDashboard />} />
         <Route path="/registrardashboard" element={<RegistraDashboard />} />
+        <Route path="/lecturerdashboard" element={<Lecturerdashboard />} />
         
         {/* Issue management routes */}
         <Route path="/new-issue" element={<NewIssue />} />
