@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import makerereLogo from '../assets/makererelogo.png';
 import hidden from '../assets/hidden.png';
-import './ChangePassword.css';
+import './Changepassword.css';
 import NavBar from './NavBar';
 import backgroundImage from '../assets/pexels-olia-danilevich-5088017.jpg'; // Background image
 
