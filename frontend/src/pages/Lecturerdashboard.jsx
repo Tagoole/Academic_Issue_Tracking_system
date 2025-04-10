@@ -4,17 +4,17 @@ import Navbar from './NavBar';
 import Sidebar2 from './Sidebar2';
 import backgroundimage from "../assets/backgroundimage.jpg"; 
 import backgroundImage from '../assets/backgroundimage.jpg'; 
-import IssueSummary from './IssueSummary'; // Import IssueSummary component
+import IssueSummary from './IssueSummary'; 
 
 const Lecturerdashboard = () => {
-  const [selectedIssue, setSelectedIssue] = useState(null); // State to track selected issue
+  const [selectedIssue, setSelectedIssue] = useState(null); 
 
   const issues = [
     { id: 1, status: 'Resolved', studentNo: '25/U0000/PS', category: 'Missing Mark', date: '01/01/2025', title: 'Sample Issue', submissionDate: '2025-01-01', courseUnitName: 'Math 101', courseUnitCode: 'MATH101', assignedLecturer: 'Dr. John', description: 'Description of the issue' }
   ];
 
   const handleIssueClick = (issue) => {
-    setSelectedIssue(issue); // Set the selected issue when clicked
+    setSelectedIssue(issue); 
   };
 
   return (
