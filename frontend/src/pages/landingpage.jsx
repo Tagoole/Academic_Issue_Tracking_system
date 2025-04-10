@@ -6,6 +6,16 @@ import landingimage from '../assets/landingimage.png';
 
 const LandingPage = () => {
   const navigate = useNavigate();
+  const [showWelcome, setShowWelcome] = useState(false);
+  
+  useEffect(() => {
+    // Trigger welcome message animation after a short delay
+    const timer = setTimeout(() => {
+      setShowWelcome(true);
+    }, 800);
+    
+    return () => clearTimeout(timer);
+  }, []);
   
   const navigateToSignup = () => {
     navigate('/signup');
@@ -19,7 +29,7 @@ const LandingPage = () => {
     <div className="landingpage">
       {/* Using the landingimage as a background directly in JSX */}
       <div className="bg-image" style={{ backgroundImage: `url(${landingimage})` }}></div>
-     {/*<img src={landingimage} alt="landing-image" />*/}  
+     <img src={landingimage} alt="landing-image" />
       {/* Logo at the top */}
       <div className="logo">
         <h1 className="logo-name">AITS</h1>
