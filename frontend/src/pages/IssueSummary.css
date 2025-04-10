@@ -1,0 +1,48 @@
+.issue-summary-container {
+    position: absolute;
+    right: 0;
+    top: 60px; /* Adjust if necessary */
+    width: 300px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px); /* Glassmorphism effect */
+    height: calc(100vh - 60px); /* Full height minus the navbar */
+    overflow-y: auto;
+  }
+  
+  .issue-summary-card h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 22px;
+  }
+  
+  .issue-field {
+    margin-bottom: 15px;
+  }
+  
+  .issue-field strong {
+    display: block;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .issue-field p {
+    color: #555;
+    margin: 5px 0;
+  }
+  
+  .open-file-button {
+    padding: 10px 15px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .open-file-button:hover {
+    background-color: #2980b9;
+  }
+  
