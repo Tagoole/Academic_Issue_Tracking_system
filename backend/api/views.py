@@ -457,9 +457,12 @@ def get_user_email_notifications(request):
     return Response ({'number':number,
                       'data':serializer.data})
 
+
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def get_registrars(request):
-    data = request.data
-    registrars = CustomUser.objects.filter(role = 'academic_registrar')
-    serializer = C
+    registrars = CustomUser.objects.filter(role='academic_registrar')
+    
+    serializer = UserSerializer(registrars, many=True)
+    
+    return Response(serializer.data, status=status.HTTP_200_OK)
