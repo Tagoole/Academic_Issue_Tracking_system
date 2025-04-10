@@ -10,48 +10,74 @@ const NewIssue = () => {
   const navigate = useNavigate();
   const [registrars, setRegistrars] = useState([]);
   const [registrarName, setRegistrarName] = useState('');
-  const [issueCategory, setIssueCategory] = useState('Missing marks');
+  const [issueCategory, setIssueCategory] = useState('missing_marks');
   const [issueDescription, setIssueDescription] = useState('I have no marks for OS test yet I merged 86% in it.');
   const [attachment, setAttachment] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentUser, setCurrentUser] = useState('');
 
-  // Fetch registrars when component mounts
+  // Define issue categories to match backend ISSUE_CHOICES
+  const issueCategories = [
+    { value: 'missing_marks', label: 'Missing Marks' },
+    { value: 'appeal', label: 'Appeal' },
+    { value: 'correction', label: 'Correction' }
+  ];
+
+  // Fetch registrars and current user when component mounts
   useEffect(() => {
-    const fetchRegistrars = async () => {
+    const fetchData = async () => {
       try {
         setIsLoading(true);
         setError(null);
         
-        const response = await API.get('/api/get_registrars/');
-        console.log('Registrars API response:', response);
+        // Fetch registrars
+        const registrarsResponse = await API.get('/api/get_registrars/');
+        console.log('Registrars API response:', registrarsResponse);
         
-        if (response && response.data) {
-          setRegistrars(response.data);
+        if (registrarsResponse && registrarsResponse.data) {
+          setRegistrars(registrarsResponse.data);
           
           // Set first registrar as default if available
-          if (response.data.length > 0) {
-            const firstRegistrar = typeof response.data[0] === 'object' && response.data[0].name 
-              ? response.data[0].name 
-              : response.data[0];
+          if (registrarsResponse.data.length > 0) {
+            const firstRegistrar = typeof registrarsResponse.data[0] === 'object' && registrarsResponse.data[0].name 
+              ? registrarsResponse.data[0].name 
+              : registrarsResponse.data[0];
             setRegistrarName(firstRegistrar);
           }
         } else {
           setRegistrars([]);
           setError('No data received from server');
         }
+        
+        // Fetch current user
+        try {
+          const userResponse = await API.get('/api/current-user/');
+          console.log('Current user response:', userResponse);
+          if (userResponse && userResponse.data) {
+            // Handle different response formats
+            const username = typeof userResponse.data === 'object' ? 
+              (userResponse.data.username || userResponse.data.name || '') : 
+              userResponse.data;
+            setCurrentUser(username);
+          }
+        } catch (userErr) {
+          console.error('Error fetching current user:', userErr);
+          // Don't set an error here as we still want the form to work
+          // even if we can't get the current user
+        }
       } catch (err) {
-        console.error('Error fetching registrars:', err);
-        setError('Failed to fetch registrars. Please try again later.');
+        console.error('Error fetching data:', err);
+        setError('Failed to fetch necessary data. Please try again later.');
         setRegistrars([]);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchRegistrars();
+    fetchData();
   }, []);
 
   const handleFileUpload = (e) => {
@@ -63,10 +89,6 @@ const NewIssue = () => {
     setAttachment(null);
   };
 
-  const handleClearCategory = () => {
-    setIssueCategory('');
-  };
-
   const handleSubmit = async () => {
     try {
       setIsSubmitting(true);
@@ -76,9 +98,7 @@ const NewIssue = () => {
       const issueTitle = document.querySelector('input[defaultValue="Wrong Marks"]').value;
       const courseUnitCode = document.querySelector('input[defaultValue="CSS 11001"]').value;
       const courseUnitName = document.querySelector('input[defaultValue="Operating Systems"]').value;
-      const lecturerName = document.querySelector('input[placeholder=""]').value || '';
-      const studentName = document.querySelector('input[placeholder="Enter your full name"]').value || '';
-
+      
       // Create FormData object
       const formData = new FormData();
       formData.append('registrar_name', registrarName);
@@ -87,8 +107,8 @@ const NewIssue = () => {
       formData.append('issue_title', issueTitle);
       formData.append('course_unit_code', courseUnitCode);
       formData.append('course_unit_name', courseUnitName);
-      formData.append('lecturer_name', lecturerName);
-      formData.append('student_name', studentName);
+      formData.append('lecturer_name', ''); // Always sending empty for lecturer name
+      formData.append('student_name', currentUser); // Using current user's username
       formData.append('status', 'Submitted');
       
       if (attachment) {
@@ -166,27 +186,36 @@ const NewIssue = () => {
             </div>
             <div className="form-group">
               <label>Lecturer's Name</label>
-              <input type="text" placeholder="" />
+              {/* Lecturer field is set to disabled and empty */}
+              <input type="text" disabled placeholder="Not required" value="" readOnly />
             </div>
           </div>
 
           <div className="form-row">
             <div className="form-group">
               <label>Issue Category</label>
-              <div className="input-with-clear">
-                <input
-                  type="text"
-                  value={issueCategory}
-                  onChange={(e) => setIssueCategory(e.target.value)}
-                />
-                {issueCategory && (
-                  <span className="clear-icon" onClick={handleClearCategory}>×</span>
-                )}
-              </div>
+              {/* Dropdown for issue categories */}
+              <select
+                value={issueCategory}
+                onChange={(e) => setIssueCategory(e.target.value)}
+              >
+                {issueCategories.map((category) => (
+                  <option key={category.value} value={category.value}>
+                    {category.label}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="form-group">
               <label>Student's Name</label>
-              <input type="text" placeholder="Enter your full name" />
+              {/* Student name field showing current user's name and disabled */}
+              <input 
+                type="text" 
+                value={currentUser} 
+                readOnly 
+                disabled
+                placeholder={isLoading ? "Loading user information..." : ""}
+              />
             </div>
           </div>
 
