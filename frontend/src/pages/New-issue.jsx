@@ -4,7 +4,7 @@ import NavBar from './NavBar';
 import Sidebar from './Sidebar1';
 import './New-issue.css';
 import backgroundimage from "../assets/backgroundimage.jpg";
-import API from '../api'; // Using your existing API import
+import API from '../api';
 
 const NewIssue = () => {
   const navigate = useNavigate();
@@ -15,65 +15,94 @@ const NewIssue = () => {
   const [attachment, setAttachment] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Fetch registrars when component mounts
   useEffect(() => {
-    // Fetch registrars from API
-    API.get('/api/get_registrars/')
-      .then(response => {
-        console.log('Registrars fetched:', response.data);
-        setRegistrars(response.data);
+    const fetchRegistrars = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
         
-        // Set first registrar as default if available
-        if (response.data && response.data.length > 0) {
-          // Handle different response formats (array of strings or objects)
-          const firstRegistrar = typeof response.data[0] === 'object' 
-            ? response.data[0].name 
-            : response.data[0];
-          setRegistrarName(firstRegistrar);
+        const response = await API.get('/api/get_registrars/');
+        console.log('Registrars API response:', response);
+        
+        if (response && response.data) {
+          setRegistrars(response.data);
+          
+          // Set first registrar as default if available
+          if (response.data.length > 0) {
+            const firstRegistrar = typeof response.data[0] === 'object' && response.data[0].name 
+              ? response.data[0].name 
+              : response.data[0];
+            setRegistrarName(firstRegistrar);
+          }
+        } else {
+          setRegistrars([]);
+          setError('No data received from server');
         }
-      })
-      .catch(error => {
-        console.error('Error fetching registrars:', error);
-      });
+      } catch (err) {
+        console.error('Error fetching registrars:', err);
+        setError('Failed to fetch registrars. Please try again later.');
+        setRegistrars([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchRegistrars();
   }, []);
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
-    setAttachment(file); // Store the file object itself, not a URL
+    setAttachment(file);
   };
 
   const handleRemoveAttachment = () => {
     setAttachment(null);
   };
 
-  const handleSubmit = () => {
-    setIsSubmitting(true);
+  const handleClearCategory = () => {
+    setIssueCategory('');
+  };
 
-    // Create FormData object to handle file upload and text fields
-    const formData = new FormData();
-    formData.append('registrar_name', registrarName);
-    formData.append('issue_category', issueCategory);
-    formData.append('issue_description', issueDescription);
-    formData.append('issue_title', document.querySelector('input[defaultValue="Wrong Marks"]').value);
-    formData.append('course_unit_code', document.querySelector('input[defaultValue="CSS 11001"]').value);
-    formData.append('course_unit_name', document.querySelector('input[defaultValue="Operating Systems"]').value);
-    formData.append('lecturer_name', document.querySelector('input[placeholder=""]').value || '');
-    formData.append('student_name', document.querySelector('input[placeholder="Enter your full name"]').value || '');
-    formData.append('status', 'Submitted');
-    if (attachment) {
-      formData.append('attachment', attachment); // Attach file if present
-    }
+  const handleSubmit = async () => {
+    try {
+      setIsSubmitting(true);
+      setSubmitStatus(null);
 
-    // Send POST request to Django API
-    API.post('/api/issues/', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data', // Required for file uploads
-      },
-    })
-    .then((response) => {
+      // Get values from form elements
+      const issueTitle = document.querySelector('input[defaultValue="Wrong Marks"]').value;
+      const courseUnitCode = document.querySelector('input[defaultValue="CSS 11001"]').value;
+      const courseUnitName = document.querySelector('input[defaultValue="Operating Systems"]').value;
+      const lecturerName = document.querySelector('input[placeholder=""]').value || '';
+      const studentName = document.querySelector('input[placeholder="Enter your full name"]').value || '';
+
+      // Create FormData object
+      const formData = new FormData();
+      formData.append('registrar_name', registrarName);
+      formData.append('issue_category', issueCategory);
+      formData.append('issue_description', issueDescription);
+      formData.append('issue_title', issueTitle);
+      formData.append('course_unit_code', courseUnitCode);
+      formData.append('course_unit_name', courseUnitName);
+      formData.append('lecturer_name', lecturerName);
+      formData.append('student_name', studentName);
+      formData.append('status', 'Submitted');
+      
+      if (attachment) {
+        formData.append('attachment', attachment);
+      }
+
+      // Send POST request
+      const response = await API.post('/api/issues/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
       console.log('Issue submitted successfully:', response.data);
-      setIsSubmitting(false);
       setSubmitStatus('success');
 
       // Navigate to success page after brief delay
@@ -81,17 +110,17 @@ const NewIssue = () => {
         navigate('/success', {
           state: {
             registrarName,
-            issueTitle: response.data.issue_title,
-            courseUnitName: response.data.course_unit_name,
+            issueTitle,
+            courseUnitName,
           },
         });
       }, 1500);
-    })
-    .catch((error) => {
-      console.error('Error submitting issue:', error);
-      setIsSubmitting(false);
+    } catch (err) {
+      console.error('Error submitting issue:', err);
       setSubmitStatus('error');
-    });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -104,21 +133,36 @@ const NewIssue = () => {
           <div className="form-row">
             <div className="form-group">
               <label>Registrar's Name</label>
-              <select
-                value={registrarName}
-                onChange={(e) => setRegistrarName(e.target.value)}
-              >
-                {registrars.length === 0 && <option value="">Loading registrars...</option>}
-                
-                {registrars.map((registrar, index) => (
-                  <option 
-                    key={index} 
-                    value={typeof registrar === 'object' ? registrar.name : registrar}
-                  >
-                    {typeof registrar === 'object' ? registrar.name : registrar}
-                  </option>
-                ))}
-              </select>
+              {isLoading ? (
+                <select disabled>
+                  <option>Loading registrars...</option>
+                </select>
+              ) : error ? (
+                <div>
+                  <select disabled>
+                    <option>Error loading registrars</option>
+                  </select>
+                  <p className="error-message">{error}</p>
+                </div>
+              ) : (
+                <select
+                  value={registrarName}
+                  onChange={(e) => setRegistrarName(e.target.value)}
+                >
+                  {registrars.length === 0 ? (
+                    <option value="">No registrars available</option>
+                  ) : (
+                    registrars.map((registrar, index) => (
+                      <option 
+                        key={index} 
+                        value={typeof registrar === 'object' ? registrar.name || registrar.username : registrar}
+                      >
+                        {typeof registrar === 'object' ? registrar.name || registrar.username : registrar}
+                      </option>
+                    ))
+                  )}
+                </select>
+              )}
             </div>
             <div className="form-group">
               <label>Lecturer's Name</label>
@@ -129,12 +173,16 @@ const NewIssue = () => {
           <div className="form-row">
             <div className="form-group">
               <label>Issue Category</label>
-              <input
-                type="text"
-                value={issueCategory}
-                onChange={(e) => setIssueCategory(e.target.value)}
-              />
-              <span className="clear-icon">×</span>
+              <div className="input-with-clear">
+                <input
+                  type="text"
+                  value={issueCategory}
+                  onChange={(e) => setIssueCategory(e.target.value)}
+                />
+                {issueCategory && (
+                  <span className="clear-icon" onClick={handleClearCategory}>×</span>
+                )}
+              </div>
             </div>
             <div className="form-group">
               <label>Student's Name</label>
@@ -201,7 +249,7 @@ const NewIssue = () => {
             <button
               className="submit-button"
               onClick={handleSubmit}
-              disabled={isSubmitting}
+              disabled={isSubmitting || isLoading || registrars.length === 0}
             >
               {isSubmitting ? 'Submitting...' : 'Submit Issue'}
             </button>
