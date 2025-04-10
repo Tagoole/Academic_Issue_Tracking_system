@@ -14,6 +14,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['email'] = user.email  
         token['role'] = user.role  
         token['username'] = user.username
+        token['program'] = user.program
         print(token)
         return token
 
