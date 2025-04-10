@@ -23,6 +23,13 @@ class UserSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ['id','username','email','role']
         
+class CustomUserprofileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = "__all__"
+    
+    
+        
 class Course_unitSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course_unit
