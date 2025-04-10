@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './registrationtoken.css';
-import token_image from '../assets/token.png';
+import token_image from '../assets/ict.png';
 
 
 function Registrationtoken() {
