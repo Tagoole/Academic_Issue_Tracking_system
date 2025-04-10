@@ -31,6 +31,6 @@ urlpatterns = [
     path('user_email_notifications/',get_user_email_notifications,name = 'user_email_notifications'),
     path('resend_password_reset_code/',resend_password_reset_code,name = 'resend_password_reset_code'),
     path('get_registrars/',get_registrars,name = 'get_registrars'),
-        path('get_lecturers/',get_registrars,name = 'get_lecturers'),
+    path('get_lecturers/',get_registrars,name = 'get_lecturers'),
     
 ]

@@ -33,6 +33,9 @@ const SignIn = () => {
       console.log('API Response:', response.data);
       
       // Store tokens in localStorage
+      if (data.id) {
+        localStorage.setItem('userId', data.id);
+      }
       if (data.access) {
         localStorage.setItem('accessToken', data.access);
       } else {

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import makerereLogo from '../assets/makererelogo.png';
 import backgroundImage from '../assets/pexels-olia-danilevich-5088017.jpg';
-import './DeleteAccount.css';
+import './Deleteaccount.css';
 
 const DeleteAccount = () => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);

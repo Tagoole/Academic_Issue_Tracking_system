@@ -24,12 +24,12 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         serializer.is_valid(raise_exception=True)  # Validate data
         validated_data = serializer.validated_data
 
-        print("Validated Data:", validated_data)  # Print validated data in the console
         # Get the user
         user = serializer.user
         
-        # Add role to the response
         response.data['role'] = user.role
+        response.data['id'] = user.id
+        print(response.data)
         print(user.role)
         
 

@@ -10,9 +10,11 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token = super().get_token(user)
         
         # Add custom claims
+        token['id'] = user.id
         token['email'] = user.email  
         token['role'] = user.role  
         token['username'] = user.username
+        token['program'] = user.program
         print(token)
         return token
 
@@ -22,6 +24,13 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['id','username','email','role']
+        
+class CustomUserprofileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = "__all__"
+    
+    
         
 class Course_unitSerializer(serializers.ModelSerializer):
     class Meta:

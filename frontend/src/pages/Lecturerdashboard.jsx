@@ -1,15 +1,21 @@
-import React from 'react';
-import './RegistraDashboard.css';
+import React, { useState } from 'react';
+import './Lecturerdashboard.css';
 import Navbar from './NavBar'; 
-import Sidebar from './Sidebar';
+import Sidebar2 from './Sidebar2';
 import backgroundimage from "../assets/backgroundimage.jpg"; 
 import backgroundImage from '../assets/backgroundimage.jpg'; 
+import IssueSummary from './IssueSummary'; // Import IssueSummary component
 
+const Lecturerdashboard = () => {
+  const [selectedIssue, setSelectedIssue] = useState(null); // State to track selected issue
 
-const RegistraDashboard = () => {
   const issues = [
-    { id: 1, status: 'Resolved', studentNo: '25/U0000/PS', category: 'Missing Mark', date: '01/01/2025' }
+    { id: 1, status: 'Resolved', studentNo: '25/U0000/PS', category: 'Missing Mark', date: '01/01/2025', title: 'Sample Issue', submissionDate: '2025-01-01', courseUnitName: 'Math 101', courseUnitCode: 'MATH101', assignedLecturer: 'Dr. John', description: 'Description of the issue' }
   ];
+
+  const handleIssueClick = (issue) => {
+    setSelectedIssue(issue); // Set the selected issue when clicked
+  };
 
   return (
     <div
@@ -23,44 +29,10 @@ const RegistraDashboard = () => {
     >
       <Navbar />
       <div className="content-container">
-        <Sidebar />
-        <main 
-          className="main-content" 
-          style={{ backgroundImage: `url(${backgroundimage})`, backgroundSize: 'cover', backgroundPosition: 'center' }} // Added background image
-        >
-          <div className="dashboard-cards">
-            
-            
-            <DashboardCard
-              title="Pending issues"
-              count={0}
-              description="You currently have 0 pending issues"
-            />
-            <DashboardCard
-              title="In-progress issues"
-              count={0}
-              description="You currently have 0 in-progress issues"
-            />
-            <DashboardCard
-              title="Resolved issues"
-              count={1}
-              description="You currently have 1 resolved issue"
-            />
-          </div>
-
+        <Sidebar2 />
+        <main className="main-content">
+          {/* Your dashboard cards and issue table */}
           <div className="issues-section">
-            <div className="issues-header">
-              <h2>My issues</h2>
-              <div className="search-container">
-                <input type="text" placeholder="search for issues" className="search-input" />
-                <span className="search-icon"></span>
-              </div>
-              <button className="filter-button">
-                <span>Filter</span>
-                <span className="filter-icon">▼</span>
-              </button>
-            </div>
-
             <div className="issues-table">
               <table>
                 <thead>
@@ -74,7 +46,7 @@ const RegistraDashboard = () => {
                 </thead>
                 <tbody>
                   {issues.map(issue => (
-                    <tr key={issue.id}>
+                    <tr key={issue.id} onClick={() => handleIssueClick(issue)}>
                       <td>{issue.id}</td>
                       <td>{issue.status}</td>
                       <td>{issue.studentNo}</td>
@@ -87,20 +59,11 @@ const RegistraDashboard = () => {
             </div>
           </div>
         </main>
+        {/* Conditionally render IssueSummary when an issue is clicked */}
+        {selectedIssue && <IssueSummary issue={selectedIssue} />}
       </div>
     </div>
   );
 };
 
-// Dashboard Card Component
-const DashboardCard = ({ title, count, description }) => {
-  return (
-    <div className="dashboard-card">
-      <h3>{title}</h3>
-      <div className="card-count">{count}</div>
-      <p>{description}</p>
-    </div>
-  );
-};
-
-export default RegistraDashboard;
+export default Lecturerdashboard;
