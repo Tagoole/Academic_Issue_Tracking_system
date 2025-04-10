@@ -33,6 +33,9 @@ const SignIn = () => {
       console.log('API Response:', response.data);
       
       // Store tokens in localStorage
+      if (data.email) {
+        localStorage.setItem('userEmail', data.email);
+      }
       if (data.username) {
         localStorage.setItem('userName', data.username);
       }
