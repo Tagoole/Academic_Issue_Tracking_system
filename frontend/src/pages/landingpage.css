@@ -68,4 +68,62 @@
     opacity: 0;
     transition: all 1.2s ease-out;
   }
+  .welcome-text.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  
+  /* Button container styling */
+  .button-container {
+    display: flex;
+    justify-content: space-between;
+    width: 60%;
+    max-width: 500px;
+    margin-top: 20px;
+  }
+  
+  /* Button styling */
+  .signup-btn, .signin-btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .signup-btn {
+    background-color: #2a52be;
+    color: white;
+  }
+  
+  .signin-btn {
+    background-color: white;
+    color: #2a52be;
+  }
+  .signup-btn:hover, .signin-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .welcome-text {
+      font-size: 24px;
+    }
+    
+    .button-container {
+      width: 90%;
+      flex-direction: column;
+      gap: 15px;
+      align-items: center;
+    }
+    
+    .signup-btn, .signin-btn {
+      width: 80%;
+      padding: 10px 0;
+    }
+  }
   
