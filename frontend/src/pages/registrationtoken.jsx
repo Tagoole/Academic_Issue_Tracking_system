@@ -1,7 +1,7 @@
 import React from 'react';
-import './styles.css';
+import './registrationtoken.css';
 
-function RegistrationForm() {
+function Registrationtoken() {
   return (
     <div className="container">
       <div className="form-section">
@@ -29,4 +29,4 @@ function RegistrationForm() {
   );
 }
 
-export default RegistrationForm;
+export default Registrationtoken;

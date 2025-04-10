@@ -25,6 +25,7 @@ import Notifications from "./pages/Notifications";
 import LandingPage from "./pages/landingpage";
 import CONGS from "./pages/congs";
 import Lecturerdashboard from "./pages/Lecturerdashboard";
+import Registrationtoken from "./pages/registrationtoken";
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
         <Route path="/resetpassword" element={<ResetPassword />} />
         <Route path="/changepassword" element={<Changepassword />} />
         <Route path="/congs" element={<CONGS />} />
+        <Route path="/registrationtoken" element={<Registrationtoken />} />
         
         {/* Profile setup routes */}
         <Route path="/profilesetup" element={<ProfileSetup />} />
