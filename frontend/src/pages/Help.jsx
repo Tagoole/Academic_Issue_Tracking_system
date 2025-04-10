@@ -2,7 +2,7 @@ import React from 'react';
 import makerereLogo from '../assets/makererelogo.png';
 import './Help.css'; 
 import NavBar from './NavBar';
-import backgroundImage from '../assets/pexels-olia-danilevich-5088017.jpg'; // Background image
+import backgroundImage from '../assets/pexels-olia-danilevich-5088017.jpg'; 
 
 const Help = () => {
   const handleEmailCopy = () => {
@@ -19,13 +19,13 @@ const Help = () => {
     <div
       className="settings-container"
       style={{
-        backgroundImage: `url(${backgroundImage})`, // Fixed template literal syntax
+        backgroundImage: `url(${backgroundImage})`, 
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
         minHeight: '100vh',
-        width: '100%', // Ensure it spans the full width
-        position: 'absolute', // Position absolute to cover the entire viewport
+        width: '100%', 
+        position: 'absolute', 
         top: 0,
         left: 0,
       }}
@@ -37,14 +37,14 @@ const Help = () => {
       <div
         className="settings-sidebar"
         style={{
-          background: 'rgba(0, 0, 0, 0.4)', // Increased opacity for better visibility
-          backdropFilter: 'blur(10px)', // Enhanced blur effect
-          WebkitBackdropFilter: 'blur(10px)', // For Safari support
+          background: 'rgba(0, 0, 0, 0.4)', 
+          backdropFilter: 'blur(10px)', 
+          WebkitBackdropFilter: 'blur(10px)', 
           borderRadius: '12px',
-          border: '1px solid rgba(255, 255, 255, 0.18)', // More visible border
-          boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)', // Enhanced shadow
-          padding: '25px 20px', // Improved padding
-          zIndex: 10, // Ensure sidebar is above background
+          border: '1px solid rgba(255, 255, 255, 0.18)', 
+          boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)', 
+          padding: '25px 20px', 
+          zIndex: 10, 
         }}
       >
         <div className="university-logo-sidebar">
@@ -92,17 +92,17 @@ const Help = () => {
       <div
         className="main-content"
         style={{
-          background: 'rgba(255, 255, 255, 0.15)', // More transparent to enhance glassmorphism
-          backdropFilter: 'blur(15px)', // Increased blur for more glassmorphism effect
-          WebkitBackdropFilter: 'blur(15px)', // For Safari support
+          background: 'rgba(255, 255, 255, 0.15)', 
+          backdropFilter: 'blur(15px)', 
+          WebkitBackdropFilter: 'blur(15px)', 
           borderRadius: '15px',
-          border: '1px solid rgba(255, 255, 255, 0.2)', // More visible border
-          boxShadow: '0 8px 32px 0 rgba(5, 5, 5, 0.37)', // Enhanced shadow
-          padding: '30px', // Increased padding for better spacing
-          marginTop: '20px', // Add some space from the top
-          maxWidth: '800px', // Limit width for better readability
-          width: '100%', // Take full width up to max-width
-          zIndex: 5, // Ensure content is above background
+          border: '1px solid rgba(255, 255, 255, 0.2)', 
+          boxShadow: '0 8px 32px 0 rgba(5, 5, 5, 0.37)', 
+          padding: '30px', 
+          marginTop: '20px', 
+          maxWidth: '800px', 
+          width: '100%', 
+          zIndex: 5, 
         }}
       >
         <div className="support-help-title">Support/Help</div>
@@ -138,7 +138,7 @@ const Help = () => {
               readOnly
               onClick={() => handlePhoneCopy('+256 764671815')}
               style={{ 
-                background: 'rgba(255, 255, 255, 0.6)', // Semi-transparent input
+                background: 'rgba(255, 255, 255, 0.6)', 
                 border: '1px solid rgba(255, 255, 255, 0.3)'
               }}
             />
@@ -150,7 +150,7 @@ const Help = () => {
               readOnly
               onClick={() => handlePhoneCopy('+256 704671815')}
               style={{ 
-                background: 'rgba(255, 255, 255, 0.6)', // Semi-transparent input
+                background: 'rgba(255, 255, 255, 0.6)', 
                 border: '1px solid rgba(255, 255, 255, 0.3)'
               }}
             />

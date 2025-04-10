@@ -13,14 +13,11 @@ const DeleteAccount = () => {
   };
 
   const confirmDeleteAccount = () => {
-    // Implement actual account deletion logic here
     console.log('Account deleted');
     setShowConfirmModal(false);
     setShowSuccessModal(true);
     
-    // Redirect to login page after a delay
     setTimeout(() => {
-      // Replace with your actual redirect logic
       // window.location.href = '/login';
       setShowSuccessModal(false);
     }, 3000);
