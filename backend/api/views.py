@@ -477,3 +477,12 @@ def get_lecturers(request):
     
     return Response(serializer.data, status=status.HTTP_200_OK)
 
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_info(request):
+    info = CustomUser.objects.filter(id = request.data['id'])
+    
+    serializer = UserSerializer(info)
+    
+    return Response(serializer.data, status=status.HTTP_200_OK)

@@ -118,7 +118,7 @@ const NewIssue = () => {
         setIsLoading(prev => ({ ...prev, user: true }));
         setErrors(prev => ({ ...prev, user: null }));
         
-        const response = await API.get('/api/current-user/');
+        const response = await API.get('/api/student_issues/');
         console.log('Current user response:', response);
         
         if (response && response.data) {
