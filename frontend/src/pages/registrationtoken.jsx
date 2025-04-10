@@ -17,7 +17,16 @@ function RegistrationForm() {
           Generate Registration Token
         </div>
       </div>
-  
+      <div className="image-section">
+        <div className="image-bubble">
+          Some random picture
+          <div className="placeholder-image">
+            <img src="/api/placeholder/150/150" alt="Random placeholder" />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
+export default RegistrationForm;
