@@ -69,7 +69,7 @@ function Registrationtoken() {
         <div className="image-section">
           <div className="image-bubble">
             <div className="token-image">
-                
+                <img src={token_image} alt="Token" />
             </div>
           </div>
         </div>
