@@ -456,4 +456,10 @@ def get_user_email_notifications(request):
     serializer = Email_notificationSerializer(notifications,many = True)
     return Response ({'number':number,
                       'data':serializer.data})
-    
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_registrars(request):
+    data = request.data
+    registrars = CustomUser.objects.filter(role = 'academic_registrar')
+    serializer = C

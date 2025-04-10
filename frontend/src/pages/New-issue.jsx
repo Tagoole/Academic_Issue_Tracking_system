@@ -1,21 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavBar from './NavBar';
 import Sidebar from './Sidebar1';
 import './New-issue.css';
 import backgroundimage from "../assets/backgroundimage.jpg";
-import axios from 'axios'; // Import axios for API calls
+import API from '../api'; // Using your existing API import
 
 const NewIssue = () => {
   const navigate = useNavigate();
-  const [registrarName, setRegistrarName] = useState('Nassuna Annet');
+  const [registrars, setRegistrars] = useState([]);
+  const [registrarName, setRegistrarName] = useState('');
   const [issueCategory, setIssueCategory] = useState('Missing marks');
   const [issueDescription, setIssueDescription] = useState('I have no marks for OS test yet I merged 86% in it.');
   const [attachment, setAttachment] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
 
-  const API_URL = 'http://127.0.0.1:8000/api/'; // Django API base URL
+  // Fetch registrars when component mounts
+  useEffect(() => {
+    // Fetch registrars from API
+    API.get('/api/get_registrars/')
+      .then(response => {
+        console.log('Registrars fetched:', response.data);
+        setRegistrars(response.data);
+        
+        // Set first registrar as default if available
+        if (response.data && response.data.length > 0) {
+          // Handle different response formats (array of strings or objects)
+          const firstRegistrar = typeof response.data[0] === 'object' 
+            ? response.data[0].name 
+            : response.data[0];
+          setRegistrarName(firstRegistrar);
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching registrars:', error);
+      });
+  }, []);
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
@@ -45,33 +66,32 @@ const NewIssue = () => {
     }
 
     // Send POST request to Django API
-    axios
-      .post(`${API_URL}issues/`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data', // Required for file uploads
-        },
-      })
-      .then((response) => {
-        console.log('Issue submitted successfully:', response.data);
-        setIsSubmitting(false);
-        setSubmitStatus('success');
+    API.post('/api/issues/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data', // Required for file uploads
+      },
+    })
+    .then((response) => {
+      console.log('Issue submitted successfully:', response.data);
+      setIsSubmitting(false);
+      setSubmitStatus('success');
 
-        // Navigate to success page after brief delay
-        setTimeout(() => {
-          navigate('/success', {
-            state: {
-              registrarName,
-              issueTitle: response.data.issue_title,
-              courseUnitName: response.data.course_unit_name,
-            },
-          });
-        }, 1500);
-      })
-      .catch((error) => {
-        console.error('Error submitting issue:', error);
-        setIsSubmitting(false);
-        setSubmitStatus('error');
-      });
+      // Navigate to success page after brief delay
+      setTimeout(() => {
+        navigate('/success', {
+          state: {
+            registrarName,
+            issueTitle: response.data.issue_title,
+            courseUnitName: response.data.course_unit_name,
+          },
+        });
+      }, 1500);
+    })
+    .catch((error) => {
+      console.error('Error submitting issue:', error);
+      setIsSubmitting(false);
+      setSubmitStatus('error');
+    });
   };
 
   return (
@@ -84,12 +104,21 @@ const NewIssue = () => {
           <div className="form-row">
             <div className="form-group">
               <label>Registrar's Name</label>
-              <input
-                type="text"
+              <select
                 value={registrarName}
                 onChange={(e) => setRegistrarName(e.target.value)}
-              />
-              <span className="clear-icon">×</span>
+              >
+                {registrars.length === 0 && <option value="">Loading registrars...</option>}
+                
+                {registrars.map((registrar, index) => (
+                  <option 
+                    key={index} 
+                    value={typeof registrar === 'object' ? registrar.name : registrar}
+                  >
+                    {typeof registrar === 'object' ? registrar.name : registrar}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="form-group">
               <label>Lecturer's Name</label>
