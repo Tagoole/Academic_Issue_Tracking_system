@@ -34,14 +34,15 @@ function Registrationtoken() {
       <div className="container">
         <div className="form-section">
           <div className="form-group">
-            <label htmlFor="user-id">User ID:</label>
-            <input 
-              type="text" 
-              id="user-id" 
-              placeholder="Enter ID"
-              value={userId}
-              onChange={(e) => setUserId(e.target.value)}
-            />
+            <label htmlFor="Role">Role</label>
+           < select id="Role">
+           value={userId}
+              <option value="admin">Lecturer</option>
+              <option value="user">Registrar</option>
+            </select>
+
+
+            
           </div>
           <div className="form-group">
             <label htmlFor="email">Email:</label>
