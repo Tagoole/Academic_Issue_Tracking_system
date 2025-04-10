@@ -57,10 +57,3 @@ const LandingPage = () => {
 };
 
 export default LandingPage;
-
-
-
-
-
-
-<div className="separator"></div>
