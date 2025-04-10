@@ -13,8 +13,7 @@ function Registrationtoken() {
     if (email) {
       setMessage(`The registration token has been created and sent to the Email "${email}"`);
       setShowMessage(true);
-      
-      // Hide message after 5 seconds
+      // Simulate an API call to send the token
       setTimeout(() => {
         setShowMessage(false);
       }, 5000);
@@ -22,7 +21,6 @@ function Registrationtoken() {
       setMessage('Please enter an email address');
       setShowMessage(true);
       
-      // Hide error message after 3 seconds
       setTimeout(() => {
         setShowMessage(false);
       }, 3000);
