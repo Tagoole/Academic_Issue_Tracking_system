@@ -1,12 +1,12 @@
 import React from 'react';
-import './RegistraDashboard.css';
+import './Lecturerdashboard.css';
 import Navbar from './NavBar'; 
-import Sidebar from './Sidebar';
+import Sidebar2 from './Sidebar2';
 import backgroundimage from "../assets/backgroundimage.jpg"; 
 import backgroundImage from '../assets/backgroundimage.jpg'; 
 
 
-const RegistraDashboard = () => {
+const Lecturerdashboard = () => {
   const issues = [
     { id: 1, status: 'Resolved', studentNo: '25/U0000/PS', category: 'Missing Mark', date: '01/01/2025' }
   ];
@@ -23,7 +23,7 @@ const RegistraDashboard = () => {
     >
       <Navbar />
       <div className="content-container">
-        <Sidebar />
+        <Sidebar2 />
         <main 
           className="main-content" 
           style={{ backgroundImage: `url(${backgroundimage})`, backgroundSize: 'cover', backgroundPosition: 'center' }} // Added background image
@@ -103,4 +103,4 @@ const DashboardCard = ({ title, count, description }) => {
   );
 };
 
-export default RegistraDashboard;
+export default Lecturerdashboard;

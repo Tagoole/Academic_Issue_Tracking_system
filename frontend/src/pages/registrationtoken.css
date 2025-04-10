@@ -1,19 +1,20 @@
-.body{
-    font-family: Arial, Helvetica, sans-serif;
+body, html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  .page-container {
+    width: 100%;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    margin: 100px;
-    background-color: #f0f0f0;
-}
-.container{
-    display: flex;
-    background-color: #fff;
-    max-width: 800px;
-    width: 100%;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-}
+    background-image: url('pexels-olia-danilevich-5088017.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  
+ 

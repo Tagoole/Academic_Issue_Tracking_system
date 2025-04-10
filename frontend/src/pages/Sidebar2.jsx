@@ -9,9 +9,9 @@ function Sidebar() {
         <img src={makerereLogo} alt="University Logo" className="logo-sidebar" />
       </div>
 
-      {/* Registrar Dashboard Link */}
-      <a href="/RegistraDashboard" className="menu-item">
-        Registrar Dashboard
+      {/* Lecturer Dashboard Link */}
+      <a href="/Lecturerdashboard" className="menu-item">
+        Lecturer Dashboard
         <svg viewBox="0 0 24 24" className="arrow-icon">
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
@@ -26,8 +26,8 @@ function Sidebar() {
       </a>
 
       {/* Registrar Profile Link */}
-      <a href="/Registraprofile" className="menu-item">
-        Registrar Profile
+      <a href="/Lecturerprofile" className="menu-item">
+        Lecturer Profile
         <svg viewBox="0 0 24 24" className="arrow-icon">
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
