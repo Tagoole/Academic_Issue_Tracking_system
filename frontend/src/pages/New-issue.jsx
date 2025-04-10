@@ -9,15 +9,26 @@ import API from '../api';
 const NewIssue = () => {
   const navigate = useNavigate();
   const [registrars, setRegistrars] = useState([]);
+  const [courseUnits, setCourseUnits] = useState([]);
   const [registrarName, setRegistrarName] = useState('');
   const [issueCategory, setIssueCategory] = useState('missing_marks');
   const [issueDescription, setIssueDescription] = useState('I have no marks for OS test yet I merged 86% in it.');
   const [attachment, setAttachment] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState({
+    registrars: true,
+    courseUnits: true,
+    user: true
+  });
+  const [errors, setErrors] = useState({
+    registrars: null,
+    courseUnits: null,
+    user: null,
+    general: null
+  });
   const [currentUser, setCurrentUser] = useState('');
+  const [selectedCourseUnit, setSelectedCourseUnit] = useState('');
 
   // Define issue categories to match backend ISSUE_CHOICES
   const issueCategories = [
@@ -26,58 +37,113 @@ const NewIssue = () => {
     { value: 'correction', label: 'Correction' }
   ];
 
-  // Fetch registrars and current user when component mounts
+  // Fetch registrars when component mounts
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchRegistrars = async () => {
       try {
-        setIsLoading(true);
-        setError(null);
+        setIsLoading(prev => ({ ...prev, registrars: true }));
+        setErrors(prev => ({ ...prev, registrars: null }));
         
-        // Fetch registrars
-        const registrarsResponse = await API.get('/api/get_registrars/');
-        console.log('Registrars API response:', registrarsResponse);
+        const response = await API.get('/api/get_registrars/');
+        console.log('Registrars API response:', response);
         
-        if (registrarsResponse && registrarsResponse.data) {
-          setRegistrars(registrarsResponse.data);
+        if (response && response.data && Array.isArray(response.data) && response.data.length > 0) {
+          setRegistrars(response.data);
           
-          // Set first registrar as default if available
-          if (registrarsResponse.data.length > 0) {
-            const firstRegistrar = typeof registrarsResponse.data[0] === 'object' && registrarsResponse.data[0].name 
-              ? registrarsResponse.data[0].name 
-              : registrarsResponse.data[0];
-            setRegistrarName(firstRegistrar);
-          }
+          // Set first registrar as default
+          const firstRegistrar = typeof response.data[0] === 'object' && response.data[0].name 
+            ? response.data[0].name 
+            : response.data[0];
+          setRegistrarName(firstRegistrar);
         } else {
           setRegistrars([]);
-          setError('No data received from server');
-        }
-        
-        // Fetch current user
-        try {
-          const userResponse = await API.get('/api/current-user/');
-          console.log('Current user response:', userResponse);
-          if (userResponse && userResponse.data) {
-            // Handle different response formats
-            const username = typeof userResponse.data === 'object' ? 
-              (userResponse.data.username || userResponse.data.name || '') : 
-              userResponse.data;
-            setCurrentUser(username);
-          }
-        } catch (userErr) {
-          console.error('Error fetching current user:', userErr);
-          // Don't set an error here as we still want the form to work
-          // even if we can't get the current user
+          setErrors(prev => ({ ...prev, registrars: 'No registrars found. Please try again later.' }));
         }
       } catch (err) {
-        console.error('Error fetching data:', err);
-        setError('Failed to fetch necessary data. Please try again later.');
+        console.error('Error fetching registrars:', err);
         setRegistrars([]);
+        setErrors(prev => ({ 
+          ...prev, 
+          registrars: `Failed to load registrars: ${err.response?.data?.message || err.message || 'Unknown error'}`
+        }));
       } finally {
-        setIsLoading(false);
+        setIsLoading(prev => ({ ...prev, registrars: false }));
       }
     };
 
-    fetchData();
+    fetchRegistrars();
+  }, []);
+
+  // Fetch course units when component mounts
+  useEffect(() => {
+    const fetchCourseUnits = async () => {
+      try {
+        setIsLoading(prev => ({ ...prev, courseUnits: true }));
+        setErrors(prev => ({ ...prev, courseUnits: null }));
+        
+        const response = await API.get('/api/course_unit/');
+        console.log('Course units API response:', response);
+        
+        if (response && response.data && Array.isArray(response.data) && response.data.length > 0) {
+          setCourseUnits(response.data);
+          
+          // Set first course unit as default
+          const firstCourseUnit = typeof response.data[0] === 'object' 
+            ? response.data[0].name || response.data[0].course_unit_name 
+            : response.data[0];
+          setSelectedCourseUnit(firstCourseUnit);
+        } else {
+          setCourseUnits([]);
+          setErrors(prev => ({ ...prev, courseUnits: 'No course units found. Please try again later.' }));
+        }
+      } catch (err) {
+        console.error('Error fetching course units:', err);
+        setCourseUnits([]);
+        setErrors(prev => ({ 
+          ...prev, 
+          courseUnits: `Failed to load course units: ${err.response?.data?.message || err.message || 'Unknown error'}`
+        }));
+      } finally {
+        setIsLoading(prev => ({ ...prev, courseUnits: false }));
+      }
+    };
+
+    fetchCourseUnits();
+  }, []);
+
+  // Fetch current user when component mounts
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        setIsLoading(prev => ({ ...prev, user: true }));
+        setErrors(prev => ({ ...prev, user: null }));
+        
+        const response = await API.get('/api/current-user/');
+        console.log('Current user response:', response);
+        
+        if (response && response.data) {
+          // Handle different response formats
+          const username = typeof response.data === 'object' ? 
+            (response.data.username || response.data.name || '') : 
+            response.data;
+          setCurrentUser(username);
+        } else {
+          setCurrentUser('');
+          setErrors(prev => ({ ...prev, user: 'Failed to retrieve user information.' }));
+        }
+      } catch (err) {
+        console.error('Error fetching current user:', err);
+        setCurrentUser('');
+        setErrors(prev => ({ 
+          ...prev, 
+          user: `Could not load user info: ${err.response?.data?.message || err.message || 'Unknown error'}`
+        }));
+      } finally {
+        setIsLoading(prev => ({ ...prev, user: false }));
+      }
+    };
+
+    fetchCurrentUser();
   }, []);
 
   const handleFileUpload = (e) => {
@@ -90,23 +156,42 @@ const NewIssue = () => {
   };
 
   const handleSubmit = async () => {
+    // Reset any previous submission status
+    setSubmitStatus(null);
+    setErrors(prev => ({ ...prev, general: null }));
+    
+    // Form validation
+    if (!registrarName) {
+      setErrors(prev => ({ ...prev, general: 'Please select a registrar.' }));
+      return;
+    }
+    
+    if (!selectedCourseUnit) {
+      setErrors(prev => ({ ...prev, general: 'Please select a course unit.' }));
+      return;
+    }
+    
+    const issueTitle = document.querySelector('input[name="issue_title"]').value;
+    if (!issueTitle.trim()) {
+      setErrors(prev => ({ ...prev, general: 'Please enter an issue title.' }));
+      return;
+    }
+    
+    if (!issueDescription.trim()) {
+      setErrors(prev => ({ ...prev, general: 'Please provide an issue description.' }));
+      return;
+    }
+    
     try {
       setIsSubmitting(true);
-      setSubmitStatus(null);
 
-      // Get values from form elements
-      const issueTitle = document.querySelector('input[defaultValue="Wrong Marks"]').value;
-      const courseUnitCode = document.querySelector('input[defaultValue="CSS 11001"]').value;
-      const courseUnitName = document.querySelector('input[defaultValue="Operating Systems"]').value;
-      
       // Create FormData object
       const formData = new FormData();
       formData.append('registrar_name', registrarName);
       formData.append('issue_category', issueCategory);
       formData.append('issue_description', issueDescription);
       formData.append('issue_title', issueTitle);
-      formData.append('course_unit_code', courseUnitCode);
-      formData.append('course_unit_name', courseUnitName);
+      formData.append('course_unit_name', selectedCourseUnit);
       formData.append('lecturer_name', ''); // Always sending empty for lecturer name
       formData.append('student_name', currentUser); // Using current user's username
       formData.append('status', 'Submitted');
@@ -131,15 +216,42 @@ const NewIssue = () => {
           state: {
             registrarName,
             issueTitle,
-            courseUnitName,
+            courseUnitName: selectedCourseUnit,
           },
         });
       }, 1500);
     } catch (err) {
       console.error('Error submitting issue:', err);
       setSubmitStatus('error');
+      setErrors(prev => ({ 
+        ...prev, 
+        general: `Failed to submit issue: ${err.response?.data?.message || err.message || 'Unknown error. Please try again later.'}`
+      }));
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  // Check if form is ready for submission
+  const isFormReady = registrars.length > 0 && courseUnits.length > 0 && !isLoading.registrars && !isLoading.courseUnits;
+  
+  // Check if any loading is in progress
+  const anyLoading = isLoading.registrars || isLoading.courseUnits || isLoading.user;
+
+  // Helper function to retry loading
+  const retryLoading = (type) => {
+    if (type === 'registrars') {
+      // Reset registrars error and trigger effect to reload
+      setErrors(prev => ({ ...prev, registrars: null }));
+      setIsLoading(prev => ({ ...prev, registrars: true }));
+      // Force effect to run again by updating a dependency
+      setRegistrars([]);
+    } else if (type === 'courseUnits') {
+      // Reset course units error and trigger effect to reload
+      setErrors(prev => ({ ...prev, courseUnits: null }));
+      setIsLoading(prev => ({ ...prev, courseUnits: true }));
+      // Force effect to run again by updating a dependency
+      setCourseUnits([]);
     }
   };
 
@@ -150,19 +262,32 @@ const NewIssue = () => {
         <Sidebar />
         <div className="issue-form-container">
           <h1>Create New Issue</h1>
+          
+          {/* General error message at the top */}
+          {errors.general && (
+            <div className="error-banner">
+              <p>{errors.general}</p>
+              <button className="dismiss-btn" onClick={() => setErrors(prev => ({ ...prev, general: null }))}>×</button>
+            </div>
+          )}
+          
           <div className="form-row">
             <div className="form-group">
               <label>Registrar's Name</label>
-              {isLoading ? (
-                <select disabled>
-                  <option>Loading registrars...</option>
-                </select>
-              ) : error ? (
-                <div>
+              {isLoading.registrars ? (
+                <div className="loading-field">
+                  <select disabled>
+                    <option>Loading registrars...</option>
+                  </select>
+                  <div className="loading-spinner"></div>
+                </div>
+              ) : errors.registrars ? (
+                <div className="error-field">
                   <select disabled>
                     <option>Error loading registrars</option>
                   </select>
-                  <p className="error-message">{error}</p>
+                  <p className="error-message">{errors.registrars}</p>
+                  <button className="retry-btn" onClick={() => retryLoading('registrars')}>Retry</button>
                 </div>
               ) : (
                 <select
@@ -209,13 +334,30 @@ const NewIssue = () => {
             <div className="form-group">
               <label>Student's Name</label>
               {/* Student name field showing current user's name and disabled */}
-              <input 
-                type="text" 
-                value={currentUser} 
-                readOnly 
-                disabled
-                placeholder={isLoading ? "Loading user information..." : ""}
-              />
+              {isLoading.user ? (
+                <input 
+                  type="text" 
+                  disabled
+                  placeholder="Loading user information..."
+                />
+              ) : errors.user ? (
+                <div className="error-field">
+                  <input 
+                    type="text" 
+                    disabled
+                    placeholder="Error loading user"
+                    value={currentUser}
+                  />
+                  <p className="error-message">{errors.user}</p>
+                </div>
+              ) : (
+                <input 
+                  type="text" 
+                  value={currentUser} 
+                  readOnly 
+                  disabled
+                />
+              )}
             </div>
           </div>
 
@@ -251,18 +393,47 @@ const NewIssue = () => {
             </div>
             <div className="form-group">
               <label>Issue Title</label>
-              <input type="text" defaultValue="Wrong Marks" />
+              <input type="text" name="issue_title" defaultValue="Wrong Marks" />
             </div>
           </div>
 
           <div className="form-row">
-            <div className="form-group">
-              <label>Course Unit Code</label>
-              <input type="text" defaultValue="CSS 11001" />
-            </div>
-            <div className="form-group">
+            <div className="form-group full-width">
               <label>Course Unit Name</label>
-              <input type="text" defaultValue="Operating Systems" />
+              {isLoading.courseUnits ? (
+                <div className="loading-field">
+                  <select disabled>
+                    <option>Loading course units...</option>
+                  </select>
+                  <div className="loading-spinner"></div>
+                </div>
+              ) : errors.courseUnits ? (
+                <div className="error-field">
+                  <select disabled>
+                    <option>Error loading course units</option>
+                  </select>
+                  <p className="error-message">{errors.courseUnits}</p>
+                  <button className="retry-btn" onClick={() => retryLoading('courseUnits')}>Retry</button>
+                </div>
+              ) : (
+                <select
+                  value={selectedCourseUnit}
+                  onChange={(e) => setSelectedCourseUnit(e.target.value)}
+                >
+                  {courseUnits.length === 0 ? (
+                    <option value="">No course units available</option>
+                  ) : (
+                    courseUnits.map((unit, index) => (
+                      <option 
+                        key={index} 
+                        value={typeof unit === 'object' ? unit.name || unit.course_unit_name : unit}
+                      >
+                        {typeof unit === 'object' ? unit.name || unit.course_unit_name : unit}
+                      </option>
+                    ))
+                  )}
+                </select>
+              )}
             </div>
           </div>
 
@@ -278,7 +449,7 @@ const NewIssue = () => {
             <button
               className="submit-button"
               onClick={handleSubmit}
-              disabled={isSubmitting || isLoading || registrars.length === 0}
+              disabled={isSubmitting || anyLoading || !isFormReady}
             >
               {isSubmitting ? 'Submitting...' : 'Submit Issue'}
             </button>
@@ -290,7 +461,7 @@ const NewIssue = () => {
             )}
             {submitStatus === 'error' && (
               <div className="submit-status error">
-                Failed to submit issue. Please try again.
+                Failed to submit issue. Please check the form and try again.
               </div>
             )}
           </div>
