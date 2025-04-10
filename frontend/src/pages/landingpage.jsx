@@ -19,7 +19,7 @@ const LandingPage = () => {
     <div className="landingpage">
       {/* Using the landingimage as a background directly in JSX */}
       <div className="bg-image" style={{ backgroundImage: `url(${landingimage})` }}></div>
-      
+     {/*<img src={landingimage} alt="landing-image" />*/}  
       {/* Logo at the top */}
       <div className="logo">
         <h1 className="logo-name">AITS</h1>

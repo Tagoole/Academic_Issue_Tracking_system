@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import './registrationtoken.css';
+import token_image from '../assets/token.png';
+
 
 function Registrationtoken() {
   const [userId, setUserId] = useState('');
@@ -66,9 +68,8 @@ function Registrationtoken() {
         </div>
         <div className="image-section">
           <div className="image-bubble">
-            Some random picture
             <div className="token-image">
-              <img src="token.png" alt="Token" />
+                
             </div>
           </div>
         </div>
