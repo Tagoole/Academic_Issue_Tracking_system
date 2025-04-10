@@ -1,0 +1,73 @@
+.issue-management-container {
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px); /* Glassmorphism effect */
+  }
+  
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 28px;
+  }
+  
+  .issue-details {
+    margin-bottom: 20px;
+  }
+  
+  .issue-field {
+    margin-bottom: 10px;
+  }
+  
+  .issue-field strong {
+    display: block;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .issue-field p {
+    color: #555;
+    margin: 5px 0;
+  }
+  
+  .comment-section {
+    margin-bottom: 20px;
+  }
+  
+  .comment-section textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    color: #555;
+    resize: vertical;
+  }
+  
+  .file-attachment-section {
+    margin-bottom: 20px;
+  }
+  
+  .save-button-container {
+    text-align: center;
+  }
+  
+  .save-button {
+    padding: 10px 20px;
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .save-button:hover {
+    background-color: #27ae60;
+  }
+  
+  .save-button:active {
+    background-color: #1f9c4e;
+  }
+  
