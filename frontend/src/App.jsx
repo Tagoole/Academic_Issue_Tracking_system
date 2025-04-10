@@ -26,6 +26,8 @@ import LandingPage from "./pages/landingpage";
 import CONGS from "./pages/congs";
 import Lecturerdashboard from "./pages/Lecturerdashboard";
 import Registrationtoken from "./pages/registrationtoken";
+import Settings from "./pages/Settings";
+import LecturerIssueManagement from "./pages/LecturerIssueManagement";
 
 function App() {
   return (
@@ -60,6 +62,7 @@ function App() {
         <Route path="/issues" element={<Issues />} />
         <Route path="/issuemanagement" element={<IssueManagement />} />
         <Route path="/viewdetails/:id" element={<Viewdetails />} />
+        <Route path="/lecturerissuemanagement" element={<LecturerIssueManagement />} />
         
         {/* Other routes */}
         <Route path="/messages" element={<Messages />} />
@@ -68,6 +71,9 @@ function App() {
         <Route path="/preferences" element={<Preferences />} />
         <Route path="/help" element={<Help />} />
         <Route path="/deleteaccount" element={<Deleteaccount />} />
+        <Route path="/settings" element={<Settings />} />
+        
+        {/* Catch-all route */}
       </Routes>
     </Router>
   );

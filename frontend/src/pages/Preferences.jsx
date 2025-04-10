@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import makerereLogo from '../assets/makererelogo.png';
 import './Preferences.css';
-import NavBar from './Navbar';
+import NavBar from './NavBar';
 import backgroundImage from '../assets/pexels-olia-danilevich-5088017.jpg'; // Background image
 
 const Preferences = () => {
