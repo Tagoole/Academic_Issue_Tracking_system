@@ -1,68 +1,63 @@
 import React from 'react';
 import './Sidebar.css';
-import dashboardIcon from "../assets/dash.png";
-import issueIcon from "../assets/issue.png";
-import profileIcon from "../assets/profile.png";
-import settingsIcon from "../assets/settings.png";
-import logoutIcon from "../assets/logout.png";
-import helpIcon from "../assets/help.png";
+import makerereLogo from '../assets/makererelogo.png';
 
-const Sidebar = () => {
-  const handleNavigation = (path) => {
-    window.location.href = path;
-  };
-
+function Sidebar() {
   return (
-    <div className="sidebar">
-      {/* Registra Dashboard Link */}
-      <div className="sidebar-item">
-        <div className="sidebar-link" onClick={() => handleNavigation('/RegistraDashboard')}>
-          <img src={dashboardIcon} alt="Dashboard Icon" className="sidebar-icon" />
-          <span>RegistraDashboard</span>
-        </div>
+    <div className="sidebar-container">
+      <div className="university-logo-sidebar">
+        <img src={makerereLogo} alt="University Logo" className="logo-sidebar" />
       </div>
 
-      {/* Issues Link */}
-      <div className="sidebar-item">
-        <div className="sidebar-link" onClick={() => handleNavigation('/IssueManagement')}>
-          <img src={issueIcon} alt="Issue Icon" className="sidebar-icon" />
-          <span>IssueManagement</span>
-        </div>
-      </div>
+      {/* Registrar Dashboard Link */}
+      <a href="/RegistraDashboard" className="menu-item">
+        Registrar Dashboard
+        <svg viewBox="0 0 24 24" className="arrow-icon">
+          <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+        </svg>
+      </a>
 
-      {/* Profile Link */}
-      <div className="sidebar-item">
-        <div className="sidebar-link" onClick={() => handleNavigation('/Registraprofile')}>
-          <img src={profileIcon} alt="Profile Icon" className="sidebar-icon" />
-          <span>Registraprofile</span>
-        </div>
-      </div>
+      {/* Issue Management Link */}
+      <a href="/IssueManagement" className="menu-item">
+        Issue Management
+        <svg viewBox="0 0 24 24" className="arrow-icon">
+          <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+        </svg>
+      </a>
+
+      {/* Registrar Profile Link */}
+      <a href="/Registraprofile" className="menu-item">
+        Registrar Profile
+        <svg viewBox="0 0 24 24" className="arrow-icon">
+          <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+        </svg>
+      </a>
 
       {/* Settings Link */}
-      <div className="sidebar-item">
-        <div className="sidebar-link" onClick={() => handleNavigation('/settings')}>
-          <img src={settingsIcon} alt="Settings Icon" className="sidebar-icon" />
-          <span>Settings</span>
-        </div>
-      </div>
+      <a href="/settings" className="menu-item">
+        Settings
+        <svg viewBox="0 0 24 24" className="arrow-icon">
+          <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+        </svg>
+      </a>
 
       {/* Help and Support Link */}
-      <div className="sidebar-item">
-        <div className="sidebar-link" onClick={() => handleNavigation('/help')}>
-          <img src={helpIcon} alt="Help Icon" className="sidebar-icon" />
-          <span>Help and Support</span>
-        </div>
-      </div>
+      <a href="/help" className="menu-item">
+        Help and Support
+        <svg viewBox="0 0 24 24" className="arrow-icon">
+          <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+        </svg>
+      </a>
 
       {/* Logout Link */}
-      <div className="sidebar-item logout">
-        <div className="sidebar-link" onClick={() => handleNavigation('/logout')}>
-          <img src={logoutIcon} alt="Logout Icon" className="sidebar-icon" />
-          <span>Log Out</span>
-        </div>
-      </div>
+      <a href="/logout" className="menu-item delete-account">
+        Logout
+        <svg viewBox="0 0 24 24" className="arrow-icon">
+          <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+        </svg>
+      </a>
     </div>
   );
-};
+}
 
 export default Sidebar;
