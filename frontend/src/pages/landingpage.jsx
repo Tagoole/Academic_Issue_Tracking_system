@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './LandingPage.css';
+import './landingpage.css';
 import makererelogo from '../assets/makererelogo.png';
 import landingimage from '../assets/landingimage.png';
 
