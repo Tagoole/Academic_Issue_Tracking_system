@@ -11,11 +11,13 @@ const NewIssue = () => {
   const [registrars, setRegistrars] = useState([]);
   const [courseUnits, setCourseUnits] = useState([]);
   const [registrarName, setRegistrarName] = useState('');
-  const [issueCategory, setIssueCategory] = useState('missing_marks');
-  const [issueDescription, setIssueDescription] = useState('I have no marks for OS test yet I merged 86% in it.');
+  const [issueType, setIssueType] = useState('missing_marks');
+  const [description, setDescription] = useState('I have no marks for OS test yet I merged 86% in it.');
   const [attachment, setAttachment] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
+  const [yearOfStudy, setYearOfStudy] = useState('1st_year');
+  const [semester, setSemester] = useState('one');
   const [isLoading, setIsLoading] = useState({
     registrars: true,
     courseUnits: true,
@@ -29,25 +31,52 @@ const NewIssue = () => {
   });
   const [currentUser, setCurrentUser] = useState('');
   const [selectedCourseUnit, setSelectedCourseUnit] = useState('');
-  const [authToken, setAuthToken] = useState('');
+  const [accessToken, setAccessToken] = useState('');
+  const [refreshToken, setRefreshToken] = useState('');
 
-  // Define issue categories to match backend ISSUE_CHOICES
-  const issueCategories = [
+  // Define issue types to match backend ISSUE_CHOICES
+  const issueTypes = [
     { value: 'missing_marks', label: 'Missing Marks' },
     { value: 'appeal', label: 'Appeal' },
     { value: 'correction', label: 'Correction' }
   ];
 
-  // Get username and token from localStorage when component mounts
+  // Define year of study options
+  const yearOfStudyOptions = [
+    { value: '1st_year', label: '1st Year' },
+    { value: '2nd_year', label: '2nd Year' },
+    { value: '3rd_year', label: '3rd Year' },
+    { value: '4th_year', label: '4th Year' },
+    { value: '5th_year', label: '5th Year' }
+  ];
+
+  // Define semester options
+  const semesterOptions = [
+    { value: 'one', label: 'One' },
+    { value: 'two', label: 'Two' }
+  ];
+
+  // Define status options
+  const statusOptions = [
+    { value: 'pending', label: 'Pending' },
+    { value: 'resolved', label: 'Resolved' },
+    { value: 'in_progress', label: 'In Progress' }
+  ];
+
+  // Get username and tokens from localStorage when component mounts
   useEffect(() => {
     try {
       // Get username from localStorage
       const username = localStorage.getItem('userName');
       console.log('Username from localStorage:', username);
       
-      // Get auth token from localStorage
-      const token = localStorage.getItem('accessToken');
-      console.log('Auth token retrieved:', token ? 'Yes' : 'No');
+      // Get access token from localStorage
+      const access = localStorage.getItem('accessToken');
+      console.log('Access token retrieved:', access ? 'Yes' : 'No');
+      
+      // Get refresh token from localStorage
+      const refresh = localStorage.getItem('refreshToken');
+      console.log('Refresh token retrieved:', refresh ? 'Yes' : 'No');
       
       if (username) {
         setCurrentUser(username);
@@ -56,12 +85,16 @@ const NewIssue = () => {
         setErrors(prev => ({ ...prev, user: 'User information not found. Please sign in again.' }));
       }
       
-      if (token) {
-        setAuthToken(token);
+      if (access) {
+        setAccessToken(access);
       } else {
         setErrors(prev => ({ ...prev, general: 'Authentication token not found. Please sign in again.' }));
         // Optionally redirect to sign in page if no token found
         // setTimeout(() => navigate('/signin'), 1500);
+      }
+      
+      if (refresh) {
+        setRefreshToken(refresh);
       }
     } catch (err) {
       console.error('Error retrieving user info from localStorage:', err);
@@ -77,21 +110,71 @@ const NewIssue = () => {
   const getAuthConfig = () => {
     return {
       headers: {
-        'Authorization': `Bearer ${authToken}`
+        'Authorization': `Bearer ${accessToken}`
       }
     };
+  };
+
+  // Function to refresh the access token using refresh token
+  const refreshAccessToken = async () => {
+    try {
+      const response = await API.post('/api/refresh_token/', {
+        refresh: refreshToken
+      });
+      
+      if (response && response.data && response.data.access) {
+        // Save new access token to localStorage and state
+        localStorage.setItem('accessToken', response.data.access);
+        setAccessToken(response.data.access);
+        return response.data.access;
+      }
+      return null;
+    } catch (err) {
+      console.error('Error refreshing access token:', err);
+      // If refresh fails, redirect to login
+      setErrors(prev => ({ ...prev, general: 'Session expired. Please sign in again.' }));
+      setTimeout(() => navigate('/signin'), 1500);
+      return null;
+    }
+  };
+
+  // Helper function to handle API requests with token refresh capability
+  const makeAuthRequest = async (requestFn) => {
+    try {
+      // First attempt with current access token
+      return await requestFn();
+    } catch (err) {
+      // If unauthorized error (401), try refreshing the token
+      if (err.response && err.response.status === 401 && refreshToken) {
+        const newToken = await refreshAccessToken();
+        if (newToken) {
+          // Retry the request with new token
+          return await requestFn(newToken);
+        }
+      }
+      // If not 401 or refresh failed, throw the original error
+      throw err;
+    }
   };
 
   // Fetch registrars when component mounts
   useEffect(() => {
     const fetchRegistrars = async () => {
-      if (!authToken) return; // Don't fetch if no auth token
+      if (!accessToken) return; // Don't fetch if no access token
       
       try {
         setIsLoading(prev => ({ ...prev, registrars: true }));
         setErrors(prev => ({ ...prev, registrars: null }));
         
-        const response = await API.get('/api/get_registrars/', getAuthConfig());
+        // Use the makeAuthRequest helper for token refresh capability
+        const response = await makeAuthRequest(async (token = accessToken) => {
+          return API.get('/api/get_registrars/', {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+        });
+        
         console.log('Registrars API response:', response);
         
         if (response && response.data && Array.isArray(response.data) && response.data.length > 0) {
@@ -119,18 +202,26 @@ const NewIssue = () => {
     };
 
     fetchRegistrars();
-  }, [authToken]);
+  }, [accessToken, refreshToken]);
 
   // Fetch course units when component mounts
   useEffect(() => {
     const fetchCourseUnits = async () => {
-      if (!authToken) return; // Don't fetch if no auth token
+      if (!accessToken) return; // Don't fetch if no access token
       
       try {
         setIsLoading(prev => ({ ...prev, courseUnits: true }));
         setErrors(prev => ({ ...prev, courseUnits: null }));
         
-        const response = await API.get('/api/course_unit/', getAuthConfig());
+        // Use the makeAuthRequest helper for token refresh capability
+        const response = await makeAuthRequest(async (token = accessToken) => {
+          return API.get('/api/course_unit/', {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+        });
+        
         console.log('Course units API response:', response);
         
         if (response && response.data && Array.isArray(response.data) && response.data.length > 0) {
@@ -158,7 +249,7 @@ const NewIssue = () => {
     };
 
     fetchCourseUnits();
-  }, [authToken]);
+  }, [accessToken, refreshToken]);
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
@@ -171,7 +262,7 @@ const NewIssue = () => {
 
   const handleSubmit = async () => {
     // Check if token exists
-    if (!authToken) {
+    if (!accessToken) {
       setErrors(prev => ({ ...prev, general: 'Authentication token not found. Please sign in again.' }));
       setTimeout(() => navigate('/signin'), 1500);
       return;
@@ -198,7 +289,7 @@ const NewIssue = () => {
       return;
     }
     
-    if (!issueDescription.trim()) {
+    if (!description.trim()) {
       setErrors(prev => ({ ...prev, general: 'Please provide an issue description.' }));
       return;
     }
@@ -215,24 +306,28 @@ const NewIssue = () => {
       // Create FormData object
       const formData = new FormData();
       formData.append('registrar_name', registrarName);
-      formData.append('issue_category', issueCategory);
-      formData.append('issue_description', issueDescription);
+      formData.append('issue_type', issueType); // Updated from issue_category to issue_type
+      formData.append('description', description); // Updated from issue_description to description
       formData.append('issue_title', issueTitle);
       formData.append('course_unit_name', selectedCourseUnit);
       formData.append('lecturer_name', ''); // Always sending empty for lecturer name
       formData.append('student_name', currentUser); // Using current user's username
-      formData.append('status', 'Submitted');
+      formData.append('status', 'pending'); // Setting status to pending for student role
+      formData.append('year_of_study', yearOfStudy); // Adding year of study
+      formData.append('semester', semester); // Adding semester
       
       if (attachment) {
         formData.append('attachment', attachment);
       }
 
-      // Send POST request with auth header
-      const response = await API.post('/api/issues/', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${authToken}`
-        },
+      // Send POST request with auth header using the makeAuthRequest helper
+      const response = await makeAuthRequest(async (token = accessToken) => {
+        return API.post('/api/issues/', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `Bearer ${token}`
+          },
+        });
       });
 
       console.log('Issue submitted successfully:', response.data);
@@ -261,7 +356,7 @@ const NewIssue = () => {
   };
 
   // Check if form is ready for submission
-  const isFormReady = registrars.length > 0 && courseUnits.length > 0 && !isLoading.registrars && !isLoading.courseUnits && authToken;
+  const isFormReady = registrars.length > 0 && courseUnits.length > 0 && !isLoading.registrars && !isLoading.courseUnits && accessToken;
   
   // Check if any loading is in progress
   const anyLoading = isLoading.registrars || isLoading.courseUnits;
@@ -292,7 +387,7 @@ const NewIssue = () => {
           <h1>Create New Issue</h1>
           
           {/* Auth token error message */}
-          {!authToken && (
+          {!accessToken && (
             <div className="error-banner">
               <p>Authentication token not found. Please sign in again.</p>
               <button className="dismiss-btn" onClick={() => navigate('/signin')}>Sign In</button>
@@ -354,15 +449,15 @@ const NewIssue = () => {
 
           <div className="form-row">
             <div className="form-group">
-              <label>Issue Category</label>
-              {/* Dropdown for issue categories */}
+              <label>Issue Type</label>
+              {/* Dropdown for issue types (renamed from issue categories) */}
               <select
-                value={issueCategory}
-                onChange={(e) => setIssueCategory(e.target.value)}
+                value={issueType}
+                onChange={(e) => setIssueType(e.target.value)}
               >
-                {issueCategories.map((category) => (
-                  <option key={category.value} value={category.value}>
-                    {category.label}
+                {issueTypes.map((type) => (
+                  <option key={type.value} value={type.value}>
+                    {type.label}
                   </option>
                 ))}
               </select>
@@ -392,11 +487,40 @@ const NewIssue = () => {
           </div>
 
           <div className="form-row">
+            <div className="form-group">
+              <label>Year of Study</label>
+              <select
+                value={yearOfStudy}
+                onChange={(e) => setYearOfStudy(e.target.value)}
+              >
+                {yearOfStudyOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Semester</label>
+              <select
+                value={semester}
+                onChange={(e) => setSemester(e.target.value)}
+              >
+                {semesterOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="form-row">
             <div className="form-group full-width">
-              <label>Issue Description</label>
+              <label>Description</label>
               <textarea
-                value={issueDescription}
-                onChange={(e) => setIssueDescription(e.target.value)}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
               />
             </div>
           </div>
@@ -470,7 +594,8 @@ const NewIssue = () => {
           <div className="form-row">
             <div className="form-group">
               <label className="status">Status</label>
-              <input type="text" defaultValue="Pending ......." disabled />
+              {/* Status field is readonly for student role */}
+              <input type="text" value="Pending" readOnly disabled />
             </div>
           </div>
 
