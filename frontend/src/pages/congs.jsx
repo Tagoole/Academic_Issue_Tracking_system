@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import './congs.css'; // You'll need to create this CSS file
+import './congs.css'; 
 
 const CONGS = () => {
   const navigate = useNavigate();
@@ -17,7 +17,6 @@ const CONGS = () => {
       navigate('/signin');
     }, 3000); // 3 seconds
     
-    // Set up countdown
     const countdownInterval = setInterval(() => {
       setCountdown(prev => {
         if (prev <= 1) {

@@ -1,20 +1,152 @@
-body, html {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
+
+.page-container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  overflow: hidden;
+}
+
+.background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.background-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.glass-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(100px);
+  -webkit-backdrop-filter: blur(100px);
+}
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  width: 100%;
+  max-width: 1000px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+}
+
+.form-section {
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+}
+
+.form-section h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.generate-btn {
+  background-color: #906426;
+  color: white;
+  padding: 12px;
+  border-radius: 4px;
+  text-align: center;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-bottom: 15px;
+}
+
+.generate-btn:hover {
+  background-color: #825d2c;
+}
+
+.message {
+  padding: 10px;
+  border-radius: 4px;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.message.success {
+  background-color: #c6f6d5;
+  color: #2f855a;
+}
+
+.message.error {
+  background-color: #fed7d7;
+  color: #c53030;
+}
+
+.token-image-container {
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.logo-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    grid-template-columns: 1fr;
   }
   
-  .page-container {
-    width: 100%;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-image: url('pexels-olia-danilevich-5088017.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+  .logo-section {
+    padding-top: 0;
   }
   
- 
+  .university-logo {
+    max-width: 180px;
+  }
+}

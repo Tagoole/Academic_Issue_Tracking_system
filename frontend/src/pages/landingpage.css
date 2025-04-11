@@ -1,0 +1,114 @@
+
+.landing-container {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Arial', sans-serif;
+}
+.background-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    z-index: -1;
+    filter: brightness(0.85);
+  }
+  .aits-header {
+    position: absolute;
+    top: 20px;
+    right: 40px;
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+    z-index: 10;
+  }
+  .content-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    z-index: 5;
+  }
+  .logo-container {
+    margin-bottom: 30px;
+  }
+  
+  .main-logo {
+    width: 180px;
+    height: auto;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+  }
+  .welcome-text {
+    text-align: center;
+    font-size: 50px;
+    font-weight: bold;
+    margin: 20px 0 40px;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    max-width: 80%;
+    transform: translateY(30px);
+    opacity: 0;
+    transition: all 1.2s ease-out;
+  }
+  .welcome-text.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  .button-container {
+    display: flex;
+    justify-content: space-between;
+    width: 60%;
+    max-width: 500px;
+    margin-top: 20px;
+  }
+  .signup-btn, .signin-btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .signup-btn {
+    background-color: #289f48;
+    color: white;
+  }
+  
+  .signin-btn {
+    background-color: white;
+    color: #259732;
+  }
+  .signup-btn:hover, .signin-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(8, 81, 191, 0.3);
+  }
+  @media (max-width: 768px) {
+    .welcome-text {
+      font-size: 24px;
+    }
+    
+    .button-container {
+      width: 90%;
+      flex-direction: column;
+      gap: 15px;
+      align-items: center;
+    }
+    
+    .signup-btn, .signin-btn {
+      width: 80%;
+      padding: 10px 0;
+    }
+  }
+  

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import './registrationtoken.css';
+import token_image from '../assets/ict.png';
+
 
 function Registrationtoken() {
   const [userId, setUserId] = useState('');
@@ -11,8 +13,7 @@ function Registrationtoken() {
     if (email) {
       setMessage(`The registration token has been created and sent to the Email "${email}"`);
       setShowMessage(true);
-      
-      // Hide message after 5 seconds
+      // Simulate an API call to send the token
       setTimeout(() => {
         setShowMessage(false);
       }, 5000);
@@ -20,7 +21,6 @@ function Registrationtoken() {
       setMessage('Please enter an email address');
       setShowMessage(true);
       
-      // Hide error message after 3 seconds
       setTimeout(() => {
         setShowMessage(false);
       }, 3000);
@@ -32,14 +32,15 @@ function Registrationtoken() {
       <div className="container">
         <div className="form-section">
           <div className="form-group">
-            <label htmlFor="user-id">User ID:</label>
-            <input 
-              type="text" 
-              id="user-id" 
-              placeholder="Enter ID"
-              value={userId}
-              onChange={(e) => setUserId(e.target.value)}
-            />
+            <label htmlFor="Role">Role</label>
+           < select id="Role">
+           value={userId}
+              <option value="admin">Lecturer</option>
+              <option value="user">Registrar</option>
+            </select>
+
+
+            
           </div>
           <div className="form-group">
             <label htmlFor="email">Email:</label>
@@ -66,9 +67,8 @@ function Registrationtoken() {
         </div>
         <div className="image-section">
           <div className="image-bubble">
-            Some random picture
             <div className="token-image">
-              <img src="token.png" alt="Token" />
+                <img src={token_image} alt="Token" />
             </div>
           </div>
         </div>

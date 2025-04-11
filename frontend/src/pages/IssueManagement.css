@@ -1,12 +1,8 @@
-/* Add these styles to your IssueManagement.css file */
 
-/* Actions dropdown container */
 .actions-dropdown-container {
   position: relative;
   display: inline-block;
 }
-
-/* Actions dropdown toggle button */
 .actions-dropdown-toggle {
   background-color: #4a90e2;
   color: white;
@@ -20,11 +16,9 @@
   justify-content: center;
   transition: background-color 0.2s;
 }
-
 .actions-dropdown-toggle:hover {
   background-color: #3a7bc8;
 }
-
 .dropdown-arrow {
   margin-left: 6px;
   border: solid white;
@@ -39,8 +33,6 @@
 .actions-dropdown-toggle:hover .dropdown-arrow {
   transform: rotate(-135deg);
 }
-
-/* Dropdown menu */
 .actions-dropdown-menu {
   position: absolute;
   background-color: white;
@@ -58,8 +50,6 @@
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
-
-/* Dropdown items */
 .dropdown-item {
   color: #333;
   padding: 12px 16px;
@@ -87,8 +77,6 @@
 .dropdown-item.danger:hover {
   background-color: #fde8e6;
 }
-
-/* Icons in dropdown */
 .dropdown-item i {
   margin-right: 10px;
   font-size: 16px;
@@ -110,13 +98,12 @@
   content: "🗑️";
 }
 
-/* Existing lecturers dropdown styling - enhanced */
 .lecturers-dropdown {
   position: absolute;
   background-color: white;
   min-width: 250px;
   box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-  z-index: 11; /* Higher than actions dropdown */
+  z-index: 11; 
   border-radius: 4px;
   top: 40px;
   right: 0;
