@@ -30,7 +30,7 @@ const NewIssue = () => {
     general: null
   });
   const [currentUser, setCurrentUser] = useState('');
-  const [selectedCourseUnit, setSelectedCourseUnit] = useState('');
+  const [selectedCourseUnitId, setSelectedCourseUnitId] = useState(''); // Changed to store ID instead of name
   const [accessToken, setAccessToken] = useState('');
   const [refreshToken, setRefreshToken] = useState('');
 
@@ -118,7 +118,7 @@ const NewIssue = () => {
   // Function to refresh the access token using refresh token
   const refreshAccessToken = async () => {
     try {
-      const response = await API.post('/api/refresh_token/', {
+      const response = await API.post('/api/token/refresh/', {
         refresh: refreshToken
       });
       
@@ -228,10 +228,12 @@ const NewIssue = () => {
           setCourseUnits(response.data);
           
           // Set first course unit as default
-          const firstCourseUnit = typeof response.data[0] === 'object' 
-            ? response.data[0].name || response.data[0].course_unit_name 
-            : response.data[0];
-          setSelectedCourseUnit(firstCourseUnit);
+          if (response.data.length > 0) {
+            const firstUnit = response.data[0];
+            // Use the ID instead of name
+            const firstUnitId = typeof firstUnit === 'object' ? firstUnit.id : firstUnit;
+            setSelectedCourseUnitId(firstUnitId);
+          }
         } else {
           setCourseUnits([]);
           setErrors(prev => ({ ...prev, courseUnits: 'No course units found. Please try again later.' }));
@@ -278,7 +280,7 @@ const NewIssue = () => {
       return;
     }
     
-    if (!selectedCourseUnit) {
+    if (!selectedCourseUnitId) {
       setErrors(prev => ({ ...prev, general: 'Please select a course unit.' }));
       return;
     }
@@ -306,18 +308,24 @@ const NewIssue = () => {
       // Create FormData object
       const formData = new FormData();
       formData.append('registrar_name', registrarName);
-      formData.append('issue_type', issueType); // Updated from issue_category to issue_type
-      formData.append('description', description); // Updated from issue_description to description
+      formData.append('issue_type', issueType);
+      formData.append('description', description);
       formData.append('issue_title', issueTitle);
-      formData.append('course_unit_name', selectedCourseUnit);
-      formData.append('lecturer_name', ''); // Always sending empty for lecturer name
-      formData.append('student_name', currentUser); // Using current user's username
-      formData.append('status', 'pending'); // Setting status to pending for student role
-      formData.append('year_of_study', yearOfStudy); // Adding year of study
-      formData.append('semester', semester); // Adding semester
+      formData.append('course_unit_id', selectedCourseUnitId);
+      formData.append('lecturer_name', '');
+      formData.append('student_name', currentUser);
+      formData.append('status', 'pending');
+      formData.append('year_of_study', yearOfStudy);
+      formData.append('semester', semester);
       
       if (attachment) {
         formData.append('attachment', attachment);
+      }
+
+      // For debugging - log what we're sending to the API
+      console.log('Submitting form data:');
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
       }
 
       // Send POST request with auth header using the makeAuthRequest helper
@@ -335,21 +343,60 @@ const NewIssue = () => {
 
       // Navigate to success page after brief delay
       setTimeout(() => {
+        // Find the course unit name for display on success page
+        const selectedUnit = courseUnits.find(unit => {
+          if (typeof unit === 'object') {
+            return unit.id === selectedCourseUnitId;
+          }
+          return unit === selectedCourseUnitId;
+        });
+        
+        const courseUnitName = selectedUnit ? 
+          (typeof selectedUnit === 'object' ? selectedUnit.name || selectedUnit.course_unit_name : selectedUnit) : 
+          'Selected Course Unit';
+          
         navigate('/success', {
           state: {
             registrarName,
             issueTitle,
-            courseUnitName: selectedCourseUnit,
+            courseUnitName,
           },
         });
       }, 1500);
     } catch (err) {
       console.error('Error submitting issue:', err);
       setSubmitStatus('error');
-      setErrors(prev => ({ 
-        ...prev, 
-        general: `Failed to submit issue: ${err.response?.data?.message || err.message || 'Unknown error. Please try again later.'}`
-      }));
+      
+      // Handle API error responses
+      let errorMessage = 'Unknown error. Please try again later.';
+      
+      if (err.response) {
+        console.log('Error response data:', err.response.data);
+        
+        if (err.response.data && typeof err.response.data === 'object') {
+          // Format error messages from response data if available
+          const errorMessages = [];
+          Object.entries(err.response.data).forEach(([field, messages]) => {
+            if (Array.isArray(messages)) {
+              errorMessages.push(`${field}: ${messages.join(', ')}`);
+            } else if (typeof messages === 'string') {
+              errorMessages.push(`${field}: ${messages}`);
+            }
+          });
+          
+          if (errorMessages.length > 0) {
+            errorMessage = errorMessages.join('\n');
+          } else {
+            errorMessage = 'Server error. Please try again later.';
+          }
+        } else if (typeof err.response.data === 'string') {
+          errorMessage = err.response.data;
+        }
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
+      setErrors(prev => ({ ...prev, general: `Failed to submit issue: ${errorMessage}` }));
     } finally {
       setIsSubmitting(false);
     }
@@ -376,6 +423,20 @@ const NewIssue = () => {
       // Force effect to run again by updating a dependency
       setCourseUnits([]);
     }
+  };
+
+  // Helper function to get course unit name by ID for display purposes
+  const getCourseUnitNameById = (id) => {
+    const unit = courseUnits.find(unit => {
+      if (typeof unit === 'object') {
+        return unit.id === id;
+      }
+      return unit === id;
+    });
+    
+    if (!unit) return '';
+    
+    return typeof unit === 'object' ? unit.name || unit.course_unit_name : unit;
   };
 
   return (
@@ -571,20 +632,21 @@ const NewIssue = () => {
                 </div>
               ) : (
                 <select
-                  value={selectedCourseUnit}
-                  onChange={(e) => setSelectedCourseUnit(e.target.value)}
+                  value={selectedCourseUnitId}
+                  onChange={(e) => setSelectedCourseUnitId(e.target.value)}
                 >
                   {courseUnits.length === 0 ? (
                     <option value="">No course units available</option>
                   ) : (
-                    courseUnits.map((unit, index) => (
-                      <option 
-                        key={index} 
-                        value={typeof unit === 'object' ? unit.name || unit.course_unit_name : unit}
-                      >
-                        {typeof unit === 'object' ? unit.name || unit.course_unit_name : unit}
-                      </option>
-                    ))
+                    courseUnits.map((unit, index) => {
+                      const id = typeof unit === 'object' ? unit.id : unit;
+                      const name = typeof unit === 'object' ? unit.name || unit.course_unit_name : unit;
+                      return (
+                        <option key={index} value={id}>
+                          {name}
+                        </option>
+                      );
+                    })
                   )}
                 </select>
               )}

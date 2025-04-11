@@ -56,10 +56,15 @@ class IssueSerializer(serializers.ModelSerializer):
     student = serializers.StringRelatedField()
     registrar = serializers.StringRelatedField()
     course_unit = Course_unitSerializer(read_only=True)
+    course_unit_id = serializers.PrimaryKeyRelatedField(
+        source='course_unit', 
+        queryset=Course_unit.objects.all(),
+        write_only=True
+    )
     #program = ProgramSerializer()
     class Meta:
         model = Issue
-        fields = ['id','student','issue_type','course_unit','description','image','status','created_at','updated_at','registrar','year_of_study','semester']
+        fields = ['id','student','issue_type','course_unit','description','image','status','created_at','updated_at','registrar','year_of_study','semester','course_unit_id']
 
 class Student_RegisterSerializer(serializers.ModelSerializer):
     class Meta:
