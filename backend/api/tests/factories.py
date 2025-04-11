@@ -5,3 +5,6 @@ from api.models import *
 
 class CustomUserFactory(DjangoModelFactory):
     pass
+
+class Course_unitFactory(DjangoModelFactory):
+    pass
