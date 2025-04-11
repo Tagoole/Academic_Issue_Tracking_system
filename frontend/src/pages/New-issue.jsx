@@ -19,7 +19,7 @@ const NewIssue = () => {
   const [isLoading, setIsLoading] = useState({
     registrars: true,
     courseUnits: true,
-    user: true
+    user: false // Changed to false since we're getting from localStorage
   });
   const [errors, setErrors] = useState({
     registrars: null,
@@ -36,6 +36,29 @@ const NewIssue = () => {
     { value: 'appeal', label: 'Appeal' },
     { value: 'correction', label: 'Correction' }
   ];
+
+  // Get username from localStorage when component mounts
+  useEffect(() => {
+    try {
+      // Get username from localStorage
+      const username = localStorage.getItem('userName');
+      console.log('Username from localStorage:', username);
+      
+      if (username) {
+        setCurrentUser(username);
+      } else {
+        setCurrentUser('');
+        setErrors(prev => ({ ...prev, user: 'User information not found. Please sign in again.' }));
+      }
+    } catch (err) {
+      console.error('Error retrieving user from localStorage:', err);
+      setCurrentUser('');
+      setErrors(prev => ({ 
+        ...prev, 
+        user: `Could not load user info: ${err.message || 'Unknown error'}`
+      }));
+    }
+  }, []);
 
   // Fetch registrars when component mounts
   useEffect(() => {
@@ -111,43 +134,6 @@ const NewIssue = () => {
     fetchCourseUnits();
   }, []);
 
-  // Fetch current user when component mounts
-  useEffect(() => {
-    const fetchCurrentUser = async () => {
-      try {
-        setIsLoading(prev => ({ ...prev, user: true }));
-        setErrors(prev => ({ ...prev, user: null }));
-        
-        const response = await API.get('/api/get_user_info/');
-        console.log('Current user response:', response);
-
-        
-        
-        if (response && response.data) {
-          // Handle different response formats
-          const username = typeof response.data === 'object' ? 
-            (response.data.username || response.data.name || '') : 
-            response.data;
-          setCurrentUser(username);
-        } else {
-          setCurrentUser('');
-          setErrors(prev => ({ ...prev, user: 'Failed to retrieve user information.' }));
-        }
-      } catch (err) {
-        console.error('Error fetching current user:', err);
-        setCurrentUser('');
-        setErrors(prev => ({ 
-          ...prev, 
-          user: `Could not load user info: ${err.response?.data?.message || err.message || 'Unknown error'}`
-        }));
-      } finally {
-        setIsLoading(prev => ({ ...prev, user: false }));
-      }
-    };
-
-    fetchCurrentUser();
-  }, []);
-
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     setAttachment(file);
@@ -181,6 +167,12 @@ const NewIssue = () => {
     
     if (!issueDescription.trim()) {
       setErrors(prev => ({ ...prev, general: 'Please provide an issue description.' }));
+      return;
+    }
+    
+    if (!currentUser) {
+      setErrors(prev => ({ ...prev, general: 'User information not found. Please sign in again.' }));
+      navigate('/signin');
       return;
     }
     
@@ -238,7 +230,7 @@ const NewIssue = () => {
   const isFormReady = registrars.length > 0 && courseUnits.length > 0 && !isLoading.registrars && !isLoading.courseUnits;
   
   // Check if any loading is in progress
-  const anyLoading = isLoading.registrars || isLoading.courseUnits || isLoading.user;
+  const anyLoading = isLoading.registrars || isLoading.courseUnits;
 
   // Helper function to retry loading
   const retryLoading = (type) => {
@@ -335,14 +327,8 @@ const NewIssue = () => {
             </div>
             <div className="form-group">
               <label>Student's Name</label>
-              {/* Student name field showing current user's name and disabled */}
-              {isLoading.user ? (
-                <input 
-                  type="text" 
-                  disabled
-                  placeholder="Loading user information..."
-                />
-              ) : errors.user ? (
+              {/* Student name field showing current user's name from localStorage */}
+              {errors.user ? (
                 <div className="error-field">
                   <input 
                     type="text" 
