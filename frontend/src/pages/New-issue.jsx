@@ -120,6 +120,8 @@ const NewIssue = () => {
         
         const response = await API.get('/api/get_user_info/');
         console.log('Current user response:', response);
+
+        
         
         if (response && response.data) {
           // Handle different response formats
