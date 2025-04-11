@@ -19,7 +19,7 @@ const NewIssue = () => {
   const [isLoading, setIsLoading] = useState({
     registrars: true,
     courseUnits: true,
-    user: false // Changed to false since we're getting from localStorage
+    user: false
   });
   const [errors, setErrors] = useState({
     registrars: null,
@@ -29,6 +29,7 @@ const NewIssue = () => {
   });
   const [currentUser, setCurrentUser] = useState('');
   const [selectedCourseUnit, setSelectedCourseUnit] = useState('');
+  const [authToken, setAuthToken] = useState('');
 
   // Define issue categories to match backend ISSUE_CHOICES
   const issueCategories = [
@@ -37,12 +38,16 @@ const NewIssue = () => {
     { value: 'correction', label: 'Correction' }
   ];
 
-  // Get username from localStorage when component mounts
+  // Get username and token from localStorage when component mounts
   useEffect(() => {
     try {
       // Get username from localStorage
       const username = localStorage.getItem('userName');
       console.log('Username from localStorage:', username);
+      
+      // Get auth token from localStorage
+      const token = localStorage.getItem('accessToken');
+      console.log('Auth token retrieved:', token ? 'Yes' : 'No');
       
       if (username) {
         setCurrentUser(username);
@@ -50,24 +55,43 @@ const NewIssue = () => {
         setCurrentUser('');
         setErrors(prev => ({ ...prev, user: 'User information not found. Please sign in again.' }));
       }
+      
+      if (token) {
+        setAuthToken(token);
+      } else {
+        setErrors(prev => ({ ...prev, general: 'Authentication token not found. Please sign in again.' }));
+        // Optionally redirect to sign in page if no token found
+        // setTimeout(() => navigate('/signin'), 1500);
+      }
     } catch (err) {
-      console.error('Error retrieving user from localStorage:', err);
+      console.error('Error retrieving user info from localStorage:', err);
       setCurrentUser('');
       setErrors(prev => ({ 
         ...prev, 
         user: `Could not load user info: ${err.message || 'Unknown error'}`
       }));
     }
-  }, []);
+  }, [navigate]);
+
+  // Create API request config with auth token
+  const getAuthConfig = () => {
+    return {
+      headers: {
+        'Authorization': `Bearer ${authToken}`
+      }
+    };
+  };
 
   // Fetch registrars when component mounts
   useEffect(() => {
     const fetchRegistrars = async () => {
+      if (!authToken) return; // Don't fetch if no auth token
+      
       try {
         setIsLoading(prev => ({ ...prev, registrars: true }));
         setErrors(prev => ({ ...prev, registrars: null }));
         
-        const response = await API.get('/api/get_registrars/');
+        const response = await API.get('/api/get_registrars/', getAuthConfig());
         console.log('Registrars API response:', response);
         
         if (response && response.data && Array.isArray(response.data) && response.data.length > 0) {
@@ -95,16 +119,18 @@ const NewIssue = () => {
     };
 
     fetchRegistrars();
-  }, []);
+  }, [authToken]);
 
   // Fetch course units when component mounts
   useEffect(() => {
     const fetchCourseUnits = async () => {
+      if (!authToken) return; // Don't fetch if no auth token
+      
       try {
         setIsLoading(prev => ({ ...prev, courseUnits: true }));
         setErrors(prev => ({ ...prev, courseUnits: null }));
         
-        const response = await API.get('/api/course_unit/');
+        const response = await API.get('/api/course_unit/', getAuthConfig());
         console.log('Course units API response:', response);
         
         if (response && response.data && Array.isArray(response.data) && response.data.length > 0) {
@@ -132,7 +158,7 @@ const NewIssue = () => {
     };
 
     fetchCourseUnits();
-  }, []);
+  }, [authToken]);
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
@@ -144,6 +170,13 @@ const NewIssue = () => {
   };
 
   const handleSubmit = async () => {
+    // Check if token exists
+    if (!authToken) {
+      setErrors(prev => ({ ...prev, general: 'Authentication token not found. Please sign in again.' }));
+      setTimeout(() => navigate('/signin'), 1500);
+      return;
+    }
+    
     // Reset any previous submission status
     setSubmitStatus(null);
     setErrors(prev => ({ ...prev, general: null }));
@@ -194,10 +227,11 @@ const NewIssue = () => {
         formData.append('attachment', attachment);
       }
 
-      // Send POST request
+      // Send POST request with auth header
       const response = await API.post('/api/issues/', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${authToken}`
         },
       });
 
@@ -227,7 +261,7 @@ const NewIssue = () => {
   };
 
   // Check if form is ready for submission
-  const isFormReady = registrars.length > 0 && courseUnits.length > 0 && !isLoading.registrars && !isLoading.courseUnits;
+  const isFormReady = registrars.length > 0 && courseUnits.length > 0 && !isLoading.registrars && !isLoading.courseUnits && authToken;
   
   // Check if any loading is in progress
   const anyLoading = isLoading.registrars || isLoading.courseUnits;
@@ -256,6 +290,14 @@ const NewIssue = () => {
         <Sidebar />
         <div className="issue-form-container">
           <h1>Create New Issue</h1>
+          
+          {/* Auth token error message */}
+          {!authToken && (
+            <div className="error-banner">
+              <p>Authentication token not found. Please sign in again.</p>
+              <button className="dismiss-btn" onClick={() => navigate('/signin')}>Sign In</button>
+            </div>
+          )}
           
           {/* General error message at the top */}
           {errors.general && (
