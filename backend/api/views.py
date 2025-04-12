@@ -40,9 +40,18 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 
 class IssueViewSet(ModelViewSet):
-    permission_classes = [IsAuthenticated,IsStudent]
+    permission_classes = [AllowAny]
     queryset = Issue.objects.all()
     serializer_class = IssueSerializer
+    
+    def create(self, request, *args, **kwargs):
+        # Simple print of request data
+        print("--- REQUEST DATA ---")
+        print(request.data)
+        print("-------------------")
+        
+        # Continue with normal processing
+        return super().create(request, *args, **kwargs)
     
 class Lecturer_Issue_Manangement(ModelViewSet):
     serializer_class = IssueSerializer

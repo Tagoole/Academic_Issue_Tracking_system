@@ -30,9 +30,10 @@ const NewIssue = () => {
     general: null
   });
   const [currentUser, setCurrentUser] = useState('');
-  const [selectedCourseUnitId, setSelectedCourseUnitId] = useState(''); // Changed to store ID instead of name
+  const [selectedCourseUnitId, setSelectedCourseUnitId] = useState('');
   const [accessToken, setAccessToken] = useState('');
   const [refreshToken, setRefreshToken] = useState('');
+  const [issueTitle, setIssueTitle] = useState('Wrong Marks');
 
   // Define issue types to match backend ISSUE_CHOICES
   const issueTypes = [
@@ -89,8 +90,6 @@ const NewIssue = () => {
         setAccessToken(access);
       } else {
         setErrors(prev => ({ ...prev, general: 'Authentication token not found. Please sign in again.' }));
-        // Optionally redirect to sign in page if no token found
-        // setTimeout(() => navigate('/signin'), 1500);
       }
       
       if (refresh) {
@@ -106,18 +105,10 @@ const NewIssue = () => {
     }
   }, [navigate]);
 
-  // Create API request config with auth token
-  const getAuthConfig = () => {
-    return {
-      headers: {
-        'Authorization': `Bearer ${accessToken}`
-      }
-    };
-  };
-
   // Function to refresh the access token using refresh token
   const refreshAccessToken = async () => {
     try {
+      // Fixed the token refresh endpoint
       const response = await API.post('/api/token/refresh/', {
         refresh: refreshToken
       });
@@ -262,6 +253,18 @@ const NewIssue = () => {
     setAttachment(null);
   };
 
+  // Find registrar ID from name to send to backend if needed
+  const getRegistrarIdByName = (name) => {
+    const registrar = registrars.find(reg => {
+      if (typeof reg === 'object') {
+        return reg.name === name || reg.username === name;
+      }
+      return reg === name;
+    });
+    
+    return registrar && typeof registrar === 'object' ? registrar.id : name;
+  };
+
   const handleSubmit = async () => {
     // Check if token exists
     if (!accessToken) {
@@ -285,7 +288,6 @@ const NewIssue = () => {
       return;
     }
     
-    const issueTitle = document.querySelector('input[name="issue_title"]').value;
     if (!issueTitle.trim()) {
       setErrors(prev => ({ ...prev, general: 'Please enter an issue title.' }));
       return;
@@ -307,25 +309,29 @@ const NewIssue = () => {
 
       // Create FormData object
       const formData = new FormData();
-      formData.append('registrar_name', registrarName);
+      
+      // Keeping registrar as the name and using 'student' field instead of 'student_name'
+      formData.append('registrar', registrarName);
       formData.append('issue_type', issueType);
       formData.append('description', description);
       formData.append('issue_title', issueTitle);
       formData.append('course_unit_id', selectedCourseUnitId);
-      formData.append('lecturer_name', '');
-      formData.append('student_name', currentUser);
+      formData.append('lecturer', '');
+      // Changed student_name to student to match the serializer
+      formData.append('student', currentUser);
       formData.append('status', 'pending');
       formData.append('year_of_study', yearOfStudy);
       formData.append('semester', semester);
       
       if (attachment) {
-        formData.append('attachment', attachment);
+        // Change to 'image' to match the serializer field
+        formData.append('image', attachment);
       }
 
       // For debugging - log what we're sending to the API
       console.log('Submitting form data:');
       for (let [key, value] of formData.entries()) {
-        console.log(`${key}: ${value}`);
+        console.log(`${key}: ${value instanceof File ? 'File: ' + value.name : value}`);
       }
 
       // Send POST request with auth header using the makeAuthRequest helper
@@ -425,20 +431,6 @@ const NewIssue = () => {
     }
   };
 
-  // Helper function to get course unit name by ID for display purposes
-  const getCourseUnitNameById = (id) => {
-    const unit = courseUnits.find(unit => {
-      if (typeof unit === 'object') {
-        return unit.id === id;
-      }
-      return unit === id;
-    });
-    
-    if (!unit) return '';
-    
-    return typeof unit === 'object' ? unit.name || unit.course_unit_name : unit;
-  };
-
   return (
     <div className="create-issue-page" style={{ backgroundImage: `url(${backgroundimage})` }}>
       <NavBar />
@@ -511,7 +503,6 @@ const NewIssue = () => {
           <div className="form-row">
             <div className="form-group">
               <label>Issue Type</label>
-              {/* Dropdown for issue types (renamed from issue categories) */}
               <select
                 value={issueType}
                 onChange={(e) => setIssueType(e.target.value)}
@@ -525,7 +516,6 @@ const NewIssue = () => {
             </div>
             <div className="form-group">
               <label>Student's Name</label>
-              {/* Student name field showing current user's name from localStorage */}
               {errors.user ? (
                 <div className="error-field">
                   <input 
@@ -608,7 +598,11 @@ const NewIssue = () => {
             </div>
             <div className="form-group">
               <label>Issue Title</label>
-              <input type="text" name="issue_title" defaultValue="Wrong Marks" />
+              <input 
+                type="text" 
+                value={issueTitle}
+                onChange={(e) => setIssueTitle(e.target.value)}
+              />
             </div>
           </div>
 
