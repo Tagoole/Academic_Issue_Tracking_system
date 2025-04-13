@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import NavBar from './NavBar';
 import Sidebar from './Sidebar1';
 import './New-issue.css';
-import backgroundimage from "../assets/backgroundimage.jpg";
 import API from '../api';
 
 const NewIssue = () => {
@@ -121,8 +120,6 @@ const NewIssue = () => {
         const response = await API.get('/api/get_user_info/');
         console.log('Current user response:', response);
 
-        
-        
         if (response && response.data) {
           // Handle different response formats
           const username = typeof response.data === 'object' ? 
@@ -258,7 +255,7 @@ const NewIssue = () => {
   };
 
   return (
-    <div className="create-issue-page" style={{ backgroundImage: `url(${backgroundimage})` }}>
+    <div className="create-issue-page">
       <NavBar />
       <div className="page-content">
         <Sidebar />
