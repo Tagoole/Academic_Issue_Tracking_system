@@ -1,17 +1,14 @@
-/* Base styles */
-.landingpage {
-    position: relative;
-    height: 100vh;
+
+.landing-container {
     width: 100%;
+    height: 100vh;
+    position: relative;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    color: white;
-  }
-  
-  /* Background image styling - with increased opacity */
-  .bg-image {
+    font-family: 'Arial', sans-serif;
+}
+.background-image {
     position: absolute;
     top: 0;
     left: 0;
@@ -19,185 +16,99 @@
     height: 100%;
     background-size: cover;
     background-position: center;
-    background-repeat: no-repeat;
     z-index: -1;
-    /* No overlay on the image itself */
+    filter: brightness(0.85);
   }
-  
-  /* Remove the semi-transparent overlay that was making the image appear transparent */
-  .bg-image::after {
-    content: none; /* Remove this overlay completely */
-  }
-  
-  /* Optional: Add a very slight darkening only if needed for text readability */
-  .landingpage::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.15); /* Very slight darkening */
-    z-index: 0;
-    pointer-events: none;
-  }
-  
-  /* Logo styles */
-  .logo {
+  .aits-header {
     position: absolute;
     top: 20px;
-    left: 20px;
+    right: 40px;
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
     z-index: 10;
   }
-  
-  .logo-name {
-    color: white;
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin: 0;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
-  }
-  
-  /* Content container */
   .content-container {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
-    height: 100%;
-    width: 100%;
+    align-items: center;
+    padding: 20px;
     z-index: 5;
-    position: relative;
+  }
+  .logo-container {
+    margin-bottom: 30px;
   }
   
-  /* Main content overlay */
-  .overlay {
-    text-align: center;
-    padding: 30px;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-width: 90%;
-    /* Optional: Add a subtle background to help text stand out */
-    background-color: rgba(0, 0, 0, 0.2);
-  }
-  
-  /* Makerere logo */
-  .makerere-logo {
-    width: 150px;
+  .main-logo {
+    width: 180px;
     height: auto;
-    display: block;
-    margin: 0 auto 30px auto;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
   }
-  
-  /* Welcome text */
   .welcome-text {
-    font-size: 2.5rem;
-    font-weight: bold;
-    margin: 0 0 50px 0; /* Added bottom margin for spacing before buttons */
     text-align: center;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-  }
-  
-  /* Button container - now below welcome text */
-  .buttons {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    margin-top: 10px;
-  }
-  
-  /* Button styles */
-  .signup-button,
-  .signin-button {
-    color: white;
-    border: none;
-    padding: 12px 30px;
-    cursor: pointer;
-    border-radius: 5px;
-    background-color: rgba(0, 0, 0, 0.7);
+    font-size: 50px;
     font-weight: bold;
-    font-size: 1.1rem;
+    margin: 20px 0 40px;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    max-width: 80%;
+    transform: translateY(30px);
+    opacity: 0;
+    transition: all 1.2s ease-out;
+  }
+  .welcome-text.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  .button-container {
+    display: flex;
+    justify-content: space-between;
+    width: 60%;
+    max-width: 500px;
+    margin-top: 20px;
+  }
+  .signup-btn, .signin-btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
     transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
   
-  .signup-button:hover,
-  .signin-button:hover {
-    background-color: black;
-    transform: scale(1.05);
+  .signup-btn {
+    background-color: #289f48;
+    color: white;
   }
   
-  /* Separator between buttons */
-  .separator {
-    width: 2px;
-    height: 30px;
+  .signin-btn {
     background-color: white;
+    color: #259732;
   }
-  
-  /* Media queries for responsiveness */
-  @media screen and (max-width: 1024px) {
-    .welcome-text {
-      font-size: 2.2rem;
-      margin-bottom: 40px;
-    }
-    
-    .makerere-logo {
-      width: 130px;
-      margin-bottom: 25px;
-    }
+  .signup-btn:hover, .signin-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(8, 81, 191, 0.3);
   }
-  
-  @media screen and (max-width: 768px) {
+  @media (max-width: 768px) {
     .welcome-text {
-      font-size: 1.8rem;
-      margin-bottom: 35px;
+      font-size: 24px;
     }
     
-    .makerere-logo {
-      width: 120px;
-      margin-bottom: 20px;
-    }
-    
-    .signup-button,
-    .signin-button {
-      padding: 10px 25px;
-      font-size: 1rem;
-    }
-  }
-  
-  @media screen and (max-width: 480px) {
-    .overlay {
-      padding: 20px;
-    }
-  
-    .logo-name {
-      font-size: 1.2rem;
-    }
-    
-    .welcome-text {
-      font-size: 1.4rem;
-      margin-bottom: 30px;
-    }
-    
-    .makerere-logo {
-      width: 100px;
-      margin-bottom: 15px;
-    }
-    
-    .buttons {
+    .button-container {
+      width: 90%;
       flex-direction: column;
       gap: 15px;
+      align-items: center;
     }
     
-    .separator {
-      display: none; /* Hide separator on mobile to stack buttons */
-    }
-    
-    .signup-button,
-    .signin-button {
-      padding: 10px 20px;
-      font-size: 0.9rem;
-      width: 150px;
+    .signup-btn, .signin-btn {
+      width: 80%;
+      padding: 10px 0;
     }
   }
+  

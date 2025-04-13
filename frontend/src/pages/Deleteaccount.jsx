@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import makerereLogo from '../assets/makererelogo.png';
-import './DeleteAccount.css';
+import backgroundImage from '../assets/pexels-olia-danilevich-5088017.jpg';
+import './Deleteaccount.css';
 
 const DeleteAccount = () => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -12,7 +13,6 @@ const DeleteAccount = () => {
   };
 
   const confirmDeleteAccount = () => {
-    // Implement actual account deletion logic here
     console.log('Account deleted');
     setShowConfirmModal(false);
 
@@ -28,13 +28,10 @@ const DeleteAccount = () => {
   };
 
   return (
-    <div className="settings-container">
-      <div className="background-image"></div>
-
-      {/* Sidebar */}
+    <div className="settings-container" style={{ backgroundImage: `url(${backgroundImage})` }}>
       <div className="settings-sidebar glass-effect">
         <div className="university-logo-sidebar">
-          <img src={makerereLogo} alt="University Logo" className="logo-sidebar" />
+          <img src={makerereLogo} alt="Makerere University Logo" className="logo-sidebar" />
         </div>
 
         <Link to="/changepassword" className="menu-item">
@@ -66,7 +63,6 @@ const DeleteAccount = () => {
         </Link>
       </div>
 
-      {/* Main Content */}
       <div className="main-content glass-effect">
         <h1 className="delete-account-title">Delete Account</h1>
 
@@ -96,7 +92,6 @@ const DeleteAccount = () => {
         </div>
       </div>
 
-      {/* Confirmation Modal */}
       {showConfirmModal && (
         <div className="modal-overlay">
           <div className="modal-content glass-effect">

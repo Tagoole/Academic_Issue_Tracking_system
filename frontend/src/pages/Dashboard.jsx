@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import libraryImage from '../assets/student.png'; // Import the library image (you'll need to add this)
-import dashboardIcon from '../assets/knowledge.png'; // Import dashboard icon (you'll need to add this)
+import libraryImage from '../assets/student.png'; 
+import dashboardIcon from '../assets/knowledge.png'; 
 import './Dashboard.css';
 
 

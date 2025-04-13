@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './congragulation.css';
-import congsImage from '../assets/congs.png'; // Update this path to match your project structure
+import congsImage from '../assets/congs.png'; 
 
 const  Congragulation = () => {
   const navigate = useNavigate();

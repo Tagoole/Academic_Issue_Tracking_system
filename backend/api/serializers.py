@@ -10,6 +10,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token = super().get_token(user)
         
         # Add custom claims
+        token['id'] = user.id
         token['email'] = user.email  
         token['role'] = user.role  
         token['username'] = user.username
@@ -21,7 +22,14 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['id','first_name','last_name','username','email','password','role']
+        fields = ['id','username','email','role']
+        
+class CustomUserprofileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = "__all__"
+    
+    
         
 class Course_unitSerializer(serializers.ModelSerializer):
     class Meta:
@@ -48,10 +56,15 @@ class IssueSerializer(serializers.ModelSerializer):
     student = serializers.StringRelatedField()
     registrar = serializers.StringRelatedField()
     course_unit = Course_unitSerializer(read_only=True)
+    course_unit_id = serializers.PrimaryKeyRelatedField(
+        source='course_unit', 
+        queryset=Course_unit.objects.all(),
+        write_only=True
+    )
     #program = ProgramSerializer()
     class Meta:
         model = Issue
-        fields = ['id','student','issue_type','course_unit','description','image','status','created_at','updated_at','registrar','year_of_study','semester']
+        fields = ['id','student','issue_type','course_unit','description','image','status','created_at','updated_at','registrar','year_of_study','semester','course_unit_id']
 
 class Student_RegisterSerializer(serializers.ModelSerializer):
     class Meta:

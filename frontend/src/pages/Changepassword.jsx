@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import makerereLogo from '../assets/makererelogo.png';
 import hidden from '../assets/hidden.png';
-import './ChangePassword.css';
+import './Changepassword.css';
 import NavBar from './NavBar';
-import backgroundImage from '../assets/pexels-olia-danilevich-5088017.jpg'; // Background image
+import backgroundImage from '../assets/pexels-olia-danilevich-5088017.jpg'; 
 
 function ChangePassword() {
   const [oldPassword, setOldPassword] = useState('');
@@ -24,13 +24,10 @@ function ChangePassword() {
   };
 
   const handleSaveChanges = () => {
-    // Add validation here before showing confirmation
     if (!oldPassword || !newPassword || !confirmPassword) {
       alert("Please fill in all password fields");
       return;
     }
-
-    // Validation for password length
     if (newPassword.length < 6) {
       alert("New password must be at least 6 characters");
       return;
@@ -40,16 +37,13 @@ function ChangePassword() {
       alert("New passwords don't match");
       return;
     }
-    setShowConfirmation(true); // Show confirmation modal
+    setShowConfirmation(true); 
   };
 
   const confirmChangePassword = () => {
-    setShowConfirmation(false); // Close confirmation modal
-    setSuccessMessage(true); // Show success message
-    // Add logic to handle password change here
+    setShowConfirmation(false); 
+    setSuccessMessage(true); 
     console.log('Password changed successfully!');
-    
-    // Reset form fields after successful change
     setOldPassword('');
     setNewPassword('');
     setConfirmPassword('');
@@ -120,7 +114,7 @@ function ChangePassword() {
             position: 'fixed',
             height: '100vh',
             zIndex: 90,
-            paddingTop: '80px', // Space for the navbar
+            paddingTop: '80px', 
           }}
         >
           <div className="university-logo-sidebar">

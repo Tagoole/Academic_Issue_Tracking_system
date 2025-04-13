@@ -1,12 +1,22 @@
-import React from 'react';
-import './landingpage.css';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './landingpage.css';
 import makererelogo from '../assets/makererelogo.png';
 import landingimage from '../assets/landingimage.png';
 
 const LandingPage = () => {
   const navigate = useNavigate();
-  
+  const [showWelcome, setShowWelcome] = useState(false);
+  const [showButtons, setShowButtons] = useState(false);
+  useEffect(() => {
+    // Trigger welcome message animation after a short delay
+    const timer = setTimeout(() => {
+      setShowWelcome(true);
+    }, 800);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
   const navigateToSignup = () => {
     navigate('/signup');
   };
@@ -16,37 +26,30 @@ const LandingPage = () => {
   };
   
   return (
-    <div className="landingpage">
-      {/* Using the landingimage as a background directly in JSX */}
-      <div className="bg-image" style={{ backgroundImage: `url(${landingimage})` }}></div>
+    <div className="landing-container">
+      {/* Background image */}
+      <div className="background-image" style={{ backgroundImage: `url(${landingimage})` }}></div>
       
-      {/* Logo at the top */}
-      <div className="logo">
-        <h1 className="logo-name">AITS</h1>
-      </div>
+      {/* AITS Logo at top right */}
+      <div className="aits-header">AITS</div>
       
-      {/* Main content section */}
+      {/* Main content */}
       <div className="content-container">
-        <div className="overlay">
-          <img 
-            src={makererelogo} 
-            alt="Makerere University Logo" 
-            className="makerere-logo" 
-          />
-          <div className="welcome-text">
-            WELCOME TO THE ACADEMIC ISSUE TRACKING SYSTEM
-          </div>
-          
-          {/* Buttons now below the welcome text */}
-          <div className="buttons">
-            <button className="signup-button" onClick={navigateToSignup}>
-              Sign Up
-            </button>
-            <div className="separator"></div>
-            <button className="signin-button" onClick={navigateToSignin}>
-              Sign In
-            </button>
-          </div>
+        {/* Logo centered */}
+        <div className="logo-container">
+          <img src={makererelogo} alt="Makerere University Logo" className="main-logo" />
+        </div>
+        
+        {/* Welcome text with animation */}
+        <div className={`welcome-text ${showWelcome ? 'show' : ''}`}>
+          WELCOME TO THE ACADEMIC ISSUE TRACKING SYSTEM
+        </div>
+        
+        {/* Button container */}
+        <div className={`button-container ${showButtons ? 'show-buttons' : ''}`}>
+          <div className="separator"></div>
+          <button className="signup-btn" onClick={navigateToSignup}>Sign Up</button>
+          <button className="signin-btn" onClick={navigateToSignin}>Sign In</button>
         </div>
       </div>
     </div>

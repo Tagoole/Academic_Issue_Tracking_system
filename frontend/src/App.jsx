@@ -24,8 +24,6 @@ import ProfileScreen from "./pages/StudentsProfile";
 import Notifications from "./pages/Notifications";
 import LandingPage from "./pages/landingpage";
 import CONGS from "./pages/congs";
-import Lecturerdashboard from "./pages/Lecturerdashboard";
-import LecturerProfile from "./pages/Lecturerprofile";
 
 function App() {
   return (
@@ -42,6 +40,7 @@ function App() {
         <Route path="/resetpassword" element={<ResetPassword />} />
         <Route path="/changepassword" element={<Changepassword />} />
         <Route path="/congs" element={<CONGS />} />
+        <Route path="/registrationtoken" element={<Registrationtoken />} />
         
         {/* Profile setup routes */}
         <Route path="/profilesetup" element={<ProfileSetup />} />
@@ -52,7 +51,7 @@ function App() {
         
         {/* Dashboard routes */}
         <Route path="/studentdashboard" element={<StudentDashboard />} />
-        <Route path="/registrardashboard" element={<RegistraDashboard />} />
+        <Route path="/registradashboard" element={<RegistraDashboard />} />
         <Route path="/lecturerdashboard" element={<Lecturerdashboard />} />
         
         {/* Issue management routes */}
@@ -60,6 +59,7 @@ function App() {
         <Route path="/issues" element={<Issues />} />
         <Route path="/issuemanagement" element={<IssueManagement />} />
         <Route path="/viewdetails/:id" element={<Viewdetails />} />
+        <Route path="/lecturerissuemanagement" element={<LecturerIssueManagement />} />
         
         {/* Other routes */}
         <Route path="/messages" element={<Messages />} />
@@ -68,6 +68,9 @@ function App() {
         <Route path="/preferences" element={<Preferences />} />
         <Route path="/help" element={<Help />} />
         <Route path="/deleteaccount" element={<Deleteaccount />} />
+        <Route path="/settings" element={<Settings />} />
+        
+        {/* Catch-all route */}
       </Routes>
     </Router>
   );
