@@ -54,7 +54,7 @@ function App() {
         
         {/* Dashboard routes */}
         <Route path="/studentdashboard" element={<StudentDashboard />} />
-        <Route path="/registrardashboard" element={<RegistraDashboard />} />
+        <Route path="/registradashboard" element={<RegistraDashboard />} />
         <Route path="/lecturerdashboard" element={<Lecturerdashboard />} />
         
         {/* Issue management routes */}
