@@ -25,6 +25,7 @@ import Notifications from "./pages/Notifications";
 import LandingPage from "./pages/landingpage";
 import CONGS from "./pages/congs";
 import Lecturerdashboard from "./pages/Lecturerdashboard";
+import LecturerProfile from "./pages/Lecturerprofile";
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
         <Route path="/profilepicture" element={<ProfilePictureSetup />} />
         <Route path="/congratulation" element={<Congragulation />} />
         <Route path="/profile" element={<ProfileScreen />} />
+        <Route path="/lecturerprofile" element={<LecturerProfile />} />
         
         {/* Dashboard routes */}
         <Route path="/studentdashboard" element={<StudentDashboard />} />
