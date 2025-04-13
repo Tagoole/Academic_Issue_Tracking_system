@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom'; // Import Link for client-side navigation
 import './Sidebar1.css';
 import makerereLogo from '../assets/makererelogo.png'; // Correct import
 
@@ -11,52 +12,52 @@ function Sidebar1() {
       </div>
 
       {/* Student Dashboard Link */}
-      <a href="/dashboard" className="menu-item">
+      <Link to="/studentdashboard" className="menu-item">
         Student Dashboard
         <svg viewBox="0 0 24 24" className="arrow-icon">
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
-      </a>
+      </Link>
 
       {/* Issues Link */}
-      <a href="/issues" className="menu-item">
+      <Link to="/issues" className="menu-item">
         Issues
         <svg viewBox="0 0 24 24" className="arrow-icon">
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
-      </a>
+      </Link>
 
       {/* Profile Link */}
-      <a href="/profile" className="menu-item">
+      <Link to="/StudentsProfile" className="menu-item">
         Student Profile
         <svg viewBox="0 0 24 24" className="arrow-icon">
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
-      </a>
+      </Link>
 
       {/* Settings Link */}
-      <a href="/settings" className="menu-item">
+      <Link to="/settings" className="menu-item">
         Settings
         <svg viewBox="0 0 24 24" className="arrow-icon">
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
-      </a>
+      </Link>
 
       {/* Help and Support Link */}
-      <a href="/help" className="menu-item">
+      <Link to="/help" className="menu-item">
         Help and Support
         <svg viewBox="0 0 24 24" className="arrow-icon">
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
-      </a>
+      </Link>
 
       {/* Logout Link */}
-      <a href="/logout" className="menu-item delete-account">
+      <Link to="/" className="menu-item delete-account">
         Logout
         <svg viewBox="0 0 24 24" className="arrow-icon">
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
-      </a>
+      </Link>
     </div>
   );
 }
