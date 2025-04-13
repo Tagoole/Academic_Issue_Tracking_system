@@ -15,6 +15,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
+    permission_classes = [AllowAny]
     serializer_class = CustomTokenObtainPairSerializer
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
@@ -29,6 +30,8 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         
         response.data['role'] = user.role
         response.data['id'] = user.id
+        response.data['email'] = user.email
+        response.data['username'] = user.username
         print(response.data)
         print(user.role)
         
@@ -37,9 +40,18 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 
 class IssueViewSet(ModelViewSet):
-    permission_classes = [IsAuthenticated,IsStudent]
+    permission_classes = [AllowAny]
     queryset = Issue.objects.all()
     serializer_class = IssueSerializer
+    
+    def create(self, request, *args, **kwargs):
+        # Simple print of request data
+        print("--- REQUEST DATA ---")
+        print(request.data)
+        print("-------------------")
+        
+        # Continue with normal processing
+        return super().create(request, *args, **kwargs)
     
 class Lecturer_Issue_Manangement(ModelViewSet):
     serializer_class = IssueSerializer
@@ -261,24 +273,24 @@ class Student_Registration(APIView):
                 settings.EMAIL_HOST_USER,
                 [recipient_email]
             )
-            try:
-                email.send(fail_silently=False)
-                return Response({
-                        "message": "User Created Successfully, Token created and email sent!",
-                        "user": {
-                        "id": user.id,
-                        "first_name": user.first_name,
-                        "last_name": user.last_name,
-                        "username": user.username,
-                        "email": user.email,
-                        "role":user.role,
-                        "gender": user.gender,
-                        "program": user.program.id if user.program else None,
-                        "is_email_verified": user.is_email_verified,
-                    
-                        }}, status=status.HTTP_201_CREATED)
-            except Exception as e:
-                print(f"Email sending failed: {str(e)}")
+            #try:
+            email.send(fail_silently=False)
+            return Response({
+                    "message": "User Created Successfully, Token created and email sent!",
+                    "user": {
+                    "id": user.id,
+                    "first_name": user.first_name,
+                    "last_name": user.last_name,
+                    "username": user.username,
+                    "email": user.email,
+                    "role":user.role,
+                    "gender": user.gender,
+                    "program": user.program.id if user.program else None,
+                    "is_email_verified": user.is_email_verified,
+                
+                    }}, status=status.HTTP_201_CREATED)
+            #except Exception as e:
+                #print(f"Email sending failed: {str(e)}")
         print(serializer.errors)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
     
