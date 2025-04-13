@@ -1,13 +1,13 @@
 import React from 'react';
 import './Sidebar1.css';
-import makerereLogo from '../assets/makererelogo.png';
-
+import makerereLogo from '../assets/makererelogo.png'; // Correct import
 
 function Sidebar1() {
   return (
     <div className="sidebar-container">
       <div className="university-logo-sidebar">
-        <img src={studentLogo} alt="Student Logo" className="logo-sidebar" />
+        {/* Use the correct logo import */}
+        <img src={makerereLogo} alt="Makerere University Logo" className="logo-sidebar" />
       </div>
 
       {/* Student Dashboard Link */}
