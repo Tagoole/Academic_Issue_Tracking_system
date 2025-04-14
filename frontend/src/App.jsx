@@ -25,6 +25,11 @@ import ProfileScreen from "./pages/StudentsProfile";
 import Notifications from "./pages/Notifications";
 import LandingPage from "./pages/landingpage";
 import CONGS from "./pages/congs";
+import LecturerProfile from "./pages/Lecturerprofile";
+import Lecturerdashboard from "./pages/Lecturerdashboard";
+import LecturerIssueManagement from "./pages/LecturerIssueManagement";
+import Settings from "./pages/Settings";
+
 
 function App() {
   return (
