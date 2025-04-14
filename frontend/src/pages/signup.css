@@ -63,3 +63,43 @@ html, body {
   min-width: 300px; /* Ensure minimum width on small screens */
 }
 
+/* Make left side white */
+.left-side {
+  background-color: white;
+}
+
+/* Keep right side with slight differentiation but lighter */
+.right-side {
+  background-color: white; /* Changed from #f8f8f8 to even lighter gray */
+  border-left: 1px solid #eeeeee; /* Lighter border */
+}
+
+/* Make "Create an Account" text bigger */
+.left-side h2:first-of-type {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 5px;
+  color: green;
+}
+
+/* Slightly reduce margin between form groups */
+.form-group {
+  margin-bottom: 18px;
+}
+
+/* Slightly reduce input padding to save vertical space */
+input, select {
+  padding: 10px 12px;
+}
+
+/* Form footer with white background */
+.form-footer {
+  width: 100%;
+  padding: 15px 25px;
+  background-color: #fafafa; /* Changed from #f0f0f0 to lighter */
+  border-top: 1px solid #eeeeee;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
