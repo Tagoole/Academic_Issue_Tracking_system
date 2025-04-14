@@ -1,7 +1,7 @@
 import React from 'react';
 import makerereLogo from '../assets/makererelogo.png';
 import './Help.css'; 
-import NavBar from './NavBar';
+import NavBar from '../NavBar';
 import backgroundImage from '../assets/pexels-olia-danilevich-5088017.jpg'; 
 
 const Help = () => {
