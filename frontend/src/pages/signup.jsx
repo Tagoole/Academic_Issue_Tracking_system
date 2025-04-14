@@ -544,12 +544,12 @@ const SignUp = () => {
                     {success && <p className="success-message">{success}</p>}
                     
                     <button 
-                        type="submit" 
-                        className="sign-up-button" 
-                        disabled={isSubmitting || (isStudent && isLoadingPrograms)}
-                    >
-                        {isSubmitting ? 'Signing Up...' : 'Sign Up'}
-                    </button>
+                          type="submit" 
+                           className="sign-up-button" 
+                            disabled={isSubmitting || (isStudent && isLoadingPrograms)}
+                             style={{ cursor: isSubmitting || (isStudent && isLoadingPrograms) ? 'not-allowed' : 'pointer' }}>
+                              <span>{isSubmitting ? 'Signing Up...' : 'Sign Up'}</span>
+                            </button>
                     
                     <div className="bottom-text">
                         <p>Already have an account? <a href="/signin">Sign In</a></p>
