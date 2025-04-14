@@ -257,3 +257,97 @@
       flex-direction: column;
     }
   }
+  /* Modal Overlay */
+.issue-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Modal Container */
+.issue-modal {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  width: 80%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Modal Header */
+.issue-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.issue-modal-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.close-modal-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #777;
+}
+
+.close-modal-btn:hover {
+  color: #333;
+}
+
+/* Modal Content */
+.issue-modal-content {
+  padding: 20px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.issue-detail-item {
+  margin-bottom: 12px;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+}
+
+.issue-detail-item strong {
+  margin-bottom: 4px;
+  color: #555;
+}
+
+/* Modal Footer */
+.issue-modal-footer {
+  padding: 15px 20px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.modal-close-btn {
+  padding: 8px 16px;
+  background-color: #4a6cf7;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.modal-close-btn:hover {
+  background-color: #3b5ef0;
+}
