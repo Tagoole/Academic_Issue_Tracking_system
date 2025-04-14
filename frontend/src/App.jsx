@@ -11,6 +11,7 @@ import ProfileSetup from "./pages/ProfileSetup";
 import ProfilePictureSetup from "./pages/profilepicture";
 import Congragulation from "./pages/congragulation";
 import RegistraDashboard from "./pages/RegistraDashboard";
+import Registrationtoken from "./pages/registrationtoken";
 import IssueManagement from "./pages/IssueManagement";
 import Viewdetails from "./pages/View-details";
 import Changepassword from "./pages/Changepassword";
