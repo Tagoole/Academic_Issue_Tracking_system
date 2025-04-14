@@ -37,3 +37,29 @@ html, body {
   overflow-y: auto; /* Enable scrolling for the form when it exceeds max-height */
 }
 
+/* Add custom scrollbar styling for better appearance */
+.signup-form::-webkit-scrollbar {
+  width: 8px;
+}
+
+.signup-form::-webkit-scrollbar-track {
+  background: white;
+  border-radius: 10px;
+}
+
+.signup-form::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 10px;
+}
+
+.signup-form::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* Adjust padding to make contents more compact */
+.left-side, .right-side {
+  padding: 20px 25px;
+  flex: 1;
+  min-width: 300px; /* Ensure minimum width on small screens */
+}
+
