@@ -33,6 +33,7 @@ const StudentDashboard = () => {
         API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
         
         const response = await API.get('/api/student_issues/');
+        console.log("API Response:", response.data); // Debug log
         setIssueData(response.data);
         setLoading(false);
       } catch (err) {
@@ -60,14 +61,14 @@ const StudentDashboard = () => {
               setLoading(false);
             } else {
               // No refresh token available, redirect to login
-              navigate('/login');
+              navigate('/signin');
             }
           } catch (refreshErr) {
             console.error('Error refreshing token:', refreshErr);
             setError('Your session has expired. Please log in again.');
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
-            navigate('/login');
+            navigate('/signin');
           }
         } else {
           setError('Failed to load issues. Please try again later.');
@@ -79,11 +80,20 @@ const StudentDashboard = () => {
     fetchStudentIssues();
   }, [navigate]);
 
-  const filteredIssues = issueData.filter(issue => 
-    activeTab === 'Pending' ? issue.status === 'Pending' :
-    activeTab === 'In-progress' ? issue.status === 'In-progress' :
-    activeTab === 'Resolved' ? issue.status === 'Resolved' : true
-  );
+  // Map UI status labels to backend status values
+  const getStatusMapping = (uiStatus) => {
+    const statusMap = {
+      'Pending': 'pending',
+      'In-progress': 'in_progress',
+      'Resolved': 'resolved'
+    };
+    return statusMap[uiStatus] || uiStatus.toLowerCase();
+  };
+
+  const filteredIssues = issueData.filter(issue => {
+    const backendStatus = getStatusMapping(activeTab);
+    return issue.status === backendStatus;
+  });
 
   const handleNewIssueClick = () => {
     navigate('/new-issue'); // Navigate to the new issue page
@@ -93,7 +103,7 @@ const StudentDashboard = () => {
     <div 
       className="dashboard-container"
       style={{
-        backgroundImage: `url(${backgroundimage})`, // Use the imported background image
+        backgroundImage: `url(${backgroundimage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -172,14 +182,18 @@ const StudentDashboard = () => {
                     <tr key={index}>
                       <td>{issue.issue}</td>
                       <td>
-                        <span className={`status-tag status-${issue.status.toLowerCase().replace('-', '')}`}>
-                          {issue.status}
+                        <span className={`status-tag status-${issue.status}`}>
+                          {issue.status === 'pending' ? 'Pending' : 
+                           issue.status === 'in_progress' ? 'In-progress' : 
+                           issue.status === 'resolved' ? 'Resolved' : issue.status}
                         </span>
                       </td>
                       <td>{issue.category}</td>
                       <td>{issue.date}</td>
                       <td>
-                        <button className="view-details-btn">View Details</button>
+                        <button className="view-details-btn" onClick={() => navigate(`/issue/${issue.id}`)}>
+                          View Details
+                        </button>
                       </td>
                     </tr>
                   ))
