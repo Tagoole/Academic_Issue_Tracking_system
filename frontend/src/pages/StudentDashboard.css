@@ -7,7 +7,7 @@
   
   body, html {
     height: 100%;
-    width: 1200px;
+    width: 1700px;
     font-family: Arial, sans-serif;
   }
   
@@ -20,7 +20,8 @@
     background-position: center;
     background-repeat: no-repeat;
     position: relative;
-    margin-right: 300px;
+    margin-left:250px;
+    ;
     
   }
   
@@ -54,10 +55,11 @@
   
   /* Dashboard Wrapper */
   .dashboard-wrapper {
-    margin-left: 25px; /* Same as sidebar width */
+    margin-left: 100px; /* Same as sidebar width */
     padding-top: 70px; /* Same as navbar height */
     width: calc(100% - 250px);
     min-height: calc(100vh - 70px);
+    margin-right: 250px;
   }
   
   /* Dashboard Panels */

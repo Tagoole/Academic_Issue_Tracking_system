@@ -19,7 +19,7 @@ const SignIn = () => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
-    
+
     try {
       // Make API call to authenticate user using your API instance
       const response = await API.post('/api/access_token/', {
@@ -31,8 +31,17 @@ const SignIn = () => {
       const data = response.data;
       // Add this right after getting the response
       console.log('API Response:', response.data);
-      
+
       // Store tokens in localStorage
+      if (data.email) {
+        localStorage.setItem('userEmail', data.email);
+      }
+      if (data.username) {
+        localStorage.setItem('userName', data.username);
+      }
+      if (data.program) {
+        localStorage.setItem('userProgram', data.program);
+      }
       if (data.id) {
         localStorage.setItem('userId', data.id);
       }
@@ -41,17 +50,16 @@ const SignIn = () => {
       } else {
         console.warn('No access token in response');
       }
-      
+
       if (data.refresh) {
         localStorage.setItem('refreshToken', data.refresh);
       }
-      
+
       // Check the role directly from the response
-      // (Modified to check for role directly in response instead of nested in user object)
       if (data.role) {
         // Store role in localStorage for future use if needed
         localStorage.setItem('userRole', data.role);
-        
+
         switch (data.role.toLowerCase()) {
           case 'student':
             navigate('/studentdashboard');
@@ -60,7 +68,7 @@ const SignIn = () => {
             navigate('/registrardashboard');
             break;
           default:
-            navigate('/landingpage'); 
+            navigate('/landingpage');
             break;
         }
       } else {
@@ -69,7 +77,7 @@ const SignIn = () => {
         setError('Login successful but role information is missing. Contact administrator.');
         navigate('/landingpage');
       }
-      
+
     } catch (err) {
       // Axios error handling
       if (err.response) {
@@ -97,12 +105,12 @@ const SignIn = () => {
         <a href="/forgot-password" className="forgot-password-link">FORGOT PASSWORD</a>
         <img src={codeIcon} alt="Code Icon" className="code-icon" />
       </div>
-      
+
       <div className="split-layout">
         <div className="left-section">
           <div className="header">
             <h1 className="green-text">WELCOME TO THE ACADEMIC TRACKING SYSTEM</h1>
-            <h2 className="green-text">(AITS)</h2>
+            <h2 className="green-text">AITS</h2>
           </div>
 
           <div className="content">
@@ -142,11 +150,11 @@ const SignIn = () => {
                   />
                 </div>
               </div>
-              
+
               <a href="/forgot-password" className="forgot-password-text">Forgot the password?</a>
 
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className="submit-button"
                 disabled={isLoading}
               >
