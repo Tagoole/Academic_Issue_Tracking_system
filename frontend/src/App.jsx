@@ -11,6 +11,7 @@ import ProfileSetup from "./pages/ProfileSetup";
 import ProfilePictureSetup from "./pages/profilepicture";
 import Congragulation from "./pages/congragulation";
 import RegistraDashboard from "./pages/RegistraDashboard";
+import Registrationtoken from "./pages/registrationtoken";
 import IssueManagement from "./pages/IssueManagement";
 import Viewdetails from "./pages/View-details";
 import Changepassword from "./pages/Changepassword";
@@ -24,10 +25,11 @@ import ProfileScreen from "./pages/StudentsProfile";
 import Notifications from "./pages/Notifications";
 import LandingPage from "./pages/landingpage";
 import CONGS from "./pages/congs";
+import LecturerProfile from "./pages/Lecturerprofile";
 import Lecturerdashboard from "./pages/Lecturerdashboard";
-import Registrationtoken from "./pages/registrationtoken";
-import Settings from "./pages/Settings";
 import LecturerIssueManagement from "./pages/LecturerIssueManagement";
+import Settings from "./pages/Settings";
+
 
 function App() {
   return (
@@ -51,6 +53,7 @@ function App() {
         <Route path="/profilepicture" element={<ProfilePictureSetup />} />
         <Route path="/congratulation" element={<Congragulation />} />
         <Route path="/profile" element={<ProfileScreen />} />
+        <Route path="/lecturerprofile" element={<LecturerProfile />} />
         
         {/* Dashboard routes */}
         <Route path="/studentdashboard" element={<StudentDashboard />} />
