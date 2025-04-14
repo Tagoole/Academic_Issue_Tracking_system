@@ -11,6 +11,8 @@ const StudentDashboard = () => {
   const [issueData, setIssueData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedIssue, setSelectedIssue] = useState(null);
   const navigate = useNavigate(); 
 
   useEffect(() => {
@@ -99,6 +101,16 @@ const StudentDashboard = () => {
     navigate('/new-issue'); // Navigate to the new issue page
   };
 
+  const openIssueDetails = (issue) => {
+    setSelectedIssue(issue);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setSelectedIssue(null);
+  };
+
   return (
     <div 
       className="dashboard-container"
@@ -171,7 +183,7 @@ const StudentDashboard = () => {
                 <tr>
                   <th>Issue</th>
                   <th>Status</th>
-                  <th>Category</th>
+                  <th>Issue Type</th>
                   <th>Date</th>
                   <th>Actions</th>
                 </tr>
@@ -188,10 +200,10 @@ const StudentDashboard = () => {
                            issue.status === 'resolved' ? 'Resolved' : issue.status}
                         </span>
                       </td>
-                      <td>{issue.category}</td>
+                      <td>{issue.issue_type || issue.category}</td>
                       <td>{issue.date}</td>
                       <td>
-                        <button className="view-details-btn" onClick={() => navigate(`/issue/${issue.id}`)}>
+                        <button className="view-details-btn" onClick={() => openIssueDetails(issue)}>
                           View Details
                         </button>
                       </td>
@@ -207,6 +219,29 @@ const StudentDashboard = () => {
           )}
         </div>
       </div>
+
+      {/* Issue Details Modal */}
+      {showModal && selectedIssue && (
+        <div className="issue-modal-overlay">
+          <div className="issue-modal">
+            <div className="issue-modal-header">
+              <h2>Issue Details</h2>
+              <button className="close-modal-btn" onClick={closeModal}>×</button>
+            </div>
+            <div className="issue-modal-content">
+              {Object.entries(selectedIssue).map(([key, value]) => (
+                <div key={key} className="issue-detail-item">
+                  <strong>{key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:</strong> 
+                  {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                </div>
+              ))}
+            </div>
+            <div className="issue-modal-footer">
+              <button className="modal-close-btn" onClick={closeModal}>Close</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
