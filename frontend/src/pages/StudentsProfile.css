@@ -77,11 +77,8 @@ body {
   margin-left: 220px;
   padding: 80px 20px 20px 20px;
   flex: 1;
-  /* Critical for scrolling - ensure content can scroll */
   overflow-y: auto;
-  /* Ensure content takes up enough space to trigger scrolling */
   min-height: calc(100vh - 60px);
-  /* Prevent horizontal scrolling */
   width: calc(100% - 220px);
 }
 
@@ -89,7 +86,6 @@ body {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  /* Add some padding at the bottom to ensure last elements are visible */
   padding-bottom: 80px;
 }
 
