@@ -112,3 +112,33 @@
   filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
 }
 
+/* Welcome text with animation */
+.welcome-text {
+  text-align: center;
+  font-size: 50px;
+  font-weight: bold;
+  margin: 20px 0 40px;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  max-width: 80%;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 1.2s ease-out;
+}
+
+.welcome-text.show {
+  transform: translateY(0);
+  opacity: 1;
+  animation: wavyText 3s ease-in-out infinite;
+}
+
+/* Wave effect for text */
+@keyframes wavyText {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
