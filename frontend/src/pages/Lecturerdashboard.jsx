@@ -223,7 +223,7 @@ const Lecturerdashboard = () => {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="5" className="no-issues">No issues match the current filters</td>
+                      <td colSpan="5" className="no-issues">No issues match the current filters. Please try another search term</td>
                     </tr>
                   )}
                 </tbody>
