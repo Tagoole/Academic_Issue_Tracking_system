@@ -1,11 +1,44 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import makerereLogo from '../assets/makererelogo.png';
-import settingsIcon from '../assets/settings.png'; // Settings icon
+import settingsIcon from '../assets/settings.png';
 import './Settings.css';
 import NavBar from './NavBar';
-import backgroundImage from '../assets/pexels-olia-danilevich-5088017.jpg'; // Background image
+import backgroundImage from '../assets/pexels-olia-danilevich-5088017.jpg';
 
 function Settings() {
+  const navigate = useNavigate();
+  const [userRole, setUserRole] = useState('');
+
+  // Determine user role on component mount
+  useEffect(() => {
+    // Get user role from localStorage or any other source where you store user information
+    const role = localStorage.getItem('userRole');
+    setUserRole(role);
+  }, []);
+
+  // Function to handle dashboard navigation based on user role
+  const handleDashboardNavigation = (e) => {
+    e.preventDefault();
+    
+    // Navigate based on user role
+    switch(userRole?.toLowerCase()) {
+      case 'student':
+        navigate('/studentdashboard');
+        break;
+      case 'lecturer':
+        navigate('/lecturerdashboard');
+        break;
+      case 'registrar':
+        navigate('/registrardashboard');
+        break;
+      default:
+        // Default fallback if role is not found or recognized
+        navigate('/dashboard');
+        break;
+    }
+  };
+
   return (
     <div
       style={{
@@ -62,7 +95,7 @@ function Settings() {
           </div>
 
           {/* Sidebar menu items */}
-          <a href="/dashboard" className="menu-item">
+          <a href="#" className="menu-item" onClick={handleDashboardNavigation}>
             Back to Dashboard
             <svg viewBox="0 0 24 24" className="arrow-icon">
               <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
@@ -116,6 +149,7 @@ function Settings() {
         >
           <div className="settings-message">
             <h2>Your settings will be displayed here</h2>
+            <p>Logged in as: {userRole || 'Unknown user'}</p>
             <img 
               src={settingsIcon} 
               alt="Settings Icon" 
