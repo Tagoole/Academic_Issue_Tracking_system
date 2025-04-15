@@ -7,19 +7,25 @@
   
   body, html {
     height: 100%;
+    width: 100%;
     overflow: hidden;
     font-family: Arial, sans-serif;
-    background-image: url('../assets/backgroundimage.jpg'); 
-    background-size: cover; 
-    background-position: center; 
-    background-attachment: fixed; 
+    
   }
+  body {
+    background-image: url('../assets/backgroundimage.jpg'); 
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
   .app-container {
     display: flex;
     flex-direction: column;
     height: 100vh;
     width: 1000px;
     position: relative;
+    background: transparent; /* Make sure this is transparent */
   }
   .navbar {
     width: 100%;
