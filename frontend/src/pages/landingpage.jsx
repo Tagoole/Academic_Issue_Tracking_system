@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './landingpage.css';
 import makererelogo from '../assets/makererelogo.png';
@@ -8,14 +8,32 @@ const LandingPage = () => {
   const navigate = useNavigate();
   const [showWelcome, setShowWelcome] = useState(false);
   const [showButtons, setShowButtons] = useState(false);
+  const particlesContainerRef = useRef(null);
+  
   useEffect(() => {
     // Trigger welcome message animation after a short delay
-    const timer = setTimeout(() => {
+    const welcomeTimer = setTimeout(() => {
       setShowWelcome(true);
     }, 800);
     
-    return () => clearTimeout(timer);
+    // Show buttons with delay
+    const buttonsTimer = setTimeout(() => {
+      setShowButtons(true);
+    }, 1500);
+    
+    // Create particles
+    createParticles();
+    
+    // Create cursor trail effect
+    createCursorTrail();
+    
+    return () => {
+      clearTimeout(welcomeTimer);
+      clearTimeout(buttonsTimer);
+    };
   }, []);
+  
+
 
   const navigateToSignup = () => {
     navigate('/signup');
@@ -27,6 +45,9 @@ const LandingPage = () => {
   
   return (
     <div className="landing-container">
+      {/* Particles */}
+      <div className="particles" ref={particlesContainerRef}></div>
+      
       {/* Background image */}
       <div className="background-image" style={{ backgroundImage: `url(${landingimage})` }}></div>
       
