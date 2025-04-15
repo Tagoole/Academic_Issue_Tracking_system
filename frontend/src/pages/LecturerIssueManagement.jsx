@@ -90,15 +90,8 @@ const LecturerIssueManagement = () => {
   };
 
   return (
-    <div
-      className="app-container"
-      style={{
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        width: '1000px',
-      }}
-    >
+    <div className="app-container">
+    
       <Navbar />
       <div className="content-container">
         <Sidebar2 />
