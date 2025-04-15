@@ -1,16 +1,31 @@
 import React from 'react';
-import { Link } from 'react-router-dom'; // Import Link for client-side navigation
+import { Link, useNavigate } from 'react-router-dom'; // Added useNavigate
 import './Sidebar1.css';
-import makerereLogo from '../assets/makererelogo.png'; // Correct import
+import makerereLogo from '../assets/makererelogo.png';
 
 function Sidebar1() {
+  const navigate = useNavigate(); // Initialize the navigate function
+
+  // Function to handle logout
+  const handleLogout = (e) => {
+    e.preventDefault(); // Prevent default link behavior
+    
+    // Clear all items from localStorage
+    localStorage.clear();
+    
+    // Log for debugging
+    console.log('All localStorage items cleared for logout');
+    
+    // Navigate to home/login page
+    navigate('/');
+  };
+
   return (
     <div className="sidebar-container">
       <div className="university-logo-sidebar">
-        {/* Use the correct logo import */}
         <img src={makerereLogo} alt="Makerere University Logo" className="logo-sidebar" />
       </div>
-
+      
       {/* Student Dashboard Link */}
       <Link to="/studentdashboard" className="menu-item">
         Student Dashboard
@@ -18,7 +33,7 @@ function Sidebar1() {
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
       </Link>
-
+      
       {/* Issues Link */}
       <Link to="/issues" className="menu-item">
         Issues
@@ -26,7 +41,7 @@ function Sidebar1() {
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
       </Link>
-
+      
       {/* Profile Link */}
       <Link to="/StudentsProfile" className="menu-item">
         Student Profile
@@ -34,7 +49,7 @@ function Sidebar1() {
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
       </Link>
-
+      
       {/* Settings Link */}
       <Link to="/settings" className="menu-item">
         Settings
@@ -42,7 +57,7 @@ function Sidebar1() {
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
       </Link>
-
+      
       {/* Help and Support Link */}
       <Link to="/help" className="menu-item">
         Help and Support
@@ -50,14 +65,14 @@ function Sidebar1() {
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
       </Link>
-
-      {/* Logout Link */}
-      <Link to="/" className="menu-item delete-account">
+      
+      {/* Logout Link - Modified to use onClick handler */}
+      <a href="/" onClick={handleLogout} className="menu-item delete-account">
         Logout
         <svg viewBox="0 0 24 24" className="arrow-icon">
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
-      </Link>
+      </a>
     </div>
   );
 }

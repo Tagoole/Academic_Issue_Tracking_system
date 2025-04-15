@@ -346,21 +346,21 @@ const NewIssue = () => {
       console.log('Issue submitted successfully:', response.data);
       setSubmitStatus('success');
 
-      // Navigate to success page after brief delay
-      setTimeout(() => {
-        // Find the course unit name for display on success page
-        const selectedUnit = courseUnits.find(unit => {
-          if (typeof unit === 'object') {
-            return unit.id === selectedCourseUnitId;
-          }
-          return unit === selectedCourseUnitId;
-        });
+      // Find the course unit name for display on success page
+      const selectedUnit = courseUnits.find(unit => {
+        if (typeof unit === 'object') {
+          return unit.id === selectedCourseUnitId;
+        }
+        return unit === selectedCourseUnitId;
+      });
+      
+      const courseUnitName = selectedUnit ? 
+        (typeof selectedUnit === 'object' ? selectedUnit.name || selectedUnit.course_unit_name : selectedUnit) : 
+        'Selected Course Unit';
         
-        const courseUnitName = selectedUnit ? 
-          (typeof selectedUnit === 'object' ? selectedUnit.name || selectedUnit.course_unit_name : selectedUnit) : 
-          'Selected Course Unit';
-          
-        navigate('/success', {
+      // Navigate to NotificationSuccess page after brief delay - Changed from '/success' to '/notification-success'
+      setTimeout(() => {
+        navigate('/notification-success', {
           state: {
             registrarName,
             issueTitle,
