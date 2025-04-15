@@ -23,3 +23,13 @@
   animation: zoomBackground 20s infinite alternate ease-in-out;
 }
 
+/* Background zoom effect */
+@keyframes zoomBackground {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.1);
+  }
+}
+
