@@ -14,8 +14,10 @@ class Course_unitFactory(DjangoModelFactory):
         model = Course_unit
 
 
-class programFactory(DjangoModelFactory):
-    pass
+class ProgramFactory(DjangoModelFactory):
+    class Meta:
+        model = Program
+
 
 class IssueFactory(DjangoModelFactory):
     pass
