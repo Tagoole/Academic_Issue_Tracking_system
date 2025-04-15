@@ -10,7 +10,9 @@ class CustomUserFactory(DjangoModelFactory):
         model = CustomUser
 
 class Course_unitFactory(DjangoModelFactory):
-    pass
+    class Meta:
+        model = Course_unit
+
 
 class programFactory(DjangoModelFactory):
     pass
