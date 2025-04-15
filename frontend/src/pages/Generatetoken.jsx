@@ -3,13 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import './Generatetoken.css';
 import token_image from '../assets/ict.png';
 import API from '../api';
-import axios from 'axios';
 
 function Registrationtoken() {
-  const [userRole, setUserRole] = useState(''); // Changed from userId to userRole for clarity
+  const [userRole, setUserRole] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [showMessage, setShowMessage] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
 
   const refreshAccessToken = async () => {
@@ -20,7 +21,7 @@ function Registrationtoken() {
       }
 
       const response = await API.post('/api/refresh_token/', {
-        refresh: refreshToken, // Match backend field name
+        refresh: refreshToken,
       });
 
       const newAccessToken = response.data.access;
@@ -35,14 +36,28 @@ function Registrationtoken() {
       setTimeout(() => {
         setShowMessage(false);
         navigate('/');
-      }, 5000);
+      }, 3000);
       throw error;
     }
+  };
+
+  const handleSuccessPopupClose = () => {
+    setShowSuccessPopup(false);
+    navigate('/registradashboard');
   };
 
   const handleGenerateToken = async () => {
     if (!email) {
       setMessage('Please enter an email address');
+      setShowMessage(true);
+      setTimeout(() => {
+        setShowMessage(false);
+      }, 3000);
+      return;
+    }
+
+    if (!userRole) {
+      setMessage('Please select a role');
       setShowMessage(true);
       setTimeout(() => {
         setShowMessage(false);
@@ -62,12 +77,12 @@ function Registrationtoken() {
         return;
       }
 
-      console.log('Sending payload:', { user_role: userRole, email }); // Log payload for debugging
+      console.log('Sending payload:', { role: userRole, email });
 
       const response = await API.post(
         '/api/registration_token/',
         {
-          role: userRole, 
+          role: userRole,
           email: email,
         },
         {
@@ -77,13 +92,12 @@ function Registrationtoken() {
         }
       );
 
-      setMessage(`The registration token has been created and sent to the Email "${email}"`);
-      setShowMessage(true);
-      setTimeout(() => {
-        setShowMessage(false);
-      }, 5000);
+      // Show success popup instead of message
+      setSuccessMessage(`The registration token has been created and sent to the Email "${email}"`);
+      setShowSuccessPopup(true);
+      
     } catch (error) {
-      console.error('API error:', error.response); // Log full error response
+      console.error('API error:', error.response);
       if (error.response?.status === 401) {
         try {
           const newAccessToken = await refreshAccessToken();
@@ -92,7 +106,7 @@ function Registrationtoken() {
           const retryResponse = await API.post(
             '/api/registration_token/',
             {
-              user_role: userRole,
+              role: userRole,
               email: email,
             },
             {
@@ -102,11 +116,10 @@ function Registrationtoken() {
             }
           );
 
-          setMessage(`The registration token has been created and sent to the Email "${email}"`);
-          setShowMessage(true);
-          setTimeout(() => {
-            setShowMessage(false);
-          }, 5000);
+          // Show success popup instead of message
+          setSuccessMessage(`The registration token has been created and sent to the Email "${email}"`);
+          setShowSuccessPopup(true);
+          
         } catch (refreshError) {
           // Error message handled in refreshAccessToken
         }
@@ -114,14 +127,14 @@ function Registrationtoken() {
         // Handle 400 and other errors
         const errorMessage =
           error.response?.data?.errors ||
-          error.response?.data?.user_role?.[0] ||
+          error.response?.data?.role?.[0] ||
           error.response?.data?.email?.[0] ||
           'Failed to generate token. Please check the input and try again.';
         setMessage(errorMessage);
         setShowMessage(true);
         setTimeout(() => {
           setShowMessage(false);
-        }, 5000);
+        }, 3000);
       }
     }
   };
@@ -161,7 +174,7 @@ function Registrationtoken() {
           {showMessage && (
             <div
               className={`message ${
-                !email || message.includes('Failed') || message.includes('expired')
+                !email || message.includes('Failed') || message.includes('expired') || message.includes('select')
                   ? 'error'
                   : 'success'
               }`}
@@ -178,6 +191,25 @@ function Registrationtoken() {
           </div>
         </div>
       </div>
+
+      {/* Success Popup */}
+      {showSuccessPopup && (
+        <div className="popup-overlay">
+          <div className="popup-content">
+            <div className="popup-header">
+              <h3>Success</h3>
+            </div>
+            <div className="popup-body">
+              <p>{successMessage}</p>
+            </div>
+            <div className="popup-footer">
+              <button className="popup-button" onClick={handleSuccessPopupClose}>
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
