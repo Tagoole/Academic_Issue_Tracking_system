@@ -199,3 +199,12 @@ body {
   padding: 5px;
 }
 
+/* Show overlay on hover */
+.profile-image-container:hover .image-overlay {
+  opacity: 1;
+}
+
+.profile-image-container:hover .profile-image {
+  filter: blur(1px);
+}
+
