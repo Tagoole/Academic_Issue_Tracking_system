@@ -22,6 +22,21 @@ const LecturerIssueManagement = () => {
   });
   
   const [file, setFile] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [showStatusDialog, setShowStatusDialog] = useState(false);
+
+  const handleStatusUpdate = (newStatus) => {
+    setSelectedIssue({
+      ...selectedIssue,
+      status: newStatus,
+    });
+    
+    setShowStatusDialog(false);
+    
+    // Add logic to save the issue, e.g., send to server or local storage
+    console.log('Issue saved with status:', newStatus, selectedIssue);
+  };
+
 
   const handleCommentChange = (event) => {
     setSelectedIssue({
@@ -35,13 +50,19 @@ const LecturerIssueManagement = () => {
   };
 
   const handleSave = () => {
-    setSelectedIssue({
-      ...selectedIssue,
-      status: 'Resolved',
-    });
-    // Add logic to save the issue, e.g., send to server or local storage
-    console.log('Issue saved:', selectedIssue);
+    // Check if comments are empty
+    if (!selectedIssue.comments.trim()) {
+      setErrorMessage('Please add a comment before saving changes.');
+      return;
+    }
+    
+    // Clear any previous error message
+    setErrorMessage('');
+    
+    // Show status selection dialog
+    setShowStatusDialog(true);
   };
+  
 
   return (
     <div
@@ -107,9 +128,44 @@ const LecturerIssueManagement = () => {
             </div>
 
             <div className="save-button-container">
-              <button className="save-button" onClick={handleSave}>Save and Mark as Resolved</button>
+              <button className="save-button" onClick={handleSave}>Save Changes and Update Status</button>
+              {errorMessage && <p className="error-message">{errorMessage}</p>}
             </div>
           </div>
+          {showStatusDialog && (
+  <div className="status-dialog-overlay">
+    <div className="status-dialog">
+      <h3>Choose Status</h3>
+      <p>Select a status for this issue:</p>
+      <div className="status-options">
+        <button 
+          className="status-option pending" 
+          onClick={() => handleStatusUpdate('Pending')}
+        >
+          Pending
+        </button>
+        <button 
+          className="status-option in-progress" 
+          onClick={() => handleStatusUpdate('In Progress')}
+        >
+          In Progress
+        </button>
+        <button 
+          className="status-option resolved" 
+          onClick={() => handleStatusUpdate('Resolved')}
+        >
+          Resolved
+        </button>
+      </div>
+      <button 
+        className="cancel-button" 
+        onClick={() => setShowStatusDialog(false)}
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+)}
         </main>
       </div>
     </div>
