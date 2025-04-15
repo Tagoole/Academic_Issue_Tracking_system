@@ -67,7 +67,7 @@ function Registrationtoken() {
       const response = await API.post(
         '/api/registration_token/',
         {
-          user_role: userRole, // Changed to user_role to match potential serializer field
+          role: userRole, 
           email: email,
         },
         {
@@ -141,7 +141,7 @@ function Registrationtoken() {
                 Select a role
               </option>
               <option value="lecturer">Lecturer</option>
-              <option value="registrar">Registrar</option>
+              <option value="academic_registrar">Registrar</option>
             </select>
           </div>
           <div className="form-group">

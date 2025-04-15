@@ -354,6 +354,7 @@ class Registration_Token_viewset(ModelViewSet):
             receipient_email = token_instance.email
             
             try:
+                print(token_instance.token)
                 send_mail(subject,message,settings.EMAIL_HOST_USER,[receipient_email],fail_silently=False)
                 return Response({"message": "Token created and email sent!"}, status=status.HTTP_201_CREATED)
             

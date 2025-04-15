@@ -177,7 +177,8 @@ class Lecturer_and_Registrar_RegisterSerializer(serializers.ModelSerializer):
 class Registration_Token_Serializer(serializers.ModelSerializer):
     class Meta:
         model = Registration_Token
-        fields = '__all__'
+        fields = ['id', 'email', 'token', 'role']
+    
         
     def validate(self, data):
         email_value = data.get('email')
