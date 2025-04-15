@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios'; // Import axios
-import API from '../api.js'; // Import API from your api.js file
+import axios from 'axios'; 
+import API from '../api.js'; 
 import './signup.css';
 import userIcon from '../assets/user.png';
 import hiddenIcon from '../assets/hidden.png';
@@ -20,7 +20,7 @@ const SignUp = () => {
         confirm_password: '',
         gender: '',
         program: '',
-        role: 'student', // Default role is student
+        role: 'student', 
         registration_token: '',
         agreeToTerms: false,
     });
