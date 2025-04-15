@@ -8,7 +8,7 @@ import IssueSummary from './IssueSummary';
 const Lecturerdashboard = () => {
   const [selectedIssue, setSelectedIssue] = useState(null);
   const summaryRef = useRef(null);
-  
+
   // Filter states
   const [statusFilter, setStatusFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
@@ -141,16 +141,26 @@ const Lecturerdashboard = () => {
     setSelectedIssue(null);
   };
 
+  // Update issue status in the dashboard
+  const updateIssueStatus = (issueId, newStatus) => {
+    const updatedIssues = allIssues.map(issue => {
+      if (issue.id === issueId) {
+        return { ...issue, status: newStatus };
+      }
+      return issue;
+    });
+    
+    // If you're using a state setter for allIssues, you'd use it here
+    // setAllIssues(updatedIssues);
+    
+    // For now we'll just log the update
+    console.log(`Issue ${issueId} status updated to ${newStatus}`);
+    console.log('Updated issues:', updatedIssues);
+  };
+
   return (
-    <div
-      className="app-container"
-      style={{
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        width: '1000px',
-      }}
-    >
+    <div className="app-container">
+    
       <Navbar />
       <div className="content-container">
         <Sidebar2 />
@@ -159,33 +169,32 @@ const Lecturerdashboard = () => {
           <div className="dashboard-header">
             <h1>Issue Dashboard</h1>
             <div className="filter-controls">
-            <div className="select-wrapper"> 
-              <select 
-                className="status-filter" 
-                value={statusFilter} 
-                onChange={handleStatusFilterChange}
-              >
-                <option value="all">All Statuses</option>
-                {uniqueStatuses.map(status => (
-                  <option key={status} value={status}>{status}</option>
-                ))}
-              </select>
-              <span className="dropdown-arrow"></span>
-            </div>
-            <div className="select-wrapper">
-              <select 
-                className="category-filter" 
-                value={categoryFilter} 
-                onChange={handleCategoryFilterChange}
-              >
-                <option value="all">All Categories</option>
-                {uniqueCategories.map(category => (
-                  <option key={category} value={category}>{category}</option>
-                ))}
-              </select>
-              <span className="dropdown-arrow"></span>
-            </div>
-
+              <div className="select-wrapper"> 
+                <select 
+                  className="status-filter" 
+                  value={statusFilter} 
+                  onChange={handleStatusFilterChange}
+                >
+                  <option value="all">All Statuses</option>
+                  {uniqueStatuses.map(status => (
+                    <option key={status} value={status}>{status}</option>
+                  ))}
+                </select>
+                <span className="dropdown-arrow"></span>
+              </div>
+              <div className="select-wrapper">
+                <select 
+                  className="category-filter" 
+                  value={categoryFilter} 
+                  onChange={handleCategoryFilterChange}
+                >
+                  <option value="all">All Categories</option>
+                  {uniqueCategories.map(category => (
+                    <option key={category} value={category}>{category}</option>
+                  ))}
+                </select>
+                <span className="dropdown-arrow"></span>
+              </div>
 
               <input 
                 type="text" 
@@ -214,34 +223,32 @@ const Lecturerdashboard = () => {
                   {filteredIssues.length > 0 ? (
                     filteredIssues.map(issue => (
                       <tr 
-  key={issue.id} 
-  className={selectedIssue && selectedIssue.id === issue.id ? 'selected-row' : ''}
->
-  <td onClick={() => handleIssueClick(issue)}>{issue.id}</td>
-  <td onClick={() => handleIssueClick(issue)}>
-    <span className={`status-badge ${issue.status.toLowerCase().replace(' ', '-')}`}>
-      {issue.status}
-    </span>
-  </td>
-  <td onClick={() => handleIssueClick(issue)}>{issue.studentNo}</td>
-  <td onClick={() => handleIssueClick(issue)}>{issue.category}</td>
-  <td onClick={() => handleIssueClick(issue)}>{issue.date}</td>
-  <td>
-    {issue.status !== 'Resolved' && (
-      <button 
-        className="resolve-btn"
-        onClick={(e) => {
-          e.stopPropagation();
-          window.location.href = `/LecturerIssueManagement?issueId=${issue.id}`;
-        }}
-      >
-        Resolve Issue
-      </button>
-    )}
-  </td>
-</tr>
-
-
+                        key={issue.id} 
+                        className={selectedIssue && selectedIssue.id === issue.id ? 'selected-row' : ''}
+                      >
+                        <td onClick={() => handleIssueClick(issue)}>{issue.id}</td>
+                        <td onClick={() => handleIssueClick(issue)}>
+                          <span className={`status-badge ${issue.status.toLowerCase().replace(' ', '-')}`}>
+                            {issue.status}
+                          </span>
+                        </td>
+                        <td onClick={() => handleIssueClick(issue)}>{issue.studentNo}</td>
+                        <td onClick={() => handleIssueClick(issue)}>{issue.category}</td>
+                        <td onClick={() => handleIssueClick(issue)}>{issue.date}</td>
+                        <td>
+                          {issue.status !== 'Resolved' && (
+                            <button 
+                              className="resolve-btn"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                window.location.href = `/LecturerIssueManagement?issueId=${issue.id}`;
+                              }}
+                            >
+                              Resolve Issue
+                            </button>
+                          )}
+                        </td>
+                      </tr>
                     ))
                   ) : (
                     <tr>

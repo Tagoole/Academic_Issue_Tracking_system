@@ -170,11 +170,13 @@ const NewIssue = () => {
         if (response && response.data && Array.isArray(response.data) && response.data.length > 0) {
           setRegistrars(response.data);
           
-          // Set first registrar as default
-          const firstRegistrar = typeof response.data[0] === 'object' && response.data[0].name 
-            ? response.data[0].name 
-            : response.data[0];
-          setRegistrarName(firstRegistrar);
+          // Store the complete first registrar object or a string
+          const firstRegistrar = response.data[0];
+          // Extract name as string to display in dropdown
+          const firstRegistrarName = typeof firstRegistrar === 'object' ? 
+            (firstRegistrar.name || firstRegistrar.username || '') : 
+            firstRegistrar;
+          setRegistrarName(firstRegistrarName);
         } else {
           setRegistrars([]);
           setErrors(prev => ({ ...prev, registrars: 'No registrars found. Please try again later.' }));
@@ -252,16 +254,12 @@ const NewIssue = () => {
     setAttachment(null);
   };
 
-  // Find registrar ID from name to send to backend if needed
-  const getRegistrarIdByName = (name) => {
-    const registrar = registrars.find(reg => {
-      if (typeof reg === 'object') {
-        return reg.name === name || reg.username === name;
-      }
-      return reg === name;
-    });
-    
-    return registrar && typeof registrar === 'object' ? registrar.id : name;
+  // Get registrar name as string
+  const getRegistrarName = (registrar) => {
+    if (typeof registrar === 'object') {
+      return registrar.name || registrar.username || '';
+    }
+    return registrar;
   };
 
   const handleSubmit = async () => {
@@ -309,21 +307,34 @@ const NewIssue = () => {
       // Create FormData object
       const formData = new FormData();
       
-      // Keeping registrar as the name and using 'student' field instead of 'student_name'
-      formData.append('registrar', registrarName);
+      // Get registrar name as string and ensure it matches exactly what's in database
+      const registrarNameString = typeof registrarName === 'object' ? 
+        (registrarName.name || registrarName.username || '') : 
+        registrarName;
+      
+      // Get the full username for the student, exactly as stored in the database
+      const studentUsername = currentUser;
+
+      // For debugging
+      console.log('Using registrar name:', registrarNameString);
+      console.log('Using student username:', studentUsername);
+      
+      // Instead of 'registrar', use 'registrar_username' to help backend identify field type
+      formData.append('registrar_username', registrarNameString);
+      // Instead of 'student', use 'student_username' to help backend identify field type
+      formData.append('student_username', studentUsername);
+      
+      // Rest of form data remains the same
       formData.append('issue_type', issueType);
       formData.append('description', description);
       formData.append('issue_title', issueTitle);
       formData.append('course_unit_id', selectedCourseUnitId);
       formData.append('lecturer', '');
-      // Changed student_name to student to match the serializer
-      formData.append('student', currentUser);
       formData.append('status', 'pending');
       formData.append('year_of_study', yearOfStudy);
       formData.append('semester', semester);
       
       if (attachment) {
-        // Change to 'image' to match the serializer field
         formData.append('image', attachment);
       }
 
@@ -362,7 +373,7 @@ const NewIssue = () => {
       setTimeout(() => {
         navigate('/notification-success', {
           state: {
-            registrarName,
+            registrarName: registrarNameString,
             issueTitle,
             courseUnitName,
           },
@@ -474,20 +485,24 @@ const NewIssue = () => {
                 </div>
               ) : (
                 <select
-                  value={registrarName}
+                  value={typeof registrarName === 'object' ? 
+                    (registrarName.name || registrarName.username || '') : 
+                    registrarName}
                   onChange={(e) => setRegistrarName(e.target.value)}
                 >
                   {registrars.length === 0 ? (
                     <option value="">No registrars available</option>
                   ) : (
-                    registrars.map((registrar, index) => (
-                      <option 
-                        key={index} 
-                        value={typeof registrar === 'object' ? registrar.name || registrar.username : registrar}
-                      >
-                        {typeof registrar === 'object' ? registrar.name || registrar.username : registrar}
-                      </option>
-                    ))
+                    registrars.map((registrar, index) => {
+                      const name = typeof registrar === 'object' ? 
+                        (registrar.name || registrar.username || '') : 
+                        registrar;
+                      return (
+                        <option key={index} value={name}>
+                          {name}
+                        </option>
+                      );
+                    })
                   )}
                 </select>
               )}
@@ -666,7 +681,9 @@ const NewIssue = () => {
 
             {submitStatus === 'success' && (
               <div className="submit-status success">
-                Issue successfully sent to {registrarName}!
+                Issue successfully sent to {typeof registrarName === 'object' ? 
+                  (registrarName.name || registrarName.username || '') : 
+                  registrarName}!
               </div>
             )}
             {submitStatus === 'error' && (

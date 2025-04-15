@@ -36,8 +36,8 @@ const LecturerProfile = () => {
       <NavBar />
       <Sidebar2 />
       <div className="main-content">
-
-        <div className="profile-container" style={{ backgroundImage: `url(${backgroundimage})` }}>
+        <NavBar />
+        <div className="profile-container">
           <div className="profile-overlay">
             <h1 className="profile-heading">Personal profile</h1>
 
