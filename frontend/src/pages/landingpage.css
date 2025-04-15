@@ -211,3 +211,42 @@
   }
 }
 
+/* Sign up button with pulse animation */
+.signup-btn {
+  background-color: #289f48;
+  color: white;
+  animation: pulseGreen 2s infinite;
+}
+
+/* Sign in button with pulse animation */
+.signin-btn {
+  background-color: white;
+  color: #259732;
+  animation: pulseWhite 2s infinite;
+}
+
+/* Button pulse animations */
+@keyframes pulseGreen {
+  0% {
+    box-shadow: 0 0 0 0 rgba(40, 159, 72, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(40, 159, 72, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(40, 159, 72, 0);
+  }
+}
+
+@keyframes pulseWhite {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
