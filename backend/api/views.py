@@ -297,6 +297,7 @@ class Student_Registration(APIView):
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
     
 class Registration_Token_viewset(ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Registration_Token.objects.all()
     serializer_class = Registration_Token_Serializer
     http_method_names = ['get','post','delete']
