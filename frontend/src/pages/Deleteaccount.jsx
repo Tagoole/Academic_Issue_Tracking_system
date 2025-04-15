@@ -19,7 +19,7 @@ const DeleteAccount = () => {
     // Show brief success message before redirecting
     alert('Account deleted successfully');
 
-    // Navigate to the landing page
+    
     navigate('/');
   };
 
