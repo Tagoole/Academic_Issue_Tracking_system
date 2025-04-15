@@ -14,3 +14,6 @@ class programFactory(DjangoModelFactory):
 
 class IssueFactory(DjangoModelFactory):
     pass
+
+class Registration_TokenFactory(DjangoModelFactory):
+    pass
