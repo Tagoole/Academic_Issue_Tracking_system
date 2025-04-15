@@ -1,20 +1,144 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './Lecturerdashboard.css';
-import Navbar from './NavBar'; 
+import Navbar from './NavBar';
 import Sidebar2 from './Sidebar2';
-import backgroundimage from "../assets/backgroundimage.jpg"; 
-import backgroundImage from '../assets/backgroundimage.jpg'; 
-import IssueSummary from './IssueSummary'; 
+import backgroundImage from '../assets/backgroundimage.jpg';
+import IssueSummary from './IssueSummary';
 
 const Lecturerdashboard = () => {
-  const [selectedIssue, setSelectedIssue] = useState(null); 
+  const [selectedIssue, setSelectedIssue] = useState(null);
+  const summaryRef = useRef(null);
+  
+  // Filter states
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const issues = [
-    { id: 1, status: 'Resolved', studentNo: '25/U0000/PS', category: 'Missing Mark', date: '01/01/2025', title: 'Sample Issue', submissionDate: '2025-01-01', courseUnitName: 'Math 101', courseUnitCode: 'MATH101', assignedLecturer: 'Dr. John', description: 'Description of the issue' }
+  // Sample issues data
+  const allIssues = [
+    { 
+      id: 1, 
+      status: 'Resolved', 
+      studentNo: '25/U0000/PS', 
+      category: 'Missing Mark', 
+      date: '01/01/2025', 
+      title: 'Sample Issue', 
+      submissionDate: '2025-01-01', 
+      courseUnitName: 'Math 101', 
+      courseUnitCode: 'MATH101', 
+      assignedLecturer: 'Dr. John', 
+      description: 'Description of the issue' 
+    },
+    { 
+      id: 2, 
+      status: 'Pending', 
+      studentNo: '25/U0001/PS', 
+      category: 'Grade Appeal', 
+      date: '02/01/2025', 
+      title: 'Grade Review Request', 
+      submissionDate: '2025-01-02', 
+      courseUnitName: 'Physics 101', 
+      courseUnitCode: 'PHYS101', 
+      assignedLecturer: 'Dr. Smith', 
+      description: 'Student requesting grade review for midterm exam' 
+    },
+    { 
+      id: 3, 
+      status: 'In Progress', 
+      studentNo: '25/U0002/PS', 
+      category: 'Technical Issue', 
+      date: '03/01/2025', 
+      title: 'Assignment Submission Problem', 
+      submissionDate: '2025-01-03', 
+      courseUnitName: 'Computer Science 101', 
+      courseUnitCode: 'CS101', 
+      assignedLecturer: 'Dr. Johnson', 
+      description: 'Unable to submit assignment due to technical issue' 
+    },
+    { 
+      id: 4, 
+      status: 'Resolved', 
+      studentNo: '25/U0003/PS', 
+      category: 'Missing Mark', 
+      date: '04/01/2025', 
+      title: 'Missing Final Exam Score', 
+      submissionDate: '2025-01-04', 
+      courseUnitName: 'Biology 101', 
+      courseUnitCode: 'BIO101', 
+      assignedLecturer: 'Dr. Green', 
+      description: 'Final exam mark not appearing in the system' 
+    },
+    { 
+      id: 5, 
+      status: 'Pending', 
+      studentNo: '25/U0004/PS', 
+      category: 'Missing Mark', 
+      date: '05/01/2025', 
+      title: 'Assignment 2 Not Graded', 
+      submissionDate: '2025-01-05', 
+      courseUnitName: 'Chemistry 101', 
+      courseUnitCode: 'CHEM101', 
+      assignedLecturer: 'Dr. Adams', 
+      description: 'Assignment submitted but not graded yet' 
+    }
   ];
 
+  // Apply filters to issues
+  const filteredIssues = allIssues.filter(issue => {
+    const matchesStatus = statusFilter === 'all' || issue.status === statusFilter;
+    const matchesCategory = categoryFilter === 'all' || issue.category === categoryFilter;
+    const matchesSearch = searchTerm === '' || 
+      issue.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      issue.studentNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      issue.category.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    return matchesStatus && matchesCategory && matchesSearch;
+  });
+
+  // Handle issue click
   const handleIssueClick = (issue) => {
-    setSelectedIssue(issue); 
+    setSelectedIssue(issue);
+  };
+
+  // Handle status filter change
+  const handleStatusFilterChange = (e) => {
+    setStatusFilter(e.target.value);
+  };
+
+  // Handle category filter change
+  const handleCategoryFilterChange = (e) => {
+    setCategoryFilter(e.target.value);
+  };
+
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  // Effect to handle clicks outside the issue summary
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (summaryRef.current && !summaryRef.current.contains(event.target)) {
+        setSelectedIssue(null);
+      }
+    };
+
+    if (selectedIssue) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [selectedIssue]);
+
+  // Get unique categories and statuses for filter dropdowns
+  const uniqueCategories = [...new Set(allIssues.map(issue => issue.category))];
+  const uniqueStatuses = [...new Set(allIssues.map(issue => issue.status))];
+
+  // Handler to close the issue summary from within
+  const handleCloseSummary = () => {
+    setSelectedIssue(null);
   };
 
   return (
@@ -24,14 +148,48 @@ const Lecturerdashboard = () => {
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        width:'1000px',
+        width: '1000px',
       }}
     >
       <Navbar />
       <div className="content-container">
         <Sidebar2 />
         <main className="main-content">
-          {/* Your dashboard cards and issue table */}
+          {/* Dashboard header with search and filter options */}
+          <div className="dashboard-header">
+            <h1>Issue Dashboard</h1>
+            <div className="filter-controls">
+              <select 
+                className="status-filter" 
+                value={statusFilter} 
+                onChange={handleStatusFilterChange}
+              >
+                <option value="all">All Statuses</option>
+                {uniqueStatuses.map(status => (
+                  <option key={status} value={status}>{status}</option>
+                ))}
+              </select>
+              <select 
+                className="category-filter" 
+                value={categoryFilter} 
+                onChange={handleCategoryFilterChange}
+              >
+                <option value="all">All Categories</option>
+                {uniqueCategories.map(category => (
+                  <option key={category} value={category}>{category}</option>
+                ))}
+              </select>
+              <input 
+                type="text" 
+                placeholder="Search issues..." 
+                className="search-input" 
+                value={searchTerm}
+                onChange={handleSearchChange}
+              />
+            </div>
+          </div>
+
+          {/* Issues table section */}
           <div className="issues-section">
             <div className="issues-table">
               <table>
@@ -45,22 +203,46 @@ const Lecturerdashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {issues.map(issue => (
-                    <tr key={issue.id} onClick={() => handleIssueClick(issue)}>
-                      <td>{issue.id}</td>
-                      <td>{issue.status}</td>
-                      <td>{issue.studentNo}</td>
-                      <td>{issue.category}</td>
-                      <td>{issue.date}</td>
+                  {filteredIssues.length > 0 ? (
+                    filteredIssues.map(issue => (
+                      <tr 
+                        key={issue.id} 
+                        onClick={() => handleIssueClick(issue)}
+                        className={selectedIssue && selectedIssue.id === issue.id ? 'selected-row' : ''}
+                      >
+                        <td>{issue.id}</td>
+                        <td>
+                          <span className={`status-badge ${issue.status.toLowerCase().replace(' ', '-')}`}>
+                            {issue.status}
+                          </span>
+                        </td>
+                        <td>{issue.studentNo}</td>
+                        <td>{issue.category}</td>
+                        <td>{issue.date}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="5" className="no-issues">No issues match the current filters. Please try another search term</td>
                     </tr>
-                  ))}
+                  )}
                 </tbody>
               </table>
             </div>
           </div>
         </main>
-        {/* Conditionally render IssueSummary when an issue is clicked */}
-        {selectedIssue && <IssueSummary issue={selectedIssue} />}
+
+        {/* Issue Summary with ref for click outside detection */}
+        {selectedIssue && (
+          <div className="issue-summary-overlay">
+            <div ref={summaryRef} className="issue-summary-container">
+              <IssueSummary 
+                issue={selectedIssue} 
+                onClose={handleCloseSummary}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
