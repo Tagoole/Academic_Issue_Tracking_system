@@ -46,3 +46,16 @@
   animation: float 3s ease-in-out infinite, glowText 2s ease-in-out infinite;
 }
 
+/* Floating effect for the AITS header */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
