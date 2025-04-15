@@ -17,3 +17,6 @@ class IssueFactory(DjangoModelFactory):
 
 class Registration_TokenFactory(DjangoModelFactory):
     pass
+
+class Verification_codeFactory(DjangoModelFactory):
+    pass
