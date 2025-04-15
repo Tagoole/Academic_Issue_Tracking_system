@@ -159,6 +159,7 @@ const Lecturerdashboard = () => {
           <div className="dashboard-header">
             <h1>Issue Dashboard</h1>
             <div className="filter-controls">
+            <div className="select-wrapper"> 
               <select 
                 className="status-filter" 
                 value={statusFilter} 
@@ -169,6 +170,9 @@ const Lecturerdashboard = () => {
                   <option key={status} value={status}>{status}</option>
                 ))}
               </select>
+              <span className="dropdown-arrow"></span>
+            </div>
+            <div className="select-wrapper">
               <select 
                 className="category-filter" 
                 value={categoryFilter} 
@@ -179,6 +183,10 @@ const Lecturerdashboard = () => {
                   <option key={category} value={category}>{category}</option>
                 ))}
               </select>
+              <span className="dropdown-arrow"></span>
+            </div>
+
+
               <input 
                 type="text" 
                 placeholder="Search issues..." 
