@@ -170,8 +170,9 @@ const NewIssue = () => {
         if (response && response.data && Array.isArray(response.data) && response.data.length > 0) {
           setRegistrars(response.data);
           
-          // Set first registrar as default - FIXED to always be a string
+          // Store the complete first registrar object or a string
           const firstRegistrar = response.data[0];
+          // Extract name as string to display in dropdown
           const firstRegistrarName = typeof firstRegistrar === 'object' ? 
             (firstRegistrar.name || firstRegistrar.username || '') : 
             firstRegistrar;
@@ -306,18 +307,29 @@ const NewIssue = () => {
       // Create FormData object
       const formData = new FormData();
       
-      // FIXED: Ensure registrarName is a string, not an object
+      // Get registrar name as string and ensure it matches exactly what's in database
       const registrarNameString = typeof registrarName === 'object' ? 
         (registrarName.name || registrarName.username || '') : 
         registrarName;
       
-      formData.append('registrar', registrarNameString);
+      // Get the full username for the student, exactly as stored in the database
+      const studentUsername = currentUser;
+
+      // For debugging
+      console.log('Using registrar name:', registrarNameString);
+      console.log('Using student username:', studentUsername);
+      
+      // Instead of 'registrar', use 'registrar_username' to help backend identify field type
+      formData.append('registrar_username', registrarNameString);
+      // Instead of 'student', use 'student_username' to help backend identify field type
+      formData.append('student_username', studentUsername);
+      
+      // Rest of form data remains the same
       formData.append('issue_type', issueType);
       formData.append('description', description);
       formData.append('issue_title', issueTitle);
       formData.append('course_unit_id', selectedCourseUnitId);
       formData.append('lecturer', '');
-      formData.append('student', currentUser);
       formData.append('status', 'pending');
       formData.append('year_of_study', yearOfStudy);
       formData.append('semester', semester);

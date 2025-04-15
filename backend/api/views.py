@@ -38,21 +38,61 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
         return response
 
-
 class IssueViewSet(ModelViewSet):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     queryset = Issue.objects.all()
     serializer_class = IssueSerializer
     
     def create(self, request, *args, **kwargs):
-        # Simple print of request data
-        print("--- REQUEST DATA ---")
+        # Make a mutable copy of the request data
+        data = request.data.copy()
+        
+        # Debug print
+        print("--- ORIGINAL REQUEST DATA ---")
         print(request.data)
         print("-------------------")
         
-        # Continue with normal processing
-        return super().create(request, *args, **kwargs)
-    
+        # Handle student username - convert to User ID
+        student_username =  data.get('student_username') or data.get('student')
+        if student_username:
+            try:
+                student = CustomUser.objects.get(username=student_username)
+                data['student'] = student.id
+            except CustomUser.DoesNotExist:
+                return Response(
+                    {'error': f'Student with username {student_username} not found'}, 
+                    status=400
+                )
+        
+        # Handle registrar name - convert to User ID
+        registrar_name = data.get('registrar_username') or data.get('registrar')
+        if registrar_name:
+            try:
+                # Try to find by username first, then by name if that exists
+                try:
+                    registrar = CustomUser.objects.get(username=registrar_name)
+                except CustomUser.DoesNotExist:
+                    # If your User model has a name field, use this:
+                    registrar = CustomUser.objects.get(name=registrar_name)
+                data['registrar'] = registrar.id
+            except CustomUser.DoesNotExist:
+                return Response(
+                    {'error': f'Registrar with name {registrar_name} not found'}, 
+                    status=400
+                )
+        
+        # Debug print after conversion
+        print("--- MODIFIED REQUEST DATA ---")
+        print(data)
+        print("-------------------")
+        
+        # Use modified data for serialization
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=201, headers=headers)
+        
 class Lecturer_Issue_Manangement(ModelViewSet):
     serializer_class = IssueSerializer
     permission_classes = [AllowAny]

@@ -54,7 +54,17 @@ class DepartmentSerializer(serializers.ModelSerializer):
             
 class IssueSerializer(serializers.ModelSerializer):
     student = serializers.StringRelatedField()
+    student_id = serializers.PrimaryKeyRelatedField(
+        source='student', 
+        queryset=CustomUser.objects.all(),  # Assuming User is your user model
+        write_only=True
+    )
     registrar = serializers.StringRelatedField()
+    registrar_id = serializers.PrimaryKeyRelatedField(
+        source='registrar', 
+        queryset=CustomUser.objects.all(),  # Assuming registrars are also User models
+        write_only=True
+    )
     course_unit = Course_unitSerializer(read_only=True)
     course_unit_id = serializers.PrimaryKeyRelatedField(
         source='course_unit', 
@@ -64,7 +74,7 @@ class IssueSerializer(serializers.ModelSerializer):
     #program = ProgramSerializer()
     class Meta:
         model = Issue
-        fields = ['id','student','issue_type','course_unit','description','image','status','created_at','updated_at','registrar','year_of_study','semester','course_unit_id']
+        fields = ['id','student','issue_type','course_unit','description','image','status','created_at','updated_at','registrar','year_of_study','semester','course_unit_id','registrar_id','student_id']
 
 class Student_RegisterSerializer(serializers.ModelSerializer):
     class Meta:
