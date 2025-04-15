@@ -82,7 +82,7 @@ const LecturerProfile = () => {
                     required
                   >
                     <option value="" disabled>Select your college</option>
-                    <option value="college 1">College of Science</option>
+                    <option value="college 1">College of computer science</option>
                     <option value="college 2">College of Engineering</option>
                     <option value="college 3">College of Arts</option>
                     <option value="college 4">College of Business</option>
