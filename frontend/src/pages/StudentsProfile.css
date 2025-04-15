@@ -1,15 +1,23 @@
+/* Keep all your existing styles */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: url('../assets/backgroundimage.png') no-repeat center center fixed; /* Add the new background image */
-  background-size: cover; /* Ensure the image covers the entire screen */
-  color: #333; /* Default text color */
+  background: url('../assets/backgroundimage.png') no-repeat center center fixed;
+  background-size: cover;
+  color: #333;
+  /* Add these properties to ensure scrolling works */
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .app-container {
   display: flex;
-  height: 100vh;
-  background: rgba(255, 255, 255, 0.9); /* Add a slight white overlay for readability */
+  /* Change from fixed height to min-height to allow content to expand */
+  min-height: 100vh;
+  background: rgba(255, 255, 255, 0.9);
+  /* Enable overflow to make scrolling work */
+  overflow: auto;
 }
 
 /* Navigation Bar */
@@ -18,7 +26,7 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
-  background-color: rgba(0, 123, 255, 0.9); /* Semi-transparent blue */
+  background-color: rgba(0, 123, 255, 0.9);
   color: white;
   position: fixed;
   width: 100%;
@@ -29,12 +37,14 @@ body {
 /* Sidebar */
 .sidebar {
   width: 200px;
-  background-color: rgba(52, 58, 64, 0.9); /* Semi-transparent dark gray */
+  background-color: rgba(52, 58, 64, 0.9);
   color: white;
   padding: 20px;
   position: fixed;
   top: 60px;
   bottom: 0;
+  /* Ensure sidebar is scrollable if needed */
+  overflow-y: auto;
 }
 
 .sidebar ul {
@@ -53,21 +63,37 @@ body {
   margin-left: 100px;
 }
 
+/* Content area - this is key for scrolling */
+.content-wrapper {
+  display: flex;
+  flex: 1;
+  /* Ensure this container has proper height */
+  min-height: 100vh;
+  /* Add padding to adjust for fixed navbar */
+  padding-top: 60px;
+}
 
 .main-content {
   margin-left: 220px;
-  padding: 80px 20px;
+  padding: 80px 20px 20px 20px;
   flex: 1;
+  /* Critical for scrolling - ensure content can scroll */
   overflow-y: auto;
+  /* Ensure content takes up enough space to trigger scrolling */
+  min-height: calc(100vh - 60px);
+  /* Prevent horizontal scrolling */
+  width: calc(100% - 220px);
 }
 
 .profile-container {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  /* Add some padding at the bottom to ensure last elements are visible */
+  padding-bottom: 40px;
 }
 
-
+/* The rest of your CSS remains unchanged */
 .profile-card {
   background-color: white;
   padding: 20px;
@@ -158,6 +184,7 @@ body {
 .save-btn:hover {
   background-color: rgb(151, 113, 17);
 }
+
 /* Profile image container styling */
 .profile-image-container {
   position: relative;
@@ -218,6 +245,11 @@ body {
   .image-overlay span {
     font-size: 12px;
   }
+  
+  .main-content {
+    margin-left: 200px;
+    width: calc(100% - 200px);
+  }
 }
 
 @media (max-width: 576px) {
@@ -226,13 +258,32 @@ body {
     height: 80px;
     margin: 0 auto 15px;
   }
-}
-.profile-header {
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.profile-details {
-  margin-bottom: 15px;
+  
+  .sidebar {
+    width: 0;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+  
+  .sidebar.active {
+    width: 200px;
+    transform: translateX(0);
+  }
+  
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  
+  .profile-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .profile-details {
+    margin-bottom: 15px;
+  }
 }
