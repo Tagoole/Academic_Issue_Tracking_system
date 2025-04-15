@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import './reset.css';
+import './Forgot-password.css';
 import keyIcon from '../assets/group.png';
 import mailIcon from '../assets/mail.png';
 import helpIcon from '../assets/question.png';
