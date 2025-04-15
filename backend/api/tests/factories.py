@@ -8,3 +8,6 @@ class CustomUserFactory(DjangoModelFactory):
 
 class Course_unitFactory(DjangoModelFactory):
     pass
+
+class programFactory(DjangoModelFactory):
+    pass
