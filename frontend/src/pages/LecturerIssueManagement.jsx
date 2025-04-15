@@ -31,7 +31,6 @@ const LecturerIssueManagement = () => {
   const handleStatusUpdate = (newStatus) => {
     setSelectedNewStatus(newStatus);
     setShowStatusDialog(false);
-    setShowConfirmation(true);
 
     // Prepare status update message
     let message = `Status will be updated to "${newStatus}".`;
@@ -39,6 +38,7 @@ const LecturerIssueManagement = () => {
       message += " Please remember to come back later and resolve this issue.";
     }
     setStatusUpdateMessage(message);
+    setShowConfirmation(true);
   };
 
   const handleCommentChange = (event) => {
@@ -173,9 +173,17 @@ const LecturerIssueManagement = () => {
           )}
 
           {showConfirmation && (
-            <div className="status-confirmation">
-              <p>{statusUpdateMessage}</p>
-              <button className="close-confirmation" onClick={() => setShowConfirmation(false)}>Close</button>
+            <div className="status-dialog-overlay">
+              <div className="status-dialog">
+                <h3>Status Update</h3>
+                <p>{statusUpdateMessage}</p>
+                <button 
+                  className="close-confirmation" 
+                  onClick={() => setShowConfirmation(false)}
+                >
+                  Okay
+                </button>
+              </div>
             </div>
           )}
         </main>
