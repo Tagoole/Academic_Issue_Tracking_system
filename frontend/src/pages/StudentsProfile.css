@@ -208,3 +208,15 @@ body {
   filter: blur(1px);
 }
 
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .profile-image-container {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .image-overlay span {
+    font-size: 12px;
+  }
+}
+
