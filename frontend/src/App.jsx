@@ -11,7 +11,7 @@ import ProfileSetup from "./pages/ProfileSetup";
 import ProfilePictureSetup from "./pages/profilepicture";
 import Congragulation from "./pages/congragulation";
 import RegistraDashboard from "./pages/RegistraDashboard";
-import Registrationtoken from "./pages/registrationtoken";
+import Registrationtoken from "./pages/Generatetoken";
 import IssueManagement from "./pages/IssueManagement";
 import Viewdetails from "./pages/View-details";
 import Changepassword from "./pages/Changepassword";
@@ -47,7 +47,7 @@ function App() {
         <Route path="/resetpassword" element={<ResetPassword />} />
         <Route path="/changepassword" element={<Changepassword />} />
         <Route path="/congs" element={<CONGS />} />
-        <Route path="/registrationtoken" element={<Registrationtoken />} />
+        <Route path="/Generatetoken" element={<Registrationtoken />} />
 
         {/* Profile setup routes */}
         <Route path="/profilesetup" element={<ProfileSetup />} />
