@@ -95,6 +95,7 @@ const StudentsProfile = ({ userData }) => {
                   {editableField === field ? (
                     <input
                       type="text"
+                      
                       name={field}
                       value={profile[field]}
                       onChange={handleInputChange}
