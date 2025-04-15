@@ -5,7 +5,6 @@ https://github.com/Fam1n0/WeldingTools/tree/dfabdf55bc647e56ec1f889aafd76db58315
 
 ```
 ;
-}
 
 .form-group {
   margin-bottom: 15px;
