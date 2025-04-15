@@ -257,7 +257,8 @@ class Lecturer_and_Registrar_Registration(APIView):
     permission_classes = [AllowAny]
     def post(self,request):
         data = request.data.copy()
-        token_value = data['token']
+        print(data)
+        token_value = data['registration_token']
         email_value = data['email']
         
         token_object = Registration_Token.objects.filter(token=token_value, email=email_value).first()
