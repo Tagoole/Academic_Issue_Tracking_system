@@ -67,9 +67,7 @@ body {
 .content-wrapper {
   display: flex;
   flex: 1;
-  /* Ensure this container has proper height */
   min-height: 100vh;
-  /* Add padding to adjust for fixed navbar */
   padding-top: 60px;
 }
 
@@ -180,7 +178,7 @@ body {
   margin-top: 20px;
   margin-bottom: 50px; 
   width: 200px; 
-  position: relative; /* Ensure it's in the normal document flow */
+  position: relative; 
   z-index: 100; 
 }
 .save-btn:disabled {
