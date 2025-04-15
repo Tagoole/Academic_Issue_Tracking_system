@@ -20,7 +20,9 @@ class ProgramFactory(DjangoModelFactory):
 
 
 class IssueFactory(DjangoModelFactory):
-    pass
+    class Meta:
+        model = Issue
+
 
 class Registration_TokenFactory(DjangoModelFactory):
     pass
