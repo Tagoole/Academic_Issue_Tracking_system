@@ -8,15 +8,16 @@ function Sidebar() {
   // Function to handle logout
   const handleLogout = (e) => {
     e.preventDefault(); // Prevent default link behavior
-    
+
     // Clear all items from localStorage
     localStorage.clear();
-    
+
     console.log('All localStorage items cleared for logout');
-    
+
     // Navigate to home/login page
     navigate('/');
   };
+
   return (
     <div className="sidebar-container">
       <div className="university-logo-sidebar">
@@ -63,8 +64,16 @@ function Sidebar() {
         </svg>
       </a>
 
+      {/* Generate Token Link */}
+      <a href="/GenerateToken" className="menu-item">
+        Generate Token
+        <svg viewBox="0 0 24 24" className="arrow-icon">
+          <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+        </svg>
+      </a>
+
       {/* Logout Link */}
-      <a href="/logout" className="menu-item delete-account">
+      <a href="/logout" className="menu-item delete-account" onClick={handleLogout}>
         Logout
         <svg viewBox="0 0 24 24" className="arrow-icon">
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
