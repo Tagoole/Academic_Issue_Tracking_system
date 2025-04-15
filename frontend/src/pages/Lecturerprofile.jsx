@@ -33,13 +33,14 @@ const LecturerProfile = () => {
 
   return (
     <div className="app-container">
+      <NavBar />
       <Sidebar2 />
       <div className="main-content">
-        <NavBar />
+
         <div className="profile-container" style={{ backgroundImage: `url(${backgroundimage})` }}>
           <div className="profile-overlay">
             <h1 className="profile-heading">Personal profile</h1>
-            
+
             <form className="profile-form" onSubmit={handleSubmit}>
               <div className="input-group">
                 <div className="input-icon">
@@ -54,7 +55,7 @@ const LecturerProfile = () => {
                   required
                 />
               </div>
-              
+
               <div className="input-group">
                 <div className="input-icon">
                   <img src={name} alt="Phone Icon" />
@@ -68,7 +69,7 @@ const LecturerProfile = () => {
                   required
                 />
               </div>
-              
+
               <div className="input-group">
                 <div className="input-icon">
                   <img src={name} alt="College Icon" />
@@ -88,7 +89,7 @@ const LecturerProfile = () => {
                   </select>
                 </div>
               </div>
-              
+
               <div className="input-group">
                 <div className="input-icon">
                   <img src={name} alt="Department Icon" />
@@ -108,7 +109,7 @@ const LecturerProfile = () => {
                   </select>
                 </div>
               </div>
-              
+
               <div className="input-group">
                 <div className="input-icon">
                   <img src={name} alt="Office Icon" />
@@ -128,10 +129,10 @@ const LecturerProfile = () => {
                   </select>
                 </div>
               </div>
-              
+
               <button type="submit" className="next-button">NEXT</button>
             </form>
-            
+
             <div className="bottom-links">
               <a href="/help" className="help-link">Need Help?</a>
               <a href="/delete-account" className="delete-account-link">Delete Account</a>
