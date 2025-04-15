@@ -6,7 +6,8 @@ import shortuuid
 from random import randint
 
 class CustomUserFactory(DjangoModelFactory):
-    pass
+    class Meta:
+        model = CustomUser
 
 class Course_unitFactory(DjangoModelFactory):
     pass
