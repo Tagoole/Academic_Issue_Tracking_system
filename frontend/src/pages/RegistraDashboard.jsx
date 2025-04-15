@@ -1,6 +1,6 @@
 import React from 'react';
 import './RegistraDashboard.css';
-import Navbar from './NavBar'; 
+import NavBar from './NavBar'; 
 import Sidebar from './Sidebar';
 
 const RegistraDashboard = () => {
@@ -10,7 +10,7 @@ const RegistraDashboard = () => {
 
   return (
     <div className="app-container" style={{ width: '1000px' }}>
-      <Navbar />
+      <NavBar />
       <div className="content-container">
         <Sidebar />
         <main className="main-content">
