@@ -30,7 +30,9 @@ class Registration_TokenFactory(DjangoModelFactory):
 
 
 class Verification_codeFactory(DjangoModelFactory):
-    pass
+    class Meta:
+        model = Verification_code
+
 
 class Email_NotificationFactory(DjangoModelFactory):
     pass
