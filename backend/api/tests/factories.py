@@ -35,4 +35,5 @@ class Verification_codeFactory(DjangoModelFactory):
 
 
 class Email_NotificationFactory(DjangoModelFactory):
-    pass
+    class Meta:
+        model = Email_Notification
