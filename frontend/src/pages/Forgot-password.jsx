@@ -1,18 +1,23 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; 
-import './reset.css';
+import { Link, useNavigate } from 'react-router-dom';
+
+import './Forgot-password.css';
 import keyIcon from '../assets/group.png';
 import mailIcon from '../assets/mail.png';
-import helpIcon from '../assets/question.png'
-
+import helpIcon from '../assets/question.png';
 
 const ResetPassword = () => {
   const [email, setEmail] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle password reset logic here
     console.log('Password reset requested for:', email);
+  };
+
+  const handleSignIn = () => {
+    navigate('/login');
   };
 
   return (
@@ -59,9 +64,15 @@ const ResetPassword = () => {
         </form>
 
         <div className="sign-in-link-container">
-          <Link to="/login" className="sign-in-link">
+          {/* Option 1: Using Link component (recommended for React Router) */}
+          <Link to="/Signin" className="sign-in-link">
             Sign In
           </Link>
+
+          {/* Option 2: Alternative using button with onClick handler */}
+          {/* <button onClick={handleSignIn} className="sign-in-link">
+            Sign In
+          </button> */}
         </div>
       </div>
     </div>

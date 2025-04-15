@@ -6,6 +6,7 @@ html, body {
   padding: 0;
   height: 10%;
   font-family: Arial, sans-serif;
+  background-color: transparent;
 
 }
 
@@ -15,6 +16,7 @@ html, body {
   display: flex;
   margin-left: 10px;
   flex-direction: column;
+  background-color: transparent;
 }
 
 /* Top navigation */
@@ -93,6 +95,18 @@ h2.green-text {
   flex-direction: column;
   gap: 20px;
 }
+.content {
+  max-width: 1500px;
+  position: relative;
+  background: rgba(255, 255, 255, 0.1); /* translucent white */
+  backdrop-filter: blur(20px); /* frosted glass blur */
+  -webkit-backdrop-filter: blur(20px); /* Safari support */
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  padding: 30px;
+  font-size: 18px;
+}
 
 .form-group {
   width: 100%;
@@ -100,7 +114,9 @@ h2.green-text {
 
 .input-container {
   position: relative;
-  width: 100%;
+  width: 70%;
+  padding: 14px 50px 14px 20px; /* Increase padding for better spacing */
+  font-size: 18px; /* Slightly increase font size inside the inputs */
 }
 
 .input-container input {
@@ -181,7 +197,7 @@ h2.green-text {
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  background-color: #f8f8f8;
+  background-color: transparent;
 }
 
 .graduate-image {

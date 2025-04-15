@@ -6,7 +6,7 @@ import Messages from "./pages/Messages";
 import NewIssue from "./pages/New-issue";
 import Signin from "./pages/Signin";
 import EmailVerification from "./pages/verification";
-import ResetPassword from "./pages/reset";
+import ResetPassword from "./pages/Forgot-password";
 import ProfileSetup from "./pages/ProfileSetup";
 import ProfilePictureSetup from "./pages/profilepicture";
 import Congragulation from "./pages/congragulation";
@@ -32,6 +32,7 @@ import Settings from "./pages/Settings";
 import StudentsProfile from "./pages/StudentsProfile";
 
 
+
 function App() {
   return (
     <Router>
@@ -44,7 +45,7 @@ function App() {
         <Route path="/signin" element={<Signin />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/verification" element={<EmailVerification />} />
-        <Route path="/resetpassword" element={<ResetPassword />} />
+        <Route path="/Forgot-password" element={<ResetPassword />} />
         <Route path="/changepassword" element={<Changepassword />} />
         <Route path="/congs" element={<CONGS />} />
         <Route path="/Generatetoken" element={<Registrationtoken />} />
