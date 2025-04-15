@@ -16,7 +16,7 @@ const DeleteAccount = () => {
     console.log('Account deleted');
     setShowConfirmModal(false);
 
-    // Show brief success message before redirecting
+    
     alert('Account deleted successfully');
 
     
