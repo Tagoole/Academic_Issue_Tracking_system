@@ -141,6 +141,12 @@ const StudentsProfile = ({ userData }) => {
 
             {editableField && (
               <button className="save-btn" onClick={handleSave}>
+                style={{ 
+                display: 'block',
+                opacity: editableField ? 1 : 0.5,
+                cursor: editableField ? 'pointer' : 'not-allowed',
+                marginBottom: '50px'  // Add extra margin to ensure it's visible
+              }}
                 Save Changes
               </button>
             )}
