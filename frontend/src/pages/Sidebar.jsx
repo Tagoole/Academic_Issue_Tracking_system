@@ -1,8 +1,22 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Sidebar.css';
 import makerereLogo from '../assets/makererelogo.png';
 
 function Sidebar() {
+  const navigate = useNavigate();
+  // Function to handle logout
+  const handleLogout = (e) => {
+    e.preventDefault(); // Prevent default link behavior
+    
+    // Clear all items from localStorage
+    localStorage.clear();
+    
+    console.log('All localStorage items cleared for logout');
+    
+    // Navigate to home/login page
+    navigate('/');
+  };
   return (
     <div className="sidebar-container">
       <div className="university-logo-sidebar">

@@ -32,6 +32,8 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         response.data['id'] = user.id
         response.data['email'] = user.email
         response.data['username'] = user.username
+        response.data['gender'] = user.gender
+        response.data['program'] = user.program.id if user.program else None
         print(response.data)
         print(user.role)
         

@@ -1,13 +1,13 @@
 import React from 'react';
 import makerereLogo from '../assets/makererelogo.png';
 import NavBar from './NavBar';
-import './NotificationSuccess.css';
+import './notification-success.css';
 import backgroundImage from '../assets/pexels-olia-danilevich-5088017.jpg';
 
 const NotificationSuccess = () => {
   return (
-    <div 
-      className="notification-success-page" 
+    <div
+      className="notification-success-page"
       style={{
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
@@ -17,7 +17,7 @@ const NotificationSuccess = () => {
       }}
     >
       <NavBar />
-      
+
       <main
         className="main-content"
         style={{
