@@ -192,3 +192,10 @@ body {
   border-radius: 50%;
 }
 
+.image-overlay span {
+  color: white;
+  font-size: 14px;
+  text-align: center;
+  padding: 5px;
+}
+
