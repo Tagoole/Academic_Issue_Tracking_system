@@ -20,3 +20,6 @@ class Registration_TokenFactory(DjangoModelFactory):
 
 class Verification_codeFactory(DjangoModelFactory):
     pass
+
+class Email_NotificationFactory(DjangoModelFactory):
+    pass
