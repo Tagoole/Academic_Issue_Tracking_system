@@ -1,114 +1,156 @@
-
+/* Base container styles */
 .landing-container {
-    width: 100%;
-    height: 100vh;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    font-family: 'Arial', sans-serif;
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Arial', sans-serif;
 }
+
+/* Background styles with zoom animation */
 .background-image {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
-    z-index: -1;
-    filter: brightness(0.85);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
+  filter: brightness(0.85);
+  animation: zoomBackground 20s infinite alternate ease-in-out;
+}
+
+/* Background zoom effect */
+@keyframes zoomBackground {
+  0% {
+    transform: scale(1);
   }
-  .aits-header {
-    position: absolute;
-    top: 20px;
-    right: 40px;
-    font-size: 24px;
-    font-weight: bold;
-    color: white;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
-    z-index: 10;
+  100% {
+    transform: scale(1.1);
   }
-  .content-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    z-index: 5;
+}
+
+/* AITS Header with floating animation */
+.aits-header {
+  position: absolute;
+  top: 20px;
+  right: 40px;
+  font-size: 28px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+  z-index: 10;
+  animation: float 3s ease-in-out infinite, glowText 2s ease-in-out infinite;
+}
+
+/* Floating effect for the AITS header */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
   }
-  .logo-container {
-    margin-bottom: 30px;
+  50% {
+    transform: translateY(-10px);
   }
-  
-  .main-logo {
-    width: 180px;
-    height: auto;
-    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+  100% {
+    transform: translateY(0px);
   }
-  .welcome-text {
-    text-align: center;
-    font-size: 50px;
-    font-weight: bold;
-    margin: 20px 0 40px;
-    color: white;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-    max-width: 80%;
-    transform: translateY(30px);
-    opacity: 0;
-    transition: all 1.2s ease-out;
+}
+
+/* Text glow effect */
+@keyframes glowText {
+  0% {
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
   }
-  .welcome-text.show {
+  50% {
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 30px rgba(72, 199, 116, 0.6);
+  }
+  100% {
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+  }
+}
+
+/* Content container */
+.content-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  z-index: 5;
+}
+
+/* Logo container with animation */
+.logo-container {
+  margin-bottom: 30px;
+  animation: rotatePulse 6s infinite alternate ease-in-out;
+}
+
+/* Logo rotation and pulse effect */
+@keyframes rotatePulse {
+  0% {
+    transform: rotate(0deg) scale(1);
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
+  }
+  50% {
+    transform: rotate(3deg) scale(1.1);
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));
+  }
+  100% {
+    transform: rotate(-3deg) scale(1);
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
+  }
+}
+
+/* Logo image */
+.main-logo {
+  width: 180px;
+  height: auto;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+}
+
+/* Welcome text with animation */
+.welcome-text {
+  text-align: center;
+  font-size: 50px;
+  font-weight: bold;
+  margin: 20px 0 40px;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  max-width: 80%;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 1.2s ease-out;
+}
+
+.welcome-text.show {
+  transform: translateY(0);
+  opacity: 1;
+  animation: wavyText 3s ease-in-out infinite;
+}
+
+/* Wave effect for text */
+@keyframes wavyText {
+  0%, 100% {
     transform: translateY(0);
-    opacity: 1;
   }
-  .button-container {
-    display: flex;
-    justify-content: space-between;
-    width: 60%;
-    max-width: 500px;
-    margin-top: 20px;
+  50% {
+    transform: translateY(-8px);
   }
-  .signup-btn, .signin-btn {
-    padding: 12px 30px;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
-  
-  .signup-btn {
-    background-color: #289f48;
-    color: white;
-  }
-  
-  .signin-btn {
-    background-color: white;
-    color: #259732;
-  }
-  .signup-btn:hover, .signin-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(8, 81, 191, 0.3);
-  }
-  @media (max-width: 768px) {
-    .welcome-text {
-      font-size: 24px;
-    }
-    
-    .button-container {
-      width: 90%;
-      flex-direction: column;
-      gap: 15px;
-      align-items: center;
-    }
-    
-    .signup-btn, .signin-btn {
-      width: 80%;
-      padding: 10px 0;
-    }
-  }
-  
+}
+
+/* Button container with animation */
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  width: 60%;
+  max-width: 500px;
+  margin-top: 20px;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 1s ease-out 0.8s;
+}
+
