@@ -8,120 +8,139 @@ const LandingPage = () => {
   const navigate = useNavigate();
   const [showWelcome, setShowWelcome] = useState(false);
   const [showButtons, setShowButtons] = useState(false);
-  const [pageTransition, setPageTransition] = useState('');
   const particlesContainerRef = useRef(null);
-
+  
   useEffect(() => {
     // Trigger welcome message animation after a short delay
     const welcomeTimer = setTimeout(() => {
       setShowWelcome(true);
     }, 800);
-
-    // Show buttons after welcome text appears
+    
+    // Show buttons with delay
     const buttonsTimer = setTimeout(() => {
       setShowButtons(true);
-    }, 1800);
-
-    // Create particles and cursor trail effects
+    }, 1500);
+    
+    // Create particles
     createParticles();
     const removeTrail = createCursorTrail();
-
+    
+    // Create cursor trail effect
+    createCursorTrail();
+    
     return () => {
       clearTimeout(welcomeTimer);
       clearTimeout(buttonsTimer);
-      removeTrail();
     };
   }, []);
-
-  // Create floating particles effect
+  
+  // Function to create floating particles
   const createParticles = () => {
     if (!particlesContainerRef.current) return;
     
-    const container = particlesContainerRef.current;
-    const particleCount = 20;
+    const particleCount = 50;
     
     for (let i = 0; i < particleCount; i++) {
       const particle = document.createElement('div');
       particle.classList.add('particle');
       
-      // Randomize particle properties
-      const size = Math.random() * 10 + 5;
+      // Random position
       const posX = Math.random() * 100;
       const posY = Math.random() * 100;
-      const delay = Math.random() * 5;
-      const duration = Math.random() * 10 + 10;
       
-      particle.style.width = `${size}px`;
-      particle.style.height = `${size}px`;
+      // Random size
+      const size = Math.random() * 5 + 1;
+      
+      // Random opacity
+      const opacity = Math.random() * 0.5 + 0.1;
+      
+      // Set styles
       particle.style.left = `${posX}%`;
       particle.style.top = `${posY}%`;
-      particle.style.animationDelay = `${delay}s`;
-      particle.style.animationDuration = `${duration}s`;
+      particle.style.width = `${size}px`;
+      particle.style.height = `${size}px`;
+      particle.style.opacity = opacity;
       
-      container.appendChild(particle);
+      // Add animation
+      const duration = Math.random() * 20 + 10;
+      particle.style.animation = `floatParticle ${duration}s infinite linear`;
+      
+      // Create unique keyframe animation for each particle
+      const keyframes = `
+        @keyframes floatParticle {
+          0% {
+            transform: translate(0, 0);
+          }
+          25% {
+            transform: translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px);
+          }
+          50% {
+            transform: translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px);
+          }
+          75% {
+            transform: translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px);
+          }
+          100% {
+            transform: translate(0, 0);
+          }
+        }
+      `;
+      
+      const style = document.createElement('style');
+      style.innerHTML = keyframes;
+      document.head.appendChild(style);
+      
+      particlesContainerRef.current.appendChild(particle);
     }
   };
-
-  // Create cursor trail effect
+  
+  // Function to create cursor trail effect
   const createCursorTrail = () => {
-    const cursorTrailContainer = document.createElement('div');
-    cursorTrailContainer.classList.add('cursor-trail-container');
-    document.body.appendChild(cursorTrailContainer);
+    const maxTrails = 20;
+    const trails = [];
     
-    const trailElements = [];
-    const TRAIL_COUNT = 10;
-    
-    // Create trail elements
-    for (let i = 0; i < TRAIL_COUNT; i++) {
+    document.addEventListener('mousemove', (e) => {
       const trail = document.createElement('div');
       trail.classList.add('cursor-trail');
-      trail.style.opacity = 1 - (i / TRAIL_COUNT);
-      trail.style.transform = 'scale(' + (1 - (i / TRAIL_COUNT) * 0.5) + ')';
-      trail.style.animationDelay = `${i * 0.05}s`;
-      cursorTrailContainer.appendChild(trail);
-      trailElements.push(trail);
-    }
-    
-    // Track mouse movement
-    const handleMouseMove = (e) => {
-      const { clientX, clientY } = e;
-      trailElements.forEach((trail, index) => {
+      trail.style.left = `${e.clientX}px`;
+      trail.style.top = `${e.clientY}px`;
+      
+      document.body.appendChild(trail);
+      trails.push(trail);
+      
+      // Animate and remove
+      setTimeout(() => {
+        trail.style.width = '0';
+        trail.style.height = '0';
+        trail.style.opacity = '0';
+        trail.style.transition = 'all 0.5s ease-out';
+        
         setTimeout(() => {
-          trail.style.left = `${clientX}px`;
-          trail.style.top = `${clientY}px`;
-        }, index * 30);
-      });
-    };
-    
-    document.addEventListener('mousemove', handleMouseMove);
-    
-    // Return cleanup function
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      if (cursorTrailContainer && cursorTrailContainer.parentNode) {
-        cursorTrailContainer.parentNode.removeChild(cursorTrailContainer);
+          trail.remove();
+          trails.shift();
+        }, 500);
+      }, 10);
+      
+      // Limit the number of trails
+      if (trails.length > maxTrails) {
+        const oldTrail = trails.shift();
+        oldTrail.remove();
       }
-    };
+    });
   };
 
   const navigateToSignup = () => {
-    // Trigger the swing-right animation
-    setPageTransition('page-transition-active');
-    
-    // Wait for animation to complete before navigating
-    setTimeout(() => {
-      navigate('/signup');
-    }, 600); // Match this with the CSS animation duration
+    navigate('/signup');
   };
-
+  
   const navigateToSignin = () => {
     navigate('/signin');
   };
-
+  
   return (
-    <div className={`landing-container ${pageTransition}`}>
-      {/* Particles container */}
-      <div ref={particlesContainerRef} className="particles-container"></div>
+    <div className="landing-container">
+      {/* Particles */}
+      <div className="particles" ref={particlesContainerRef}></div>
       
       {/* Background image */}
       <div className="background-image" style={{ backgroundImage: `url(${landingimage})` }}></div>
@@ -144,14 +163,8 @@ const LandingPage = () => {
         {/* Button container */}
         <div className={`button-container ${showButtons ? 'show-buttons' : ''}`}>
           <div className="separator"></div>
-          <button className="signup-btn" onClick={navigateToSignup}>
-            <span>Sign Up</span>
-            <div className="ripple"></div>
-          </button>
-          <button className="signin-btn" onClick={navigateToSignin}>
-            <span>Sign In</span>
-            <div className="ripple"></div>
-          </button>
+          <button className="signup-btn" onClick={navigateToSignup}>Sign Up</button>
+          <button className="signin-btn" onClick={navigateToSignin}>Sign In</button>
         </div>
       </div>
     </div>
