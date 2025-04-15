@@ -20,23 +20,26 @@ const LecturerIssueManagement = () => {
     attachments: [],
     comments: '',
   });
-  
+
   const [file, setFile] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [showStatusDialog, setShowStatusDialog] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [statusUpdateMessage, setStatusUpdateMessage] = useState('');
+  const [selectedNewStatus, setSelectedNewStatus] = useState('');
 
   const handleStatusUpdate = (newStatus) => {
-    setSelectedIssue({
-      ...selectedIssue,
-      status: newStatus,
-    });
-    
+    setSelectedNewStatus(newStatus);
     setShowStatusDialog(false);
-    
-    // Add logic to save the issue, e.g., send to server or local storage
-    console.log('Issue saved with status:', newStatus, selectedIssue);
-  };
 
+    // Prepare status update message
+    let message = `Status will be updated to "${newStatus}".`;
+    if (newStatus !== 'Resolved') {
+      message += " Please remember to come back later and resolve this issue.";
+    }
+    setStatusUpdateMessage(message);
+    setShowConfirmation(true);
+  };
 
   const handleCommentChange = (event) => {
     setSelectedIssue({
@@ -55,14 +58,13 @@ const LecturerIssueManagement = () => {
       setErrorMessage('Please add a comment before saving changes.');
       return;
     }
-    
+
     // Clear any previous error message
     setErrorMessage('');
-    
+
     // Show status selection dialog
     setShowStatusDialog(true);
   };
-  
 
   return (
     <div
@@ -132,40 +134,58 @@ const LecturerIssueManagement = () => {
               {errorMessage && <p className="error-message">{errorMessage}</p>}
             </div>
           </div>
+
+          
+
           {showStatusDialog && (
-  <div className="status-dialog-overlay">
-    <div className="status-dialog">
-      <h3>Choose Status</h3>
-      <p>Select a status for this issue:</p>
-      <div className="status-options">
-        <button 
-          className="status-option pending" 
-          onClick={() => handleStatusUpdate('Pending')}
-        >
-          Pending
-        </button>
-        <button 
-          className="status-option in-progress" 
-          onClick={() => handleStatusUpdate('In Progress')}
-        >
-          In Progress
-        </button>
-        <button 
-          className="status-option resolved" 
-          onClick={() => handleStatusUpdate('Resolved')}
-        >
-          Resolved
-        </button>
-      </div>
-      <button 
-        className="cancel-button" 
-        onClick={() => setShowStatusDialog(false)}
-      >
-        Cancel
-      </button>
-    </div>
-  </div>
-)}
+            <div className="status-dialog-overlay">
+              <div className="status-dialog">
+                <h3>Choose Status</h3>
+                <p>Select a status for this issue:</p>
+                <div className="status-options">
+                  <button 
+                    className="status-option pending" 
+                    onClick={() => handleStatusUpdate('Pending')}
+                  >
+                    Pending
+                  </button>
+                  <button 
+                    className="status-option in-progress" 
+                    onClick={() => handleStatusUpdate('In Progress')}
+                  >
+                    In Progress
+                  </button>
+                  <button 
+                    className="status-option resolved" 
+                    onClick={() => handleStatusUpdate('Resolved')}
+                  >
+                    Resolved
+                  </button>
+                </div>
+                <button 
+                  className="cancel-button" 
+                  onClick={() => setShowStatusDialog(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+
+          {showConfirmation && (
+            <div className="status-dialog-overlay">
+              <div className="status-dialog">
+                <h3>Status Update</h3>
+                <p>{statusUpdateMessage}</p>
+                <button 
+                  className="close-confirmation" 
+                  onClick={() => setShowConfirmation(false)}
+                >
+                  Okay
+                </button>
+              </div>
+            </div>
+          )}
         </main>
       </div>
     </div>
