@@ -66,6 +66,24 @@ const LecturerIssueManagement = () => {
     setShowStatusDialog(true);
   };
 
+  const handleConfirmSave = () => {
+    // Update the issue with new status and comments
+    setSelectedIssue({
+      ...selectedIssue,
+      status: selectedNewStatus,
+    });
+    
+    // Add logic to save the issue to server/storage
+    console.log('Issue saved with status:', selectedNewStatus, selectedIssue);
+    
+    // Navigate back to dashboard
+    window.location.href = '/Lecturerdashboard';
+  };
+
+  const handleCancelSave = () => {
+    setShowConfirmation(false);
+  };
+
   return (
     <div
       className="app-container"
@@ -135,8 +153,6 @@ const LecturerIssueManagement = () => {
             </div>
           </div>
 
-          
-
           {showStatusDialog && (
             <div className="status-dialog-overlay">
               <div className="status-dialog">
@@ -177,12 +193,20 @@ const LecturerIssueManagement = () => {
               <div className="status-dialog">
                 <h3>Status Update</h3>
                 <p>{statusUpdateMessage}</p>
-                <button 
-                  className="close-confirmation" 
-                  onClick={() => setShowConfirmation(false)}
-                >
-                  Okay
-                </button>
+                <div className="confirmation-buttons">
+                  <button 
+                    className="confirm-button" 
+                    onClick={handleConfirmSave}
+                  >
+                    Confirm
+                  </button>
+                  <button 
+                    className="cancel-button" 
+                    onClick={handleCancelSave}
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
             </div>
           )}
