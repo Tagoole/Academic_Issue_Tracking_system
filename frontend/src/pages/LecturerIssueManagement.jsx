@@ -132,6 +132,40 @@ const LecturerIssueManagement = () => {
               {errorMessage && <p className="error-message">{errorMessage}</p>}
             </div>
           </div>
+          {showStatusDialog && (
+  <div className="status-dialog-overlay">
+    <div className="status-dialog">
+      <h3>Choose Status</h3>
+      <p>Select a status for this issue:</p>
+      <div className="status-options">
+        <button 
+          className="status-option pending" 
+          onClick={() => handleStatusUpdate('Pending')}
+        >
+          Pending
+        </button>
+        <button 
+          className="status-option in-progress" 
+          onClick={() => handleStatusUpdate('In Progress')}
+        >
+          In Progress
+        </button>
+        <button 
+          className="status-option resolved" 
+          onClick={() => handleStatusUpdate('Resolved')}
+        >
+          Resolved
+        </button>
+      </div>
+      <button 
+        className="cancel-button" 
+        onClick={() => setShowStatusDialog(false)}
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+)}
         </main>
       </div>
     </div>
