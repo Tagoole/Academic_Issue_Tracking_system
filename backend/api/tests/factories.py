@@ -11,3 +11,6 @@ class Course_unitFactory(DjangoModelFactory):
 
 class programFactory(DjangoModelFactory):
     pass
+
+class IssueFactory(DjangoModelFactory):
+    pass
