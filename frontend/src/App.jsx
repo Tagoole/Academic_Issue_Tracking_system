@@ -32,6 +32,7 @@ import Settings from "./pages/Settings";
 import StudentsProfile from "./pages/StudentsProfile";
 
 
+
 function App() {
   return (
     <Router>
@@ -44,7 +45,7 @@ function App() {
         <Route path="/signin" element={<Signin />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/verification" element={<EmailVerification />} />
-        <Route path="/resetpassword" element={<ResetPassword />} />
+        <Route path="/reset" element={<ResetPassword />} />
         <Route path="/changepassword" element={<Changepassword />} />
         <Route path="/congs" element={<CONGS />} />
         <Route path="/Generatetoken" element={<Registrationtoken />} />
