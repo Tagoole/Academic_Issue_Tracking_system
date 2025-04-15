@@ -159,6 +159,7 @@ const Lecturerdashboard = () => {
           <div className="dashboard-header">
             <h1>Issue Dashboard</h1>
             <div className="filter-controls">
+            <div className="select-wrapper"> 
               <select 
                 className="status-filter" 
                 value={statusFilter} 
@@ -169,6 +170,9 @@ const Lecturerdashboard = () => {
                   <option key={status} value={status}>{status}</option>
                 ))}
               </select>
+              <span className="dropdown-arrow"></span>
+            </div>
+            <div className="select-wrapper">
               <select 
                 className="category-filter" 
                 value={categoryFilter} 
@@ -179,6 +183,10 @@ const Lecturerdashboard = () => {
                   <option key={category} value={category}>{category}</option>
                 ))}
               </select>
+              <span className="dropdown-arrow"></span>
+            </div>
+
+
               <input 
                 type="text" 
                 placeholder="Search issues..." 
@@ -206,20 +214,34 @@ const Lecturerdashboard = () => {
                   {filteredIssues.length > 0 ? (
                     filteredIssues.map(issue => (
                       <tr 
-                        key={issue.id} 
-                        onClick={() => handleIssueClick(issue)}
-                        className={selectedIssue && selectedIssue.id === issue.id ? 'selected-row' : ''}
-                      >
-                        <td>{issue.id}</td>
-                        <td>
-                          <span className={`status-badge ${issue.status.toLowerCase().replace(' ', '-')}`}>
-                            {issue.status}
-                          </span>
-                        </td>
-                        <td>{issue.studentNo}</td>
-                        <td>{issue.category}</td>
-                        <td>{issue.date}</td>
-                      </tr>
+  key={issue.id} 
+  className={selectedIssue && selectedIssue.id === issue.id ? 'selected-row' : ''}
+>
+  <td onClick={() => handleIssueClick(issue)}>{issue.id}</td>
+  <td onClick={() => handleIssueClick(issue)}>
+    <span className={`status-badge ${issue.status.toLowerCase().replace(' ', '-')}`}>
+      {issue.status}
+    </span>
+  </td>
+  <td onClick={() => handleIssueClick(issue)}>{issue.studentNo}</td>
+  <td onClick={() => handleIssueClick(issue)}>{issue.category}</td>
+  <td onClick={() => handleIssueClick(issue)}>{issue.date}</td>
+  <td>
+    {issue.status !== 'Resolved' && (
+      <button 
+        className="resolve-btn"
+        onClick={(e) => {
+          e.stopPropagation();
+          window.location.href = `/LecturerIssueManagement?issueId=${issue.id}`;
+        }}
+      >
+        Resolve Issue
+      </button>
+    )}
+  </td>
+</tr>
+
+
                     ))
                   ) : (
                     <tr>
