@@ -49,10 +49,8 @@ const StudentsProfile = ({ userData }) => {
       const imageUrl = URL.createObjectURL(file);
       setProfileImage(imageUrl);
       
-      // Here you would typically upload the image to your server
+
       console.log('Image file selected:', file);
-      // Example of how you might handle the upload:
-      // uploadProfileImage(file);
     }
   };
 
@@ -145,7 +143,7 @@ const StudentsProfile = ({ userData }) => {
                 display: 'block',
                 opacity: editableField ? 1 : 0.5,
                 cursor: editableField ? 'pointer' : 'not-allowed',
-                marginBottom: '50px'  // Add extra margin to ensure it's visible
+                marginBottom: '50px'  
               }}
                 Save Changes
               </button>
