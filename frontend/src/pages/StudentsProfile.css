@@ -141,13 +141,13 @@ body {
 .edit-btn {
   background: none;
   border: none;
-  color: #007bff;
+  color: rgb(163, 118, 28);
   cursor: pointer;
 }
 
 .save-btn {
   padding: 10px 20px;
-  background-color: #007bff;
+  background-color: rgb(163, 119, 24);
   color: white;
   border: none;
   border-radius: 4px;
@@ -156,7 +156,7 @@ body {
 }
 
 .save-btn:hover {
-  background-color: #0056b3;
+  background-color: rgb(151, 113, 17);
 }
 /* Profile image container styling */
 .profile-image-container {
