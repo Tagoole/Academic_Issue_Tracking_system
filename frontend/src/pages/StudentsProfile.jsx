@@ -49,12 +49,9 @@ const StudentsProfile = ({ userData }) => {
       const imageUrl = URL.createObjectURL(file);
       setProfileImage(imageUrl);
       
-
       console.log('Image file selected:', file);
     }
   };
-
-  
 
   return (
     <div className="app-container">
@@ -83,7 +80,7 @@ const StudentsProfile = ({ userData }) => {
                   <h2>{profile.fullName}</h2>
                   <p>{profile.role}</p>
                 </div>
-                <button className="edit-btn" onClick={() => handleEditClick('profile')}>
+                <button className="edit-btn" onClick={() => handleEditClick('fullName')}>
                   Edit 
                 </button>
               </div>
@@ -101,13 +98,20 @@ const StudentsProfile = ({ userData }) => {
                       name={field}
                       value={profile[field]}
                       onChange={handleInputChange}
+                      autoFocus
                     />
                   ) : (
                     <span>{profile[field]}</span>
                   )}
-                  <button className="edit-btn" onClick={() => handleEditClick(field)}>
-                    Edit 
-                  </button>
+                  {editableField === field ? (
+                    <button className="edit-btn" onClick={handleSave}>
+                      Save
+                    </button>
+                  ) : (
+                    <button className="edit-btn" onClick={() => handleEditClick(field)}>
+                      Edit
+                    </button>
+                  )}
                 </div>
               ))}
             </div>
@@ -118,36 +122,34 @@ const StudentsProfile = ({ userData }) => {
               {['registrationNumber', 'studentNumber', 'course', 'semester'].map((field) => (
                 <div key={field} className="info-item">
                   <label>{field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}:</label>
-                  {editableField === field && field !== 'registrationNumber' && field !== 'studentNumber' ? (
+                  {editableField === field ? (
                     <input
                       type="text"
                       name={field}
                       value={profile[field]}
                       onChange={handleInputChange}
+                      autoFocus
+                      disabled={field === 'registrationNumber' || field === 'studentNumber'}
                     />
                   ) : (
                     <span>{profile[field]}</span>
                   )}
-                  {field !== 'registrationNumber' && field !== 'studentNumber' && (
-                    <button className="edit-btn" onClick={() => handleEditClick(field)}>
-                      Edit 
-                    </button>
-                  )}
+                  {field !== 'registrationNumber' && field !== 'studentNumber' ? (
+                    editableField === field ? (
+                      <button className="edit-btn" onClick={handleSave}>
+                        Save
+                      </button>
+                    ) : (
+                      <button className="edit-btn" onClick={() => handleEditClick(field)}>
+                        Edit
+                      </button>
+                    )
+                  ) : null}
                 </div>
               ))}
             </div>
 
-            {editableField && (
-              <button className="save-btn" onClick={handleSave}>
-                style={{ 
-                display: 'block',
-                opacity: editableField ? 1 : 0.5,
-                cursor: editableField ? 'pointer' : 'not-allowed',
-                marginBottom: '50px'  
-              }}
-                Save Changes
-              </button>
-            )}
+            {/* Global save button removed since we now have individual save buttons */}
           </div>
         </main>
       </div>
