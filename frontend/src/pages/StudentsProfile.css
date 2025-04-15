@@ -183,7 +183,7 @@ body {
   cursor: pointer;
   margin-top: 20px;
   margin-bottom: 50px; 
-  width: 200px; /* Set a specific width */
+  width: 200px; 
   position: relative; /* Ensure it's in the normal document flow */
   z-index: 100; 
 }
