@@ -1,30 +1,65 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import API from '../api';
 import makerereLogo from '../assets/makererelogo.png';
 import backgroundImage from '../assets/pexels-olia-danilevich-5088017.jpg';
 import './Deleteaccount.css';
 
 const DeleteAccount = () => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const handleDeleteAccount = () => {
     setShowConfirmModal(true);
   };
 
-  const confirmDeleteAccount = () => {
-    console.log('Account deleted');
-    setShowConfirmModal(false);
-
-    // Show brief success message before redirecting
-    alert('Account deleted successfully');
-
-    // Navigate to the landing page
-    navigate('/');
+  const confirmDeleteAccount = async () => {
+    try {
+      setIsDeleting(true);
+      setError(null);
+      
+      // Get user ID from local storage
+      const userId = localStorage.getItem('userId');
+      const accessToken = localStorage.getItem('accessToken');
+      
+      if (!userId || !accessToken) {
+        throw new Error('Authentication information not found. Please log in again.');
+      }
+      
+      // Send delete request to Django backend using your API module
+      await API.delete(`/users/delete-account/${userId}/`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
+      });
+      
+      // Clear all data from local storage
+      localStorage.removeItem('userId');
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('user'); // Remove any other user-related data
+      
+      setShowConfirmModal(false);
+      
+      // Show brief success message before redirecting
+      alert('Account deleted successfully');
+      
+      // Navigate to the landing page
+      navigate('/');
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || err.response?.data?.detail || err.message || 'Failed to delete account';
+      setError(errorMessage);
+      console.error('Error deleting account:', err);
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   const cancelDeleteAccount = () => {
     setShowConfirmModal(false);
+    setError(null);
   };
 
   return (
@@ -97,18 +132,21 @@ const DeleteAccount = () => {
           <div className="modal-content glass-effect">
             <h2>Are you absolutely sure?</h2>
             <p>This action cannot be undone. This will permanently delete your account and remove all data associated with it.</p>
+            {error && <p className="error-message">{error}</p>}
             <div className="modal-buttons">
               <button
                 className="cancel-btn"
                 onClick={cancelDeleteAccount}
+                disabled={isDeleting}
               >
                 Cancel
               </button>
               <button
                 className="confirm-delete-btn"
                 onClick={confirmDeleteAccount}
+                disabled={isDeleting}
               >
-                I understand, delete my account
+                {isDeleting ? 'Deleting...' : 'I understand, delete my account'}
               </button>
             </div>
           </div>
