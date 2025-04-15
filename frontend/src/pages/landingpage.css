@@ -59,3 +59,33 @@
   }
 }
 
+/* Text glow effect */
+@keyframes glowText {
+  0% {
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 30px rgba(72, 199, 116, 0.6);
+  }
+  100% {
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+  }
+}
+
+/* Content container */
+.content-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  z-index: 5;
+}
+
+/* Logo container with animation */
+.logo-container {
+  margin-bottom: 30px;
+  animation: rotatePulse 6s infinite alternate ease-in-out;
+}
+
