@@ -25,7 +25,9 @@ class IssueFactory(DjangoModelFactory):
 
 
 class Registration_TokenFactory(DjangoModelFactory):
-    pass
+    class Meta:
+        model = Registration_Token
+
 
 class Verification_codeFactory(DjangoModelFactory):
     pass
