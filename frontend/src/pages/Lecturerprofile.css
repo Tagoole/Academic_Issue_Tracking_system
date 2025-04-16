@@ -287,6 +287,9 @@ select option:first-child {
     grid-template-columns: 1fr; /* Switch to single column on mobile */
 
   }
+  .profile-actions {
+    grid-column: 1; /* Reset to single column on mobile */
+  }
   .profile-picture {
     width: 100px;
     height: 100px;
