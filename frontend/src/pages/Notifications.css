@@ -2,8 +2,9 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    background-color: #f4f4f449;
     overflow: hidden;
+;
 }
 
 .page-container {
@@ -15,6 +16,7 @@ body {
     background-position: center; 
     background-repeat: no-repeat; 
     min-height: 100vh; 
+    padding : 30px 120px;
 }
 
 .content-container {
@@ -22,15 +24,17 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    
 }
 
 .notification-card {
-    background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background for readability */
+    background-color: rgba(255, 255, 255, 0.516); /* Semi-transparent background for readability */
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     width: 100%;
-    max-width: 500px;
+    max-width: 2000px;
+    padding : 50px 700px;
 }
 
 .card-header {
