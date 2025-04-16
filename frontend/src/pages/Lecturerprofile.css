@@ -207,5 +207,50 @@ select option:first-child {
   border-top: 6px solid #333;
   pointer-events: none;
 }
+/* Action Buttons */
+.profile-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.edit-button, .save-button, .cancel-button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.edit-button {
+  background-color: #000;
+  color: white;
+}
+
+.edit-button:hover {
+  background-color: #333;
+}
+
+.save-button {
+  background-color: #000;
+  color: white;
+}
+
+.save-button:hover {
+  background-color: #333;
+}
+
+.cancel-button {
+  background-color: #ccc;
+  color: #333;
+}
+
+.cancel-button:hover {
+  background-color: #999;
+}
+
 
 
