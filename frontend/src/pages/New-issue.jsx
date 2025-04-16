@@ -604,6 +604,7 @@ const NewIssue = () => {
               />
             </div>
           </div>
+          
 
           <div className="form-row">
             <div className="form-group full-width">
