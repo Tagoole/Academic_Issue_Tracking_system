@@ -1,26 +1,52 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Navbar from './NavBar';
 import Sidebar from './Sidebar1';
 import './StudentsProfile.css';
 
-const StudentsProfile = ({ userData }) => {
+const StudentsProfile = () => {
   const fileInputRef = useRef(null);
   const [profileImage, setProfileImage] = useState('/avatar-placeholder.png');
+  
+  // Initialize state with localStorage data
   const [profile, setProfile] = useState({
-    fullName: userData?.fullName || '[Full Name]',
-    role: userData?.role || '[Role]',
-    phoneNumber: userData?.phoneNumber || '[Phone Number]',
-    email: userData?.email || '[Email Address]',
-    gender: userData?.gender || '[Gender]',
-    registrationNumber: userData?.registrationNumber || '[Registration]',
-    studentNumber: userData?.studentNumber || '[Student Number]',
-    course: userData?.course || '[Course]',
-    semester: userData?.semester || '[Semester]',
+    fullName: '[Full Name]',
+    role: '[Role]',
+    phoneNumber: '[Phone Number]',
+    email: '[Email Address]',
+    gender: '[Gender]',
+    registrationNumber: '[Registration]',
+    studentNumber: '[Student Number]',
+    course: '[Course]',
+    semester: '[Semester]',
   });
+
+  // Load data from localStorage on component mount
+  useEffect(() => {
+    // Get user data from localStorage
+    const userName = localStorage.getItem('userName') || '[Full Name]';
+    const userEmail = localStorage.getItem('userEmail') || '[Email Address]';
+    const userGender = localStorage.getItem('userGender') || '[Gender]';
+    const userId = localStorage.getItem('userId') || '';
+    
+    // Update profile state with localStorage data
+    setProfile(prevProfile => ({
+      ...prevProfile,
+      fullName: userName,
+      email: userEmail,
+      gender: userGender,
+      studentNumber: userId,
+      registrationNumber: userId ? `25/MAK/23-${userId}` : '[Registration]'
+    }));
+  }, []);
 
   const [editableField, setEditableField] = useState(null);
 
   const handleEditClick = (field) => {
+    // Don't allow editing for readonly fields
+    if (field === 'fullName' || field === 'email' || field === 'gender' || 
+        field === 'studentNumber' || field === 'registrationNumber') {
+      return;
+    }
     setEditableField(field);
   };
 
@@ -53,6 +79,11 @@ const StudentsProfile = ({ userData }) => {
     }
   };
 
+  // Function to determine if a field is readonly
+  const isReadOnly = (field) => {
+    return ['fullName', 'email', 'gender', 'studentNumber', 'registrationNumber'].includes(field);
+  };
+
   return (
     <div className="app-container">
       <Navbar />
@@ -80,9 +111,11 @@ const StudentsProfile = ({ userData }) => {
                   <h2>{profile.fullName}</h2>
                   <p>{profile.role}</p>
                 </div>
-                <button className="edit-btn" onClick={() => handleEditClick('fullName')}>
-                  Edit 
-                </button>
+                {!isReadOnly('fullName') && (
+                  <button className="edit-btn" onClick={() => handleEditClick('fullName')}>
+                    Edit 
+                  </button>
+                )}
               </div>
             </div>
 
@@ -95,23 +128,28 @@ const StudentsProfile = ({ userData }) => {
                   {editableField === field ? (
                     <input
                       type="text"
-                      
                       name={field}
                       value={profile[field]}
                       onChange={handleInputChange}
                       autoFocus
+                      readOnly={isReadOnly(field)}
+                      className={isReadOnly(field) ? 'readonly-field' : ''}
                     />
                   ) : (
-                    <span>{profile[field]}</span>
+                    <span className={isReadOnly(field) ? 'readonly-value' : ''}>
+                      {profile[field]}
+                    </span>
                   )}
-                  {editableField === field ? (
-                    <button className="edit-btn" onClick={handleSave}>
-                      Save
-                    </button>
-                  ) : (
-                    <button className="edit-btn" onClick={() => handleEditClick(field)}>
-                      Edit
-                    </button>
+                  {!isReadOnly(field) && (
+                    editableField === field ? (
+                      <button className="edit-btn" onClick={handleSave}>
+                        Save
+                      </button>
+                    ) : (
+                      <button className="edit-btn" onClick={() => handleEditClick(field)}>
+                        Edit
+                      </button>
+                    )
                   )}
                 </div>
               ))}
@@ -130,12 +168,15 @@ const StudentsProfile = ({ userData }) => {
                       value={profile[field]}
                       onChange={handleInputChange}
                       autoFocus
-                      disabled={field === 'registrationNumber' || field === 'studentNumber'}
+                      readOnly={isReadOnly(field)}
+                      className={isReadOnly(field) ? 'readonly-field' : ''}
                     />
                   ) : (
-                    <span>{profile[field]}</span>
+                    <span className={isReadOnly(field) ? 'readonly-value' : ''}>
+                      {profile[field]}
+                    </span>
                   )}
-                  {field !== 'registrationNumber' && field !== 'studentNumber' ? (
+                  {!isReadOnly(field) && (
                     editableField === field ? (
                       <button className="edit-btn" onClick={handleSave}>
                         Save
@@ -145,12 +186,10 @@ const StudentsProfile = ({ userData }) => {
                         Edit
                       </button>
                     )
-                  ) : null}
+                  )}
                 </div>
               ))}
             </div>
-
-            {/* Global save button removed since we now have individual save buttons */}
           </div>
         </main>
       </div>

@@ -71,6 +71,9 @@ const SignIn = () => {
           case 'academic_registrar':
             navigate('/registradashboard');
             break;
+          case 'lecturer':
+            navigate('/lecturerdashboard');
+            break;
           default:
             navigate('/landingpage');
             break;
