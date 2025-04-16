@@ -297,16 +297,7 @@ select option:first-child {
   color: white;
 }
 /* Success Message */
-.success-message {
-  background-color: rgba(0, 128, 0, 0.8);
-  color: white;
-  padding: 12px;
-  border-radius: 8px;
-  text-align: center;
-  margin-bottom: 20px;
-  font-weight: bold;
-  animation: fadeIn 0.3s, fadeOut 0.3s 2.7s;
-}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .profile-overlay {
@@ -337,5 +328,25 @@ select option:first-child {
     font-size: 14px;
   }
 }
+/* Success Message */
+.success-message {
+  background-color: rgba(0, 128, 0, 0.8);
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: bold;
+  animation: fadeIn 0.3s, fadeOut 0.3s 2.7s;
+}
 
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
 
