@@ -89,5 +89,30 @@ body {
   font-size: 48px;
   font-weight: bold;
 }
+/* Profile Details */
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.detail-label {
+  color: #ccc;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.detail-value {
+  color: white;
+  font-size: 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
 
 
