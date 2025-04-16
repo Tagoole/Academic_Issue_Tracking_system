@@ -273,12 +273,14 @@ input, select {
   position: relative;
   display: flex;
   align-items: center;
+  color: white;
 }
 
 .input-container input, 
 .input-container select {
   width: 100%;
   padding-right: 35px; /* Make room for icon */
+  color: white;
 }
 
 .input-container .icon {

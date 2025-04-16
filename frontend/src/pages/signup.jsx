@@ -22,7 +22,7 @@ const SignUp = () => {
         program: '',
         role: 'student', 
         registration_token: '',
-        city: '', // Added city field
+        city: '',
         agreeToTerms: false,
     });
     
@@ -168,7 +168,7 @@ const SignUp = () => {
             confirm_password: formData.confirm_password,
             gender: formData.gender,
             role: formData.role,
-            city: formData.city, // Added city field to submitData
+            city: formData.city,
         };
         
         // Add role-specific fields
@@ -215,7 +215,7 @@ const SignUp = () => {
                 program: '',
                 role: 'student',
                 registration_token: '',
-                city: '', // Reset city field
+                city: '',
                 agreeToTerms: false,
             });
         } catch (error) {
@@ -384,7 +384,6 @@ const SignUp = () => {
                         )}
                     </div>
 
-                    {/* Added City field */}
                     <div className="form-group">
                         <label htmlFor="city">City</label>
                         <div className="input-container">
@@ -515,13 +514,11 @@ const SignUp = () => {
                                     <option value="" disabled>
                                         {isLoadingPrograms ? "Loading programs..." : "Select your program"}
                                     </option>
-                                    <option value="statistics">Statistics</option>
-                                    <option value="computer_science">Computer Science</option>
-                                    <option value="law">Law</option>
-                                    <option value="engineering">Engineering</option>
-                                    <option value="business">Business</option>
-                                    <option value="education">Education</option>
-
+                                    {programs.map((program) => (
+                                        <option key={program.id} value={program.id}>
+                                            {program.name}
+                                        </option>
+                                    ))}
                                 </select>
                             </div>
                             {errorFields.program && (
@@ -574,12 +571,12 @@ const SignUp = () => {
                     {success && <p className="success-message">{success}</p>}
                     
                     <button 
-                          type="submit" 
-                           className="sign-up-button" 
-                            disabled={isSubmitting || (isStudent && isLoadingPrograms)}
-                             style={{ cursor: isSubmitting || (isStudent && isLoadingPrograms) ? 'not-allowed' : 'pointer' }}>
-                              <span>{isSubmitting ? 'Signing Up...' : 'Sign Up'}</span>
-                            </button>
+                        type="submit" 
+                        className="sign-up-button" 
+                        disabled={isSubmitting || (isStudent && isLoadingPrograms)}
+                        style={{ cursor: isSubmitting || (isStudent && isLoadingPrograms) ? 'not-allowed' : 'pointer' }}>
+                        <span>{isSubmitting ? 'Signing Up...' : 'Sign Up'}</span>
+                    </button>
                     
                     <div className="bottom-text">
                         <p>Already have an account? <a href="/signin">Sign In</a></p>
