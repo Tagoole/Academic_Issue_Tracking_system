@@ -1,22 +1,24 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import './Sidebar.css';
 import makerereLogo from '../assets/makererelogo.png';
 
 function Sidebar() {
   const navigate = useNavigate();
-    // Function to handle logout
-    const handleLogout = (e) => {
-      e.preventDefault(); // Prevent default link behavior
-      
-      // Clear all items from localStorage
-      localStorage.clear();
-      
-      console.log('All localStorage items cleared for logout');
-      
-      // Navigate to home/login page
-      navigate('/');
-    };
+
+  // Function to handle logout
+  const handleLogout = (e) => {
+    e.preventDefault(); // Prevent default link behavior
+
+    // Clear all items from localStorage
+    localStorage.clear();
+
+    console.log('All localStorage items cleared for logout');
+
+    // Navigate to home/login page
+    navigate('/');
+  };
+
   return (
     <div className="sidebar-container">
       <div className="university-logo-sidebar">
@@ -24,52 +26,60 @@ function Sidebar() {
       </div>
 
       {/* Lecturer Dashboard Link */}
-      <a href="/Lecturerdashboard" className="menu-item">
+      <Link to="/Lecturerdashboard" className="menu-item">
         Lecturer Dashboard
         <svg viewBox="0 0 24 24" className="arrow-icon">
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
-      </a>
+      </Link>
 
       {/* Issue Management Link */}
-      <a href="/LecturerIssueManagement" className="menu-item">
+      <Link to="/LecturerIssueManagement" className="menu-item">
         Issue Management
         <svg viewBox="0 0 24 24" className="arrow-icon">
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
-      </a>
+      </Link>
 
       {/* Registrar Profile Link */}
-      <a href="/Lecturerprofile" className="menu-item">
+      <Link to="/Lecturerprofile" className="menu-item">
         Lecturer Profile
         <svg viewBox="0 0 24 24" className="arrow-icon">
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
-      </a>
+      </Link>
 
       {/* Settings Link */}
-      <a href="/settings" className="menu-item">
+      <Link to="/settings" className="menu-item">
         Settings
         <svg viewBox="0 0 24 24" className="arrow-icon">
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
-      </a>
+      </Link>
 
       {/* Help and Support Link */}
-      <a href="/help" className="menu-item">
+      <Link to="/help" className="menu-item">
         Help and Support
         <svg viewBox="0 0 24 24" className="arrow-icon">
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
-      </a>
+      </Link>
+
+      {/* Generate Token Link */}
+      <Link to="/generatetoken" className="menu-item">
+        Generate Token
+        <svg viewBox="0 0 24 24" className="arrow-icon">
+          <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+        </svg>
+      </Link>
 
       {/* Logout Link */}
-      <a href="/logout" className="menu-item delete-account">
+      <Link to="#" className="menu-item delete-account" onClick={handleLogout}>
         Logout
         <svg viewBox="0 0 24 24" className="arrow-icon">
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
-      </a>
+      </Link>
     </div>
   );
 }

@@ -69,7 +69,7 @@ const SignIn = () => {
             navigate('/studentdashboard');
             break;
           case 'academic_registrar':
-            navigate('/registrardashboard');
+            navigate('/registradashboard');
             break;
           default:
             navigate('/landingpage');

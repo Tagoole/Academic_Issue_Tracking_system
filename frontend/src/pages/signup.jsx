@@ -22,6 +22,7 @@ const SignUp = () => {
         program: '',
         role: 'student', 
         registration_token: '',
+        city: '', // Added city field
         agreeToTerms: false,
     });
     
@@ -127,6 +128,11 @@ const SignUp = () => {
             errors.registration_token = "Registration token is required";
         }
         
+        // City validation
+        if (!formData.city.trim()) {
+            errors.city = "Please enter your city";
+        }
+        
         return errors;
     };
 
@@ -162,6 +168,7 @@ const SignUp = () => {
             confirm_password: formData.confirm_password,
             gender: formData.gender,
             role: formData.role,
+            city: formData.city, // Added city field to submitData
         };
         
         // Add role-specific fields
@@ -208,6 +215,7 @@ const SignUp = () => {
                 program: '',
                 role: 'student',
                 registration_token: '',
+                city: '', // Reset city field
                 agreeToTerms: false,
             });
         } catch (error) {
@@ -375,6 +383,26 @@ const SignUp = () => {
                             <p className="field-error-message">{errorFields.email}</p>
                         )}
                     </div>
+
+                    {/* Added City field */}
+                    <div className="form-group">
+                        <label htmlFor="city">City</label>
+                        <div className="input-container">
+                            <input 
+                                type="text" 
+                                id="city" 
+                                name="city" 
+                                value={formData.city} 
+                                onChange={handleChange} 
+                                placeholder="Enter your city" 
+                                required 
+                                className={errorFields.city ? 'input-error' : ''}
+                            />
+                        </div>
+                        {errorFields.city && (
+                            <p className="field-error-message">{errorFields.city}</p>
+                        )}
+                    </div>
                 </div>
                 
                 <div className="right-side">
@@ -488,10 +516,11 @@ const SignUp = () => {
                                         {isLoadingPrograms ? "Loading programs..." : "Select your program"}
                                     </option>
                                     {programs.map((program, index) => (
-                                        <option key={index} value={program.id || ''}>
-                                            {program.program_name || 'Unknown Program'}
-                                        </option>
+                                      <option key={index} value={program.id || ''}>
+                                        {program.program_name || 'Unknown Program'}
+                                      </option>
                                     ))}
+
                                 </select>
                             </div>
                             {errorFields.program && (
