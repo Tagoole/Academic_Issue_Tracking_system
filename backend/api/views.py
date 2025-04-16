@@ -152,7 +152,7 @@ class Lecturer_Issue_Manangement(ModelViewSet):
         return Response({'error':'Status parameter required'})
     
 class Student_Issue_ReadOnlyViewset(ReadOnlyModelViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsStudent]
     serializer_class = IssueSerializer
     
     def get_queryset(self):
