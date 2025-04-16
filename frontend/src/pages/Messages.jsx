@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import './Messages.css';
 import { useNavigate } from 'react-router-dom';
 
-
-
 const Messages = () => {
   const [contacts, setContacts] = useState([]);
   const [selectedContact, setSelectedContact] = useState(null);
@@ -14,6 +12,7 @@ const Messages = () => {
   const [drafts, setDrafts] = useState({});
   const [messages, setMessages] = useState({});
   const [unreadMessages, setUnreadMessages] = useState({});
+  const [notification, setNotification] = useState(null); // State for notification
   const navigate = useNavigate();
 
   // Load data from localStorage on component mount
@@ -121,6 +120,14 @@ const Messages = () => {
       return newDrafts;
     });
     
+    // Show "Message Sent" notification
+    setNotification('Message Sent');
+    
+    // Hide notification after 3 seconds
+    setTimeout(() => {
+      setNotification(null);
+    }, 3000);
+
     // Simulate receiving a response after 2 seconds
     setTimeout(() => {
       simulateReceivedMessage(selectedContact.id, `Reply from ${selectedContact.name}`);
@@ -303,6 +310,12 @@ const Messages = () => {
                 </div>
               )}
             </div>
+
+            {notification && (
+              <div className="notification">
+                {notification}
+              </div>
+            )}
 
             <form className="message-input-form" onSubmit={handleSendMessage}>
               <input
