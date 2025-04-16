@@ -515,12 +515,11 @@ const SignUp = () => {
                                     <option value="" disabled>
                                         {isLoadingPrograms ? "Loading programs..." : "Select your program"}
                                     </option>
-                                    <option value="statistics">Statistics</option>
-                                    <option value="computer_science">Computer Science</option>
-                                    <option value="law">Law</option>
-                                    <option value="engineering">Engineering</option>
-                                    <option value="business">Business</option>
-                                    <option value="education">Education</option>
+                                    {programs.map((program, index) => (
+                                      <option key={index} value={program.id || ''}>
+                                        {program.program_name || 'Unknown Program'}
+                                      </option>
+                                    ))}
 
                                 </select>
                             </div>
