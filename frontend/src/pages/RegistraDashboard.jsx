@@ -48,9 +48,9 @@ const RegistraDashboard = () => {
         setFilteredIssues(response.data);
         
         // Calculate counts for each status
-        const pending = response.data.filter(issue => issue.status === 'Pending').length;
-        const inProgress = response.data.filter(issue => issue.status === 'In Progress').length;
-        const resolved = response.data.filter(issue => issue.status === 'Resolved').length;
+        const pending = response.data.filter(issue => issue.status === 'pending').length;
+        const inProgress = response.data.filter(issue => issue.status === 'in_rogress').length;
+        const resolved = response.data.filter(issue => issue.status === 'resolved').length;
         
         setPendingCount(pending);
         setInProgressCount(inProgress);
