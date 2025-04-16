@@ -33,6 +33,7 @@ body {
   font-family: sans-serif;
   position: relative;
   background: transparent;
+  padding-top: 100px;
 }
 .profile-overlay {
   width: 90%;
