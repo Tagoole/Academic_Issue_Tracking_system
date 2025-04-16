@@ -175,7 +175,7 @@ class Student_Issue_ReadOnlyViewset(ReadOnlyModelViewSet):
     
     
 class Registrar_Issue_ManagementViewSet(ModelViewSet):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated,]
     serializer_class = IssueSerializer
     
     def get_queryset(self):

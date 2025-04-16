@@ -1,12 +1,96 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './RegistraDashboard.css';
-import NavBar from './NavBar'; 
+import NavBar from './NavBar';
 import Sidebar from './Sidebar';
+import API from '../api.js';
 
 const RegistraDashboard = () => {
-  const issues = [
-    { id: 1, status: 'Resolved', studentNo: '25/U0000/PS', category: 'Missing Mark', date: '01/01/2025' }
-  ];
+  const [issues, setIssues] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredIssues, setFilteredIssues] = useState([]);
+  
+  // Counters for different issue statuses
+  const [pendingCount, setPendingCount] = useState(0);
+  const [inProgressCount, setInProgressCount] = useState(0);
+  const [resolvedCount, setResolvedCount] = useState(0);
+
+  // Fetch issues when component mounts
+  useEffect(() => {
+    const fetchIssues = async () => {
+      try {
+        setLoading(true);
+        const response = await API.get('api/registrar_issue_management/');
+        setIssues(response.data);
+        setFilteredIssues(response.data);
+        
+        // Calculate counts for each status
+        const pending = response.data.filter(issue => issue.status === 'Pending').length;
+        const inProgress = response.data.filter(issue => issue.status === 'In Progress').length;
+        const resolved = response.data.filter(issue => issue.status === 'Resolved').length;
+        
+        setPendingCount(pending);
+        setInProgressCount(inProgress);
+        setResolvedCount(resolved);
+        
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching issues:", err);
+        setError("Failed to load issues. Please try again later.");
+        setLoading(false);
+      }
+    };
+
+    fetchIssues();
+  }, []);
+
+  // Handle search functionality
+  useEffect(() => {
+    if (searchTerm.trim() === '') {
+      setFilteredIssues(issues);
+    } else {
+      const filtered = issues.filter(issue => 
+        issue.id.toString().includes(searchTerm) ||
+        issue.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        issue.studentNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        issue.category.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredIssues(filtered);
+    }
+  }, [searchTerm, issues]);
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  if (loading) {
+    return (
+      <div className="app-container" style={{ width: '1000px' }}>
+        <NavBar />
+        <div className="content-container">
+          <Sidebar />
+          <main className="main-content">
+            <div className="loading-message">Loading issues...</div>
+          </main>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="app-container" style={{ width: '1000px' }}>
+        <NavBar />
+        <div className="content-container">
+          <Sidebar />
+          <main className="main-content">
+            <div className="error-message">{error}</div>
+          </main>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="app-container" style={{ width: '1000px' }}>
@@ -14,22 +98,21 @@ const RegistraDashboard = () => {
       <div className="content-container">
         <Sidebar />
         <main className="main-content">
-          
           <div className="dashboard-cards">
             <DashboardCard
               title="Pending issues"
-              count={0}
-              description="You currently have 0 pending issues"
+              count={pendingCount}
+              description={`You currently have ${pendingCount} pending issue${pendingCount !== 1 ? 's' : ''}`}
             />
             <DashboardCard
               title="In-progress issues"
-              count={0}
-              description="You currently have 0 in-progress issues"
+              count={inProgressCount}
+              description={`You currently have ${inProgressCount} in-progress issue${inProgressCount !== 1 ? 's' : ''}`}
             />
             <DashboardCard
               title="Resolved issues"
-              count={1}
-              description="You currently have 1 resolved issue"
+              count={resolvedCount}
+              description={`You currently have ${resolvedCount} resolved issue${resolvedCount !== 1 ? 's' : ''}`}
             />
           </div>
 
@@ -37,7 +120,13 @@ const RegistraDashboard = () => {
             <div className="issues-header">
               <h2>My issues</h2>
               <div className="search-container">
-                <input type="text" placeholder="search for issues" className="search-input" />
+                <input 
+                  type="text" 
+                  placeholder="search for issues" 
+                  className="search-input" 
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                />
                 <span className="search-icon"></span>
               </div>
               <button className="filter-button">
@@ -47,28 +136,34 @@ const RegistraDashboard = () => {
             </div>
 
             <div className="issues-table">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Issue ID</th>
-                    <th>Status</th>
-                    <th>Student No</th>
-                    <th>Category</th>
-                    <th>Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {issues.map(issue => (
-                    <tr key={issue.id}>
-                      <td>{issue.id}</td>
-                      <td>{issue.status}</td>
-                      <td>{issue.studentNo}</td>
-                      <td>{issue.category}</td>
-                      <td>{issue.date}</td>
+              {filteredIssues.length > 0 ? (
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Issue ID</th>
+                      <th>Status</th>
+                      <th>Student No</th>
+                      <th>Category</th>
+                      <th>Date</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {filteredIssues.map(issue => (
+                      <tr key={issue.id}>
+                        <td>{issue.id}</td>
+                        <td>{issue.status}</td>
+                        <td>{issue.studentNo}</td>
+                        <td>{issue.category}</td>
+                        <td>{issue.date}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <div className="no-issues-message">
+                  {searchTerm ? 'No issues match your search' : 'No issues found'}
+                </div>
+              )}
             </div>
           </div>
         </main>
@@ -76,7 +171,6 @@ const RegistraDashboard = () => {
     </div>
   );
 };
-
 
 // Dashboard Card Component
 const DashboardCard = ({ title, count, description }) => {
