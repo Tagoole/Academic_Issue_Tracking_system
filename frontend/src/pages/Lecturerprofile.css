@@ -34,3 +34,11 @@ body {
   position: relative;
   background: transparent;
 }
+.profile-overlay {
+  width: 90%;
+  max-width: 600px;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
