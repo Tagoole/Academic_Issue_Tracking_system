@@ -9,3 +9,10 @@ body, html {
   overflow: hidden;
   font-family: Arial, sans-serif;
 }
+body {
+  background-image: url('../assets/backgroundimage.jpg'); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
