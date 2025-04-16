@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import name from '../assets/name.png';
 import backgroundimage from "../assets/backgroundimage.jpg";
@@ -23,6 +23,12 @@ const Lecturerprofile = () => {
   const [editMode, setEditMode] = useState(false);
   // State to store temporary edits
   const [formData, setFormData] = useState({...profileData});
+  // State for confirmation dialog
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  // State for success messages
+  const [successMessage, setSuccessMessage] = useState('');
+  // File input reference
+  const fileInputRef = useRef(null);
 
   const navigate = useNavigate();
 
@@ -30,6 +36,16 @@ const Lecturerprofile = () => {
   useEffect(() => {
     setFormData({...profileData});
   }, [profileData]);
+
+  // Auto-hide success messages after 3 seconds
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => {
+        setSuccessMessage('');
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [successMessage]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,12 +55,49 @@ const Lecturerprofile = () => {
     });
   };
 
-  const handleSave = (e) => {
+  const handleProfilePictureClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Create a preview URL for the selected image
+    const reader = new FileReader();
+    reader.onload = () => {
+      setFormData({
+        ...formData,
+        profilePicture: reader.result
+      });
+      
+      // In a real app, you would upload the file to your server here
+      // For now, we'll just update the state and show a success message
+      setProfileData({
+        ...profileData,
+        profilePicture: reader.result
+      });
+      
+      setSuccessMessage('Profile picture updated successfully!');
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSaveClick = (e) => {
     e.preventDefault();
+    setShowConfirmDialog(true);
+  };
+
+  const handleConfirmSave = () => {
     // Save the changes to the profile data
     setProfileData({...formData});
     // Exit edit mode
     setEditMode(false);
+    // Hide confirmation dialog
+    setShowConfirmDialog(false);
+    // Show success message
+    setSuccessMessage('Profile updated successfully!');
+    
     // In a real application, you would send this data to your backend
     console.log('Profile data updated:', formData);
   };
@@ -54,6 +107,8 @@ const Lecturerprofile = () => {
     setFormData({...profileData});
     // Exit edit mode
     setEditMode(false);
+    // Hide confirmation dialog if it's open
+    setShowConfirmDialog(false);
   };
 
   return (
@@ -66,22 +121,47 @@ const Lecturerprofile = () => {
           <div className="profile-overlay">
             <h1 className="profile-heading">Lecturer Profile</h1>
 
+            {/* Success Message */}
+            {successMessage && (
+              <div className="success-message">
+                {successMessage}
+              </div>
+            )}
+
             <div className="profile-content">
               <div className="profile-picture-section">
-                <div className="profile-picture">
-                  {profileData.profilePicture ? (
-                    <img src={profileData.profilePicture} alt="Profile" />
+                <div 
+                  className="profile-picture" 
+                  onClick={editMode ? handleProfilePictureClick : undefined}
+                  style={editMode ? { cursor: 'pointer' } : {}}
+                >
+                  {formData.profilePicture ? (
+                    <img src={formData.profilePicture} alt="Profile" />
                   ) : (
                     <div className="profile-picture-placeholder">
-                      {profileData.name.charAt(0)}
+                      {formData.name.charAt(0)}
+                    </div>
+                  )}
+                  {editMode && (
+                    <div className="profile-picture-overlay">
+                      <span>Click to change</span>
                     </div>
                   )}
                 </div>
+                {editMode && (
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                  />
+                )}
               </div>
 
               <div className="profile-details">
                 {editMode ? (
-                  <form className="profile-form" onSubmit={handleSave}>
+                  <form className="profile-form" onSubmit={handleSaveClick}>
                     <div className="detail-item">
                       <label>Name</label>
                       <div className="input-group">
@@ -277,6 +357,24 @@ const Lecturerprofile = () => {
           </div>
         </div>
       </div>
+
+      {/* Confirmation Dialog */}
+      {showConfirmDialog && (
+        <div className="confirmation-overlay">
+          <div className="confirmation-dialog">
+            <h3>Confirm Changes</h3>
+            <p>Are you sure you want to save changes to your profile?</p>
+            <div className="confirmation-actions">
+              <button className="confirm-button" onClick={handleConfirmSave}>
+                Confirm
+              </button>
+              <button className="cancel-button" onClick={() => setShowConfirmDialog(false)}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
