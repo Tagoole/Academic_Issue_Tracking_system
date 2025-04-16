@@ -47,6 +47,7 @@ const NavBar = () => {
         </div>
       </div>
 
+
       {/* Center Section: Search Bar */}
       <div className="search-container">
         <form onSubmit={handleSearchSubmit} className="search-form">
