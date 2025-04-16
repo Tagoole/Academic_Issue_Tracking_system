@@ -137,4 +137,21 @@ body {
   align-items: center;
 }
 
+.input-icon {
+  position: absolute;
+  left: 15px;
+  width: 20px;
+  height: 20px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.input-icon img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0);
+}
+
 
