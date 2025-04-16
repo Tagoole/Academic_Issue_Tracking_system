@@ -241,11 +241,12 @@ class Registrar_Issue_ManagementViewSet(ModelViewSet):
     
     
 class DepartmentViewSet(ModelViewSet):
-    permission_classes = [IsAuthenticated,IsAcademicRegistrar]
+    permission_classes = [IsAuthenticated]
     queryset = Department.objects.all()
     serializer_class = DepartmentSerializer
 
 class Course_unitViewSet(ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Course_unit.objects.all()
     serializer_class = Course_unitSerializer
 

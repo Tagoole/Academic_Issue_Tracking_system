@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './RegistraDashboard.css';
 import NavBar from './NavBar';
 import Sidebar from './Sidebar';
 import API from '../api.js';
 
 const RegistraDashboard = () => {
+  const navigate = useNavigate();
   const [issues, setIssues] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -18,10 +20,30 @@ const RegistraDashboard = () => {
 
   // Fetch issues when component mounts
   useEffect(() => {
+    // Check if user is authenticated when component mounts
+    const checkAuth = () => {
+      const accessToken = localStorage.getItem('accessToken');
+      // If no access token is available, redirect to login
+      if (!accessToken) {
+        navigate('/signin');
+        return false;
+      }
+      return true;
+    };
+
     const fetchIssues = async () => {
       try {
         setLoading(true);
+        
+        // Get access token
+        const accessToken = localStorage.getItem('accessToken');
+        
+        // Set authorization header with access token
+        API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+        
         const response = await API.get('api/registrar_issue_management/');
+        console.log("API Response:", response.data); // Debug log
+        
         setIssues(response.data);
         setFilteredIssues(response.data);
         
@@ -36,14 +58,63 @@ const RegistraDashboard = () => {
         
         setLoading(false);
       } catch (err) {
-        console.error("Error fetching issues:", err);
-        setError("Failed to load issues. Please try again later.");
-        setLoading(false);
+        console.error('Error fetching registrar issues:', err);
+        
+        // Check if error is due to unauthorized access (401)
+        if (err.response && err.response.status === 401) {
+          // Try refreshing the token
+          try {
+            const refreshToken = localStorage.getItem('refreshToken');
+            
+            if (refreshToken) {
+              const refreshResponse = await API.post('/api/refresh_token/', {
+                refresh: refreshToken
+              });
+              
+              // Store the new access token
+              const newAccessToken = refreshResponse.data.access;
+              localStorage.setItem('accessToken', newAccessToken);
+              
+              // Retry the original request with new token
+              API.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
+              const retryResponse = await API.get('api/registrar_issue_management/');
+              
+              setIssues(retryResponse.data);
+              setFilteredIssues(retryResponse.data);
+              
+              // Calculate counts for each status
+              const pending = retryResponse.data.filter(issue => issue.status === 'Pending').length;
+              const inProgress = retryResponse.data.filter(issue => issue.status === 'In Progress').length;
+              const resolved = retryResponse.data.filter(issue => issue.status === 'Resolved').length;
+              
+              setPendingCount(pending);
+              setInProgressCount(inProgress);
+              setResolvedCount(resolved);
+              
+              setLoading(false);
+            } else {
+              // No refresh token available, redirect to login
+              navigate('/signin');
+            }
+          } catch (refreshErr) {
+            console.error('Error refreshing token:', refreshErr);
+            setError('Your session has expired. Please log in again.');
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            navigate('/signin');
+          }
+        } else {
+          setError('Failed to load issues. Please try again later.');
+          setLoading(false);
+        }
       }
     };
 
-    fetchIssues();
-  }, []);
+    // Only fetch data if authentication check passes
+    if (checkAuth()) {
+      fetchIssues();
+    }
+  }, [navigate]);
 
   // Handle search functionality
   useEffect(() => {
