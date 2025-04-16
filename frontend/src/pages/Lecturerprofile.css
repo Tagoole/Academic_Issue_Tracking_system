@@ -9,3 +9,290 @@ body, html {
   overflow: hidden;
   font-family: Arial, sans-serif;
 }
+body {
+  background-image: url('../assets/backgroundimage.jpg'); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  position: relative;
+  background: transparent;
+}
+.profile-container {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: sans-serif;
+  position: relative;
+  background: transparent;
+}
+.profile-overlay {
+  width: 90%;
+  max-width: 600px;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+.profile-heading {
+  color: white;
+  text-align: center;
+  font-size: 28px;
+  margin-bottom: 30px;
+  font-weight: bold;
+}
+.profile-content {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+/* Profile Picture Section */
+.profile-picture-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.profile-picture {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid white;
+}
+.profile-picture img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-picture-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #333;
+  color: white;
+  font-size: 48px;
+  font-weight: bold;
+}
+/* Profile Details */
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.detail-label {
+  color: #ccc;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.detail-value {
+  color: white;
+  font-size: 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+/* Form Elements */
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.detail-item label {
+  color: #ccc;
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.input-group {
+  position: relative;
+  width: 100%;
+  height: 48px;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 15px;
+  width: 20px;
+  height: 20px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.input-icon img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0);
+}
+input, .select-wrapper {
+  width: 100%;
+  height: 100%;
+  padding: 0 20px 0 45px;
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  color: #333;
+}
+
+input::placeholder {
+  color: #999;
+}
+
+.select-wrapper {
+  position: relative;
+  padding: 0;
+}
+select {
+  width: 100%;
+  height: 100%;
+  padding: 0 40px 0 45px;
+  background-color: transparent;
+  border: none;
+  font-size: 16px;
+  color: #333;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+select option {
+  color: #333;
+}
+
+select option:first-child {
+  color: #999;
+}
+
+.select-wrapper::after {
+  content: "";
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #333;
+  pointer-events: none;
+}
+/* Action Buttons */
+.profile-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.edit-button, .save-button, .cancel-button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.edit-button {
+  background-color: #000;
+  color: white;
+}
+
+.edit-button:hover {
+  background-color: #333;
+}
+
+.save-button {
+  background-color: #000;
+  color: white;
+}
+
+.save-button:hover {
+  background-color: #333;
+}
+
+.cancel-button {
+  background-color: #ccc;
+  color: #333;
+}
+
+.cancel-button:hover {
+  background-color: #999;
+}
+
+/* Bottom Links */
+.bottom-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 25px;
+}
+
+.help-link, .delete-account-link {
+  color: #ccc;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.3s;
+}
+
+.help-link:hover, .delete-account-link:hover {
+  color: white;
+}
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .profile-overlay {
+    padding: 20px;
+  }
+  
+  .profile-heading {
+    font-size: 24px;
+  }
+  
+  .profile-picture {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .profile-picture-placeholder {
+    font-size: 36px;
+  }
+  
+  .edit-button, .save-button, .cancel-button {
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+}
+
+
