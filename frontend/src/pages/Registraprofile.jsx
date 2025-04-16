@@ -28,6 +28,7 @@ const PersonalProfile = () => {
     // Handle form submission, e.g., send data to an API
     console.log(formData);
   };
+  
 
   const navigate = useNavigate();
   const handleprofilepicture = () => {

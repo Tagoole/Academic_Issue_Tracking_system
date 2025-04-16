@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from './NavBar';
 import Sidebar from './Sidebar';
 import './IssueManagement.css';
-import backgroundimage from '../assets/backgroundimage.jpg';
 import axios from 'axios'; 
 
 const IssueManagement = () => {
@@ -122,32 +121,13 @@ const IssueManagement = () => {
     };
   }, []);
 
-  const mainContentStyle = {
-    backgroundImage: `url(${backgroundimage})`,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat',
-    position: 'relative',
-  };
-
   return (
     <div className="app-container">
       <Navbar />
-      <div className="content-container">
+      <div className="content-wrapper">
         <Sidebar />
-        <div className="main-content" style={mainContentStyle}>
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: 'transparent',
-              zIndex: 1,
-            }}
-          ></div>
-          <div className="issues-container" style={{ position: 'relative', zIndex: 2 }}>
+        <div className="issue-content">
+          <div className="issues-container">
             <h2 className="issues-title">
               Issues <span className="subtitle">(Kindly click on the issue to open it.)</span>
             </h2>

@@ -5,6 +5,7 @@ import Sidebar from './Sidebar1';
 import './New-issue.css';
 import API from '../api';
 
+
 const NewIssue = () => {
   const navigate = useNavigate();
   const [registrars, setRegistrars] = useState([]);
@@ -619,6 +620,7 @@ const NewIssue = () => {
               />
             </div>
           </div>
+          
 
           <div className="form-row">
             <div className="form-group full-width">

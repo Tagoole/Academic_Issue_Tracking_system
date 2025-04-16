@@ -1,10 +1,7 @@
 import React from 'react';
 import './RegistraDashboard.css';
-import Navbar from './NavBar'; 
+import NavBar from './NavBar'; 
 import Sidebar from './Sidebar';
-import backgroundimage from "../assets/backgroundimage.jpg"; 
-import backgroundImage from '../assets/backgroundimage.jpg'; 
-
 
 const RegistraDashboard = () => {
   const issues = [
@@ -12,25 +9,13 @@ const RegistraDashboard = () => {
   ];
 
   return (
-    <div
-      className="app-container"
-      style={{
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        width:'1000px',
-      }}
-    >
-      <Navbar />
+    <div className="app-container" style={{ width: '1000px' }}>
+      <NavBar />
       <div className="content-container">
         <Sidebar />
-        <main 
-          className="main-content" 
-          style={{ backgroundImage: `url(${backgroundimage})`, backgroundSize: 'cover', backgroundPosition: 'center' }} // Added background image
-        >
+        <main className="main-content">
+          
           <div className="dashboard-cards">
-            
-            
             <DashboardCard
               title="Pending issues"
               count={0}
@@ -91,6 +76,7 @@ const RegistraDashboard = () => {
     </div>
   );
 };
+
 
 // Dashboard Card Component
 const DashboardCard = ({ title, count, description }) => {

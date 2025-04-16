@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import API from '../api'; // Import the API instance from api.js
 import emailIcon from '../assets/mailbulk.png';
 import helpIcon from '../assets/help-icon.png';
+import backgroundimage from '../assets/pexels-olia-danilevich-5088017.jpg'; 
 import './verification.css';
 
 const EmailVerification = () => {

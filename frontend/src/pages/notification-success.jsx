@@ -17,6 +17,7 @@ const NotificationSuccess = () => {
       }}
     >
       <NavBar />
+      {/* Main Content Section */}
 
       <main
         className="main-content"
