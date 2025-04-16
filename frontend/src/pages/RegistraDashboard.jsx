@@ -77,6 +77,7 @@ const RegistraDashboard = () => {
   );
 };
 
+
 // Dashboard Card Component
 const DashboardCard = ({ title, count, description }) => {
   return (
