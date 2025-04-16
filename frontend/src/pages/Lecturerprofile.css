@@ -35,13 +35,85 @@ body {
   background: transparent;
 }
 .profile-overlay {
-  width: 100%;
-  max-width: 1500px;
+  width: 90%;
+  max-width: 800px; /* Increased from 600px to make it wider */
   background-color: rgba(0, 0, 0, 0.6);
   border-radius: 16px;
   padding: 30px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  position: relative;
 }
+.profile-heading {
+  color: white;
+  text-align: center;
+  font-size: 28px;
+  margin-bottom: 30px;
+  font-weight: bold;
+}
+.profile-content {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+/* Success Message */
+.success-message {
+  background-color: rgba(0, 128, 0, 0.8);
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: bold;
+  animation: fadeIn 0.3s, fadeOut 0.3s 2.7s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* Profile Picture Section */
+.profile-picture-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.profile-picture {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid white;
+  position: relative;
+}
+.profile-picture img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-picture-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #333;
+  color: white;
+  font-size: 48px;
+  font-weight: bold;
+}
+
 /* Profile picture overlay for edit mode */
 .profile-picture-overlay {
   position: absolute;
@@ -64,57 +136,8 @@ body {
 .profile-picture:hover .profile-picture-overlay {
   opacity: 1;
 }
-.profile-heading {
-  color: white;
-  text-align: center;
-  font-size: 28px;
-  margin-bottom: 30px;
-  font-weight: bold;
-}
-.profile-content {
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-}
-.profile-container {
-  overflow: hidden;
-}
-/* Profile Picture Section */
-.profile-picture-section {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 10px;
-}
-.profile-picture {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  overflow: hidden;
-  background-color: #f0f0f0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 3px solid white;
-}
-.profile-picture img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
 
-.profile-picture-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #333;
-  color: white;
-  font-size: 48px;
-  font-weight: bold;
-}
-/* Profile Details */
+/* Profile Details - Now as a grid with 2 columns */
 .profile-details {
   display: grid;
   grid-template-columns: 1fr 1fr; /* Creates two equal columns */
@@ -142,9 +165,7 @@ body {
 }
 /* Form Elements */
 .profile-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+  display: contents; /* This makes the form blend with the grid */
 }
 
 .detail-item label {
@@ -239,9 +260,10 @@ select option:first-child {
   justify-content: flex-end;
   gap: 15px;
   margin-top: 15px;
+  grid-column: span 2; /* Make actions span both columns */
 }
 
-.edit-button, .save-button, .cancel-button {
+.edit-button, .save-button, .cancel-button, .confirm-button {
   padding: 12px 20px;
   border: none;
   border-radius: 8px;
@@ -278,6 +300,15 @@ select option:first-child {
   background-color: #999;
 }
 
+.confirm-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.confirm-button:hover {
+  background-color: #0069d9;
+}
+
 /* Bottom Links */
 .bottom-links {
   display: flex;
@@ -296,59 +327,7 @@ select option:first-child {
 .help-link:hover, .delete-account-link:hover {
   color: white;
 }
-/* Success Message */
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .profile-overlay {
-    padding: 20px;
-  }
-  
-  .profile-heading {
-    font-size: 24px;
-  }
-  .profile-details {
-    grid-template-columns: 1fr; /* Switch to single column on mobile */
-
-  }
-  .profile-actions {
-    grid-column: 1; /* Reset to single column on mobile */
-  }
-  .profile-picture {
-    width: 100px;
-    height: 100px;
-  }
-  
-  .profile-picture-placeholder {
-    font-size: 36px;
-  }
-  
-  .edit-button, .save-button, .cancel-button {
-    padding: 10px 15px;
-    font-size: 14px;
-  }
-}
-/* Success Message */
-.success-message {
-  background-color: rgba(0, 128, 0, 0.8);
-  color: white;
-  padding: 12px;
-  border-radius: 8px;
-  text-align: center;
-  margin-bottom: 20px;
-  font-weight: bold;
-  animation: fadeIn 0.3s, fadeOut 0.3s 2.7s;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes fadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
-}
 /* Confirmation Dialog */
 .confirmation-overlay {
   position: fixed;
@@ -386,4 +365,37 @@ select option:first-child {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .profile-overlay {
+    padding: 20px;
+  }
+  
+  .profile-heading {
+    font-size: 24px;
+  }
+  
+  .profile-picture {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .profile-picture-placeholder {
+    font-size: 36px;
+  }
+  
+  .profile-details {
+    grid-template-columns: 1fr; /* Switch to single column on mobile */
+  }
+  
+  .profile-actions {
+    grid-column: 1; /* Reset to single column on mobile */
+  }
+  
+  .edit-button, .save-button, .cancel-button {
+    padding: 10px 15px;
+    font-size: 14px;
+  }
 }
