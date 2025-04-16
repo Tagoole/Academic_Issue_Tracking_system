@@ -41,7 +41,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         return response
 
 class IssueViewSet(ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsStudent]
     queryset = Issue.objects.all()
     serializer_class = IssueSerializer
     
@@ -97,7 +97,7 @@ class IssueViewSet(ModelViewSet):
         
 class Lecturer_Issue_Manangement(ModelViewSet):
     serializer_class = IssueSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated,IsLecturer]
     
     def get_queryset(self): 
         user = self.request.user
