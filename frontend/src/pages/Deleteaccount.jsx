@@ -63,7 +63,17 @@ const DeleteAccount = () => {
   };
 
   return (
-    <div className="settings-container" style={{ backgroundImage: `url(${backgroundImage})` }}>
+    <div className="settings-container" style={{
+      backgroundImage: `url(${backgroundImage})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              minHeight: '100vh',
+              width: '100%',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+     }}>
       <div className="settings-sidebar glass-effect">
         <div className="university-logo-sidebar">
           <img src={makerereLogo} alt="Makerere University Logo" className="logo-sidebar" />
