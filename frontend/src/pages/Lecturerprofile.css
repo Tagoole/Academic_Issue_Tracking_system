@@ -252,5 +252,23 @@ select option:first-child {
   background-color: #999;
 }
 
+/* Bottom Links */
+.bottom-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 25px;
+}
+
+.help-link, .delete-account-link {
+  color: #ccc;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.3s;
+}
+
+.help-link:hover, .delete-account-link:hover {
+  color: white;
+}
 
 
