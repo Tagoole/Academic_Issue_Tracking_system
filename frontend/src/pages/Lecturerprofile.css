@@ -54,3 +54,11 @@ body {
   flex-direction: column;
   gap: 30px;
 }
+/* Profile Picture Section */
+.profile-picture-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
