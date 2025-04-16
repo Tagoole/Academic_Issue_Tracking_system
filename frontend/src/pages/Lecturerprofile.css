@@ -270,5 +270,29 @@ select option:first-child {
 .help-link:hover, .delete-account-link:hover {
   color: white;
 }
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .profile-overlay {
+    padding: 20px;
+  }
+  
+  .profile-heading {
+    font-size: 24px;
+  }
+  
+  .profile-picture {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .profile-picture-placeholder {
+    font-size: 36px;
+  }
+  
+  .edit-button, .save-button, .cancel-button {
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+}
 
 
