@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './Messages.css';
 import { useNavigate } from 'react-router-dom';
 
+
+
 const Messages = () => {
   const [contacts, setContacts] = useState([]);
   const [selectedContact, setSelectedContact] = useState(null);
@@ -231,7 +233,7 @@ const Messages = () => {
         <div className="contacts-list">
           {contacts.length === 0 ? (
             <div className="empty-state">
-              <div className="empty-icon">📩</div>
+              <div className="empty-icon"></div>
               <p>No chats yet</p>
               <p>Start a new conversation</p>
             </div>
