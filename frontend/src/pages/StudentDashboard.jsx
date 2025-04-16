@@ -16,20 +16,24 @@ const StudentDashboard = () => {
   const navigate = useNavigate(); 
 
   useEffect(() => {
+    // Check if user is authenticated when component mounts
+    const checkAuth = () => {
+      const accessToken = localStorage.getItem('accessToken');
+      // If no access token is available, redirect to login
+      if (!accessToken) {
+        navigate('/signin');
+        return false;
+      }
+      return true;
+    };
+    
     // Fetch student issues when component mounts
     const fetchStudentIssues = async () => {
       try {
         setLoading(true);
         
-        // Get access token and refresh token from localStorage
+        // Get access token
         const accessToken = localStorage.getItem('accessToken');
-        const refreshToken = localStorage.getItem('refreshToken');
-        
-        // If no access token is available, redirect to login
-        if (!accessToken) {
-          navigate('/signin');
-          return;
-        }
         
         // Set authorization header with access token
         API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
@@ -79,7 +83,10 @@ const StudentDashboard = () => {
       }
     };
 
-    fetchStudentIssues();
+    // Only fetch data if authentication check passes
+    if (checkAuth()) {
+      fetchStudentIssues();
+    }
   }, [navigate]);
 
   // Map UI status labels to backend status values
@@ -112,17 +119,14 @@ const StudentDashboard = () => {
   };
 
   return (
-    <div 
-      className="dashboard-container"
-      style={{
-        backgroundImage: `url(${backgroundimage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        minHeight: '100vh',
-        width:'1205px'
-      }}
-    >
+    <div className="dashboard-container" style={{
+      backgroundImage: `url(${backgroundimage})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      minHeight: '100vh',
+      width: '100%' // Changed from fixed 1205px to be responsive
+    }}>
       <SideBar />
       <div className="dashboard-wrapper">
         <NavBar />
@@ -191,7 +195,7 @@ const StudentDashboard = () => {
               <tbody>
                 {filteredIssues.length > 0 ? (
                   filteredIssues.map((issue, index) => (
-                    <tr key={index}>
+                    <tr key={issue.id || index}>
                       <td>{issue.issue}</td>
                       <td>
                         <span className={`status-tag status-${issue.status}`}>
