@@ -10,7 +10,7 @@ const ProfilePictureSetup = () => {
   const handleGoToCongragulation = () => {
     navigate('/congragulation');
   };
-  
+
 
   // const currentPicture = libraryImage
   const [currentPicture, setCurrentPicture] = useState(null);
@@ -26,6 +26,7 @@ const ProfilePictureSetup = () => {
       handleFileUpload(file);
     }
   };
+  
 
   const handleFileUpload = (file) => {
     // Check file type
