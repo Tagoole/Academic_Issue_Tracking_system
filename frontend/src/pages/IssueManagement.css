@@ -29,10 +29,10 @@
   display: flex;
   flex-direction: column;
   padding: 20px;
-  background-color: transparent; /* Light background color */
+  background-color: rgba(255, 255, 255, 0.7);
   
   margin-left: 250px;
-  width:1600px; 
+  width:900px; 
   
 }
 
@@ -119,6 +119,7 @@
 .search-container {
   position: relative;
   margin-right: 10px;
+  width:100px;
 }
 
 .search-input {
@@ -126,7 +127,6 @@
   padding-right: 35px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  width: 250px;
   font-size: 14px;
 }
 
@@ -165,7 +165,7 @@
 
 /* Issues table */
 .issues-table {
-  width: 1000px;
+  width: 1200px;
   border-collapse: collapse;
   margin-top: 15px;
   order: 3; /* Ensure this comes last */

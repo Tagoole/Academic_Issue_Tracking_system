@@ -154,7 +154,7 @@ const IssueManagement = () => {
             </div>
 
             <div className="issues-list-header">
-              <h3>Issues</h3>
+              
               <div className="search-filter-container">
                 <div className="search-container">
                   <input
