@@ -174,34 +174,51 @@ const IssueManagement = () => {
     setShowActionsDropdown(null); 
   };
 
-  const handleLecturerSelect = (lecturerId) => {
-    const issue = issues.find((i) => i.id === activeIssueId);
-    const lecturer = lecturers.find((l) => l.id === lecturerId);
-
-    if (!issue || !lecturer) return;
-
-    // Data to send to the backend (for escalation)
-    const escalationData = {
-      issue_id: issue.id,
-      lecturer_id: lecturer.id,
-      status: 'in_progress',
-    };
-
-    // Send POST request to escalate the issue
-    API.post(`api/escalate-issue/`, escalationData)
-      .then((response) => {
-        console.log('Issue escalated successfully:', response.data);
-        setIssues((prevIssues) =>
-          prevIssues.map((i) =>
-            i.id === issue.id ? { ...i, status: 'in_progress' } : i
-          )
-        );
-        setShowLecturersDropdown(false);
-      })
-      .catch((error) => {
-        console.error('Error escalating issue:', error);
-        setShowLecturersDropdown(false);
-      });
+  const handleLecturerSelect = async (lecturerId) => {
+    try {
+      const issue = issues.find((i) => i.id === activeIssueId);
+      const lecturer = lecturers.find((l) => l.id === lecturerId);
+  
+      if (!issue || !lecturer) return;
+  
+      // Data to send to the backend (for escalation)
+      const escalationData = {
+        issue_id: issue.id,
+        lecturer_id: lecturer.id,
+        status: 'in_progress',
+      };
+  
+      // Get access token for authorization
+      const accessToken = localStorage.getItem('accessToken');
+      API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+  
+      // Send POST request to escalate the issue
+      const response = await API.post(`api/escalate-issue/`, escalationData);
+      console.log('Issue escalated successfully:', response.data);
+      
+      // Update the issue in state to reflect the change
+      setIssues((prevIssues) =>
+        prevIssues.map((i) =>
+          i.id === issue.id ? { ...i, status: 'in_progress', lecturer: lecturer } : i
+        )
+      );
+      
+      // Close the dropdowns
+      setShowLecturersDropdown(false);
+      setActiveIssueId(null);
+      
+      // Update status counts
+      setInProgressCount(prev => prev + 1);
+      setPendingCount(prev => prev - 1);
+      
+      // Show success message or notification to user (you can add this functionality)
+      alert(`Issue #${issue.id} has been escalated to ${lecturer.username}`);
+      
+    } catch (error) {
+      console.error('Error escalating issue:', error);
+      alert('Failed to escalate issue. Please try again.');
+      setShowLecturersDropdown(false);
+    }
   };
 
   const toggleActionsDropdown = (issueId) => {
@@ -210,6 +227,7 @@ const IssueManagement = () => {
     } else {
       setShowActionsDropdown(issueId);
       setShowLecturersDropdown(false);
+      setActiveIssueId(null);
     }
   };
 
@@ -267,13 +285,54 @@ const IssueManagement = () => {
             {issue.status.replace('_', ' ')}
           </span>
         </td>
-        <td>
-          <button 
-            className="view-details-btn"
-            onClick={() => handleViewDetails(issue.id)}
-          >
-            View Details
-          </button>
+        <td className="action-column" ref={dropdownRef}>
+          <div className="dropdown-container">
+            <button 
+              className="action-dropdown-btn"
+              onClick={() => toggleActionsDropdown(issue.id)}
+            >
+              :
+            </button>
+            
+            {showActionsDropdown === issue.id && (
+              <div className="actions-dropdown">
+                <button 
+                  className="dropdown-item"
+                  onClick={() => handleViewDetails(issue.id)}
+                >
+                  View Details
+                </button>
+                
+                {issue.status === 'pending' && (  // Only show escalate option for pending issues
+                  <button 
+                    className="dropdown-item"
+                    onClick={() => handleEscalateIssue(issue.id)}
+                  >
+                    Escalate Issue
+                  </button>
+                )}
+              </div>
+            )}
+            
+            {showLecturersDropdown && activeIssueId === issue.id && (
+              <div className="lecturers-dropdown">
+                <div className="dropdown-header">Select Lecturer:</div>
+                {lecturers.length > 0 ? (
+                  lecturers.map((lecturer) => (
+                    <button
+                      key={lecturer.id}
+                      className="dropdown-item lecturer-item"
+                      onClick={() => handleLecturerSelect(lecturer.id)}
+                    >
+                      {lecturer.username}
+                    </button>
+                  ))
+                ) : (
+                  <div className="no-lecturers">No lecturers available</div>
+                )}
+              </div>
+            )}
+          </div>
         </td>
       </tr>
     ));
