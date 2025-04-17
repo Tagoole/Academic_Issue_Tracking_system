@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import NavBar from './NavBar';
 import SideBar from './Sidebar1';
 import './StudentDashboard.css'; 
-import backgroundimage from '../assets/pexels-olia-danilevich-5088017.jpg'; 
 import API from '../api';
 
 const StudentDashboard = () => {
@@ -120,10 +119,6 @@ const StudentDashboard = () => {
 
   return (
     <div className="dashboard-container" style={{
-      backgroundImage: `url(${backgroundimage})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat',
       minHeight: '100vh',
       width: '100%' // Changed from fixed 1205px to be responsive
     }}>
