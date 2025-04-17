@@ -74,7 +74,7 @@ class IssueSerializer(serializers.ModelSerializer):
     #program = ProgramSerializer()
     class Meta:
         model = Issue
-        fields = ['id','student','issue_type','course_unit','description','image','status','created_at','updated_at','registrar','year_of_study','semester','course_unit_id','registrar_id','student_id']
+        fields = ['id','student','issue_type','course_unit','description','image','status','created_at','updated_at','registrar','year_of_study','semester','course_unit_id','registrar_id','student_id','lecturer']
 
 class Student_RegisterSerializer(serializers.ModelSerializer):
     class Meta:
