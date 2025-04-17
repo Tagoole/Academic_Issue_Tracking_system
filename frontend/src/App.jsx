@@ -13,7 +13,7 @@ import Congragulation from "./pages/congragulation";
 import RegistraDashboard from "./pages/RegistraDashboard";
 import Registrationtoken from "./pages/Generatetoken";
 import IssueManagement from "./pages/IssueManagement";
-import Viewdetails from "./pages/View-details";
+import Viewdetails from "./pages/View-details"; // Keep this import
 import Changepassword from "./pages/Changepassword";
 import Preferences from "./pages/Preferences";
 import Help from "./pages/Help";
@@ -31,7 +31,7 @@ import LecturerIssueManagement from "./pages/LecturerIssueManagement";
 import Settings from "./pages/Settings";
 import StudentsProfile from "./pages/StudentsProfile";
 
-
+// Removed duplicate import of Viewdetails
 
 function App() {
   return (
@@ -78,6 +78,7 @@ function App() {
         <Route path="/help" element={<Help />} />
         <Route path="/deleteaccount" element={<Deleteaccount />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/view-details" element={<Viewdetails />} />
 
         {/* Catch-all route */}
       </Routes>
