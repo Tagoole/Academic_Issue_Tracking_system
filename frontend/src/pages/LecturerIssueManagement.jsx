@@ -45,7 +45,7 @@ const LecturerIssueManagement = () => {
     try {
       // Get the issue data from sessionStorage
       const issueData = JSON.parse(sessionStorage.getItem('issueToResolve'));
-      
+      console.log(issueData);
       if (issueData) {
         console.log("Retrieved issue data:", issueData);
         

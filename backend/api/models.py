@@ -94,6 +94,8 @@ class Issue(models.Model):
     registrar = models.ForeignKey(CustomUser,on_delete=models.SET_NULL,null = True, related_name = "registrar_issues",limit_choices_to={'role':'academic_registrar'}) 
     year_of_study = models.CharField(max_length=20,choices = STUDY_YEARS)
     semester = models.CharField(max_length = 10,choices = SEMESTER_CHOICES)
+    comment = models.TextField(null = True, blank = True)
+    is_commented = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['updated_at','created_at']
