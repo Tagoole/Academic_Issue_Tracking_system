@@ -148,9 +148,9 @@ const IssueManagement = () => {
       const filtered = issues.filter(issue => 
         issue.status.toLowerCase() === issueStatus.toLowerCase() &&
         (issue.id.toString().includes(searchTerm) ||
-        issue.student_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        issue.studentNo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        issue.category?.toLowerCase().includes(searchTerm.toLowerCase()))
+        (issue.student?.username && issue.student.username.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (issue.description && issue.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (issue.issue_type && issue.issue_type.toLowerCase().includes(searchTerm.toLowerCase())))
       );
       setFilteredIssues(filtered);
     }
@@ -164,8 +164,8 @@ const IssueManagement = () => {
     setSearchTerm(e.target.value);
   };
 
-  const handleViewDetails = () => {
-    navigate('/view-details');
+  const handleViewDetails = (issueId) => {
+    navigate(`/view-details/${issueId}`);
   };
 
   const handleEscalateIssue = (issueId) => {
@@ -211,6 +211,19 @@ const IssueManagement = () => {
       setShowActionsDropdown(issueId);
       setShowLecturersDropdown(false);
     }
+  };
+
+  // Format date to a user-friendly format
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(date);
   };
 
   // Close dropdowns when clicking outside
@@ -333,75 +346,38 @@ const IssueManagement = () => {
                   <thead>
                     <tr>
                       <th>ISSUE ID</th>
-                      <th>STUDENT NAME</th>
-                      <th>CATEGORY</th>
-                      <th>SUBMISSION DATE</th>
-                      <th>ACTIONS</th>
+                      <th>STUDENT</th>
+                      <th>ISSUE TYPE</th>
+                      <th>LECTURER</th>
+                      <th>YEAR OF STUDY</th>
+                      <th>SUBMITTED</th>
+                      <th>LAST UPDATED</th>
+                      <th>STATUS</th>
+                      <th>ACTION</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredIssues.map((issue) => (
                       <tr key={issue.id} className="issue-row">
                         <td>{issue.id}</td>
-                        <td>{issue.student_name || issue.studentNo}</td>
-                        <td>{issue.category}</td>
-                        <td>{issue.submission_date || issue.date}</td>
-                        <td className="actions-cell" ref={dropdownRef}>
-                          <div className="actions-dropdown-container">
-                            <button
-                              className="actions-dropdown-toggle"
-                              onClick={() => toggleActionsDropdown(issue.id)}
-                            >
-                              Actions <i className="dropdown-arrow"></i>
-                            </button>
-
-                            {showActionsDropdown === issue.id && (
-                              <div className="actions-dropdown-menu">
-                                <button className="dropdown-item" onClick={handleViewDetails}>
-                                  <i className="view-icon"></i> View details
-                                </button>
-                                <button
-                                  className="dropdown-item"
-                                  onClick={() => handleEscalateIssue(issue.id)}
-                                >
-                                  <i className="escalate-icon"></i> Escalate issue
-                                </button>
-                                <button className="dropdown-item">
-                                  <i className="edit-icon"></i> Edit issue
-                                </button>
-                                <button className="dropdown-item danger">
-                                  <i className="delete-icon"></i> Delete issue
-                                </button>
-                              </div>
-                            )}
-
-                            {showLecturersDropdown && activeIssueId === issue.id && (
-                              <div className="lecturers-dropdown">
-                                <div className="dropdown-header">
-                                  <h4>Select a Lecturer</h4>
-                                  <button
-                                    className="close-dropdown"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setShowLecturersDropdown(false);
-                                    }}
-                                  >
-                                    ×
-                                  </button>
-                                </div>
-                                <ul className="lecturers-list">
-                                  {lecturers.map((lecturer) => (
-                                    <li
-                                      key={lecturer.id}
-                                      onClick={() => handleLecturerSelect(lecturer.id)}
-                                    >
-                                      {lecturer.name}
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
-                          </div>
+                        <td>{issue.student?.username || 'N/A'}</td>
+                        <td>{issue.issue_type || 'N/A'}</td>
+                        <td>{issue.lecturer?.username || 'Not Assigned'}</td>
+                        <td>{issue.year_of_study?.replace('_', ' ') || 'N/A'}</td>
+                        <td>{formatDate(issue.created_at)}</td>
+                        <td>{formatDate(issue.updated_at)}</td>
+                        <td>
+                          <span className={`status-badge ${issue.status}`}>
+                            {issue.status.replace('_', ' ')}
+                          </span>
+                        </td>
+                        <td>
+                          <button 
+                            className="view-details-btn"
+                            onClick={() => handleViewDetails(issue.id)}
+                          >
+                            View Details
+                          </button>
                         </td>
                       </tr>
                     ))}
