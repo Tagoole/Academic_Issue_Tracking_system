@@ -1,99 +1,122 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Lecturerdashboard.css';
 import Navbar from './NavBar';
 import Sidebar2 from './Sidebar2';
-import backgroundImage from '../assets/backgroundimage.jpg';
 import IssueSummary from './IssueSummary';
+import API from '../api.js';
 
 const Lecturerdashboard = () => {
+  const navigate = useNavigate();
   const [selectedIssue, setSelectedIssue] = useState(null);
   const summaryRef = useRef(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Filter states
   const [statusFilter, setStatusFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Sample issues data
-  const allIssues = [
-    { 
-      id: 1, 
-      status: 'Resolved', 
-      studentNo: '25/U0000/PS', 
-      category: 'Missing Mark', 
-      date: '01/01/2025', 
-      title: 'Sample Issue', 
-      submissionDate: '2025-01-01', 
-      courseUnitName: 'Math 101', 
-      courseUnitCode: 'MATH101', 
-      assignedLecturer: 'Dr. John', 
-      description: 'Description of the issue' 
-    },
-    { 
-      id: 2, 
-      status: 'Pending', 
-      studentNo: '25/U0001/PS', 
-      category: 'Grade Appeal', 
-      date: '02/01/2025', 
-      title: 'Grade Review Request', 
-      submissionDate: '2025-01-02', 
-      courseUnitName: 'Physics 101', 
-      courseUnitCode: 'PHYS101', 
-      assignedLecturer: 'Dr. Smith', 
-      description: 'Student requesting grade review for midterm exam' 
-    },
-    { 
-      id: 3, 
-      status: 'In Progress', 
-      studentNo: '25/U0002/PS', 
-      category: 'Technical Issue', 
-      date: '03/01/2025', 
-      title: 'Assignment Submission Problem', 
-      submissionDate: '2025-01-03', 
-      courseUnitName: 'Computer Science 101', 
-      courseUnitCode: 'CS101', 
-      assignedLecturer: 'Dr. Johnson', 
-      description: 'Unable to submit assignment due to technical issue' 
-    },
-    { 
-      id: 4, 
-      status: 'Resolved', 
-      studentNo: '25/U0003/PS', 
-      category: 'Missing Mark', 
-      date: '04/01/2025', 
-      title: 'Missing Final Exam Score', 
-      submissionDate: '2025-01-04', 
-      courseUnitName: 'Biology 101', 
-      courseUnitCode: 'BIO101', 
-      assignedLecturer: 'Dr. Green', 
-      description: 'Final exam mark not appearing in the system' 
-    },
-    { 
-      id: 5, 
-      status: 'Pending', 
-      studentNo: '25/U0004/PS', 
-      category: 'Missing Mark', 
-      date: '05/01/2025', 
-      title: 'Assignment 2 Not Graded', 
-      submissionDate: '2025-01-05', 
-      courseUnitName: 'Chemistry 101', 
-      courseUnitCode: 'CHEM101', 
-      assignedLecturer: 'Dr. Adams', 
-      description: 'Assignment submitted but not graded yet' 
-    }
-  ];
+  // Issues data from API
+  const [allIssues, setAllIssues] = useState([]);
+  const [filteredIssues, setFilteredIssues] = useState([]);
 
-  // Apply filters to issues
-  const filteredIssues = allIssues.filter(issue => {
-    const matchesStatus = statusFilter === 'all' || issue.status === statusFilter;
-    const matchesCategory = categoryFilter === 'all' || issue.category === categoryFilter;
-    const matchesSearch = searchTerm === '' || 
-      issue.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      issue.studentNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      issue.category.toLowerCase().includes(searchTerm.toLowerCase());
+  // Fetch issues from API when component mounts
+  useEffect(() => {
+    // Check if user is authenticated when component mounts
+    const checkAuth = () => {
+      const accessToken = localStorage.getItem('accessToken');
+      // If no access token is available, redirect to login
+      if (!accessToken) {
+        navigate('/signin');
+        return false;
+      }
+      return true;
+    };
+
+    const fetchIssues = async () => {
+      try {
+        setLoading(true);
+        
+        // Get access token
+        const accessToken = localStorage.getItem('accessToken');
+        
+        // Set authorization header with access token
+        API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+        
+        const response = await API.get('api/lecturer_issue_management/');
+        console.log("API Response:", response.data); // Debug log
+        
+        setAllIssues(response.data);
+        setFilteredIssues(response.data);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching lecturer issues:', err);
+        
+        // Check if error is due to unauthorized access (401)
+        if (err.response && err.response.status === 401) {
+          // Try refreshing the token
+          try {
+            const refreshToken = localStorage.getItem('refreshToken');
+            
+            if (refreshToken) {
+              const refreshResponse = await API.post('/api/refresh_token/', {
+                refresh: refreshToken
+              });
+              
+              // Store the new access token
+              const newAccessToken = refreshResponse.data.access;
+              localStorage.setItem('accessToken', newAccessToken);
+              
+              // Retry the original request with new token
+              API.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
+              const retryResponse = await API.get('api/lecturer_issue_management/');
+              
+              setAllIssues(retryResponse.data);
+              setFilteredIssues(retryResponse.data);
+              setLoading(false);
+            } else {
+              // No refresh token available, redirect to login
+              navigate('/signin');
+            }
+          } catch (refreshErr) {
+            console.error('Error refreshing token:', refreshErr);
+            setError('Your session has expired. Please log in again.');
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            navigate('/signin');
+          }
+        } else {
+          setError('Failed to load issues. Please try again later.');
+          setLoading(false);
+        }
+      }
+    };
+
+    // Only fetch data if authentication check passes
+    if (checkAuth()) {
+      fetchIssues();
+    }
+  }, [navigate]);
+
+  // Apply filters to issues whenever filters change
+  useEffect(() => {
+    if (allIssues.length === 0) return;
     
-    return matchesStatus && matchesCategory && matchesSearch;
-  });
+    const filtered = allIssues.filter(issue => {
+      const matchesStatus = statusFilter === 'all' || issue.status === statusFilter;
+      const matchesCategory = categoryFilter === 'all' || issue.category === categoryFilter;
+      const matchesSearch = searchTerm === '' || 
+        (issue.title && issue.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (issue.studentNo && issue.studentNo.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (issue.category && issue.category.toLowerCase().includes(searchTerm.toLowerCase()));
+      
+      return matchesStatus && matchesCategory && matchesSearch;
+    });
+    
+    setFilteredIssues(filtered);
+  }, [statusFilter, categoryFilter, searchTerm, allIssues]);
 
   // Handle issue click
   const handleIssueClick = (issue) => {
@@ -133,8 +156,8 @@ const Lecturerdashboard = () => {
   }, [selectedIssue]);
 
   // Get unique categories and statuses for filter dropdowns
-  const uniqueCategories = [...new Set(allIssues.map(issue => issue.category))];
-  const uniqueStatuses = [...new Set(allIssues.map(issue => issue.status))];
+  const uniqueCategories = allIssues.length > 0 ? [...new Set(allIssues.map(issue => issue.category))] : [];
+  const uniqueStatuses = allIssues.length > 0 ? [...new Set(allIssues.map(issue => issue.status))] : [];
 
   // Handler to close the issue summary from within
   const handleCloseSummary = () => {
@@ -142,25 +165,112 @@ const Lecturerdashboard = () => {
   };
 
   // Update issue status in the dashboard
-  const updateIssueStatus = (issueId, newStatus) => {
-    const updatedIssues = allIssues.map(issue => {
-      if (issue.id === issueId) {
-        return { ...issue, status: newStatus };
+  const updateIssueStatus = async (issueId, newStatus) => {
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+      
+      // Send update to the API
+      await API.patch(`api/lecturer_issue_management/${issueId}/`, {
+        status: newStatus
+      });
+      
+      // Update local state
+      const updatedIssues = allIssues.map(issue => {
+        if (issue.id === issueId) {
+          return { ...issue, status: newStatus };
+        }
+        return issue;
+      });
+      
+      setAllIssues(updatedIssues);
+      
+      // If the selected issue is the one being updated, update it too
+      if (selectedIssue && selectedIssue.id === issueId) {
+        setSelectedIssue({ ...selectedIssue, status: newStatus });
       }
-      return issue;
-    });
-    
-    // If you're using a state setter for allIssues, you'd use it here
-    // setAllIssues(updatedIssues);
-    
-    // For now we'll just log the update
-    console.log(`Issue ${issueId} status updated to ${newStatus}`);
-    console.log('Updated issues:', updatedIssues);
+      
+      console.log(`Issue ${issueId} status updated to ${newStatus}`);
+    } catch (err) {
+      console.error('Error updating issue status:', err);
+      // Handle token refresh if needed (similar to fetch issues logic)
+      if (err.response && err.response.status === 401) {
+        try {
+          const refreshToken = localStorage.getItem('refreshToken');
+          
+          if (refreshToken) {
+            const refreshResponse = await API.post('/api/refresh_token/', {
+              refresh: refreshToken
+            });
+            
+            const newAccessToken = refreshResponse.data.access;
+            localStorage.setItem('accessToken', newAccessToken);
+            
+            // Retry the update with new token
+            API.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
+            await API.patch(`api/lecturer_issue_management/${issueId}/`, {
+              status: newStatus
+            });
+            
+            // Update local state (same as above)
+            const updatedIssues = allIssues.map(issue => {
+              if (issue.id === issueId) {
+                return { ...issue, status: newStatus };
+              }
+              return issue;
+            });
+            
+            setAllIssues(updatedIssues);
+            
+            if (selectedIssue && selectedIssue.id === issueId) {
+              setSelectedIssue({ ...selectedIssue, status: newStatus });
+            }
+          } else {
+            navigate('/signin');
+          }
+        } catch (refreshErr) {
+          console.error('Error refreshing token during status update:', refreshErr);
+          setError('Your session has expired. Please log in again.');
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          navigate('/signin');
+        }
+      } else {
+        setError('Failed to update issue status. Please try again.');
+      }
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="app-container">
+        <Navbar />
+        <div className="content-container">
+          <Sidebar2 />
+          <main className="main-content">
+            <div className="loading-message">Loading issues...</div>
+          </main>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="app-container">
+        <Navbar />
+        <div className="content-container">
+          <Sidebar2 />
+          <main className="main-content">
+            <div className="error-message">{error}</div>
+          </main>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="app-container">
-    
       <Navbar />
       <div className="content-container">
         <Sidebar2 />
@@ -217,6 +327,7 @@ const Lecturerdashboard = () => {
                     <th>Student No</th>
                     <th>Category</th>
                     <th>Date</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -252,7 +363,7 @@ const Lecturerdashboard = () => {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="5" className="no-issues">No issues match the current filters. Please try another search term</td>
+                      <td colSpan="6" className="no-issues">No issues match the current filters. Please try another search term</td>
                     </tr>
                   )}
                 </tbody>
@@ -268,6 +379,7 @@ const Lecturerdashboard = () => {
               <IssueSummary 
                 issue={selectedIssue} 
                 onClose={handleCloseSummary}
+                onUpdateStatus={updateIssueStatus}
               />
             </div>
           </div>

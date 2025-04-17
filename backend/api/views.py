@@ -40,64 +40,53 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
         return response
 
+
 class IssueViewSet(ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsStudent]
     queryset = Issue.objects.all()
     serializer_class = IssueSerializer
     
-    def create(self, request, *args, **kwargs):
-        # Make a mutable copy of the request data
-        data = request.data.copy()
+    def perform_create(self, serializer):
+        # Import User model
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
         
         # Debug print
-        print("--- ORIGINAL REQUEST DATA ---")
-        print(request.data)
-        print("-------------------")
+        print("--- PERFORMING CREATE ---")
+        print(f"Original data: {self.request.data}")
         
-        # Handle student username - convert to User ID
-        student_username =  data.get('student_username') or data.get('student')
+        # Extract usernames from request data
+        registrar_username = self.request.data.get('registrar')
+        student_username = self.request.data.get('student')
+        
+        # Handle registrar assignment by username
+        registrar = None
+        if registrar_username:
+            try:
+                registrar = User.objects.get(username=registrar_username)
+                print(f"Found registrar user: {registrar}")
+            except User.DoesNotExist:
+                print(f"No user found with username: {registrar_username}")
+        
+        # Handle student assignment by username
+        student = None
         if student_username:
             try:
-                student = CustomUser.objects.get(username=student_username)
-                data['student'] = student.id
-            except CustomUser.DoesNotExist:
-                return Response(
-                    {'error': f'Student with username {student_username} not found'}, 
-                    status=400
-                )
+                student = User.objects.get(username=student_username)
+                print(f"Found student user: {student}")
+            except User.DoesNotExist:
+                print(f"No user found with username: {student_username}")
         
-        # Handle registrar name - convert to User ID
-        registrar_name = data.get('registrar_username') or data.get('registrar')
-        if registrar_name:
-            try:
-                # Try to find by username first, then by name if that exists
-                try:
-                    registrar = CustomUser.objects.get(username=registrar_name)
-                except CustomUser.DoesNotExist:
-                    # If your User model has a name field, use this:
-                    registrar = CustomUser.objects.get(name=registrar_name)
-                data['registrar'] = registrar.id
-            except CustomUser.DoesNotExist:
-                return Response(
-                    {'error': f'Registrar with name {registrar_name} not found'}, 
-                    status=400
-                )
-        
-        # Debug print after conversion
-        print("--- MODIFIED REQUEST DATA ---")
-        print(data)
-        print("-------------------")
-        
-        # Use modified data for serialization
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=201, headers=headers)
+        # Save with the actual user objects
+        serializer.save(
+            registrar=registrar,
+            student=student
+        )
+        print("--- ISSUE SAVED SUCCESSFULLY ---")
         
 class Lecturer_Issue_Manangement(ModelViewSet):
     serializer_class = IssueSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated,IsLecturer]
     
     def get_queryset(self): 
         user = self.request.user
@@ -152,7 +141,7 @@ class Lecturer_Issue_Manangement(ModelViewSet):
         return Response({'error':'Status parameter required'})
     
 class Student_Issue_ReadOnlyViewset(ReadOnlyModelViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsStudent]
     serializer_class = IssueSerializer
     
     def get_queryset(self):
@@ -175,7 +164,7 @@ class Student_Issue_ReadOnlyViewset(ReadOnlyModelViewSet):
     
     
 class Registrar_Issue_ManagementViewSet(ModelViewSet):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated,IsAcademicRegistrar]
     serializer_class = IssueSerializer
     
     def get_queryset(self):
@@ -241,11 +230,12 @@ class Registrar_Issue_ManagementViewSet(ModelViewSet):
     
     
 class DepartmentViewSet(ModelViewSet):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     queryset = Department.objects.all()
     serializer_class = DepartmentSerializer
 
 class Course_unitViewSet(ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Course_unit.objects.all()
     serializer_class = Course_unitSerializer
 

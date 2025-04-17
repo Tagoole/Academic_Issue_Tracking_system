@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import NavBar from './NavBar';
 import SideBar from './Sidebar1';
 import './StudentDashboard.css'; 
-import backgroundimage from '../assets/pexels-olia-danilevich-5088017.jpg'; 
 import API from '../api';
 
 const StudentDashboard = () => {
@@ -118,12 +117,19 @@ const StudentDashboard = () => {
     setSelectedIssue(null);
   };
 
+  // Format date for display
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
   return (
     <div className="dashboard-container" style={{
-      backgroundImage: `url(${backgroundimage})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat',
       minHeight: '100vh',
       width: '100%' // Changed from fixed 1205px to be responsive
     }}>
@@ -185,10 +191,12 @@ const StudentDashboard = () => {
             <table className="issues-table">
               <thead>
                 <tr>
+                  <th>ID</th>
                   <th>Issue</th>
                   <th>Status</th>
                   <th>Issue Type</th>
-                  <th>Date</th>
+                  <th>Created</th>
+                  <th>Updated</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -196,6 +204,7 @@ const StudentDashboard = () => {
                 {filteredIssues.length > 0 ? (
                   filteredIssues.map((issue, index) => (
                     <tr key={issue.id || index}>
+                      <td>#{issue.id || 'N/A'}</td>
                       <td>{issue.issue}</td>
                       <td>
                         <span className={`status-tag status-${issue.status}`}>
@@ -205,7 +214,8 @@ const StudentDashboard = () => {
                         </span>
                       </td>
                       <td>{issue.issue_type || issue.category}</td>
-                      <td>{issue.date}</td>
+                      <td>{formatDate(issue.created_at || issue.date)}</td>
+                      <td>{formatDate(issue.updated_at)}</td>
                       <td>
                         <button className="view-details-btn" onClick={() => openIssueDetails(issue)}>
                           View Details
@@ -215,7 +225,7 @@ const StudentDashboard = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="5" className="no-issues-message">No {activeTab.toLowerCase()} issues found</td>
+                    <td colSpan="7" className="no-issues-message">No {activeTab.toLowerCase()} issues found</td>
                   </tr>
                 )}
               </tbody>
@@ -233,12 +243,20 @@ const StudentDashboard = () => {
               <button className="close-modal-btn" onClick={closeModal}>×</button>
             </div>
             <div className="issue-modal-content">
-              {Object.entries(selectedIssue).map(([key, value]) => (
-                <div key={key} className="issue-detail-item">
-                  <strong>{key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:</strong> 
-                  {typeof value === 'object' ? JSON.stringify(value) : String(value)}
-                </div>
-              ))}
+              <div className="issue-detail-item">
+                <strong>ID:</strong> #{selectedIssue.id || 'N/A'}
+              </div>
+              {Object.entries(selectedIssue).map(([key, value]) => {
+                // Skip ID as we've already displayed it at the top
+                if (key === 'id') return null;
+                
+                return (
+                  <div key={key} className="issue-detail-item">
+                    <strong>{key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:</strong> 
+                    {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                  </div>
+                );
+              })}
             </div>
             <div className="issue-modal-footer">
               <button className="modal-close-btn" onClick={closeModal}>Close</button>

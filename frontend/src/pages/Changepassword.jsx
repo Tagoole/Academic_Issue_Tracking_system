@@ -70,16 +70,18 @@ function ChangePassword() {
 
   return (
     <div
-      style={{
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        backgroundAttachment: 'fixed',
-        minHeight: '100vh',
-        width: '100%',
-        position: 'relative',
-      }}
+          className="settings-container"
+          style={{
+            backgroundImage: `url(${backgroundImage})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            minHeight: '100vh',
+            width: '100%',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+          }}
     >
       {/* NavBar Component with white glassmorphism */}
       <div style={{
@@ -96,6 +98,7 @@ function ChangePassword() {
       }}>
         <NavBar />
       </div>
+
 
       {/* Main content container */}
       <div className="settings-container">

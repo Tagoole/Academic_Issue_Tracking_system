@@ -1,126 +1,313 @@
-import React, { useState } from 'react';
-import './lecturerprofile.css';
-import Navbar from './NavBar'; // Import Navbar
-import Sidebar2 from './Sidebar2'; // Import Sidebar
-import pencilIcon from '../assets/pencil.png'; // Adjust the path based on your folder structure
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import name from '../assets/name.png';
+import backgroundimage from "../assets/backgroundimage.jpg";
+import Sidebar2 from './Sidebar2';
+import NavBar from './NavBar';
+import './Lecturerprofile.css';
 
 const LecturerProfile = ({ userData = {} }) => {
   // Default placeholder data
   const defaultData = {
-    fullName: 'John Doe',
+    name: 'John Doe',
     role: 'Assistant Professor',
     phoneNumber: '+123 456 7890',
     email: 'john.doe@university.edu',
     gender: 'Male',
     college: 'College of Engineering',
     department: 'Computer Science',
-    office: 'Room 203, Building B'
+    office: 'Room 203, Building B',
+    profilePicture: null
   };
 
-  // Combine provided userData with default data
-  const data = { ...defaultData, ...userData };
+  // Set up initial profile data
+  const [profileData, setProfileData] = useState({ ...defaultData, ...userData });
+  
+  // State to track if we're in edit mode
+  const [editMode, setEditMode] = useState(false);
+  
+  // State to store temporary edits
+  const [formData, setFormData] = useState({...profileData});
+  
+  // State for confirmation dialog
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  
+  // State for success messages
+  const [successMessage, setSuccessMessage] = useState('');
+  
+  // File input reference
+  const fileInputRef = useRef(null);
 
-  // State for tracking edit mode
-  const [isEditing, setIsEditing] = useState(false);
-  const [profileData, setProfileData] = useState(data);
+  const navigate = useNavigate();
 
-  // Handle saving edited data
-  const handleSave = () => {
-    setIsEditing(false);
-    console.log('Saved profile data:', profileData);
-    // Here you would typically send the data to an API
-  };
+  // If profile data changes, update the form data
+  useEffect(() => {
+    setFormData({...profileData});
+  }, [profileData]);
 
-  // Handle input changes
+  // Auto-hide success messages after 3 seconds
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => {
+        setSuccessMessage('');
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [successMessage]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProfileData(prev => ({
+    setFormData(prev => ({
       ...prev,
       [name]: value
     }));
   };
 
-  // Profile information fields configuration
-  const personalInfoFields = [
-    { label: 'Full Name', key: 'fullName' },
-    { label: 'Phone Number', key: 'phoneNumber' },
-    { label: 'Email Address', key: 'email' },
-    { label: 'Gender', key: 'gender' },
-    { label: 'College', key: 'college' },
-    { label: 'Department', key: 'department' },
-    { label: 'Office', key: 'office' }
-  ];
+  const handleProfilePictureClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Create a preview URL for the selected image
+    const reader = new FileReader();
+    reader.onload = () => {
+      setFormData({
+        ...formData,
+        profilePicture: reader.result
+      });
+      
+      // In a real app, you would upload the file to your server here
+      // For now, we'll just update the state and show a success message
+      setProfileData({
+        ...profileData,
+        profilePicture: reader.result
+      });
+      
+      setSuccessMessage('Profile picture updated successfully!');
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSaveClick = (e) => {
+    e.preventDefault();
+    setShowConfirmDialog(true);
+  };
+
+  const handleConfirmSave = () => {
+    // Save the changes to the profile data
+    setProfileData({...formData});
+    // Exit edit mode
+    setEditMode(false);
+    // Hide confirmation dialog
+    setShowConfirmDialog(false);
+    // Show success message
+    setSuccessMessage('Profile updated successfully!');
+    
+    // In a real application, you would send this data to your backend
+    console.log('Profile data updated:', formData);
+  };
+
+  const handleCancel = () => {
+    // Reset form data to original
+    setFormData({...profileData});
+    // Exit edit mode
+    setEditMode(false);
+    // Hide confirmation dialog if it's open
+    setShowConfirmDialog(false);
+  };
+
+  const toggleEditMode = () => {
+    setEditMode(!editMode);
+    setFormData({...profileData});
+  };
 
   return (
-    <div className="academic-profile-container">
-      {/* Include Navbar */}
-      <Navbar />
-      <div className="profile-layout">
-        {/* Include Sidebar */}
-        <Sidebar2 />
-        <div className="profile-content">
-          {/* Header Section */}
-          <div className="profile-header">
-            <h2>Profile</h2>
-          </div>
-          
-          <div className="profile-row">
-            {/* Profile Card - Left Section */}
-            <div className="profile-card profile-info">
-              {/* Profile Top Section */}
-              <div className="profile-top">
-                <div className="profile-image-container">
-                  {/* Placeholder profile image */}
-                  <div className="profile-image"></div>
-                </div>
-                <div className="profile-title">
-                  <h3>{profileData.fullName}</h3>
-                  <p>{profileData.role}</p>
-                </div>
-                <div className="profile-actions">
-                  {isEditing ? (
-                    <button className="edit-button" onClick={handleSave}>
-                      <span>Save</span>
-                    </button>
+    <div className="app-container">
+      <NavBar />
+      <Sidebar2 />
+      <div className="main-content">
+        <div className="profile-container">
+          <div className="profile-overlay">
+            <h1 className="profile-heading">Lecturer Profile</h1>
+
+            {/* Success Message */}
+            {successMessage && (
+              <div className="success-message">
+                {successMessage}
+              </div>
+            )}
+
+            <div className="profile-content">
+              <div className="profile-picture-section">
+                <div 
+                  className="profile-picture" 
+                  onClick={editMode ? handleProfilePictureClick : undefined}
+                  style={editMode ? { cursor: 'pointer' } : {}}
+                >
+                  {formData.profilePicture ? (
+                    <img src={formData.profilePicture} alt="Profile" />
                   ) : (
-                    <button className="edit-button" onClick={() => setIsEditing(true)}>
-                      <img src={pencilIcon} alt="Edit" className="edit-icon" />
-                      <span>Edit</span>
-                    </button>
+                    <div className="profile-picture-placeholder">
+                      {formData.name.charAt(0)}
+                    </div>
+                  )}
+                  {editMode && (
+                    <div className="profile-picture-overlay">
+                      <span>Click to change</span>
+                    </div>
                   )}
                 </div>
+                {editMode && (
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    accept="image/*"
+                    style={{ display: 'none' }}
+                  />
+                )}
               </div>
-            </div>
-            
-            {/* Personal Information Section - Right Section */}
-            <div className="profile-card personal-info">
-              <div className="section-header">
-                <h3>Personal Information</h3>
-              </div>
-              <div className="info-grid">
-                {personalInfoFields.map((field) => (
-                  <div className="info-row" key={field.key}>
-                    <div className="info-label">{field.label}:</div>
-                    <div className="info-value">
-                      {isEditing ? (
+
+              <div className="profile-details">
+                {editMode ? (
+                  <form className="profile-form" onSubmit={handleSaveClick}>
+                    <div className="detail-item">
+                      <label>Name</label>
+                      <div className="input-group">
+                        <div className="input-icon">
+                          <img src={name} alt="Name Icon" />
+                        </div>
                         <input
                           type="text"
-                          name={field.key}
-                          value={profileData[field.key]}
+                          name="name"
+                          value={formData.name}
                           onChange={handleChange}
                           className="info-input"
+                          required
                         />
-                      ) : (
-                        profileData[field.key]
-                      )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                    
+                    <div className="detail-item">
+                      <label>Department</label>
+                      <div className="input-group">
+                        <div className="input-icon">
+                          <img src={name} alt="Department Icon" />
+                        </div>
+                        <div className="select-wrapper">
+                          <select
+                            name="department"
+                            value={formData.department}
+                            onChange={handleChange}
+                            required
+                          >
+                            <option value="Department 1">Department 1</option>
+                            <option value="Department 2">Department 2</option>
+                            <option value="Department 3">Department 3</option>
+                            <option value="Department 4">Department 4</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="detail-item">
+                      <label>Office</label>
+                      <div className="input-group">
+                        <div className="input-icon">
+                          <img src={name} alt="Office Icon" />
+                        </div>
+                        <div className="select-wrapper">
+                          <select
+                            name="office"
+                            value={formData.office}
+                            onChange={handleChange}
+                            required
+                          >
+                            <option value="Computer Science">Computer Science</option>
+                            <option value="Mathematics">Mathematics</option>
+                            <option value="Physics">Physics</option>
+                            <option value="Chemistry">Chemistry</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="detail-item">
+                      <label>Gender</label>
+                      <div className="input-group">
+                        <div className="input-icon">
+                          <img src={name} alt="Gender Icon" />
+                        </div>
+                        <div className="select-wrapper">
+                          <select
+                            name="gender"
+                            value={formData.gender}
+                            onChange={handleChange}
+                            required
+                          >
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                            <option value="Prefer not to say">Prefer not to say</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="profile-actions">
+                      <button type="submit" className="save-button">Save Changes</button>
+                      <button type="button" className="cancel-button" onClick={handleCancel}>Cancel</button>
+                    </div>
+                  </form>
+                ) : (
+                  <>
+                    <div className="detail-item">
+                      <div className="detail-label">Name:</div>
+                      <div className="detail-value">{profileData.name}</div>
+                    </div>
+                    
+                    <div className="detail-item">
+                      <div className="detail-label">Department:</div>
+                      <div className="detail-value">{profileData.department}</div>
+                    </div>
+                    
+                    <div className="detail-item">
+                      <div className="detail-label">Office:</div>
+                      <div className="detail-value">{profileData.office}</div>
+                    </div>
+                    
+                    <div className="detail-item">
+                      <div className="detail-label">Gender:</div>
+                      <div className="detail-value">{profileData.gender}</div>
+                    </div>
+                    
+                    <div className="profile-actions">
+                      <button type="button" className="edit-button" onClick={toggleEditMode}>Edit Profile</button>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
+      
+      {/* Confirmation Dialog */}
+      {showConfirmDialog && (
+        <div className="confirm-dialog-overlay">
+          <div className="confirm-dialog">
+            <h3>Save Changes</h3>
+            <p>Are you sure you want to save these changes?</p>
+            <div className="confirm-dialog-actions">
+              <button onClick={handleConfirmSave} className="confirm-button">Yes, Save</button>
+              <button onClick={() => setShowConfirmDialog(false)} className="cancel-button">Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
