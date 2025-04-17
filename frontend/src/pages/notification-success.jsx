@@ -1,10 +1,23 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import makerereLogo from '../assets/makererelogo.png';
 import NavBar from './NavBar';
 import './notification-success.css';
 import backgroundImage from '../assets/pexels-olia-danilevich-5088017.jpg';
 
 const NotificationSuccess = () => {
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    // Set timer to redirect after 2 seconds
+    const redirectTimer = setTimeout(() => {
+      navigate('/studentdashboard'); // Redirect to student dashboard
+    }, 2000);
+    
+    // Clean up the timer if component unmounts before timeout completes
+    return () => clearTimeout(redirectTimer);
+  }, [navigate]);
+
   return (
     <div
       className="notification-success-page"
@@ -18,7 +31,6 @@ const NotificationSuccess = () => {
     >
       <NavBar />
       {/* Main Content Section */}
-
       <main
         className="main-content"
         style={{
@@ -66,7 +78,7 @@ const NotificationSuccess = () => {
             <div className="message-timestamp">13/02/2025 6:00PM</div>
           </div>
         </div>
-
+        
         {/* University Logo Section */}
         <div
           className="center-logo-container"
@@ -81,6 +93,21 @@ const NotificationSuccess = () => {
             <div className="university-name">MAKERERE UNIVERSITY</div>
             <div className="system-acronym">AITS</div>
           </div>
+        </div>
+        
+        {/* Redirect Message */}
+        <div
+          className="redirect-message"
+          style={{
+            marginTop: '20px',
+            padding: '10px',
+            backgroundColor: '#f8f9fa',
+            borderRadius: '5px',
+            textAlign: 'center',
+            animation: 'fadeIn 0.5s ease'
+          }}
+        >
+          Redirecting to dashboard in 2 seconds...
         </div>
       </main>
     </div>

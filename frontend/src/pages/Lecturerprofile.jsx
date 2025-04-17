@@ -6,27 +6,35 @@ import Sidebar2 from './Sidebar2';
 import NavBar from './NavBar';
 import './Lecturerprofile.css';
 
-const Lecturerprofile = () => {
-  // Initial state would typically come from your API or context
-  const [profileData, setProfileData] = useState({
-    name: 'Dr. John Doe',
-    emailaddress: 'john.doe@university.edu',
-    phonenumber: '123-456-7890',
-    college: 'College of computer science',
-    department: 'Department 1',
-    office: 'Computer Science',
+const LecturerProfile = ({ userData = {} }) => {
+  // Default placeholder data
+  const defaultData = {
+    name: 'John Doe',
+    role: 'Assistant Professor',
+    phoneNumber: '+123 456 7890',
+    email: 'john.doe@university.edu',
     gender: 'Male',
-    profilePicture: null // Would be an image URL in real application
-  });
+    college: 'College of Engineering',
+    department: 'Computer Science',
+    office: 'Room 203, Building B',
+    profilePicture: null
+  };
 
+  // Set up initial profile data
+  const [profileData, setProfileData] = useState({ ...defaultData, ...userData });
+  
   // State to track if we're in edit mode
   const [editMode, setEditMode] = useState(false);
+  
   // State to store temporary edits
   const [formData, setFormData] = useState({...profileData});
+  
   // State for confirmation dialog
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  
   // State for success messages
   const [successMessage, setSuccessMessage] = useState('');
+  
   // File input reference
   const fileInputRef = useRef(null);
 
@@ -49,10 +57,10 @@ const Lecturerprofile = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData(prev => ({
+      ...prev,
       [name]: value
-    });
+    }));
   };
 
   const handleProfilePictureClick = () => {
@@ -111,12 +119,16 @@ const Lecturerprofile = () => {
     setShowConfirmDialog(false);
   };
 
+  const toggleEditMode = () => {
+    setEditMode(!editMode);
+    setFormData({...profileData});
+  };
+
   return (
     <div className="app-container">
       <NavBar />
       <Sidebar2 />
       <div className="main-content">
-        <NavBar />
         <div className="profile-container">
           <div className="profile-overlay">
             <h1 className="profile-heading">Lecturer Profile</h1>
@@ -173,65 +185,12 @@ const Lecturerprofile = () => {
                           name="name"
                           value={formData.name}
                           onChange={handleChange}
+                          className="info-input"
                           required
                         />
                       </div>
                     </div>
-
-                    <div className="detail-item">
-                      <label>Email Address</label>
-                      <div className="input-group">
-                        <div className="input-icon">
-                          <img src={name} alt="Email Icon" />
-                        </div>
-                        <input
-                          type="email"
-                          name="emailaddress"
-                          value={formData.emailaddress}
-                          onChange={handleChange}
-                          required
-                        />
-                      </div>
-                    </div>
-
-                    <div className="detail-item">
-                      <label>Phone Number</label>
-                      <div className="input-group">
-                        <div className="input-icon">
-                          <img src={name} alt="Phone Icon" />
-                        </div>
-                        <input
-                          type="tel"
-                          name="phonenumber"
-                          value={formData.phonenumber}
-                          onChange={handleChange}
-                          required
-                        />
-                      </div>
-                    </div>
-
-                    <div className="detail-item">
-                      <label>College</label>
-                      <div className="input-group">
-                        <div className="input-icon">
-                          <img src={name} alt="College Icon" />
-                        </div>
-                        <div className="select-wrapper">
-                          <select
-                            name="college"
-                            value={formData.college}
-                            onChange={handleChange}
-                            required
-                          >
-                            <option value="College of computer science">College of computer science</option>
-                            <option value="College of Engineering">College of Engineering</option>
-                            <option value="College of Arts">College of Arts</option>
-                            <option value="College of Business">College of Business</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-
+                    
                     <div className="detail-item">
                       <label>Department</label>
                       <div className="input-group">
@@ -309,68 +268,42 @@ const Lecturerprofile = () => {
                       <div className="detail-label">Name:</div>
                       <div className="detail-value">{profileData.name}</div>
                     </div>
-
-                    <div className="detail-item">
-                      <div className="detail-label">Email Address:</div>
-                      <div className="detail-value">{profileData.emailaddress}</div>
-                    </div>
-
-                    <div className="detail-item">
-                      <div className="detail-label">Phone Number:</div>
-                      <div className="detail-value">{profileData.phonenumber}</div>
-                    </div>
-
-                    <div className="detail-item">
-                      <div className="detail-label">College:</div>
-                      <div className="detail-value">{profileData.college}</div>
-                    </div>
-
+                    
                     <div className="detail-item">
                       <div className="detail-label">Department:</div>
                       <div className="detail-value">{profileData.department}</div>
                     </div>
-
+                    
                     <div className="detail-item">
                       <div className="detail-label">Office:</div>
                       <div className="detail-value">{profileData.office}</div>
                     </div>
-
+                    
                     <div className="detail-item">
                       <div className="detail-label">Gender:</div>
                       <div className="detail-value">{profileData.gender}</div>
                     </div>
-
+                    
                     <div className="profile-actions">
-                      <button className="edit-button" onClick={() => setEditMode(true)}>
-                        Edit Profile
-                      </button>
+                      <button type="button" className="edit-button" onClick={toggleEditMode}>Edit Profile</button>
                     </div>
                   </>
                 )}
               </div>
             </div>
-
-            <div className="bottom-links">
-              <a href="/help" className="help-link">Need Help?</a>
-              <a href="/delete-account" className="delete-account-link">Delete Account</a>
-            </div>
           </div>
         </div>
       </div>
-
+      
       {/* Confirmation Dialog */}
       {showConfirmDialog && (
-        <div className="confirmation-overlay">
-          <div className="confirmation-dialog">
-            <h3>Confirm Changes</h3>
-            <p>Are you sure you want to save changes to your profile?</p>
-            <div className="confirmation-actions">
-              <button className="confirm-button" onClick={handleConfirmSave}>
-                Confirm
-              </button>
-              <button className="cancel-button" onClick={() => setShowConfirmDialog(false)}>
-                Cancel
-              </button>
+        <div className="confirm-dialog-overlay">
+          <div className="confirm-dialog">
+            <h3>Save Changes</h3>
+            <p>Are you sure you want to save these changes?</p>
+            <div className="confirm-dialog-actions">
+              <button onClick={handleConfirmSave} className="confirm-button">Yes, Save</button>
+              <button onClick={() => setShowConfirmDialog(false)} className="cancel-button">Cancel</button>
             </div>
           </div>
         </div>
@@ -379,4 +312,4 @@ const Lecturerprofile = () => {
   );
 };
 
-export default Lecturerprofile;
+export default LecturerProfile;

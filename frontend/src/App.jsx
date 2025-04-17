@@ -29,7 +29,8 @@ import LecturerProfile from "./pages/Lecturerprofile";
 import Lecturerdashboard from "./pages/Lecturerdashboard";
 import LecturerIssueManagement from "./pages/LecturerIssueManagement";
 import Settings from "./pages/Settings";
-import StudentsProfile from "./pages/StudentsProfile";
+import StudentsProfile from "./pages/StudentsProfile"
+import RegistraProfile from "./pages/Registraprofile";
 
 // Removed duplicate import of Viewdetails
 
@@ -57,6 +58,7 @@ function App() {
         <Route path="/profile" element={<ProfileScreen />} />
         <Route path="/lecturerprofile" element={<LecturerProfile />} />
         <Route path="/studentsprofile" element={<StudentsProfile />} />
+        <Route path="/registraprofile" element={<RegistraProfile />} />
 
         {/* Dashboard routes */}
         <Route path="/studentdashboard" element={<StudentDashboard />} />
