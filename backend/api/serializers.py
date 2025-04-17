@@ -22,7 +22,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['id','username','email','role']
+        fields = ['id','username','email']
         
 class CustomUserprofileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -53,7 +53,9 @@ class DepartmentSerializer(serializers.ModelSerializer):
         fields = '__all__'
             
 class IssueSerializer(serializers.ModelSerializer):
-    student = CustomUser
+    student = UserSerializer(read_only=True)
+    registrar = UserSerializer(read_only=True)
+    
     #program = ProgramSerializer()
     class Meta:
         model = Issue

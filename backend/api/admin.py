@@ -31,8 +31,8 @@ class CustomUserAdmin(UserAdmin):
 class ProgramAdmin(admin.ModelAdmin):
     filter_horizontal = ('course_units',)  
 
-admin.site.register(CustomUser)    
-admin.site.register(Issue, IssueAdmin)
+admin.site.register(CustomUser,CustomUserAdmin)    
+admin.site.register(Issue)
 admin.site.register(Department)
 admin.site.register(Course_unit)
 admin.site.register(Registration_Token)
