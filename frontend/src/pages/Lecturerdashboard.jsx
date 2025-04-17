@@ -241,6 +241,32 @@ const Lecturerdashboard = () => {
     }
   };
 
+  // Handle resolving an issue
+  const handleResolveIssue = (issue) => {
+    // Extract only the necessary data (exclude created_at, updated_at, id, and registrar email)
+    const issueData = {
+      course_unit: issue.course_unit,
+      description: issue.description,
+      image: issue.image,
+      issue_type: issue.issue_type,
+      lecturer: issue.lecturer,
+      semester: issue.semester,
+      status: issue.status,
+      student: {
+        email: issue.student?.email,
+        id: issue.student?.id,
+        username: issue.student?.username
+      },
+      year_of_study: issue.year_of_study
+    };
+    
+    // Store issue data in localStorage or sessionStorage to pass it to the next page
+    sessionStorage.setItem('issueToResolve', JSON.stringify(issueData));
+    
+    // Navigate to the LecturerIssueManagement page with the issue ID as a URL parameter
+    navigate(`/LecturerIssueManagement?issueId=${issue.id}`);
+  };
+
   if (loading) {
     return (
       <div className="app-container">
@@ -352,7 +378,7 @@ const Lecturerdashboard = () => {
                               className="resolve-btn"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                window.location.href = `/LecturerIssueManagement?issueId=${issue.id}`;
+                                handleResolveIssue(issue);
                               }}
                             >
                               Resolve Issue

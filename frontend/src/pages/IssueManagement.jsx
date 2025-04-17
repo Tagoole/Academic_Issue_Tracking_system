@@ -19,6 +19,10 @@ const IssueManagement = () => {
   const [showActionsDropdown, setShowActionsDropdown] = useState(null);
   const dropdownRef = useRef(null);
   
+  // Added state for issue details modal
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [selectedIssue, setSelectedIssue] = useState(null);
+  
   // Counters for different issue statuses
   const [pendingCount, setPendingCount] = useState(0);
   const [inProgressCount, setInProgressCount] = useState(0);
@@ -164,8 +168,19 @@ const IssueManagement = () => {
     setSearchTerm(e.target.value);
   };
 
+  // Modified handleViewDetails to display issue details in a modal
   const handleViewDetails = (issueId) => {
-    navigate(`/view-details/${issueId}`);
+    const issue = issues.find(issue => issue.id === issueId);
+    if (issue) {
+      setSelectedIssue(issue);
+      setShowDetailsModal(true);
+      setShowActionsDropdown(null); // Close the actions dropdown
+    }
+  };
+
+  const closeDetailsModal = () => {
+    setShowDetailsModal(false);
+    setSelectedIssue(null);
   };
 
   const handleEscalateIssue = (issueId) => {
@@ -193,7 +208,7 @@ const IssueManagement = () => {
       API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
   
       // Send POST request to escalate the issue
-      const response = await API.post(`api/escalate-issue/`, escalationData);
+      const response = await API.put(`api/issues/${issue.id}/`, escalationData);
       console.log('Issue escalated successfully:', response.data);
       
       // Update the issue in state to reflect the change
@@ -437,7 +452,7 @@ const IssueManagement = () => {
               </div>
             </div>
 
-            {/* Table Display Section - Completely Restructured */}
+            {/* Table Display Section */}
             <div className="issues-data-container">
               {filteredIssues.length > 0 ? (
                 <div className="responsive-table-wrapper">
@@ -467,6 +482,84 @@ const IssueManagement = () => {
               )}
             </div>
           </div>
+          
+          {/* Issue Details Modal */}
+          {showDetailsModal && selectedIssue && (
+            <div className="issue-details-modal">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h2>Issue Details - #{selectedIssue.id}</h2>
+                  <button className="close-modal-btn" onClick={closeDetailsModal}>×</button>
+                </div>
+                <div className="modal-body">
+                  <div className="issue-detail-row">
+                    <span className="detail-label">Status:</span>
+                    <span className={`status-badge ${selectedIssue.status}`}>
+                      {selectedIssue.status.replace('_', ' ')}
+                    </span>
+                  </div>
+                  <div className="issue-detail-row">
+                    <span className="detail-label">Student:</span>
+                    <span>{selectedIssue.student?.username || 'N/A'}</span>
+                  </div>
+                  <div className="issue-detail-row">
+                    <span className="detail-label">Issue Type:</span>
+                    <span>{selectedIssue.issue_type || 'N/A'}</span>
+                  </div>
+                  <div className="issue-detail-row">
+                    <span className="detail-label">Year of Study:</span>
+                    <span>{selectedIssue.year_of_study?.replace('_', ' ') || 'N/A'}</span>
+                  </div>
+                  <div className="issue-detail-row">
+                    <span className="detail-label">Assigned To:</span>
+                    <span>{selectedIssue.lecturer?.username || 'Not Assigned'}</span>
+                  </div>
+                  <div className="issue-detail-row">
+                    <span className="detail-label">Created:</span>
+                    <span>{formatDate(selectedIssue.created_at)}</span>
+                  </div>
+                  <div className="issue-detail-row">
+                    <span className="detail-label">Last Updated:</span>
+                    <span>{formatDate(selectedIssue.updated_at)}</span>
+                  </div>
+                  <div className="issue-detail-description">
+                    <h3>Description:</h3>
+                    <p>{selectedIssue.description || 'No description provided.'}</p>
+                  </div>
+                  
+                  {/* Display comments if available */}
+                  {selectedIssue.comments && selectedIssue.comments.length > 0 && (
+                    <div className="issue-comments">
+                      <h3>Comments:</h3>
+                      {selectedIssue.comments.map((comment, index) => (
+                        <div key={index} className="comment-item">
+                          <div className="comment-header">
+                            <span className="comment-author">{comment.author || 'Unknown'}</span>
+                            <span className="comment-date">{formatDate(comment.created_at)}</span>
+                          </div>
+                          <p className="comment-text">{comment.text}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <div className="modal-footer">
+                  <button className="btn close-btn" onClick={closeDetailsModal}>Close</button>
+                  {selectedIssue.status === 'pending' && (
+                    <button 
+                      className="btn escalate-btn"
+                      onClick={() => {
+                        closeDetailsModal();
+                        handleEscalateIssue(selectedIssue.id);
+                      }}
+                    >
+                      Escalate Issue
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

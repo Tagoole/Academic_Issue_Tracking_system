@@ -11,29 +11,80 @@ const LecturerIssueManagement = () => {
     return parseInt(params.get('issueId')) || 1; // Default to 1 if no ID
   });
 
-  // In a real app, you would fetch the issue details using the ID
-  // For now we'll use our sample data
-  useEffect(() => {
-    // This would be a fetch in a real application
-    console.log(`Fetching issue with ID: ${issueId}`);
-    // For demonstration, we're using the default issue
-  }, [issueId]);
-
+  // State for the selected issue details
   const [selectedIssue, setSelectedIssue] = useState({
     id: 1,
     title: 'Sample Issue',
-    status: 'In-progress',
-    studentNo: '25/U0000/PS',
-    category: 'Missing Mark',
-    date: '01/01/2025',
-    submissionDate: '2025-01-01',
-    courseUnitName: 'Math 101',
-    courseUnitCode: 'MATH101',
-    assignedLecturer: 'Dr. John',
-    description: 'Description of the issue',
+    status: 'pending',
+    studentNo: '',
+    category: '',
+    date: '',
+    submissionDate: '',
+    courseUnitName: '',
+    courseUnitCode: '',
+    assignedLecturer: '',
+    description: '',
     attachments: [],
     comments: '',
+    // Additional fields from API response
+    course_unit: '',
+    image: '',
+    issue_type: '',
+    lecturer: '',
+    semester: '',
+    student: {
+      email: '',
+      id: '',
+      username: ''
+    },
+    year_of_study: ''
   });
+
+  // Fetch issue data from sessionStorage when component mounts
+  useEffect(() => {
+    try {
+      // Get the issue data from sessionStorage
+      const issueData = JSON.parse(sessionStorage.getItem('issueToResolve'));
+      
+      if (issueData) {
+        console.log("Retrieved issue data:", issueData);
+        
+        // Map the API response fields to our component's state structure
+        setSelectedIssue(prevState => ({
+          ...prevState,
+          id: issueId,
+          status: issueData.status || 'pending',
+          // Map student information
+          studentNo: issueData.student?.username || '',
+          // Map category to issue_type
+          category: issueData.issue_type || '',
+          // Map description
+          description: issueData.description || '',
+          // Map course unit
+          courseUnitName: `Course Unit ${issueData.course_unit}`,
+          courseUnitCode: `CU-${issueData.course_unit}`,
+          // Map semester and year
+          date: new Date().toLocaleDateString(),
+          submissionDate: new Date().toISOString().split('T')[0],
+          // Map lecturer
+          assignedLecturer: `Lecturer ID: ${issueData.lecturer}`,
+          // Keep the original fields from API
+          course_unit: issueData.course_unit,
+          image: issueData.image,
+          issue_type: issueData.issue_type,
+          lecturer: issueData.lecturer,
+          semester: issueData.semester,
+          student: issueData.student,
+          year_of_study: issueData.year_of_study
+        }));
+      } else {
+        console.log(`No issue data found in sessionStorage for ID: ${issueId}`);
+        // You might want to redirect back to dashboard or show an error
+      }
+    } catch (error) {
+      console.error("Error parsing issue data from sessionStorage:", error);
+    }
+  }, [issueId]);
 
   const [file, setFile] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
@@ -76,12 +127,19 @@ const LecturerIssueManagement = () => {
   };
 
   const handleConfirmSave = () => {
+    // Here you would typically make an API call to update the issue
+    // For now, we'll just update the local state
     setSelectedIssue({
       ...selectedIssue,
       status: selectedNewStatus,
     });
 
     console.log('Issue saved with status:', selectedNewStatus, selectedIssue);
+    
+    // Clear the stored issue data before redirecting
+    sessionStorage.removeItem('issueToResolve');
+    
+    // Redirect back to dashboard
     window.location.href = '/Lecturerdashboard';
   };
 
@@ -89,9 +147,21 @@ const LecturerIssueManagement = () => {
     setShowConfirmation(false);
   };
 
+  // Format date for display if available
+  const formattedDate = () => {
+    try {
+      return new Date().toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    } catch {
+      return new Date().toLocaleDateString();
+    }
+  };
+
   return (
     <div className="app-container">
-    
       <Navbar />
       <div className="content-container">
         <Sidebar2 />
@@ -99,13 +169,23 @@ const LecturerIssueManagement = () => {
           <div className="issue-management-container">
             <h2>Issue Management</h2>
             <div className="issue-details">
-              <div className="issue-field"><strong>Issue Title:</strong><p>{selectedIssue.title}</p></div>
-              <div className="issue-field"><strong>Issue ID:</strong><p>{selectedIssue.id}</p></div>
-              <div className="issue-field"><strong>Student No:</strong><p>{selectedIssue.studentNo}</p></div>
-              <div className="issue-field"><strong>Issue Category:</strong><p>{selectedIssue.category}</p></div>
-              <div className="issue-field"><strong>Issue Status:</strong><p>{selectedIssue.status}</p></div>
-              <div className="issue-field"><strong>Assigned Lecturer:</strong><p>{selectedIssue.assignedLecturer}</p></div>
-              <div className="issue-field"><strong>Description:</strong><p>{selectedIssue.description}</p></div>
+              <div className="issue-field"><strong>Issue ID:</strong><p>{issueId}</p></div>
+              <div className="issue-field"><strong>Student Username:</strong><p>{selectedIssue.student?.username || 'N/A'}</p></div>
+              <div className="issue-field"><strong>Student Email:</strong><p>{selectedIssue.student?.email || 'N/A'}</p></div>
+              <div className="issue-field"><strong>Issue Type:</strong><p>{selectedIssue.issue_type || 'N/A'}</p></div>
+              <div className="issue-field"><strong>Issue Status:</strong><p>{selectedIssue.status || 'pending'}</p></div>
+              <div className="issue-field"><strong>Course Unit:</strong><p>{selectedIssue.course_unit || 'N/A'}</p></div>
+              <div className="issue-field"><strong>Semester:</strong><p>{selectedIssue.semester || 'N/A'}</p></div>
+              <div className="issue-field"><strong>Year of Study:</strong><p>{selectedIssue.year_of_study || 'N/A'}</p></div>
+              <div className="issue-field"><strong>Date:</strong><p>{formattedDate()}</p></div>
+              <div className="issue-field"><strong>Description:</strong><p>{selectedIssue.description || 'No description provided.'}</p></div>
+              
+              {selectedIssue.image && (
+                <div className="issue-field issue-image-field">
+                  <strong>Attached Image:</strong>
+                  <img src={selectedIssue.image} alt="Issue attachment" className="issue-attachment-image" />
+                </div>
+              )}
             </div>
 
             <div className="comment-section">
@@ -113,7 +193,7 @@ const LecturerIssueManagement = () => {
               <textarea
                 value={selectedIssue.comments}
                 onChange={handleCommentChange}
-                placeholder="Enter comments..."
+                placeholder="Enter your response to this issue..."
                 rows="4"
               />
             </div>
