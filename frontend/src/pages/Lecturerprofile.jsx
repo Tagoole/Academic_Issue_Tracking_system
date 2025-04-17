@@ -55,68 +55,68 @@ const LecturerProfile = ({ userData = {} }) => {
     <div className="academic-profile-container">
       {/* Include Navbar */}
       <Navbar />
-
       <div className="profile-layout">
         {/* Include Sidebar */}
         <Sidebar2 />
-
-        <div className="profile-card">
+        <div className="profile-content">
           {/* Header Section */}
           <div className="profile-header">
             <h2>Profile</h2>
           </div>
-
-          {/* Profile Top Section */}
-          <div className="profile-top">
-            <div className="profile-image-container">
-              {/* Placeholder profile image */}
-              <div className="profile-image"></div>
-            </div>
-
-            <div className="profile-title">
-              <h3>{profileData.fullName}</h3>
-              <p>{profileData.role}</p>
-            </div>
-
-            <div className="profile-actions">
-              {isEditing ? (
-                <button className="edit-button" onClick={handleSave}>
-                  <span>Save</span>
-                </button>
-              ) : (
-                <button className="edit-button" onClick={() => setIsEditing(true)}>
-                  <img src={pencilIcon} alt="Edit" className="edit-icon" />
-                  <span>Edit</span>
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Personal Information Section */}
-          <div className="info-section">
-            <div className="section-header">
-              <h3>Personal Information</h3>
-            </div>
-
-            <div className="info-grid">
-              {personalInfoFields.map((field) => (
-                <div className="info-row" key={field.key}>
-                  <div className="info-label">{field.label}:</div>
-                  <div className="info-value">
-                    {isEditing ? (
-                      <input
-                        type="text"
-                        name={field.key}
-                        value={profileData[field.key]}
-                        onChange={handleChange}
-                        className="info-input"
-                      />
-                    ) : (
-                      profileData[field.key]
-                    )}
-                  </div>
+          
+          <div className="profile-row">
+            {/* Profile Card - Left Section */}
+            <div className="profile-card profile-info">
+              {/* Profile Top Section */}
+              <div className="profile-top">
+                <div className="profile-image-container">
+                  {/* Placeholder profile image */}
+                  <div className="profile-image"></div>
                 </div>
-              ))}
+                <div className="profile-title">
+                  <h3>{profileData.fullName}</h3>
+                  <p>{profileData.role}</p>
+                </div>
+                <div className="profile-actions">
+                  {isEditing ? (
+                    <button className="edit-button" onClick={handleSave}>
+                      <span>Save</span>
+                    </button>
+                  ) : (
+                    <button className="edit-button" onClick={() => setIsEditing(true)}>
+                      <img src={pencilIcon} alt="Edit" className="edit-icon" />
+                      <span>Edit</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+            
+            {/* Personal Information Section - Right Section */}
+            <div className="profile-card personal-info">
+              <div className="section-header">
+                <h3>Personal Information</h3>
+              </div>
+              <div className="info-grid">
+                {personalInfoFields.map((field) => (
+                  <div className="info-row" key={field.key}>
+                    <div className="info-label">{field.label}:</div>
+                    <div className="info-value">
+                      {isEditing ? (
+                        <input
+                          type="text"
+                          name={field.key}
+                          value={profileData[field.key]}
+                          onChange={handleChange}
+                          className="info-input"
+                        />
+                      ) : (
+                        profileData[field.key]
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
