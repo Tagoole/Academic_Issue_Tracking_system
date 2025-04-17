@@ -241,6 +241,44 @@ const IssueManagement = () => {
     };
   }, []);
 
+  // Render table rows
+  const renderIssueRows = () => {
+    if (filteredIssues.length === 0) {
+      return (
+        <tr>
+          <td colSpan="9" className="no-issues">
+            {searchTerm ? 'No issues match your search' : 'No issues found'}
+          </td>
+        </tr>
+      );
+    }
+
+    return filteredIssues.map((issue) => (
+      <tr key={issue.id} className="issue-row">
+        <td>{issue.id}</td>
+        <td>{issue.student?.username || 'N/A'}</td>
+        <td>{issue.issue_type || 'N/A'}</td>
+        <td>{issue.lecturer?.username || 'Not Assigned'}</td>
+        <td>{issue.year_of_study?.replace('_', ' ') || 'N/A'}</td>
+        <td>{formatDate(issue.created_at)}</td>
+        <td>{formatDate(issue.updated_at)}</td>
+        <td>
+          <span className={`status-badge ${issue.status}`}>
+            {issue.status.replace('_', ' ')}
+          </span>
+        </td>
+        <td>
+          <button 
+            className="view-details-btn"
+            onClick={() => handleViewDetails(issue.id)}
+          >
+            View Details
+          </button>
+        </td>
+      </tr>
+    ));
+  };
+
   // Loading state
   if (loading) {
     return (
@@ -340,49 +378,29 @@ const IssueManagement = () => {
               </div>
             </div>
 
-            <div className="issues-table">
+            {/* Table Display Section - Completely Restructured */}
+            <div className="issues-data-container">
               {filteredIssues.length > 0 ? (
-                <table className="issues-table">
-                  <thead>
-                    <tr>
-                      <th>ISSUE ID</th>
-                      <th>STUDENT</th>
-                      <th>ISSUE TYPE</th>
-                      <th>LECTURER</th>
-                      <th>YEAR OF STUDY</th>
-                      <th>SUBMITTED</th>
-                      <th>LAST UPDATED</th>
-                      <th>STATUS</th>
-                      <th>ACTION</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredIssues.map((issue) => (
-                      <tr key={issue.id} className="issue-row">
-                        <td>{issue.id}</td>
-                        <td>{issue.student?.username || 'N/A'}</td>
-                        <td>{issue.issue_type || 'N/A'}</td>
-                        <td>{issue.lecturer?.username || 'Not Assigned'}</td>
-                        <td>{issue.year_of_study?.replace('_', ' ') || 'N/A'}</td>
-                        <td>{formatDate(issue.created_at)}</td>
-                        <td>{formatDate(issue.updated_at)}</td>
-                        <td>
-                          <span className={`status-badge ${issue.status}`}>
-                            {issue.status.replace('_', ' ')}
-                          </span>
-                        </td>
-                        <td>
-                          <button 
-                            className="view-details-btn"
-                            onClick={() => handleViewDetails(issue.id)}
-                          >
-                            View Details
-                          </button>
-                        </td>
+                <div className="responsive-table-wrapper">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>ISSUE ID</th>
+                        <th>STUDENT</th>
+                        <th>ISSUE TYPE</th>
+                        <th>LECTURER</th>
+                        <th>YEAR OF STUDY</th>
+                        <th>SUBMITTED</th>
+                        <th>LAST UPDATED</th>
+                        <th>STATUS</th>
+                        <th>ACTION</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {renderIssueRows()}
+                    </tbody>
+                  </table>
+                </div>
               ) : (
                 <div className="no-issues-message">
                   {searchTerm ? 'No issues match your search' : 'No issues found'}
