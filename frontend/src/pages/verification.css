@@ -11,8 +11,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 20px;
+  justify-content: flex-start; 
+  padding: 0; 
   overflow-y: auto;
 }
 
@@ -56,7 +56,8 @@
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   padding: 30px;
-  margin: 40px auto;
+  margin: 0 auto; 
+  height: 75vh; 
   max-width: 500px;
   width: 90%;
   display: flex;
@@ -64,6 +65,8 @@
   align-items: center;
   border: 1px solid rgba(255, 255, 255, 0.2);
   text-align: center;
+  overflow-y: auto; 
+  justify-content: center; 
 }
 
 /* Increased email icon size */
