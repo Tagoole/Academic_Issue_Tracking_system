@@ -8,23 +8,115 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-  }
-  
-  .main-content {
+}
+
+.profile-card {
+    display: flex;
+    width: 1000px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* Horizontal layout for profile card */
+.profile-card.horizontal-layout {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Content row that contains both profile info and personal info */
+.profile-content-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+/* Profile info section (left side) */
+.profile-info-section {
+    flex: 0 0 300px; /* Fixed width for profile section */
+    padding: 20px;
+    border-right: 1px solid #f0f0f0;
+}
+
+/* Info section (right side) - takes remaining space */
+.info-section {
+    flex: 1;
+    padding: 20px;
+}
+
+/* Make the profile section take full width on mobile screens */
+@media (max-width: 768px) {
+    .profile-content-row {
+        flex-direction: column;
+    }
+
+    .profile-info-section {
+        flex: 1 0 auto;
+        border-right: none;
+        border-bottom: 1px solid #f0f0f0;
+    }
+}
+
+/* Profile top section adjustments for horizontal layout */
+.profile-info-section .profile-top {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0;
+    border-bottom: none;
+}
+
+.profile-info-section .profile-image-container {
+    margin-right: 0;
+    margin-bottom: 15px;
+}
+
+.profile-info-section .profile-title {
+    margin-bottom: 15px;
+}
+
+/* Existing profile styles may need minor adjustments */
+.profile-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: #f0f4f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #e6e6e6;
+}
+
+/* Make sure the info grid works well in the horizontal layout */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+@media (max-width: 992px) {
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Main Content */
+.main-content {
     display: flex;
     flex: 1;
-  }
-  
-  /* Profile Setup Container */
-  .profile-setup-container {
+}
+
+/* Profile Setup Container */
+.profile-setup-container {
     display: flex;
     flex: 1;
     justify-content: center;
     align-items: center;
     padding: 20px;
-  }
-  
-  .right-section {
+}
+
+.right-section {
     width: 100%;
     max-width: 600px;
     background-color: rgba(255, 255, 255, 0.95);
@@ -32,66 +124,66 @@
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
     padding: 30px;
     margin: 20px;
-  }
-  
-  /* Form Styling */
-  .form-container {
+}
+
+/* Form Styling */
+.form-container {
     width: 100%;
-  }
-  
-  .setup-title {
+}
+
+.setup-title {
     text-align: center;
     color: #333;
     font-size: 24px;
     margin-bottom: 30px;
     font-weight: 600;
-  }
-  
-  .input-group {
+}
+
+.input-group {
     margin-bottom: 20px;
-  }
-  
-  .label {
+}
+
+.label {
     display: block;
     margin-bottom: 8px;
     font-weight: 500;
     color: #333;
-  }
-  
-  .red-text {
+}
+
+.red-text {
     color: #e53935;
-  }
-  
-  .input-container {
+}
+
+.input-container {
     position: relative;
     width: 100%;
-  }
-  
-  .input {
+}
+
+.input {
     width: 100%;
     padding: 12px 40px 12px 15px;
     border: 1px solid #ddd;
     border-radius: 6px;
     font-size: 14px;
     transition: border-color 0.3s;
-  }
-  
-  .input:focus {
+}
+
+.input:focus {
     border-color: #4a90e2;
     outline: none;
     box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
-  }
-  
-  .select-input {
+}
+
+.select-input {
     appearance: none;
     background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
     background-repeat: no-repeat;
     background-position: right 15px top 50%;
     background-size: 12px auto;
     padding-right: 40px;
-  }
-  
-  .icon {
+}
+
+.icon {
     position: absolute;
     right: 15px;
     top: 50%;
@@ -99,73 +191,69 @@
     width: 20px;
     height: 20px;
     object-fit: contain;
-  }
-  
-  /* Navigation Container */
-  .navigation-container {
+}
+
+/* Navigation Container */
+.navigation-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-top: 30px;
-  }
-  
-  .button-group {
+}
+
+.button-group {
     display: flex;
     gap: 15px;
-  }
-  
-  .button {
+}
+
+.button {
     padding: 10px 25px;
     border-radius: 6px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
     border: none;
-  }
-  
-  .back-button {
+}
+
+.back-button {
     background-color: #f5f5f5;
     color: #333;
     border: 1px solid #ddd;
-  }
-  
-  .back-button:hover {
+}
+
+.back-button:hover {
     background-color: #e0e0e0;
-  }
-  
-  .next-button {
+}
+
+.next-button {
     background-color: #4a90e2;
     color: white;
-  }
-  
-  .next-button:hover {
+}
+
+.next-button:hover {
     background-color: #3a80d2;
-  }
-  
-  .page-indicator {
+}
+
+.page-indicator {
     color: #666;
     font-size: 14px;
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
     .main-content {
-      flex-direction: column;
+        flex-direction: column;
     }
-    
+
     .right-section {
-      max-width: 100%;
-      margin: 10px;
-      padding: 20px;
+        max-width: 100%;
+        margin: 10px;
+        padding: 20px;
     }
-    
-    .button {
-      padding: 10px 20px;
-    }
-  }
-  
-  /* NavBar Styling */
-  .navbar {
+}
+
+/* NavBar Styling */
+.navbar {
     background-color: #fff;
     height: 70px;
     display: flex;
@@ -175,45 +263,45 @@
     position: sticky;
     top: 0;
     z-index: 100;
-  }
-  
-  /* Sidebar Styling */
-  .sidebar {
+}
+
+/* Sidebar Styling */
+.sidebar {
     width: 250px;
     background-color: #fff;
     height: calc(100vh - 70px);
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
     padding: 20px 0;
-  }
-  
-  /* If sidebar is collapsed */
-  .sidebar-collapsed {
+}
+
+/* If sidebar is collapsed */
+.sidebar-collapsed {
     width: 80px;
-  }
-  
-  /* For dark mode support */
-  @media (prefers-color-scheme: dark) {
+}
+
+/* For dark mode support */
+@media (prefers-color-scheme: dark) {
     .right-section {
-      background-color: rgba(30, 30, 30, 0.95);
+        background-color: rgba(30, 30, 30, 0.95);
     }
-    
+
     .setup-title, .label {
-      color: #e0e0e0;
+        color: #e0e0e0;
     }
-    
+
     .input {
-      background-color: #333;
-      border-color: #555;
-      color: #e0e0e0;
+        background-color: #333;
+        border-color: #555;
+        color: #e0e0e0;
     }
-    
+
     .back-button {
-      background-color: #444;
-      color: #e0e0e0;
-      border-color: #555;
+        background-color: #444;
+        color: #e0e0e0;
+        border-color: #555;
     }
-    
+
     .page-indicator {
-      color: #aaa;
+        color: #aaa;
     }
-  }
+}

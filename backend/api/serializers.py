@@ -22,7 +22,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['id','username','email','role']
+        fields = ['id','username','email']
         
 class CustomUserprofileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -53,28 +53,14 @@ class DepartmentSerializer(serializers.ModelSerializer):
         fields = '__all__'
             
 class IssueSerializer(serializers.ModelSerializer):
-    student = serializers.StringRelatedField()
-    student_id = serializers.PrimaryKeyRelatedField(
-        source='student', 
-        queryset=CustomUser.objects.all(),  # Assuming User is your user model
-        write_only=True
-    )
-    registrar = serializers.StringRelatedField()
-    registrar_id = serializers.PrimaryKeyRelatedField(
-        source='registrar', 
-        queryset=CustomUser.objects.all(),  # Assuming registrars are also User models
-        write_only=True
-    )
+    student = UserSerializer(read_only=True)
+    registrar = UserSerializer(read_only=True)
     course_unit = Course_unitSerializer(read_only=True)
-    course_unit_id = serializers.PrimaryKeyRelatedField(
-        source='course_unit', 
-        queryset=Course_unit.objects.all(),
-        write_only=True
-    )
+    
     #program = ProgramSerializer()
     class Meta:
         model = Issue
-        fields = ['id','student','issue_type','course_unit','description','image','status','created_at','updated_at','registrar','year_of_study','semester','course_unit_id','registrar_id','student_id']
+        fields = ['id','student','issue_type','course_unit','description','image','status','created_at','comment','updated_at','registrar','year_of_study','semester','lecturer','is_commented']
 
 class Student_RegisterSerializer(serializers.ModelSerializer):
     class Meta:

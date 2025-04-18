@@ -1,144 +1,196 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import name from '../assets/name.png';
-import backgroundimage from "../assets/backgroundimage.jpg";
+import React, { useState, useRef, useEffect } from 'react';
+import Navbar from './NavBar';
 import Sidebar2 from './Sidebar2';
-import NavBar from './NavBar';
-import './Lecturerprofile.css';
+import './LecturerProfile.css';
 
 const LecturerProfile = () => {
-  const [formData, setFormData] = useState({
-    emailaddress: '',
-    phonenumber: '',
-    college: '',
-    department: '',
-    office: ''
+  const fileInputRef = useRef(null);
+  const [profileImage, setProfileImage] = useState('/avatar-placeholder.png');
+  
+  // Initialize state with localStorage data
+  const [profile, setProfile] = useState({
+    fullName: '[Full Name]',
+    role: '[Role]',
+    phoneNumber: '[Phone Number]',
+    email: '[Email Address]',
+    gender: '[Gender]',
+    registrationNumber: '[Registration]',
+    lecturerNumber: '[Lecturer Number]',
+    department: '[Department]'
   });
 
-  const navigate = useNavigate();
+  // Load data from localStorage on component mount
+  useEffect(() => {
+    // Get user data from localStorage
+    const userName = localStorage.getItem('userName') || '[Full Name]';
+    const userEmail = localStorage.getItem('userEmail') || '[Email Address]';
+    const userGender = localStorage.getItem('userGender') || '[Gender]';
+    const userId = localStorage.getItem('userId') || '';
+    
+    // Update profile state with localStorage data
+    setProfile(prevProfile => ({
+      ...prevProfile,
+      fullName: userName,
+      email: userEmail,
+      gender: userGender,
+      lecturerNumber: userId,
+      registrationNumber: userId ? `25/LECT/23-${userId}` : '[Registration]'
+    }));
+  }, []);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
+  const [editableField, setEditableField] = useState(null);
+
+  const handleEditClick = (field) => {
+    // Don't allow editing for readonly fields
+    if (field === 'fullName' || field === 'email' || field === 'gender' || 
+        field === 'lecturerNumber' || field === 'registrationNumber') {
+      return;
+    }
+    setEditableField(field);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Form data submitted:', formData);
-    navigate('/profilepicture');
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setProfile((prevProfile) => ({
+      ...prevProfile,
+      [name]: value,
+    }));
+  };
+
+  const handleSave = () => {
+    setEditableField(null);
+    console.log('Profile updated:', profile);
+    // Add API call to save updated profile data
+  };
+
+  const handleImageClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Create a preview URL for the image
+      const imageUrl = URL.createObjectURL(file);
+      setProfileImage(imageUrl);
+      
+      console.log('Image file selected:', file);
+    }
+  };
+
+  // Function to determine if a field is readonly
+  const isReadOnly = (field) => {
+    return ['fullName', 'email', 'gender', 'lecturerNumber', 'registrationNumber'].includes(field);
   };
 
   return (
     <div className="app-container">
-      <NavBar />
-      <Sidebar2 />
-      <div className="main-content">
-        <NavBar />
-        <div className="profile-container">
-          <div className="profile-overlay">
-            <h1 className="profile-heading">Personal profile</h1>
-
-            <form className="profile-form" onSubmit={handleSubmit}>
-              <div className="input-group">
-                <div className="input-icon">
-                  <img src={name} alt="Email Icon" />
+      <Navbar />
+      <div className="content-wrapper">
+        <Sidebar2 />
+        <main className="main-content">
+          <div className="profile-container">
+            {/* Header Section */}
+            <div className="profile-card">
+              <div className="profile-header">
+                <div className="profile-image-container" onClick={handleImageClick}>
+                  <img src={profileImage} alt="Profile" className="profile-image" />
+                  <div className="image-overlay">
+                    <span>Change Photo</span>
+                  </div>
+                  <input 
+                    type="file" 
+                    ref={fileInputRef} 
+                    style={{ display: 'none' }} 
+                    accept="image/*"
+                    onChange={handleImageChange}
+                  />
                 </div>
-                <input
-                  type="email"
-                  name="emailaddress"
-                  placeholder="Enter your email address"
-                  value={formData.emailaddress}
-                  onChange={handleChange}
-                  required
-                />
+                <div className="profile-details">
+                  <h2>{profile.fullName}</h2>
+                  <p>{profile.role}</p>
+                </div>
+                {!isReadOnly('fullName') && (
+                  <button className="edit-btn" onClick={() => handleEditClick('fullName')}>
+                    Edit 
+                  </button>
+                )}
               </div>
+            </div>
 
-              <div className="input-group">
-                <div className="input-icon">
-                  <img src={name} alt="Phone Icon" />
+            {/* Personal Information Section */}
+            <div className="info-card">
+              <h3>Personal Information</h3>
+              {['fullName', 'phoneNumber', 'email', 'gender'].map((field) => (
+                <div key={field} className="info-item">
+                  <label>{field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}:</label>
+                  {editableField === field ? (
+                    <input
+                      type="text"
+                      name={field}
+                      value={profile[field]}
+                      onChange={handleInputChange}
+                      autoFocus
+                      readOnly={isReadOnly(field)}
+                      className={isReadOnly(field) ? 'readonly-field' : ''}
+                    />
+                  ) : (
+                    <span className={isReadOnly(field) ? 'readonly-value' : ''}>
+                      {profile[field]}
+                    </span>
+                  )}
+                  {!isReadOnly(field) && (
+                    editableField === field ? (
+                      <button className="edit-btn" onClick={handleSave}>
+                        Save
+                      </button>
+                    ) : (
+                      <button className="edit-btn" onClick={() => handleEditClick(field)}>
+                        Edit
+                      </button>
+                    )
+                  )}
                 </div>
-                <input
-                  type="tel"
-                  name="phonenumber"
-                  placeholder="Enter your phone number"
-                  value={formData.phonenumber}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
+              ))}
+            </div>
 
-              <div className="input-group">
-                <div className="input-icon">
-                  <img src={name} alt="College Icon" />
+            {/* Academic Information Section */}
+            <div className="info-card">
+              <h3>Academic Information</h3>
+              {['registrationNumber', 'lecturerNumber', 'department'].map((field) => (
+                <div key={field} className="info-item">
+                  <label>{field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}:</label>
+                  {editableField === field ? (
+                    <input
+                      type="text"
+                      name={field}
+                      value={profile[field]}
+                      onChange={handleInputChange}
+                      autoFocus
+                      readOnly={isReadOnly(field)}
+                      className={isReadOnly(field) ? 'readonly-field' : ''}
+                    />
+                  ) : (
+                    <span className={isReadOnly(field) ? 'readonly-value' : ''}>
+                      {profile[field]}
+                    </span>
+                  )}
+                  {!isReadOnly(field) && (
+                    editableField === field ? (
+                      <button className="edit-btn" onClick={handleSave}>
+                        Save
+                      </button>
+                    ) : (
+                      <button className="edit-btn" onClick={() => handleEditClick(field)}>
+                        Edit
+                      </button>
+                    )
+                  )}
                 </div>
-                <div className="select-wrapper">
-                  <select
-                    name="college"
-                    value={formData.college}
-                    onChange={handleChange}
-                    required
-                  >
-                    <option value="" disabled>Select your college</option>
-                    <option value="college 1">College of computer science</option>
-                    <option value="college 2">College of Engineering</option>
-                    <option value="college 3">College of Arts</option>
-                    <option value="college 4">College of Business</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="input-group">
-                <div className="input-icon">
-                  <img src={name} alt="Department Icon" />
-                </div>
-                <div className="select-wrapper">
-                  <select
-                    name="department"
-                    value={formData.department}
-                    onChange={handleChange}
-                    required
-                  >
-                    <option value="" disabled>Select your department</option>
-                    <option value="1">Department 1</option>
-                    <option value="2">Department 2</option>
-                    <option value="3">Department 3</option>
-                    <option value="4">Department 4</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="input-group">
-                <div className="input-icon">
-                  <img src={name} alt="Office Icon" />
-                </div>
-                <div className="select-wrapper">
-                  <select
-                    name="office"
-                    value={formData.office}
-                    onChange={handleChange}
-                    required
-                  >
-                    <option value="" disabled>Select your office</option>
-                    <option value="office 1">Computer Science</option>
-                    <option value="office 2">Mathematics</option>
-                    <option value="office 3">Physics</option>
-                    <option value="office 4">Chemistry</option>
-                  </select>
-                </div>
-              </div>
-
-              <button type="submit" className="next-button">NEXT</button>
-            </form>
-
-            <div className="bottom-links">
-              <a href="/help" className="help-link">Need Help?</a>
-              <a href="/delete-account" className="delete-account-link">Delete Account</a>
+              ))}
             </div>
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );

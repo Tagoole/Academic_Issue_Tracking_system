@@ -7,6 +7,7 @@ import codeIcon from '../assets/code-icon.png';
 import graduateImage from '../assets/congragulation.png';
 import './signin.css';
 
+
 const SignIn = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -69,6 +70,9 @@ const SignIn = () => {
             break;
           case 'academic_registrar':
             navigate('/registradashboard');
+            break;
+          case 'lecturer':
+            navigate('/lecturerdashboard');
             break;
           default:
             navigate('/landingpage');

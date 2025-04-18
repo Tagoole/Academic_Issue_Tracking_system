@@ -13,7 +13,7 @@ import Congragulation from "./pages/congragulation";
 import RegistraDashboard from "./pages/RegistraDashboard";
 import Registrationtoken from "./pages/Generatetoken";
 import IssueManagement from "./pages/IssueManagement";
-import Viewdetails from "./pages/View-details";
+import Viewdetails from "./pages/View-details"; // Keep this import
 import Changepassword from "./pages/Changepassword";
 import Preferences from "./pages/Preferences";
 import Help from "./pages/Help";
@@ -29,9 +29,10 @@ import LecturerProfile from "./pages/Lecturerprofile";
 import Lecturerdashboard from "./pages/Lecturerdashboard";
 import LecturerIssueManagement from "./pages/LecturerIssueManagement";
 import Settings from "./pages/Settings";
-import StudentsProfile from "./pages/StudentsProfile";
+import StudentsProfile from "./pages/StudentsProfile"
+import RegistraProfile from "./pages/Registraprofile";
 
-
+// Removed duplicate import of Viewdetails
 
 function App() {
   return (
@@ -57,6 +58,7 @@ function App() {
         <Route path="/profile" element={<ProfileScreen />} />
         <Route path="/lecturerprofile" element={<LecturerProfile />} />
         <Route path="/studentsprofile" element={<StudentsProfile />} />
+        <Route path="/registraprofile" element={<RegistraProfile />} />
 
         {/* Dashboard routes */}
         <Route path="/studentdashboard" element={<StudentDashboard />} />
@@ -78,6 +80,7 @@ function App() {
         <Route path="/help" element={<Help />} />
         <Route path="/deleteaccount" element={<Deleteaccount />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/view-details" element={<Viewdetails />} />
 
         {/* Catch-all route */}
       </Routes>

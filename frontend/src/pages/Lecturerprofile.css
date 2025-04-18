@@ -1,16 +1,192 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+.academic-profile-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
+.profile-layout {
+  display: flex;
+  flex: 1;
+}
+
+.profile-content {
+  flex: 1;
+  padding: 20px;
+  background-color: #f5f5f5;
+}
+
+.profile-header {
+  margin-bottom: 20px;
+}
+
+.profile-header h2 {
+  font-size: 24px;
+  color: #333;
+}
+
+.profile-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.profile-card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.profile-info {
+  flex: 1;
+  min-width: 300px;
+}
+
+.personal-info {
+  flex: 2;
+  min-width: 400px;
+}
+
+.profile-top {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.profile-image-container {
+  margin-right: 20px;
+}
+
+.profile-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  background-image: url('https://via.placeholder.com/100');
+  background-size: cover;
+}
+
+.profile-title {
+  flex: 1;
+}
+
+.profile-title h3 {
+  margin: 0;
+  font-size: 20px;
+  color: #333;
+}
+
+.profile-title p {
+  margin: 5px 0 0;
+  color: #666;
+}
+
+.profile-actions {
+  margin-left: auto;
+}
+
+.edit-button {
+  display: flex;
+  align-items: center;
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.edit-button:hover {
+  background-color: #e0e0e0;
+}
+
+.edit-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 5px;
+}
+
+.section-header {
+  margin-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.section-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+}
+
+.info-row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.info-label {
+  width: 150px;
+  font-weight: 600;
+  color: #555;
+}
+
+.info-value {
+  flex: 1;
+  color: #333;
+}
+
+.info-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .profile-row {
+    flex-direction: column;
+  }
+  
+  .profile-info, .personal-info {
+    width: 100%;
+  }
+  
+  .profile-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .profile-image-container {
+    margin-right: 0;
+    margin-bottom: 15px;
+  }
+  
+  .profile-actions {
+    margin-left: 0;
+    margin-top: 15px;
+  }
+  
+  .info-label, .info-value {
+    width: 100%;
+  }
+  
+  .info-label {
+    margin-bottom: 5px;
+  }
+}
 body, html {
   height: 100%;
   width: 100%;
   overflow: hidden;
   font-family: Arial, sans-serif;
 }
-
 body {
   background-image: url('../assets/backgroundimage.jpg'); 
   background-size: cover;
@@ -18,161 +194,387 @@ body {
   background-repeat: no-repeat;
   background-attachment: fixed;
 }
-
 .app-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
   width: 100%;
   position: relative;
-  background: transparent; /* Make sure this is transparent */
+  background: transparent;
 }
 .profile-container {
-    width: 100%;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: sans-serif;
-    position: relative;
-    background: transparent; /* Changed from background-size, etc. */
-  }
-  
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: sans-serif;
+  position: relative;
+  background: transparent;
+  padding-top: 100px;
+}
+.profile-overlay {
+  width: 90%;
+  max-width: 800px; /* Increased from 600px to make it wider */
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+.profile-heading {
+  color: white;
+  text-align: center;
+  font-size: 28px;
+  margin-bottom: 30px;
+  font-weight: bold;
+}
+.profile-content {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+/* Success Message */
+.success-message {
+  background-color: rgba(0, 128, 0, 0.8);
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: bold;
+  animation: fadeIn 0.3s, fadeOut 0.3s 2.7s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* Profile Picture Section */
+.profile-picture-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.profile-picture {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid white;
+  position: relative;
+}
+.profile-picture img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-picture-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #333;
+  color: white;
+  font-size: 48px;
+  font-weight: bold;
+}
+
+/* Profile picture overlay for edit mode */
+.profile-picture-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+  color: white;
+  font-size: 12px;
+  text-align: center;
+  padding: 5px;
+}
+
+.profile-picture:hover .profile-picture-overlay {
+  opacity: 1;
+}
+
+/* Profile Details - Now as a grid with 2 columns */
+.profile-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Creates two equal columns */
+  gap: 20px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.detail-label {
+  color: #ccc;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.detail-value {
+  color: white;
+  font-size: 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+/* Form Elements */
+.profile-form {
+  display: contents; /* This makes the form blend with the grid */
+}
+
+.detail-item label {
+  color: #ccc;
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.input-group {
+  position: relative;
+  width: 100%;
+  height: 48px;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 15px;
+  width: 20px;
+  height: 20px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.input-icon img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0);
+}
+input, .select-wrapper {
+  width: 100%;
+  height: 100%;
+  padding: 0 20px 0 45px;
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  color: #333;
+}
+
+input::placeholder {
+  color: #999;
+}
+
+.select-wrapper {
+  position: relative;
+  padding: 0;
+}
+select {
+  width: 100%;
+  height: 100%;
+  padding: 0 40px 0 45px;
+  background-color: transparent;
+  border: none;
+  font-size: 16px;
+  color: #333;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+select option {
+  color: #333;
+}
+
+select option:first-child {
+  color: #999;
+}
+
+.select-wrapper::after {
+  content: "";
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #333;
+  pointer-events: none;
+}
+/* Action Buttons */
+.profile-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 15px;
+  grid-column: span 2; /* Make actions span both columns */
+}
+
+.edit-button, .save-button, .cancel-button, .confirm-button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.edit-button {
+  background-color: #000;
+  color: white;
+}
+
+.edit-button:hover {
+  background-color: #333;
+}
+
+.save-button {
+  background-color: #000;
+  color: white;
+}
+
+.save-button:hover {
+  background-color: #333;
+}
+
+.cancel-button {
+  background-color: #ccc;
+  color: #333;
+}
+
+.cancel-button:hover {
+  background-color: #999;
+}
+
+.confirm-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.confirm-button:hover {
+  background-color: #0069d9;
+}
+
+/* Bottom Links */
+.bottom-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 25px;
+}
+
+.help-link, .delete-account-link {
+  color: #ccc;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.3s;
+}
+
+.help-link:hover, .delete-account-link:hover {
+  color: white;
+}
+
+/* Confirmation Dialog */
+.confirmation-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.confirmation-dialog {
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.confirmation-dialog h3 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.confirmation-dialog p {
+  margin-bottom: 20px;
+  color: #666;
+}
+
+.confirmation-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
   .profile-overlay {
-    width: 90%;
-    max-width: 450px;
-    background-color: rgba(0, 0, 0, 0.6);
-    border-radius: 16px;
-    padding: 30px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    padding: 20px;
   }
   
   .profile-heading {
-    color: white;
-    text-align: center;
-    font-size: 28px;
-    margin-bottom: 30px;
-    font-weight: bold;
+    font-size: 24px;
   }
   
-  .profile-form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+  .profile-picture {
+    width: 100px;
+    height: 100px;
   }
   
-  .input-group {
-    position: relative;
-    width: 100%;
-    height: 54px;
-    display: flex;
-    align-items: center;
+  .profile-picture-placeholder {
+    font-size: 36px;
   }
   
-  .input-icon {
-    position: absolute;
-    left: 15px;
-    width: 20px;
-    height: 20px;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .profile-details {
+    grid-template-columns: 1fr; /* Switch to single column on mobile */
   }
   
-  .input-icon img {
-    width: 20px;
-    height: 20px;
-    filter: brightness(0); /* Makes icons black */
+  .profile-actions {
+    grid-column: 1; /* Reset to single column on mobile */
   }
   
-  input, .select-wrapper {
-    width: 100%;
-    height: 100%;
-    padding: 0 20px 0 45px;
-    background-color: #f0f0f0;
-    border: none;
-    border-radius: 10px;
-    font-size: 16px;
-    color: #333;
-  }
-  
-  input::placeholder {
-    color: #999;
-  }
-  
-  .select-wrapper {
-    position: relative;
-    padding: 0;
-  }
-  
-  select {
-    width: 100%;
-    height: 100%;
-    padding: 0 40px 0 45px;
-    background-color: transparent;
-    border: none;
-    font-size: 16px;
-    color: #333;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    cursor: pointer;
-  }
-  
-  select option {
-    color: #333;
-  }
-  
-  select option:first-child {
-    color: #999;
-  }
-  
-  .select-wrapper::after {
-    content: "";
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 0;
-    height: 0;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-top: 6px solid #333;
-    pointer-events: none;
-  }
-  
-  .next-button {
-    height: 54px;
-    background-color: #000;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 10px;
-    transition: background-color 0.3s;
-  }
-  
-  .next-button:hover {
-    background-color: #333;
-  }
-  
-  .bottom-links {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 25px;
-  }
-  
-  .help-link, .delete-account-link {
-    color: #ccc;
-    text-decoration: none;
+  .edit-button, .save-button, .cancel-button {
+    padding: 10px 15px;
     font-size: 14px;
-    transition: color 0.3s;
   }
-  
-  .help-link:hover, .delete-account-link:hover {
-    color: white;
-  }
+}

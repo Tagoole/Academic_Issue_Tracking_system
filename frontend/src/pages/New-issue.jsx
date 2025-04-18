@@ -9,7 +9,8 @@ const NewIssue = () => {
   const navigate = useNavigate();
   const [registrars, setRegistrars] = useState([]);
   const [courseUnits, setCourseUnits] = useState([]);
-  const [registrarName, setRegistrarName] = useState('');
+  const [registrarUsername, setRegistrarUsername] = useState('');
+  const [registrarDisplayNames, setRegistrarDisplayNames] = useState({});
   const [issueType, setIssueType] = useState('missing_marks');
   const [description, setDescription] = useState('I have no marks for OS test yet I merged 86% in it.');
   const [attachment, setAttachment] = useState(null);
@@ -32,7 +33,6 @@ const NewIssue = () => {
   const [selectedCourseUnitId, setSelectedCourseUnitId] = useState('');
   const [accessToken, setAccessToken] = useState('');
   const [refreshToken, setRefreshToken] = useState('');
-  const [issueTitle, setIssueTitle] = useState('Wrong Marks');
 
   // Define issue types to match backend ISSUE_CHOICES
   const issueTypes = [
@@ -54,13 +54,6 @@ const NewIssue = () => {
   const semesterOptions = [
     { value: 'one', label: 'One' },
     { value: 'two', label: 'Two' }
-  ];
-
-  // Define status options
-  const statusOptions = [
-    { value: 'pending', label: 'Pending' },
-    { value: 'resolved', label: 'Resolved' },
-    { value: 'in_progress', label: 'In Progress' }
   ];
 
   // Get username and tokens from localStorage when component mounts
@@ -170,13 +163,27 @@ const NewIssue = () => {
         if (response && response.data && Array.isArray(response.data) && response.data.length > 0) {
           setRegistrars(response.data);
           
-          // Store the complete first registrar object or a string
+          // Create a mapping of username to display name
+          const displayNameMap = {};
+          response.data.forEach(registrar => {
+            if (typeof registrar === 'object') {
+              const username = registrar.username || '';
+              displayNameMap[username] = registrar.name || username;
+            } else {
+              displayNameMap[registrar] = registrar;
+            }
+          });
+          setRegistrarDisplayNames(displayNameMap);
+          
+          // Store the username of the first registrar
           const firstRegistrar = response.data[0];
-          // Extract name as string to display in dropdown
-          const firstRegistrarName = typeof firstRegistrar === 'object' ? 
-            (firstRegistrar.name || firstRegistrar.username || '') : 
+          const firstRegistrarUsername = typeof firstRegistrar === 'object' ? 
+            (firstRegistrar.username || '') : 
             firstRegistrar;
-          setRegistrarName(firstRegistrarName);
+          setRegistrarUsername(firstRegistrarUsername);
+          
+          console.log('Setting first registrar username:', firstRegistrarUsername);
+          console.log('Display name mapping:', displayNameMap);
         } else {
           setRegistrars([]);
           setErrors(prev => ({ ...prev, registrars: 'No registrars found. Please try again later.' }));
@@ -254,14 +261,6 @@ const NewIssue = () => {
     setAttachment(null);
   };
 
-  // Get registrar name as string
-  const getRegistrarName = (registrar) => {
-    if (typeof registrar === 'object') {
-      return registrar.name || registrar.username || '';
-    }
-    return registrar;
-  };
-
   const handleSubmit = async () => {
     // Check if token exists
     if (!accessToken) {
@@ -275,18 +274,13 @@ const NewIssue = () => {
     setErrors(prev => ({ ...prev, general: null }));
     
     // Form validation
-    if (!registrarName) {
+    if (!registrarUsername) {
       setErrors(prev => ({ ...prev, general: 'Please select a registrar.' }));
       return;
     }
     
     if (!selectedCourseUnitId) {
       setErrors(prev => ({ ...prev, general: 'Please select a course unit.' }));
-      return;
-    }
-    
-    if (!issueTitle.trim()) {
-      setErrors(prev => ({ ...prev, general: 'Please enter an issue title.' }));
       return;
     }
     
@@ -307,29 +301,22 @@ const NewIssue = () => {
       // Create FormData object
       const formData = new FormData();
       
-      // Get registrar name as string and ensure it matches exactly what's in database
-      const registrarNameString = typeof registrarName === 'object' ? 
-        (registrarName.name || registrarName.username || '') : 
-        registrarName;
-      
-      // Get the full username for the student, exactly as stored in the database
+      // Get the student username and registrar username
       const studentUsername = currentUser;
-
+      
       // For debugging
-      console.log('Using registrar name:', registrarNameString);
+      console.log('Using registrar username:', registrarUsername);
       console.log('Using student username:', studentUsername);
       
-      // Instead of 'registrar', use 'registrar_username' to help backend identify field type
-      formData.append('registrar_username', registrarNameString);
-      // Instead of 'student', use 'student_username' to help backend identify field type
-      formData.append('student_username', studentUsername);
+      // Use field names matching the serializer's expected format
+      formData.append('registrar', registrarUsername); // Backend will map this to registrar field
+      formData.append('student', studentUsername); // Backend will map this to student field
+      formData.append('lecturer', ''); // Empty string will be treated as null by backend
       
-      // Rest of form data remains the same
+      // Rest of form data
       formData.append('issue_type', issueType);
       formData.append('description', description);
-      formData.append('issue_title', issueTitle);
-      formData.append('course_unit_id', selectedCourseUnitId);
-      formData.append('lecturer', '');
+      formData.append('course_unit', selectedCourseUnitId);
       formData.append('status', 'pending');
       formData.append('year_of_study', yearOfStudy);
       formData.append('semester', semester);
@@ -368,13 +355,16 @@ const NewIssue = () => {
       const courseUnitName = selectedUnit ? 
         (typeof selectedUnit === 'object' ? selectedUnit.name || selectedUnit.course_unit_name : selectedUnit) : 
         'Selected Course Unit';
+      
+      // Use display name for success page, falling back to username if no display name exists
+      const registrarDisplayName = registrarDisplayNames[registrarUsername] || registrarUsername;
         
-      // Navigate to NotificationSuccess page after brief delay - Changed from '/success' to '/notification-success'
+      // Navigate to NotificationSuccess page after brief delay
       setTimeout(() => {
         navigate('/notification-success', {
           state: {
-            registrarName: registrarNameString,
-            issueTitle,
+            registrarName: registrarDisplayName,
+            issueType: issueTypes.find(t => t.value === issueType)?.label || issueType,
             courseUnitName,
           },
         });
@@ -485,48 +475,32 @@ const NewIssue = () => {
                 </div>
               ) : (
                 <select
-                  value={typeof registrarName === 'object' ? 
-                    (registrarName.name || registrarName.username || '') : 
-                    registrarName}
-                  onChange={(e) => setRegistrarName(e.target.value)}
+                  value={registrarUsername}
+                  onChange={(e) => setRegistrarUsername(e.target.value)}
                 >
                   {registrars.length === 0 ? (
                     <option value="">No registrars available</option>
                   ) : (
                     registrars.map((registrar, index) => {
-                      const name = typeof registrar === 'object' ? 
+                      // Get the username as the value
+                      const username = typeof registrar === 'object' ? 
+                        (registrar.username || '') : 
+                        registrar;
+                      
+                      // Get a display name (could be the full name or just the username)
+                      const displayName = typeof registrar === 'object' ? 
                         (registrar.name || registrar.username || '') : 
                         registrar;
+                      
                       return (
-                        <option key={index} value={name}>
-                          {name}
+                        <option key={index} value={username}>
+                          {displayName}
                         </option>
                       );
                     })
                   )}
                 </select>
               )}
-            </div>
-            <div className="form-group">
-              <label>Lecturer's Name</label>
-              {/* Lecturer field is set to disabled and empty */}
-              <input type="text" disabled placeholder="Not required" value="" readOnly />
-            </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label>Issue Type</label>
-              <select
-                value={issueType}
-                onChange={(e) => setIssueType(e.target.value)}
-              >
-                {issueTypes.map((type) => (
-                  <option key={type.value} value={type.value}>
-                    {type.label}
-                  </option>
-                ))}
-              </select>
             </div>
             <div className="form-group">
               <label>Student's Name</label>
@@ -548,6 +522,27 @@ const NewIssue = () => {
                   disabled
                 />
               )}
+            </div>
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label>Issue Type</label>
+              <select
+                value={issueType}
+                onChange={(e) => setIssueType(e.target.value)}
+              >
+                {issueTypes.map((type) => (
+                  <option key={type.value} value={type.value}>
+                    {type.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Status</label>
+              {/* Status field is readonly for student role */}
+              <input type="text" value="Pending" readOnly disabled />
             </div>
           </div>
 
@@ -611,18 +606,7 @@ const NewIssue = () => {
               </div>
             </div>
             <div className="form-group">
-              <label>Issue Title</label>
-              <input 
-                type="text" 
-                value={issueTitle}
-                onChange={(e) => setIssueTitle(e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group full-width">
-              <label>Course Unit Name</label>
+              <label>Course Unit</label>
               {isLoading.courseUnits ? (
                 <div className="loading-field">
                   <select disabled>
@@ -661,14 +645,6 @@ const NewIssue = () => {
             </div>
           </div>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label className="status">Status</label>
-              {/* Status field is readonly for student role */}
-              <input type="text" value="Pending" readOnly disabled />
-            </div>
-          </div>
-
           {/* Submit Button Section */}
           <div className="form-row submit-row">
             <button
@@ -681,9 +657,7 @@ const NewIssue = () => {
 
             {submitStatus === 'success' && (
               <div className="submit-status success">
-                Issue successfully sent to {typeof registrarName === 'object' ? 
-                  (registrarName.name || registrarName.username || '') : 
-                  registrarName}!
+                Issue successfully submitted!
               </div>
             )}
             {submitStatus === 'error' && (
