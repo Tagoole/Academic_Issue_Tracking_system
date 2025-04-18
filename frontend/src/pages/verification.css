@@ -78,9 +78,12 @@
 }
 
 .email-icon {
-  width: 120px;
-  height: 120px;
-  color: #00a651; /* Green color */
+  width: 100px;
+  height: 100px;
+  max-width: 20%; 
+  height: auto; 
+  min-width: 80px; 
+  color: #00a651;/
 }
 
 .verification-title {
@@ -116,7 +119,7 @@
   display: flex;
   justify-content: center;
   gap: 12px;
-  margin-bottom: 25px;
+  margin-bottom: 5%; 
   width: 100%;
   max-width: 360px;
 }
@@ -221,6 +224,7 @@
 /* Responsive styles */
 @media (max-width: 480px) {
   .verification-card {
+    height: 85vh; 
     padding: 20px;
   }
   
@@ -233,6 +237,10 @@
     height: 45px;
     font-size: 20px;
   }
+  .icon-container {
+    margin-bottom: 3%;
+  }
+  
   
   .email-icon {
     width: 100px;
