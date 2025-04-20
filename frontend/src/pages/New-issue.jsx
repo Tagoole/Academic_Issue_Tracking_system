@@ -236,15 +236,23 @@ const NewIssue = () => {
       setSubmitStatus(null);
       setErrors(prev => ({ ...prev, general: null }));
 
-      // Prepare form data
+      // Prepare form data - FIXED
       const submissionData = new FormData();
       submissionData.append('registrar', formData.registrar);
       submissionData.append('student', formData.student);
-      submissionData.append('lecturer', '');
+      
+      // Remove the empty lecturer field or provide a default value if required
+      // submissionData.append('lecturer', ''); // Removed this line as it might be causing the issue
+      
       submissionData.append('issue_type', formData.issueType);
       submissionData.append('description', formData.description);
-      submissionData.append('course_unit_id', formData.courseUnitId);
-      submissionData.append('status', 'pending');
+      
+      // Make sure course_unit is submitted with the correct name and format
+      submissionData.append('course_unit', formData.courseUnitId);
+      
+      // Status might be auto-assigned by the backend, removing if causing issues
+      // submissionData.append('status', 'pending');
+      
       submissionData.append('year_of_study', formData.yearOfStudy);
       submissionData.append('semester', formData.semester);
       
@@ -252,8 +260,11 @@ const NewIssue = () => {
         submissionData.append('image', formData.attachment);
       }
 
-      // Debug log
-      console.log('Submitting with course_unit_id:', formData.courseUnitId);
+      // Log the actual data being sent for debugging
+      console.log('Submitting form data:');
+      for (let pair of submissionData.entries()) {
+        console.log(pair[0] + ': ' + pair[1]);
+      }
 
       // Make request
       const response = await makeAuthRequest(async (token) => {
@@ -291,10 +302,32 @@ const NewIssue = () => {
     } catch (err) {
       console.error('Submission error:', err);
       setSubmitStatus('error');
-      setErrors(prev => ({
-        ...prev,
-        general: err.response?.data?.message || 'Failed to submit issue'
-      }));
+      // Improved error handling to show more details
+      if (err.response?.data) {
+        console.log('Error response data:', err.response.data);
+        let errorMessage = 'Failed to submit issue';
+        if (typeof err.response.data === 'string') {
+          errorMessage = err.response.data;
+        } else if (err.response.data.message) {
+          errorMessage = err.response.data.message;
+        } else if (err.response.data.detail) {
+          errorMessage = err.response.data.detail;
+        } else {
+          // Try to extract field-specific errors
+          const fieldErrors = Object.entries(err.response.data)
+            .map(([field, msgs]) => `${field}: ${Array.isArray(msgs) ? msgs.join(', ') : msgs}`)
+            .join('; ');
+          if (fieldErrors) {
+            errorMessage = `Validation errors: ${fieldErrors}`;
+          }
+        }
+        setErrors(prev => ({ ...prev, general: errorMessage }));
+      } else {
+        setErrors(prev => ({
+          ...prev,
+          general: 'Network error or server unavailable'
+        }));
+      }
     } finally {
       setIsSubmitting(false);
     }
