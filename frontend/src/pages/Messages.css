@@ -3,7 +3,8 @@
 .messages-page {
   display: flex;
   height: calc(100vh - 70px); /* Adjust for navbar height */
-  margin-top: 70px; /* To account for fixed navbar */
+  margin-top: 50px; /* To account for fixed navbar */
+  margin-bottom: 3%;
   background-color: rgba(255, 255, 255, 0.382);
   font-family: Arial, sans-serif;
 }
@@ -35,7 +36,7 @@
   border: 1px solid #cccccc;
   font-size: 14px;
   outline: none;
-  background-color: #050505;
+  background-color: hsl(0, 55%, 96%);
 }
 
 .search-bar input:focus {
