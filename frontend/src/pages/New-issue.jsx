@@ -307,16 +307,20 @@ const NewIssue = () => {
       // For debugging
       console.log('Using registrar username:', registrarUsername);
       console.log('Using student username:', studentUsername);
+      console.log('Using course unit ID:', selectedCourseUnitId);
       
       // Use field names matching the serializer's expected format
-      formData.append('registrar', registrarUsername); // Backend will map this to registrar field
-      formData.append('student', studentUsername); // Backend will map this to student field
+      formData.append('registrar', registrarUsername);
+      formData.append('student', studentUsername);
       formData.append('lecturer', ''); // Empty string will be treated as null by backend
       
       // Rest of form data
       formData.append('issue_type', issueType);
       formData.append('description', description);
+      
+      // This is the key change - use course_unit_id instead of course_unit
       formData.append('course_unit', selectedCourseUnitId);
+      
       formData.append('status', 'pending');
       formData.append('year_of_study', yearOfStudy);
       formData.append('semester', semester);
