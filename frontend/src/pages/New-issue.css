@@ -5,7 +5,7 @@
   min-height: 800px;
   width: 100%;
   position: relative;
-  background-color: #f4f7fa; /* Light background color instead of image */
+  background-color: rgba(red, green, blue, alpha); /* Light background color instead of image */
   margin-top: 20px;
   margin-left: 250px;
 }
@@ -21,15 +21,16 @@
 .issue-form-container {
   flex: 1;
   padding: 30px;
+  margin-top: 50px;
   margin-left: 100px; /* Width of Sidebar */
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: #f9f6f6f2;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  max-width: 1000px;
-  width: calc(100% - 280px);
+  width: 900px;
   margin-right: 250px;
   max-height: 80vh; /* Set a maximum height relative to viewport height */
   overflow-y: auto; /* Enable vertical scrolling */
+  content: center;
 }
 
 .issue-form-container h1 {
