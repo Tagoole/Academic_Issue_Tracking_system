@@ -35,6 +35,10 @@ const ProfilePictureSetup = () => {
       return;
     }
 
+
+    add .
+    
+
     // Check file size (10MB max)
     if (file.size > 10 * 1024 * 1024) {
       alert('File size should be less than 10MB');
