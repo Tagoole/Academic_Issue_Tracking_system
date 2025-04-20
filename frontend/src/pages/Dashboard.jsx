@@ -6,7 +6,6 @@ import './Dashboard.css';
 
 
 
-
 const DashboardSetup = () => {
   const navigate = useNavigate();
   const handleStartSetup = () => {
