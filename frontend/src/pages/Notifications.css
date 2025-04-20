@@ -1,68 +1,109 @@
-body {
-    font-family: Arial, sans-serif;
+/* Notifications.css */
+
+/* Global reset and base styles */
+* {
     margin: 0;
     padding: 0;
-    background-color: #f4f4f449;
-    overflow: hidden;
-;
-}
-
-.page-container {
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+  }
+  
+  /* Page container */
+  .page-container {
+    width: 100%;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
-    background-image: url('../assets/background.jpg'); 
-    background-size: cover; 
-    background-position: center; 
-    background-repeat: no-repeat; 
-    min-height: 100vh; 
-    padding : 30px 120px;
-}
-
-.content-container {
-    flex: 1;
+    position: relative;
+  }
+  
+  /* Content container styling */
+  .content-container {
+    padding: 2rem;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    
-}
-
-.notification-card {
-    background-color: rgba(255, 255, 255, 0.516); /* Semi-transparent background for readability */
-    padding: 20px;
+    justify-content: center;
+    min-height: calc(100vh - 60px); /* Adjust based on your navbar height */
+  }
+  
+  /* Notification card styling */
+  .notification-card {
+    background-color: rgba(255, 255, 255, 0.9);
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     width: 100%;
-    max-width: 2000px;
-    padding : 50px 700px;
-}
-
-.card-header {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 15px;
+    max-width: 500px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 1rem;
+    cursor: pointer;
+  }
+  
+  .notification-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Notification content styling */
+  .notification-content {
+    padding: 1.5rem;
+    position: relative;
+  }
+  
+  /* Notification title styling */
+  .notification-title {
     color: #333;
-}
-
-.notification-content {
-    background-color: #f9f9f9;
-    border-radius: 6px;
-    padding: 15px;
-    ;
-}
-
-.notification-title {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
-
-.notification-text {
-    font-size: 16px;
-    margin-bottom: 20px;
-}
-
-.notification-timestamp {
-    font-size: 14px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 8px;
+    display: inline-block;
+  }
+  
+  /* Notification text styling */
+  .notification-text {
     color: #555;
-}
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+  }
+  
+  /* Notification timestamp styling */
+  .notification-timestamp {
+    color: #888;
+    font-size: 0.8rem;
+    text-align: right;
+    font-style: italic;
+  }
+  
+  /* Media queries for responsiveness */
+  @media (max-width: 768px) {
+    .content-container {
+      padding: 1rem;
+    }
+    
+    .notification-card {
+      max-width: 90%;
+    }
+    
+    .notification-title {
+      font-size: 1.2rem;
+    }
+    
+    .notification-text {
+      font-size: 0.9rem;
+    }
+  }
+  
+  /* If you need to customize NavBar specifically for this page */
+  .page-container .navbar {
+    background-color: rgba(255, 255, 255, 0.9);
+  }
