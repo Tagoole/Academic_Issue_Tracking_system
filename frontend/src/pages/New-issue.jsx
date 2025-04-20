@@ -92,7 +92,7 @@ const NewIssue = () => {
       setCurrentUser('');
       setErrors(prev => ({ 
         ...prev, 
-        user: `Could not load user info: ${err.message || 'Unknown error'}`
+        user: 'Could not load user info'
       }));
     }
   }, [navigate]);
@@ -306,8 +306,8 @@ const NewIssue = () => {
       formData.append('issue_type', issueType);
       formData.append('description', description);
       
-      // Use course_unit to pass the ID (what the backend expects)
-      formData.append('course_unit', selectedCourseUnitId);
+      // This is the key change - course_unit_id instead of course_unit
+      formData.append('course_unit_id', selectedCourseUnitId);
       
       formData.append('status', 'pending');
       formData.append('year_of_study', yearOfStudy);
