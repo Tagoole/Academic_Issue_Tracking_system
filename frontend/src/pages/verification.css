@@ -1,15 +1,8 @@
-/* Base styles */
-* 
-  
-.code-input{  
+/* Base styles - fixing the code input base class */
+* {
   box-sizing: border-box;
   margin: 0;
-  position: relative;
-  height: 100%;
-  width: 2000px;
-  margin-right: 100px;
   padding: 0;
-  font-family: 'Arial', sans-serif;
 }
 
 .verification-container {
@@ -17,10 +10,9 @@
   background-color: #f5f5f5;
   display: flex;
   flex-direction: column;
-  position: center;
   align-items: center;
-  justify-content: center;
-  padding: 20px;
+  justify-content: flex-start; 
+  padding: 0; 
   overflow-y: auto;
 }
 
@@ -32,6 +24,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
+  position: sticky; /* Make header sticky */
+  top: 0;
+  z-index: 10;
 }
 
 .header-title {
@@ -55,7 +51,7 @@
   height: 18px;
 }
 
-/* Card styles */
+/* Card styles - fixing centering and margins */
 .verification-card {
   background-color: white;
   backdrop-filter: blur(15px) saturate(180%);
@@ -63,34 +59,37 @@
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   padding: 30px;
-  margin: 40px auto;
-  max-width: 700px;
-  position: center;
-  margin-left: 300px;
+  margin: 0 auto; 
+  height: 75vh; 
+  max-width: 500px;
   width: 90%;
   display: flex;
   flex-direction: column;
   align-items: center;
-   border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   text-align: center;
+  overflow-y: auto; 
+  justify-content: center; 
 }
 
-
-
+/* Increased email icon size */
 .icon-container {
-  margin-bottom: 20px;
+  margin-bottom: 5%;
 }
 
 .email-icon {
-  width: 60px;
-  height: 60px;
-  color: #00a651; /* Green color */
+  width: 100px;
+  height: 100px;
+  max-width: 20%; 
+  height: auto; 
+  min-width: 80px; 
+  color: #00a651;/
 }
 
 .verification-title {
   font-size: 24px;
   font-weight: bold;
-  margin-bottom: 15px;
+  margin-bottom: 3%; 
   color: #000;
 }
 
@@ -104,7 +103,7 @@
   font-size: 16px;
   font-weight: bold;
   color: #333;
-  margin-bottom: 25px;
+  margin-bottom: 5%;
 }
 
 /* Form styles */
@@ -115,22 +114,28 @@
   align-items: center;
 }
 
+/* Fixed code input styling */
 .code-inputs {
   display: flex;
-  gap: 10px;
-  margin-bottom: 25px;
   justify-content: center;
+  gap: 12px;
+  margin-bottom: 5%; 
+  width: 100%;
+  max-width: 360px;
 }
 
 .code-input {
-  width: 50px;
-  height: 50px;
+  width: 55px;
+  height: 55px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 8px;
   text-align: center;
   font-size: 24px;
   font-weight: bold;
   color: #000;
+  margin: 0;
+  padding: 0;
+  font-family: 'Arial', sans-serif;
 }
 
 .code-input:focus {
@@ -219,13 +224,27 @@
 /* Responsive styles */
 @media (max-width: 480px) {
   .verification-card {
+    height: 85vh; 
     padding: 20px;
+  }
+  
+  .code-inputs {
+    gap: 8px;
   }
   
   .code-input {
     width: 45px;
     height: 45px;
     font-size: 20px;
+  }
+  .icon-container {
+    margin-bottom: 3%;
+  }
+  
+  
+  .email-icon {
+    width: 80px;
+    height: 80px;
   }
   
   .verification-title {
