@@ -4,6 +4,7 @@ import Navbar from './NavBar';
 import backgroundimage from "../assets/backgroundimage.jpg"; 
 
 
+
 const Notifications = () => {
   return (
     <div
