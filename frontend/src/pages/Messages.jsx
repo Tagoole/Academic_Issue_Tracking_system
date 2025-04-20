@@ -118,6 +118,7 @@ const Messages = () => {
       const newDrafts = {...prev};
       delete newDrafts[selectedContact.id];
       return newDrafts;
+      
     });
     
     // Show "Message Sent" notification
