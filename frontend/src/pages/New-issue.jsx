@@ -100,13 +100,11 @@ const NewIssue = () => {
   // Function to refresh the access token using refresh token
   const refreshAccessToken = async () => {
     try {
-      // Fixed the token refresh endpoint
       const response = await API.post('/api/token/refresh/', {
         refresh: refreshToken
       });
       
       if (response && response.data && response.data.access) {
-        // Save new access token to localStorage and state
         localStorage.setItem('accessToken', response.data.access);
         setAccessToken(response.data.access);
         return response.data.access;
@@ -114,7 +112,6 @@ const NewIssue = () => {
       return null;
     } catch (err) {
       console.error('Error refreshing access token:', err);
-      // If refresh fails, redirect to login
       setErrors(prev => ({ ...prev, general: 'Session expired. Please sign in again.' }));
       setTimeout(() => navigate('/signin'), 1500);
       return null;
@@ -124,18 +121,14 @@ const NewIssue = () => {
   // Helper function to handle API requests with token refresh capability
   const makeAuthRequest = async (requestFn) => {
     try {
-      // First attempt with current access token
       return await requestFn();
     } catch (err) {
-      // If unauthorized error (401), try refreshing the token
       if (err.response && err.response.status === 401 && refreshToken) {
         const newToken = await refreshAccessToken();
         if (newToken) {
-          // Retry the request with new token
           return await requestFn(newToken);
         }
       }
-      // If not 401 or refresh failed, throw the original error
       throw err;
     }
   };
@@ -143,13 +136,12 @@ const NewIssue = () => {
   // Fetch registrars when component mounts
   useEffect(() => {
     const fetchRegistrars = async () => {
-      if (!accessToken) return; // Don't fetch if no access token
+      if (!accessToken) return;
       
       try {
         setIsLoading(prev => ({ ...prev, registrars: true }));
         setErrors(prev => ({ ...prev, registrars: null }));
         
-        // Use the makeAuthRequest helper for token refresh capability
         const response = await makeAuthRequest(async (token = accessToken) => {
           return API.get('/api/get_registrars/', {
             headers: {
@@ -181,9 +173,6 @@ const NewIssue = () => {
             (firstRegistrar.username || '') : 
             firstRegistrar;
           setRegistrarUsername(firstRegistrarUsername);
-          
-          console.log('Setting first registrar username:', firstRegistrarUsername);
-          console.log('Display name mapping:', displayNameMap);
         } else {
           setRegistrars([]);
           setErrors(prev => ({ ...prev, registrars: 'No registrars found. Please try again later.' }));
@@ -193,7 +182,7 @@ const NewIssue = () => {
         setRegistrars([]);
         setErrors(prev => ({ 
           ...prev, 
-          registrars: `Failed to load registrars: ${err.response?.data?.message || err.message || 'Unknown error'}`
+          registrars: 'Failed to load registrars. Please try again later.'
         }));
       } finally {
         setIsLoading(prev => ({ ...prev, registrars: false }));
@@ -206,13 +195,12 @@ const NewIssue = () => {
   // Fetch course units when component mounts
   useEffect(() => {
     const fetchCourseUnits = async () => {
-      if (!accessToken) return; // Don't fetch if no access token
+      if (!accessToken) return;
       
       try {
         setIsLoading(prev => ({ ...prev, courseUnits: true }));
         setErrors(prev => ({ ...prev, courseUnits: null }));
         
-        // Use the makeAuthRequest helper for token refresh capability
         const response = await makeAuthRequest(async (token = accessToken) => {
           return API.get('/api/course_unit/', {
             headers: {
@@ -242,7 +230,7 @@ const NewIssue = () => {
         setCourseUnits([]);
         setErrors(prev => ({ 
           ...prev, 
-          courseUnits: `Failed to load course units: ${err.response?.data?.message || err.message || 'Unknown error'}`
+          courseUnits: 'Failed to load course units. Please try again later.'
         }));
       } finally {
         setIsLoading(prev => ({ ...prev, courseUnits: false }));
@@ -309,7 +297,7 @@ const NewIssue = () => {
       console.log('Using student username:', studentUsername);
       console.log('Using course unit ID:', selectedCourseUnitId);
       
-      // Use field names matching the serializer's expected format
+      // Append data to FormData
       formData.append('registrar', registrarUsername);
       formData.append('student', studentUsername);
       formData.append('lecturer', ''); // Empty string will be treated as null by backend
@@ -318,7 +306,7 @@ const NewIssue = () => {
       formData.append('issue_type', issueType);
       formData.append('description', description);
       
-      // This is the key change - use course_unit_id instead of course_unit
+      // Use course_unit to pass the ID (what the backend expects)
       formData.append('course_unit', selectedCourseUnitId);
       
       formData.append('status', 'pending');
@@ -335,7 +323,7 @@ const NewIssue = () => {
         console.log(`${key}: ${value instanceof File ? 'File: ' + value.name : value}`);
       }
 
-      // Send POST request with auth header using the makeAuthRequest helper
+      // Send POST request with auth header
       const response = await makeAuthRequest(async (token = accessToken) => {
         return API.post('/api/issues/', formData, {
           headers: {
@@ -377,36 +365,8 @@ const NewIssue = () => {
       console.error('Error submitting issue:', err);
       setSubmitStatus('error');
       
-      // Handle API error responses
-      let errorMessage = 'Unknown error. Please try again later.';
-      
-      if (err.response) {
-        console.log('Error response data:', err.response.data);
-        
-        if (err.response.data && typeof err.response.data === 'object') {
-          // Format error messages from response data if available
-          const errorMessages = [];
-          Object.entries(err.response.data).forEach(([field, messages]) => {
-            if (Array.isArray(messages)) {
-              errorMessages.push(`${field}: ${messages.join(', ')}`);
-            } else if (typeof messages === 'string') {
-              errorMessages.push(`${field}: ${messages}`);
-            }
-          });
-          
-          if (errorMessages.length > 0) {
-            errorMessage = errorMessages.join('\n');
-          } else {
-            errorMessage = 'Server error. Please try again later.';
-          }
-        } else if (typeof err.response.data === 'string') {
-          errorMessage = err.response.data;
-        }
-      } else if (err.message) {
-        errorMessage = err.message;
-      }
-      
-      setErrors(prev => ({ ...prev, general: `Failed to submit issue: ${errorMessage}` }));
+      // Simplified error handling
+      setErrors(prev => ({ ...prev, general: 'Failed to submit issue. Please try again later.' }));
     } finally {
       setIsSubmitting(false);
     }
@@ -421,16 +381,12 @@ const NewIssue = () => {
   // Helper function to retry loading
   const retryLoading = (type) => {
     if (type === 'registrars') {
-      // Reset registrars error and trigger effect to reload
       setErrors(prev => ({ ...prev, registrars: null }));
       setIsLoading(prev => ({ ...prev, registrars: true }));
-      // Force effect to run again by updating a dependency
       setRegistrars([]);
     } else if (type === 'courseUnits') {
-      // Reset course units error and trigger effect to reload
       setErrors(prev => ({ ...prev, courseUnits: null }));
       setIsLoading(prev => ({ ...prev, courseUnits: true }));
-      // Force effect to run again by updating a dependency
       setCourseUnits([]);
     }
   };
@@ -474,7 +430,6 @@ const NewIssue = () => {
                   <select disabled>
                     <option>Error loading registrars</option>
                   </select>
-                  <p className="error-message">{errors.registrars}</p>
                   <button className="retry-btn" onClick={() => retryLoading('registrars')}>Retry</button>
                 </div>
               ) : (
@@ -516,7 +471,6 @@ const NewIssue = () => {
                     placeholder="Error loading user"
                     value={currentUser}
                   />
-                  <p className="error-message">{errors.user}</p>
                 </div>
               ) : (
                 <input 
@@ -623,7 +577,6 @@ const NewIssue = () => {
                   <select disabled>
                     <option>Error loading course units</option>
                   </select>
-                  <p className="error-message">{errors.courseUnits}</p>
                   <button className="retry-btn" onClick={() => retryLoading('courseUnits')}>Retry</button>
                 </div>
               ) : (
@@ -635,8 +588,12 @@ const NewIssue = () => {
                     <option value="">No course units available</option>
                   ) : (
                     courseUnits.map((unit, index) => {
+                      // Get the unit ID for the value attribute
                       const id = typeof unit === 'object' ? unit.id : unit;
+                      
+                      // Get the unit name for display in the dropdown
                       const name = typeof unit === 'object' ? unit.name || unit.course_unit_name : unit;
+                      
                       return (
                         <option key={index} value={id}>
                           {name}
@@ -666,7 +623,7 @@ const NewIssue = () => {
             )}
             {submitStatus === 'error' && (
               <div className="submit-status error">
-                Failed to submit issue. Please check the form and try again.
+                Failed to submit issue.
               </div>
             )}
           </div>
