@@ -163,6 +163,7 @@ const RegistraDashboard = () => {
     );
   }
 
+  
   return (
     <div className="app-container" style={{ width: '1000px' }}>
       <NavBar />
