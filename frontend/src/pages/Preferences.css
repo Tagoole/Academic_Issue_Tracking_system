@@ -5,6 +5,8 @@ body {
   overflow-x: hidden;
 }
 
+
+
 /* Container structure */
 .settings-container {
   display: flex;
