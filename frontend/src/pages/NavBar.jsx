@@ -5,6 +5,7 @@ import notificationIcon from '../assets/notification.png';
 import messageIcon from '../assets/mail.png';
 import { useNavigate } from 'react-router-dom';
 
+
 const NavBar = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [userName, setUserName] = useState('');

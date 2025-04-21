@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-
 import './Forgot-password.css';
 import keyIcon from '../assets/group.png';
-import mailIcon from '../assets/mail.png';
 import helpIcon from '../assets/question.png';
+
 
 const ResetPassword = () => {
   const [email, setEmail] = useState('');
@@ -56,7 +55,7 @@ const ResetPassword = () => {
               className="email-input"
             />
             <div className="input-icon">
-              <img src={mailIcon} alt="Email" className="email-icon" />
+              
             </div>
           </div>
           

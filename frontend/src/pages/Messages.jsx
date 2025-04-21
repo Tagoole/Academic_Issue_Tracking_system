@@ -118,6 +118,7 @@ const Messages = () => {
       const newDrafts = {...prev};
       delete newDrafts[selectedContact.id];
       return newDrafts;
+      
     });
     
     // Show "Message Sent" notification
@@ -225,11 +226,7 @@ const Messages = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <div className="search-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
+            <div className="search-icon"> 
             </div>
           </div>
           <button className="new-chat-btn" onClick={() => setShowNewChatModal(true)}>
@@ -330,10 +327,10 @@ const Messages = () => {
                 className="send-button"
                 disabled={!messageInput.trim()}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="22" y1="2" x2="11" y2="13"></line>
-                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                </svg>
+                
+                
+                
+              
               </button>
             </form>
           </>
