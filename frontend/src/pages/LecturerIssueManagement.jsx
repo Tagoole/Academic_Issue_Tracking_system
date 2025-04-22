@@ -168,7 +168,7 @@ const LecturerIssueManagement = () => {
       console.log('Issue ID:', selectedIssue.id);
       
       // Send PATCH request to update the issue
-      const response = await API.patch(`api/issues/${selectedIssue.id}/`, updateData);
+      const response = await API.patch(`api/lecturer_issue_management/${selectedIssue.id}/`, updateData);
       console.log('Issue updated successfully:', response.data);
       
       setLoading(false);
@@ -205,7 +205,7 @@ const LecturerIssueManagement = () => {
             
             // Retry the original request with new token
             API.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
-            const retryResponse = await API.patch(`api/issues/${selectedIssue.id}/`, {
+            const retryResponse = await API.patch(`api/lecturer_issue_management/${selectedIssue.id}/`, {
               status: formattedStatus,
               comments: selectedIssue.comments,
               is_commented: true
