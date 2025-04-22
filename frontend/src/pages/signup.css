@@ -335,10 +335,12 @@ input, select {
   margin-left: 8px;
 }
 
-/* Make bottom text and links black */
+/* Make bottom text and links brownish */
 .bottom-text, .bottom-text a {
-  color: black;
+  color: rgb(157, 121, 35);
 }
-
-
+/* Fix the white background on scrollbar mentioned in your original CSS */
+.signup-form::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.3);
+}
 
