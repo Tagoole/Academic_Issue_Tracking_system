@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './LecturerIssueManagement.css'; 
 import Navbar from './NavBar'; 
 import Sidebar2 from './Sidebar2'; 
-import backgroundImage from '../assets/backgroundimage.jpg'; 
+import API from '../api.js'; // Import the API variable
 
 const LecturerIssueManagement = () => {
   // Get issue ID from URL
@@ -24,8 +24,8 @@ const LecturerIssueManagement = () => {
     courseUnitCode: '',
     assignedLecturer: '',
     description: '',
-    attachments: [],
     comments: '',
+    is_commented: false,
     // Additional fields from API response
     course_unit: '',
     image: '',
@@ -39,6 +39,13 @@ const LecturerIssueManagement = () => {
     },
     year_of_study: ''
   });
+
+  const [errorMessage, setErrorMessage] = useState('');
+  const [showStatusDialog, setShowStatusDialog] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [statusUpdateMessage, setStatusUpdateMessage] = useState('');
+  const [selectedNewStatus, setSelectedNewStatus] = useState('');
+  const [loading, setLoading] = useState(false);
 
   // Fetch issue data from sessionStorage when component mounts
   useEffect(() => {
@@ -75,7 +82,9 @@ const LecturerIssueManagement = () => {
           lecturer: issueData.lecturer,
           semester: issueData.semester,
           student: issueData.student,
-          year_of_study: issueData.year_of_study
+          year_of_study: issueData.year_of_study,
+          comments: issueData.comments || '',
+          is_commented: issueData.is_commented || false
         }));
       } else {
         console.log(`No issue data found in sessionStorage for ID: ${issueId}`);
@@ -85,13 +94,6 @@ const LecturerIssueManagement = () => {
       console.error("Error parsing issue data from sessionStorage:", error);
     }
   }, [issueId]);
-
-  const [file, setFile] = useState(null);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [showStatusDialog, setShowStatusDialog] = useState(false);
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const [statusUpdateMessage, setStatusUpdateMessage] = useState('');
-  const [selectedNewStatus, setSelectedNewStatus] = useState('');
 
   const handleStatusUpdate = (newStatus) => {
     setSelectedNewStatus(newStatus);
@@ -112,10 +114,6 @@ const LecturerIssueManagement = () => {
     });
   };
 
-  const handleFileChange = (event) => {
-    setFile(event.target.files[0]);
-  };
-
   const handleSave = () => {
     if (!selectedIssue.comments.trim()) {
       setErrorMessage('Please add a comment before saving changes.');
@@ -126,21 +124,91 @@ const LecturerIssueManagement = () => {
     setShowStatusDialog(true);
   };
 
-  const handleConfirmSave = () => {
-    // Here you would typically make an API call to update the issue
-    // For now, we'll just update the local state
-    setSelectedIssue({
-      ...selectedIssue,
-      status: selectedNewStatus,
-    });
-
-    console.log('Issue saved with status:', selectedNewStatus, selectedIssue);
-    
-    // Clear the stored issue data before redirecting
-    sessionStorage.removeItem('issueToResolve');
-    
-    // Redirect back to dashboard
-    window.location.href = '/Lecturerdashboard';
+  const handleConfirmSave = async () => {
+    try {
+      setLoading(true);
+      
+      // Get access token for authorization
+      const accessToken = localStorage.getItem('accessToken');
+      
+      // Check if token exists, if not redirect to login
+      if (!accessToken) {
+        window.location.href = '/signin';
+        return;
+      }
+      
+      // Set authorization header with access token
+      API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+      
+      // Data to send to the backend
+      const updateData = {
+        status: selectedNewStatus,
+        comments: selectedIssue.comments,
+        is_commented: true
+      };
+      
+      console.log('Sending update data:', updateData);
+      
+      // Send PATCH request to update the issue
+      const response = await API.patch(`api/issues/${selectedIssue.id}/`, updateData);
+      console.log('Issue updated successfully:', response.data);
+      
+      setLoading(false);
+      
+      // Clear the stored issue data before redirecting
+      sessionStorage.removeItem('issueToResolve');
+      
+      // Redirect back to dashboard
+      window.location.href = '/Lecturerdashboard';
+    } catch (err) {
+      setLoading(false);
+      console.error('Error updating issue:', err);
+      
+      // Check if error is due to unauthorized access (401)
+      if (err.response && err.response.status === 401) {
+        // Try refreshing the token
+        try {
+          const refreshToken = localStorage.getItem('refreshToken');
+          
+          if (refreshToken) {
+            const refreshResponse = await API.post('/api/refresh_token/', {
+              refresh: refreshToken
+            });
+            
+            // Store the new access token
+            const newAccessToken = refreshResponse.data.access;
+            localStorage.setItem('accessToken', newAccessToken);
+            
+            // Retry the original request with new token
+            API.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
+            const retryResponse = await API.patch(`api/issues/${selectedIssue.id}/`, {
+              status: selectedNewStatus,
+              comments: selectedIssue.comments,
+              is_commented: true
+            });
+            
+            console.log('Issue updated successfully after token refresh:', retryResponse.data);
+            
+            // Clear the stored issue data before redirecting
+            sessionStorage.removeItem('issueToResolve');
+            
+            // Redirect back to dashboard
+            window.location.href = '/Lecturerdashboard';
+          } else {
+            // No refresh token available, redirect to login
+            window.location.href = '/signin';
+          }
+        } catch (refreshErr) {
+          console.error('Error refreshing token:', refreshErr);
+          alert('Your session has expired. Please log in again.');
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          window.location.href = '/signin';
+        }
+      } else {
+        alert('Failed to update issue. Please try again later.');
+      }
+    }
   };
 
   const handleCancelSave = () => {
@@ -189,7 +257,7 @@ const LecturerIssueManagement = () => {
             </div>
 
             <div className="comment-section">
-              <strong>Comments</strong>
+              <strong>Add Comment</strong>
               <textarea
                 value={selectedIssue.comments}
                 onChange={handleCommentChange}
@@ -198,14 +266,10 @@ const LecturerIssueManagement = () => {
               />
             </div>
 
-            <div className="file-attachment-section">
-              <strong>Attach Files</strong>
-              <input type="file" onChange={handleFileChange} />
-              {file && <p>File selected: {file.name}</p>}
-            </div>
-
             <div className="save-button-container">
-              <button className="save-button" onClick={handleSave}>Save Changes and Update Status</button>
+              <button className="save-button" onClick={handleSave} disabled={loading}>
+                {loading ? 'Saving...' : 'Save Comment and Update Status'}
+              </button>
               {errorMessage && <p className="error-message">{errorMessage}</p>}
             </div>
           </div>
@@ -231,8 +295,20 @@ const LecturerIssueManagement = () => {
                 <h3>Status Update</h3>
                 <p>{statusUpdateMessage}</p>
                 <div className="confirmation-buttons">
-                  <button className="confirm-button" onClick={handleConfirmSave}>Confirm</button>
-                  <button className="cancel-button" onClick={handleCancelSave}>Cancel</button>
+                  <button 
+                    className="confirm-button" 
+                    onClick={handleConfirmSave}
+                    disabled={loading}
+                  >
+                    {loading ? 'Saving...' : 'Confirm'}
+                  </button>
+                  <button 
+                    className="cancel-button" 
+                    onClick={handleCancelSave}
+                    disabled={loading}
+                  >
+                    Cancel
+                  </button>
                 </div>
               </div>
             </div>
