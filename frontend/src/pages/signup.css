@@ -301,3 +301,11 @@ input, select {
   height: 16px;
   transform: scale(0.8); /* Slightly reduce size */
 }
+/* Update text styling in form fields to be bold and black */
+.input-container input,
+.input-container select,
+.input-container textarea {
+  color: black !important; /* Override the white color */
+  font-weight: bold;
+}
+
