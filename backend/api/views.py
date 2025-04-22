@@ -42,7 +42,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 
 class IssueViewSet(ModelViewSet):
-    permission_classes = [IsAuthenticated, IsStudent,IsAcademicRegistrar,IsLecturer]
+    permission_classes = [IsAuthenticated, IsStudentOrRegistrarOrLecturer]
     queryset = Issue.objects.all()
     serializer_class = IssueSerializer
     http_method_names = ['put','post','patch','get','delete']
