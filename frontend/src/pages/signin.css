@@ -210,6 +210,16 @@ submit-button::after {
   z-index: 3;
 }
 
+/* Hologram animation keyframes */
+@keyframes hologramShine {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
 
 
 
