@@ -309,3 +309,11 @@ input, select {
   font-weight: bold;
 }
 
+/* Make placeholder text darker for better visibility */
+.input-container input::placeholder,
+.input-container select::placeholder,
+.input-container textarea::placeholder {
+  color: #555;
+  opacity: 0.8;
+}
+
