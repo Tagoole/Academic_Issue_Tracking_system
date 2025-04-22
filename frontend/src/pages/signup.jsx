@@ -8,6 +8,7 @@ import hiddenIcon from '../assets/hidden.png';
 import visibleIcon from '../assets/visible.png';
 import mailIcon from '../assets/mail.png';
 
+
 const SignUp = () => {
     const navigate = useNavigate();
     

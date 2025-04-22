@@ -417,7 +417,6 @@ def password_reset_code(request):
         
         verification_code, created = Verification_code.objects.get_or_create(user=user)
         verification_code.code = randint(100000, 999999)
-        verification_code.created_at = timezone.now()
         verification_code.is_verified = False
         verification_code.save()
         
@@ -469,6 +468,7 @@ def verify_password_reset_code(request):
         
         
     return Response(serializer.errors,status = status.HTTP_400_BAD_REQUEST)
+        
         
 @api_view(['POST'])
 def final_password_reset(request):

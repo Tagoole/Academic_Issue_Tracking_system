@@ -7,41 +7,41 @@ import API from '../api';
 
 const NewIssue = () => {
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    registrar: '',
+    student: '',
+    issueType: 'missing_marks',
+    description: 'I have no marks for OS test yet I merged 86% in it.',
+    courseUnitId: '',
+    yearOfStudy: '1st_year',
+    semester: 'one',
+    attachment: null
+  });
   const [registrars, setRegistrars] = useState([]);
   const [courseUnits, setCourseUnits] = useState([]);
-  const [registrarUsername, setRegistrarUsername] = useState('');
   const [registrarDisplayNames, setRegistrarDisplayNames] = useState({});
-  const [issueType, setIssueType] = useState('missing_marks');
-  const [description, setDescription] = useState('I have no marks for OS test yet I merged 86% in it.');
-  const [attachment, setAttachment] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
-  const [yearOfStudy, setYearOfStudy] = useState('1st_year');
-  const [semester, setSemester] = useState('one');
   const [isLoading, setIsLoading] = useState({
     registrars: true,
     courseUnits: true,
-    user: false
   });
   const [errors, setErrors] = useState({
     registrars: null,
     courseUnits: null,
-    user: null,
     general: null
   });
   const [currentUser, setCurrentUser] = useState('');
-  const [selectedCourseUnitId, setSelectedCourseUnitId] = useState('');
   const [accessToken, setAccessToken] = useState('');
   const [refreshToken, setRefreshToken] = useState('');
 
-  // Define issue types to match backend ISSUE_CHOICES
+  // Define constants
   const issueTypes = [
     { value: 'missing_marks', label: 'Missing Marks' },
     { value: 'appeal', label: 'Appeal' },
     { value: 'correction', label: 'Correction' }
   ];
 
-  // Define year of study options
   const yearOfStudyOptions = [
     { value: '1st_year', label: '1st Year' },
     { value: '2nd_year', label: '2nd Year' },
@@ -50,151 +50,109 @@ const NewIssue = () => {
     { value: '5th_year', label: '5th Year' }
   ];
 
-  // Define semester options
   const semesterOptions = [
     { value: 'one', label: 'One' },
     { value: 'two', label: 'Two' }
   ];
 
-  // Get username and tokens from localStorage when component mounts
+  // Initialize user data
   useEffect(() => {
-    try {
-      // Get username from localStorage
-      const username = localStorage.getItem('userName');
-      console.log('Username from localStorage:', username);
-      
-      // Get access token from localStorage
-      const access = localStorage.getItem('accessToken');
-      console.log('Access token retrieved:', access ? 'Yes' : 'No');
-      
-      // Get refresh token from localStorage
-      const refresh = localStorage.getItem('refreshToken');
-      console.log('Refresh token retrieved:', refresh ? 'Yes' : 'No');
-      
-      if (username) {
+    const initializeUser = () => {
+      try {
+        const username = localStorage.getItem('userName');
+        const access = localStorage.getItem('accessToken');
+        const refresh = localStorage.getItem('refreshToken');
+
+        if (!username || !access) {
+          throw new Error('Missing authentication data');
+        }
+
         setCurrentUser(username);
-      } else {
-        setCurrentUser('');
-        setErrors(prev => ({ ...prev, user: 'User information not found. Please sign in again.' }));
-      }
-      
-      if (access) {
         setAccessToken(access);
-      } else {
-        setErrors(prev => ({ ...prev, general: 'Authentication token not found. Please sign in again.' }));
+        if (refresh) setRefreshToken(refresh);
+        setFormData(prev => ({ ...prev, student: username }));
+      } catch (err) {
+        console.error('Initialization error:', err);
+        setErrors(prev => ({ ...prev, user: 'Please sign in again' }));
+        navigate('/signin');
       }
-      
-      if (refresh) {
-        setRefreshToken(refresh);
-      }
-    } catch (err) {
-      console.error('Error retrieving user info from localStorage:', err);
-      setCurrentUser('');
-      setErrors(prev => ({ 
-        ...prev, 
-        user: `Could not load user info: ${err.message || 'Unknown error'}`
-      }));
-    }
+    };
+
+    initializeUser();
   }, [navigate]);
 
-  // Function to refresh the access token using refresh token
+  // Token refresh function
   const refreshAccessToken = async () => {
-    try {
-      // Fixed the token refresh endpoint
-      const response = await API.post('/api/token/refresh/', {
-        refresh: refreshToken
-      });
-      
-      if (response && response.data && response.data.access) {
-        // Save new access token to localStorage and state
-        localStorage.setItem('accessToken', response.data.access);
-        setAccessToken(response.data.access);
-        return response.data.access;
-      }
+    if (!refreshToken) {
+      navigate('/signin');
       return null;
+    }
+
+    try {
+      const response = await API.post('/api/token/refresh/', { refresh: refreshToken });
+      const newToken = response.data.access;
+      localStorage.setItem('accessToken', newToken);
+      setAccessToken(newToken);
+      return newToken;
     } catch (err) {
-      console.error('Error refreshing access token:', err);
-      // If refresh fails, redirect to login
-      setErrors(prev => ({ ...prev, general: 'Session expired. Please sign in again.' }));
-      setTimeout(() => navigate('/signin'), 1500);
+      console.error('Token refresh failed:', err);
+      navigate('/signin');
       return null;
     }
   };
 
-  // Helper function to handle API requests with token refresh capability
+  // Auth request wrapper
   const makeAuthRequest = async (requestFn) => {
     try {
-      // First attempt with current access token
-      return await requestFn();
+      return await requestFn(accessToken);
     } catch (err) {
-      // If unauthorized error (401), try refreshing the token
-      if (err.response && err.response.status === 401 && refreshToken) {
+      if (err.response?.status === 401 && refreshToken) {
         const newToken = await refreshAccessToken();
         if (newToken) {
-          // Retry the request with new token
           return await requestFn(newToken);
         }
       }
-      // If not 401 or refresh failed, throw the original error
       throw err;
     }
   };
 
-  // Fetch registrars when component mounts
+  // Fetch registrars
   useEffect(() => {
+    if (!accessToken) return;
+
     const fetchRegistrars = async () => {
-      if (!accessToken) return; // Don't fetch if no access token
-      
       try {
         setIsLoading(prev => ({ ...prev, registrars: true }));
         setErrors(prev => ({ ...prev, registrars: null }));
-        
-        // Use the makeAuthRequest helper for token refresh capability
-        const response = await makeAuthRequest(async (token = accessToken) => {
+
+        const response = await makeAuthRequest(async (token) => {
           return API.get('/api/get_registrars/', {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
+            headers: { Authorization: `Bearer ${token}` }
           });
         });
-        
-        console.log('Registrars API response:', response);
-        
-        if (response && response.data && Array.isArray(response.data) && response.data.length > 0) {
+
+        if (response?.data?.length > 0) {
           setRegistrars(response.data);
           
-          // Create a mapping of username to display name
-          const displayNameMap = {};
-          response.data.forEach(registrar => {
-            if (typeof registrar === 'object') {
-              const username = registrar.username || '';
-              displayNameMap[username] = registrar.name || username;
-            } else {
-              displayNameMap[registrar] = registrar;
-            }
+          // Create display name mapping
+          const displayNames = {};
+          response.data.forEach(reg => {
+            const username = reg.username || reg;
+            const name = reg.name || username;
+            displayNames[username] = name;
           });
-          setRegistrarDisplayNames(displayNameMap);
+          setRegistrarDisplayNames(displayNames);
           
-          // Store the username of the first registrar
-          const firstRegistrar = response.data[0];
-          const firstRegistrarUsername = typeof firstRegistrar === 'object' ? 
-            (firstRegistrar.username || '') : 
-            firstRegistrar;
-          setRegistrarUsername(firstRegistrarUsername);
-          
-          console.log('Setting first registrar username:', firstRegistrarUsername);
-          console.log('Display name mapping:', displayNameMap);
+          // Set first registrar as default
+          const firstReg = response.data[0];
+          const firstRegUsername = firstReg.username || firstReg;
+          setFormData(prev => ({ ...prev, registrar: firstRegUsername }));
         } else {
-          setRegistrars([]);
-          setErrors(prev => ({ ...prev, registrars: 'No registrars found. Please try again later.' }));
+          setErrors(prev => ({ ...prev, registrars: 'No registrars found' }));
         }
       } catch (err) {
-        console.error('Error fetching registrars:', err);
-        setRegistrars([]);
-        setErrors(prev => ({ 
-          ...prev, 
-          registrars: `Failed to load registrars: ${err.response?.data?.message || err.message || 'Unknown error'}`
-        }));
+        console.error('Fetch registrars error:', err);
+        setErrors(prev => ({ ...prev, registrars: 'Failed to load registrars' }));
       } finally {
         setIsLoading(prev => ({ ...prev, registrars: false }));
       }
@@ -203,47 +161,34 @@ const NewIssue = () => {
     fetchRegistrars();
   }, [accessToken, refreshToken]);
 
-  // Fetch course units when component mounts
+  // Fetch course units
   useEffect(() => {
+    if (!accessToken) return;
+
     const fetchCourseUnits = async () => {
-      if (!accessToken) return; // Don't fetch if no access token
-      
       try {
         setIsLoading(prev => ({ ...prev, courseUnits: true }));
         setErrors(prev => ({ ...prev, courseUnits: null }));
-        
-        // Use the makeAuthRequest helper for token refresh capability
-        const response = await makeAuthRequest(async (token = accessToken) => {
+
+        const response = await makeAuthRequest(async (token) => {
           return API.get('/api/course_unit/', {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
+            headers: { Authorization: `Bearer ${token}` }
           });
         });
-        
-        console.log('Course units API response:', response);
-        
-        if (response && response.data && Array.isArray(response.data) && response.data.length > 0) {
+
+        if (response?.data?.length > 0) {
           setCourseUnits(response.data);
           
           // Set first course unit as default
-          if (response.data.length > 0) {
-            const firstUnit = response.data[0];
-            // Use the ID instead of name
-            const firstUnitId = typeof firstUnit === 'object' ? firstUnit.id : firstUnit;
-            setSelectedCourseUnitId(firstUnitId);
-          }
+          const firstUnit = response.data[0];
+          const firstUnitId = firstUnit.id || firstUnit;
+          setFormData(prev => ({ ...prev, courseUnitId: firstUnitId }));
         } else {
-          setCourseUnits([]);
-          setErrors(prev => ({ ...prev, courseUnits: 'No course units found. Please try again later.' }));
+          setErrors(prev => ({ ...prev, courseUnits: 'No course units found' }));
         }
       } catch (err) {
-        console.error('Error fetching course units:', err);
-        setCourseUnits([]);
-        setErrors(prev => ({ 
-          ...prev, 
-          courseUnits: `Failed to load course units: ${err.response?.data?.message || err.message || 'Unknown error'}`
-        }));
+        console.error('Fetch course units error:', err);
+        setErrors(prev => ({ ...prev, courseUnits: 'Failed to load course units' }));
       } finally {
         setIsLoading(prev => ({ ...prev, courseUnits: false }));
       }
@@ -252,184 +197,146 @@ const NewIssue = () => {
     fetchCourseUnits();
   }, [accessToken, refreshToken]);
 
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    setAttachment(file);
+  // Handle form changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleRemoveAttachment = () => {
-    setAttachment(null);
+  const handleFileChange = (e) => {
+    setFormData(prev => ({ ...prev, attachment: e.target.files[0] }));
   };
 
-  const handleSubmit = async () => {
-    // Check if token exists
-    if (!accessToken) {
-      setErrors(prev => ({ ...prev, general: 'Authentication token not found. Please sign in again.' }));
-      setTimeout(() => navigate('/signin'), 1500);
+  const removeAttachment = () => {
+    setFormData(prev => ({ ...prev, attachment: null }));
+  };
+
+  // Form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Validate form
+    if (!formData.registrar) {
+      setErrors(prev => ({ ...prev, general: 'Please select a registrar' }));
       return;
     }
     
-    // Reset any previous submission status
-    setSubmitStatus(null);
-    setErrors(prev => ({ ...prev, general: null }));
-    
-    // Form validation
-    if (!registrarUsername) {
-      setErrors(prev => ({ ...prev, general: 'Please select a registrar.' }));
+    if (!formData.courseUnitId) {
+      setErrors(prev => ({ ...prev, general: 'Please select a course unit' }));
       return;
     }
     
-    if (!selectedCourseUnitId) {
-      setErrors(prev => ({ ...prev, general: 'Please select a course unit.' }));
+    if (!formData.description.trim()) {
+      setErrors(prev => ({ ...prev, general: 'Please provide a description' }));
       return;
     }
-    
-    if (!description.trim()) {
-      setErrors(prev => ({ ...prev, general: 'Please provide an issue description.' }));
-      return;
-    }
-    
-    if (!currentUser) {
-      setErrors(prev => ({ ...prev, general: 'User information not found. Please sign in again.' }));
-      navigate('/signin');
-      return;
-    }
-    
+
     try {
       setIsSubmitting(true);
+      setSubmitStatus(null);
+      setErrors(prev => ({ ...prev, general: null }));
 
-      // Create FormData object
-      const formData = new FormData();
+      // Prepare form data - FIXED
+      const submissionData = new FormData();
+      submissionData.append('registrar', formData.registrar);
+      submissionData.append('student', formData.student);
       
-      // Get the student username and registrar username
-      const studentUsername = currentUser;
+      // Remove the empty lecturer field or provide a default value if required
+      // submissionData.append('lecturer', ''); // Removed this line as it might be causing the issue
       
-      // For debugging
-      console.log('Using registrar username:', registrarUsername);
-      console.log('Using student username:', studentUsername);
+      submissionData.append('issue_type', formData.issueType);
+      submissionData.append('description', formData.description);
       
-      // Use field names matching the serializer's expected format
-      formData.append('registrar', registrarUsername); // Backend will map this to registrar field
-      formData.append('student', studentUsername); // Backend will map this to student field
-      formData.append('lecturer', ''); // Empty string will be treated as null by backend
+      // Make sure course_unit is submitted with the correct name and format
+      submissionData.append('course_unit', formData.courseUnitId);
       
-      // Rest of form data
-      formData.append('issue_type', issueType);
-      formData.append('description', description);
-      formData.append('course_unit', selectedCourseUnitId);
-      formData.append('status', 'pending');
-      formData.append('year_of_study', yearOfStudy);
-      formData.append('semester', semester);
+      // Status might be auto-assigned by the backend, removing if causing issues
+      // submissionData.append('status', 'pending');
       
-      if (attachment) {
-        formData.append('image', attachment);
+      submissionData.append('year_of_study', formData.yearOfStudy);
+      submissionData.append('semester', formData.semester);
+      
+      if (formData.attachment) {
+        submissionData.append('image', formData.attachment);
       }
 
-      // For debugging - log what we're sending to the API
+      // Log the actual data being sent for debugging
       console.log('Submitting form data:');
-      for (let [key, value] of formData.entries()) {
-        console.log(`${key}: ${value instanceof File ? 'File: ' + value.name : value}`);
+      for (let pair of submissionData.entries()) {
+        console.log(pair[0] + ': ' + pair[1]);
       }
 
-      // Send POST request with auth header using the makeAuthRequest helper
-      const response = await makeAuthRequest(async (token = accessToken) => {
-        return API.post('/api/issues/', formData, {
+      // Make request
+      const response = await makeAuthRequest(async (token) => {
+        return API.post('/api/issues/', submissionData, {
           headers: {
             'Content-Type': 'multipart/form-data',
             'Authorization': `Bearer ${token}`
-          },
+          }
         });
       });
 
-      console.log('Issue submitted successfully:', response.data);
+      // Handle success
       setSubmitStatus('success');
-
-      // Find the course unit name for display on success page
+      
+      // Find course unit name for success page
       const selectedUnit = courseUnits.find(unit => {
-        if (typeof unit === 'object') {
-          return unit.id === selectedCourseUnitId;
-        }
-        return unit === selectedCourseUnitId;
+        const unitId = unit.id || unit;
+        return unitId === formData.courseUnitId;
       });
       
-      const courseUnitName = selectedUnit ? 
-        (typeof selectedUnit === 'object' ? selectedUnit.name || selectedUnit.course_unit_name : selectedUnit) : 
-        'Selected Course Unit';
-      
-      // Use display name for success page, falling back to username if no display name exists
-      const registrarDisplayName = registrarDisplayNames[registrarUsername] || registrarUsername;
-        
-      // Navigate to NotificationSuccess page after brief delay
+      const courseUnitName = selectedUnit?.name || selectedUnit?.course_unit_name || 'Selected Course';
+      const registrarName = registrarDisplayNames[formData.registrar] || formData.registrar;
+      const issueTypeLabel = issueTypes.find(t => t.value === formData.issueType)?.label || formData.issueType;
+
+      // Navigate to success page
       setTimeout(() => {
         navigate('/notification-success', {
           state: {
-            registrarName: registrarDisplayName,
-            issueType: issueTypes.find(t => t.value === issueType)?.label || issueType,
-            courseUnitName,
-          },
+            registrarName,
+            issueType: issueTypeLabel,
+            courseUnitName
+          }
         });
       }, 1500);
     } catch (err) {
-      console.error('Error submitting issue:', err);
+      console.error('Submission error:', err);
       setSubmitStatus('error');
-      
-      // Handle API error responses
-      let errorMessage = 'Unknown error. Please try again later.';
-      
-      if (err.response) {
+      // Improved error handling to show more details
+      if (err.response?.data) {
         console.log('Error response data:', err.response.data);
-        
-        if (err.response.data && typeof err.response.data === 'object') {
-          // Format error messages from response data if available
-          const errorMessages = [];
-          Object.entries(err.response.data).forEach(([field, messages]) => {
-            if (Array.isArray(messages)) {
-              errorMessages.push(`${field}: ${messages.join(', ')}`);
-            } else if (typeof messages === 'string') {
-              errorMessages.push(`${field}: ${messages}`);
-            }
-          });
-          
-          if (errorMessages.length > 0) {
-            errorMessage = errorMessages.join('\n');
-          } else {
-            errorMessage = 'Server error. Please try again later.';
-          }
-        } else if (typeof err.response.data === 'string') {
+        let errorMessage = 'Failed to submit issue';
+        if (typeof err.response.data === 'string') {
           errorMessage = err.response.data;
+        } else if (err.response.data.message) {
+          errorMessage = err.response.data.message;
+        } else if (err.response.data.detail) {
+          errorMessage = err.response.data.detail;
+        } else {
+          // Try to extract field-specific errors
+          const fieldErrors = Object.entries(err.response.data)
+            .map(([field, msgs]) => `${field}: ${Array.isArray(msgs) ? msgs.join(', ') : msgs}`)
+            .join('; ');
+          if (fieldErrors) {
+            errorMessage = `Validation errors: ${fieldErrors}`;
+          }
         }
-      } else if (err.message) {
-        errorMessage = err.message;
+        setErrors(prev => ({ ...prev, general: errorMessage }));
+      } else {
+        setErrors(prev => ({
+          ...prev,
+          general: 'Network error or server unavailable'
+        }));
       }
-      
-      setErrors(prev => ({ ...prev, general: `Failed to submit issue: ${errorMessage}` }));
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Check if form is ready for submission
-  const isFormReady = registrars.length > 0 && courseUnits.length > 0 && !isLoading.registrars && !isLoading.courseUnits && accessToken;
-  
-  // Check if any loading is in progress
-  const anyLoading = isLoading.registrars || isLoading.courseUnits;
-
-  // Helper function to retry loading
-  const retryLoading = (type) => {
-    if (type === 'registrars') {
-      // Reset registrars error and trigger effect to reload
-      setErrors(prev => ({ ...prev, registrars: null }));
-      setIsLoading(prev => ({ ...prev, registrars: true }));
-      // Force effect to run again by updating a dependency
-      setRegistrars([]);
-    } else if (type === 'courseUnits') {
-      // Reset course units error and trigger effect to reload
-      setErrors(prev => ({ ...prev, courseUnits: null }));
-      setIsLoading(prev => ({ ...prev, courseUnits: true }));
-      // Force effect to run again by updating a dependency
-      setCourseUnits([]);
-    }
-  };
+  // Check if form is ready
+  const isFormReady = registrars.length > 0 && courseUnits.length > 0 && 
+                     !isLoading.registrars && !isLoading.courseUnits && 
+                     accessToken && formData.courseUnitId;
 
   return (
     <div className="create-issue-page">
@@ -439,233 +346,222 @@ const NewIssue = () => {
         <div className="issue-form-container">
           <h1>Create New Issue</h1>
           
-          {/* Auth token error message */}
+          {/* Error messages */}
           {!accessToken && (
             <div className="error-banner">
-              <p>Authentication token not found. Please sign in again.</p>
-              <button className="dismiss-btn" onClick={() => navigate('/signin')}>Sign In</button>
+              <p>Please sign in to continue</p>
+              <button onClick={() => navigate('/signin')}>Sign In</button>
             </div>
           )}
           
-          {/* General error message at the top */}
           {errors.general && (
             <div className="error-banner">
               <p>{errors.general}</p>
-              <button className="dismiss-btn" onClick={() => setErrors(prev => ({ ...prev, general: null }))}>×</button>
+              <button onClick={() => setErrors(prev => ({ ...prev, general: null }))}>×</button>
             </div>
           )}
           
-          <div className="form-row">
-            <div className="form-group">
-              <label>Registrar's Name</label>
-              {isLoading.registrars ? (
-                <div className="loading-field">
-                  <select disabled>
-                    <option>Loading registrars...</option>
-                  </select>
-                  <div className="loading-spinner"></div>
-                </div>
-              ) : errors.registrars ? (
-                <div className="error-field">
-                  <select disabled>
-                    <option>Error loading registrars</option>
-                  </select>
-                  <p className="error-message">{errors.registrars}</p>
-                  <button className="retry-btn" onClick={() => retryLoading('registrars')}>Retry</button>
-                </div>
-              ) : (
-                <select
-                  value={registrarUsername}
-                  onChange={(e) => setRegistrarUsername(e.target.value)}
-                >
-                  {registrars.length === 0 ? (
-                    <option value="">No registrars available</option>
-                  ) : (
-                    registrars.map((registrar, index) => {
-                      // Get the username as the value
-                      const username = typeof registrar === 'object' ? 
-                        (registrar.username || '') : 
-                        registrar;
-                      
-                      // Get a display name (could be the full name or just the username)
-                      const displayName = typeof registrar === 'object' ? 
-                        (registrar.name || registrar.username || '') : 
-                        registrar;
-                      
+          <form onSubmit={handleSubmit}>
+            <div className="form-row">
+              <div className="form-group">
+                <label>Registrar's Name</label>
+                {isLoading.registrars ? (
+                  <div className="loading-field">
+                    <select disabled>
+                      <option>Loading...</option>
+                    </select>
+                  </div>
+                ) : errors.registrars ? (
+                  <div className="error-field">
+                    <select disabled>
+                      <option>Error loading registrars</option>
+                    </select>
+                    <button type="button" onClick={() => window.location.reload()}>Retry</button>
+                  </div>
+                ) : (
+                  <select
+                    name="registrar"
+                    value={formData.registrar}
+                    onChange={handleChange}
+                    required
+                  >
+                    {registrars.map((reg, index) => {
+                      const username = reg.username || reg;
+                      const displayName = registrarDisplayNames[username] || username;
                       return (
                         <option key={index} value={username}>
                           {displayName}
                         </option>
                       );
-                    })
-                  )}
-                </select>
-              )}
-            </div>
-            <div className="form-group">
-              <label>Student's Name</label>
-              {errors.user ? (
-                <div className="error-field">
-                  <input 
-                    type="text" 
-                    disabled
-                    placeholder="Error loading user"
-                    value={currentUser}
-                  />
-                  <p className="error-message">{errors.user}</p>
-                </div>
-              ) : (
+                    })}
+                  </select>
+                )}
+              </div>
+              
+              <div className="form-group">
+                <label>Student's Name</label>
                 <input 
                   type="text" 
                   value={currentUser} 
                   readOnly 
                   disabled
                 />
-              )}
-            </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label>Issue Type</label>
-              <select
-                value={issueType}
-                onChange={(e) => setIssueType(e.target.value)}
-              >
-                {issueTypes.map((type) => (
-                  <option key={type.value} value={type.value}>
-                    {type.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="form-group">
-              <label>Status</label>
-              {/* Status field is readonly for student role */}
-              <input type="text" value="Pending" readOnly disabled />
-            </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label>Year of Study</label>
-              <select
-                value={yearOfStudy}
-                onChange={(e) => setYearOfStudy(e.target.value)}
-              >
-                {yearOfStudyOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="form-group">
-              <label>Semester</label>
-              <select
-                value={semester}
-                onChange={(e) => setSemester(e.target.value)}
-              >
-                {semesterOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group full-width">
-              <label>Description</label>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label>Attachments</label>
-              <div className="attachment-area">
-                {attachment ? (
-                  <div className="attachment-preview">
-                    <img src={URL.createObjectURL(attachment)} alt="Attachment" />
-                    <span className="clear-icon" onClick={handleRemoveAttachment}>×</span>
-                  </div>
-                ) : (
-                  <div className="attachment-placeholder">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileUpload}
-                    />
-                  </div>
-                )}
               </div>
             </div>
-            <div className="form-group">
-              <label>Course Unit</label>
-              {isLoading.courseUnits ? (
-                <div className="loading-field">
-                  <select disabled>
-                    <option>Loading course units...</option>
-                  </select>
-                  <div className="loading-spinner"></div>
-                </div>
-              ) : errors.courseUnits ? (
-                <div className="error-field">
-                  <select disabled>
-                    <option>Error loading course units</option>
-                  </select>
-                  <p className="error-message">{errors.courseUnits}</p>
-                  <button className="retry-btn" onClick={() => retryLoading('courseUnits')}>Retry</button>
-                </div>
-              ) : (
+
+            <div className="form-row">
+              <div className="form-group">
+                <label>Issue Type</label>
                 <select
-                  value={selectedCourseUnitId}
-                  onChange={(e) => setSelectedCourseUnitId(e.target.value)}
+                  name="issueType"
+                  value={formData.issueType}
+                  onChange={handleChange}
                 >
-                  {courseUnits.length === 0 ? (
-                    <option value="">No course units available</option>
+                  {issueTypes.map(type => (
+                    <option key={type.value} value={type.value}>
+                      {type.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              <div className="form-group">
+                <label>Status</label>
+                <input type="text" value="Pending" readOnly disabled />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label>Year of Study</label>
+                <select
+                  name="yearOfStudy"
+                  value={formData.yearOfStudy}
+                  onChange={handleChange}
+                >
+                  {yearOfStudyOptions.map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              <div className="form-group">
+                <label>Semester</label>
+                <select
+                  name="semester"
+                  value={formData.semester}
+                  onChange={handleChange}
+                >
+                  {semesterOptions.map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group full-width">
+                <label>Description</label>
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label>Attachments</label>
+                <div className="attachment-area">
+                  {formData.attachment ? (
+                    <div className="attachment-preview">
+                      <img 
+                        src={URL.createObjectURL(formData.attachment)} 
+                        alt="Attachment preview" 
+                      />
+                      <button 
+                        type="button" 
+                        className="clear-icon" 
+                        onClick={removeAttachment}
+                      >
+                        ×
+                      </button>
+                    </div>
                   ) : (
-                    courseUnits.map((unit, index) => {
-                      const id = typeof unit === 'object' ? unit.id : unit;
-                      const name = typeof unit === 'object' ? unit.name || unit.course_unit_name : unit;
+                    <div className="attachment-placeholder">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              <div className="form-group">
+                <label>Course Unit</label>
+                {isLoading.courseUnits ? (
+                  <div className="loading-field">
+                    <select disabled>
+                      <option>Loading...</option>
+                    </select>
+                  </div>
+                ) : errors.courseUnits ? (
+                  <div className="error-field">
+                    <select disabled>
+                      <option>Error loading course units</option>
+                    </select>
+                    <button type="button" onClick={() => window.location.reload()}>Retry</button>
+                  </div>
+                ) : (
+                  <select
+                    name="courseUnitId"
+                    value={formData.courseUnitId}
+                    onChange={handleChange}
+                    required
+                  >
+                    {courseUnits.map((unit, index) => {
+                      const id = unit.id || unit;
+                      const name = unit.name || unit.course_unit_name || unit;
                       return (
                         <option key={index} value={id}>
                           {name}
                         </option>
                       );
-                    })
-                  )}
-                </select>
+                    })}
+                  </select>
+                )}
+              </div>
+            </div>
+
+            <div className="form-row submit-row">
+              <button
+                type="submit"
+                className="submit-button"
+                disabled={isSubmitting || !isFormReady}
+              >
+                {isSubmitting ? 'Submitting...' : 'Submit Issue'}
+              </button>
+
+              {submitStatus === 'success' && (
+                <div className="submit-status success">
+                  Issue submitted successfully!
+                </div>
+              )}
+              {submitStatus === 'error' && (
+                <div className="submit-status error">
+                  Submission failed. Please try again.
+                </div>
               )}
             </div>
-          </div>
-
-          {/* Submit Button Section */}
-          <div className="form-row submit-row">
-            <button
-              className="submit-button"
-              onClick={handleSubmit}
-              disabled={isSubmitting || anyLoading || !isFormReady}
-            >
-              {isSubmitting ? 'Submitting...' : 'Submit Issue'}
-            </button>
-
-            {submitStatus === 'success' && (
-              <div className="submit-status success">
-                Issue successfully submitted!
-              </div>
-            )}
-            {submitStatus === 'error' && (
-              <div className="submit-status error">
-                Failed to submit issue. Please check the form and try again.
-              </div>
-            )}
-          </div>
+          </form>
         </div>
       </div>
     </div>
