@@ -104,7 +104,7 @@ h2.green-text {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  align-items: center; /* Center form elements */
+  align-items: center; 
 }
 
 .form-group {
@@ -137,12 +137,12 @@ h2.green-text {
   transform: translateY(-50%);
   width: 20px;
   height: 20px;
-  filter: brightness(0); /* Make icons black for visibility */
+  filter: brightness(0); 
 }
 
 .forgot-password-text {
   align-self: flex-end;
-  color: rgb(182, 57, 57); /* Darker for better visibility */
+  color: rgb(182, 57, 57); 
   text-decoration: none;
   font-size: 14px;
   margin-top: -10px;
