@@ -13,7 +13,7 @@ class IsAcademicRegistrar(BasePermission):
         return request.user.role == 'academic_registrar'
     
 
-class IsStudentOrRegistrarOrLecturer(permissions.BasePermission):
+class IsStudentOrRegistrarOrLecturer(BasePermission):
     def has_permission(self, request, view):
         # Check if user is authenticated first
         if not request.user.is_authenticated:
