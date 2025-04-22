@@ -220,7 +220,14 @@ submit-button::after {
   }
 }
 
-
+@keyframes hologramScan {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 100px;
+  }
+}
 
 
 .submit-button:hover {
