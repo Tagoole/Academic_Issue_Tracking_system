@@ -358,3 +358,12 @@
   text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
 }
 
+/* Hologram class to apply to the button */
+.hologram-button {
+  background: linear-gradient(135deg, 
+    rgba(0, 86, 179, 0.8) 0%, 
+    rgba(0, 123, 255, 0.9) 50%, 
+    rgba(102, 176, 255, 0.8) 100%);
+  animation: buttonPulse 3s infinite ease-in-out;
+}
+
