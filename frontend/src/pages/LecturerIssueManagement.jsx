@@ -59,7 +59,7 @@ const LecturerIssueManagement = () => {
         // Map the API response fields to our component's state structure
         setSelectedIssue(prevState => ({
           ...prevState,
-          id: issueId,
+          id: issueData.id || issueId, // Use the ID from the data if available
           status: issueData.status || 'pending',
           // Map student information
           studentNo: issueData.student?.username || '',
@@ -96,11 +96,11 @@ const LecturerIssueManagement = () => {
   }, [issueId]);
 
   const handleStatusUpdate = (newStatus) => {
-    setSelectedNewStatus(newStatus);
+    setSelectedNewStatus(newStatus.toLowerCase()); // Convert to lowercase to match API expectations
     setShowStatusDialog(false);
 
     let message = `Status will be updated to "${newStatus}".`;
-    if (newStatus !== 'Resolved') {
+    if (newStatus.toLowerCase() !== 'resolved') {
       message += " Please remember to come back later and resolve this issue.";
     }
     setStatusUpdateMessage(message);
@@ -140,14 +140,22 @@ const LecturerIssueManagement = () => {
       // Set authorization header with access token
       API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
       
+      // Format the status value to match backend expectations
+      // Convert "In Progress" to "in_progress" format if needed
+      let formattedStatus = selectedNewStatus.toLowerCase();
+      if (formattedStatus === 'in progress') {
+        formattedStatus = 'in_progress';
+      }
+      
       // Data to send to the backend
       const updateData = {
-        status: selectedNewStatus,
+        status: formattedStatus,
         comments: selectedIssue.comments,
         is_commented: true
       };
       
       console.log('Sending update data:', updateData);
+      console.log('Issue ID:', selectedIssue.id);
       
       // Send PATCH request to update the issue
       const response = await API.patch(`api/issues/${selectedIssue.id}/`, updateData);
@@ -179,10 +187,16 @@ const LecturerIssueManagement = () => {
             const newAccessToken = refreshResponse.data.access;
             localStorage.setItem('accessToken', newAccessToken);
             
+            // Format the status value again
+            let formattedStatus = selectedNewStatus.toLowerCase();
+            if (formattedStatus === 'in progress') {
+              formattedStatus = 'in_progress';
+            }
+            
             // Retry the original request with new token
             API.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
             const retryResponse = await API.patch(`api/issues/${selectedIssue.id}/`, {
-              status: selectedNewStatus,
+              status: formattedStatus,
               comments: selectedIssue.comments,
               is_commented: true
             });
@@ -237,7 +251,7 @@ const LecturerIssueManagement = () => {
           <div className="issue-management-container">
             <h2>Issue Management</h2>
             <div className="issue-details">
-              <div className="issue-field"><strong>Issue ID:</strong><p>{issueId}</p></div>
+              <div className="issue-field"><strong>Issue ID:</strong><p>{selectedIssue.id}</p></div>
               <div className="issue-field"><strong>Student Username:</strong><p>{selectedIssue.student?.username || 'N/A'}</p></div>
               <div className="issue-field"><strong>Student Email:</strong><p>{selectedIssue.student?.email || 'N/A'}</p></div>
               <div className="issue-field"><strong>Issue Type:</strong><p>{selectedIssue.issue_type || 'N/A'}</p></div>
@@ -280,9 +294,9 @@ const LecturerIssueManagement = () => {
                 <h3>Choose Status</h3>
                 <p>Select a status for this issue:</p>
                 <div className="status-options">
-                  <button className="status-option pending" onClick={() => handleStatusUpdate('Pending')}>Pending</button>
-                  <button className="status-option in-progress" onClick={() => handleStatusUpdate('In Progress')}>In Progress</button>
-                  <button className="status-option resolved" onClick={() => handleStatusUpdate('Resolved')}>Resolved</button>
+                  <button className="status-option pending" onClick={() => handleStatusUpdate('pending')}>Pending</button>
+                  <button className="status-option in-progress" onClick={() => handleStatusUpdate('in_progress')}>In Progress</button>
+                  <button className="status-option resolved" onClick={() => handleStatusUpdate('resolved')}>Resolved</button>
                 </div>
                 <button className="cancel-button" onClick={() => setShowStatusDialog(false)}>Cancel</button>
               </div>
