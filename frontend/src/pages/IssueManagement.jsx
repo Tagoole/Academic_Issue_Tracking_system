@@ -220,7 +220,7 @@ const IssueManagement = () => {
       console.log('Sending escalation data:', escalationData);
   
       // Send PATCH request to escalate the issue
-      const response = await API.patch(`api/issues/${issue.id}/`, escalationData);
+      const response = await API.patch(`api/registrar_issue_management/${issue.id}/`, escalationData);
       console.log('Issue escalated successfully:', response.data);
       
       // Update the issue in state to reflect the change
@@ -283,7 +283,7 @@ const IssueManagement = () => {
       console.log('Sending update data:', updateData);
       
       // Send PATCH request instead of PUT to update only specific fields
-      const response = await API.patch(`api/issues/${selectedIssue.id}/`, updateData);
+      const response = await API.patch(`api/registrar_issue_management/${selectedIssue.id}/`, updateData);
       console.log('Issue updated successfully:', response.data);
       
       // Get the lecturer object for the updated issue
