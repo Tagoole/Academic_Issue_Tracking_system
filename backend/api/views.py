@@ -469,6 +469,7 @@ def verify_password_reset_code(request):
         
     return Response(serializer.errors,status = status.HTTP_400_BAD_REQUEST)
         
+        
 @api_view(['POST'])
 def final_password_reset(request):
     serializer = Final_Password_ResetSerializer(data = request.data)
