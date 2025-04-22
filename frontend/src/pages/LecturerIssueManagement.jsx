@@ -24,7 +24,7 @@ const LecturerIssueManagement = () => {
     courseUnitCode: '',
     assignedLecturer: '',
     description: '',
-    comments: '',
+    comments: '', // Initialize with empty string instead of null
     is_commented: false,
     // Additional fields from API response
     course_unit: '',
@@ -52,9 +52,11 @@ const LecturerIssueManagement = () => {
     try {
       // Get the issue data from sessionStorage
       const issueData = JSON.parse(sessionStorage.getItem('issueToResolve'));
-      console.log(issueData);
+      console.log("Initial issue data:", issueData);
+      
       if (issueData) {
         console.log("Retrieved issue data:", issueData);
+        console.log("Original comments value:", issueData.comments);
         
         // Map the API response fields to our component's state structure
         setSelectedIssue(prevState => ({
@@ -83,9 +85,11 @@ const LecturerIssueManagement = () => {
           semester: issueData.semester,
           student: issueData.student,
           year_of_study: issueData.year_of_study,
-          comments: issueData.comments || '',
+          comments: issueData.comments || '', // Use empty string as fallback instead of null
           is_commented: issueData.is_commented || false
         }));
+        
+        console.log("State after update:", selectedIssue);
       } else {
         console.log(`No issue data found in sessionStorage for ID: ${issueId}`);
         // You might want to redirect back to dashboard or show an error
@@ -108,14 +112,19 @@ const LecturerIssueManagement = () => {
   };
 
   const handleCommentChange = (event) => {
-    setSelectedIssue({
-      ...selectedIssue,
-      comments: event.target.value,
-    });
+    const commentText = event.target.value;
+    console.log("Comment changed to:", commentText);
+    
+    setSelectedIssue(prevState => ({
+      ...prevState,
+      comments: commentText,
+    }));
   };
 
   const handleSave = () => {
-    if (!selectedIssue.comments.trim()) {
+    console.log("Current comments before save:", selectedIssue.comments);
+    
+    if (!selectedIssue.comments || !selectedIssue.comments.trim()) {
       setErrorMessage('Please add a comment before saving changes.');
       return;
     }
@@ -127,6 +136,7 @@ const LecturerIssueManagement = () => {
   const handleConfirmSave = async () => {
     try {
       setLoading(true);
+      console.log("Saving comment:", selectedIssue.comments);
       
       // Get access token for authorization
       const accessToken = localStorage.getItem('accessToken');
@@ -150,7 +160,7 @@ const LecturerIssueManagement = () => {
       // Data to send to the backend
       const updateData = {
         status: formattedStatus,
-        comments: selectedIssue.comments,
+        comments: selectedIssue.comments, // This will be the user's typed comment
         is_commented: true
       };
       
@@ -273,11 +283,15 @@ const LecturerIssueManagement = () => {
             <div className="comment-section">
               <strong>Add Comment</strong>
               <textarea
-                value={selectedIssue.comments}
+                value={selectedIssue.comments || ''}
                 onChange={handleCommentChange}
                 placeholder="Enter your response to this issue..."
                 rows="4"
               />
+              {/* Display current comment value for debugging */}
+              <div className="debug-info" style={{ fontSize: "12px", color: "#666" }}>
+                Current comment: {selectedIssue.comments ? `"${selectedIssue.comments}"` : "(empty)"}
+              </div>
             </div>
 
             <div className="save-button-container">
@@ -308,6 +322,7 @@ const LecturerIssueManagement = () => {
               <div className="status-dialog">
                 <h3>Status Update</h3>
                 <p>{statusUpdateMessage}</p>
+                <p><strong>Comment:</strong> {selectedIssue.comments}</p>
                 <div className="confirmation-buttons">
                   <button 
                     className="confirm-button" 
