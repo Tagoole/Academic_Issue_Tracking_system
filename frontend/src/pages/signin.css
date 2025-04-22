@@ -126,8 +126,8 @@ h2.green-text {
   border-radius: 5px;
   font-size: 16px;
   box-sizing: border-box;
-  color: black; /* Make text black */
-  font-weight: bold; /* Make text bold for visibility */
+  color: black; 
+  font-weight: bold; 
 }
 
 .input-container .icon {
