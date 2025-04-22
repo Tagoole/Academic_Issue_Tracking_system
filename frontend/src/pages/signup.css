@@ -329,4 +329,11 @@ input, select {
   color: black;
   font-weight: bold;
 }
+/* Fix terms & conditions text */
+.terms-group label {
+  color: black;
+  margin-left: 8px;
+}
+
+
 
