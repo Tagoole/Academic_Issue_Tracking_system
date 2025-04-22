@@ -323,3 +323,10 @@ input, select {
   font-weight: 600;
 }
 
+/* Ensure select dropdown options are also visible */
+.input-container select option {
+  background-color: white;
+  color: black;
+  font-weight: bold;
+}
+
