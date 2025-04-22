@@ -205,6 +205,12 @@ submit-button::after {
   z-index: 2;
 }
 
+.submit-button span {
+  position: relative;
+  z-index: 3;
+}
+
+
 
 
 .submit-button:hover {
