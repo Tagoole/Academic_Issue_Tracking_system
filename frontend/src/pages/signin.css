@@ -1,20 +1,18 @@
-/* Enhanced signin.css */
+/* Enhanced signin.css - Balanced Layout */
 
 /* Base styles */
 html, body {
   margin: 0;
   padding: 0;
-  height: 10%;
+  height: 100%; /* Changed from 10% to make full height available */
   font-family: Arial, sans-serif;
   background-color: transparent;
-
 }
 
 .signin-container {
   width: 100%;
   height: 100vh;
   display: flex;
-  margin-left: 10px;
   flex-direction: column;
   background-color: transparent;
 }
@@ -40,11 +38,12 @@ html, body {
   height: 30px;
 }
 
-/* Main layout */
+/* Main layout - better balanced */
 .split-layout {
   display: flex;
   flex: 1;
   overflow: hidden;
+  align-items: center; /* Center vertically */
 }
 
 /* Left section - Text content */
@@ -54,12 +53,14 @@ html, body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin-left: 200px;
+  align-items: center; /* Center content horizontally */
+  margin-left: 0; /* Remove left margin for better centering */
 }
 
 .header {
-  margin-bottom: 10px;
-  align-items: center;
+  margin-bottom: 30px;
+  text-align: center; /* Center welcome text */
+  width: 100%;
 }
 
 .green-text {
@@ -69,7 +70,7 @@ html, body {
 
 h1.green-text {
   font-size: 28px;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 }
 
 h2.green-text {
@@ -77,26 +78,7 @@ h2.green-text {
 }
 
 .content {
-  max-width: 400px;
-  position: relative;
-}
-
-.sign-in-heading {
-  color: #333;
-  margin-bottom: 20px;
-  font-size: 22px;
-  align-items: center;
-  margin-right: 100px;
-}
-
-/* Form styling */
-.sign-in-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-.content {
-  max-width: 1500px;
+  width: 450px; /* Fixed width for better consistency */
   position: relative;
   background: rgba(255, 255, 255, 0.1); /* translucent white */
   backdrop-filter: blur(20px); /* frosted glass blur */
@@ -108,15 +90,33 @@ h2.green-text {
   font-size: 18px;
 }
 
+.sign-in-heading {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 22px;
+  text-align: center; /* Center heading */
+  margin-right: 0; /* Remove right margin */
+  font-weight: bold;
+}
+
+/* Form styling */
+.sign-in-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center; /* Center form elements */
+}
+
 .form-group {
   width: 100%;
 }
 
 .input-container {
   position: relative;
-  width: 70%;
-  padding: 14px 50px 14px 20px; /* Increase padding for better spacing */
-  font-size: 18px; /* Slightly increase font size inside the inputs */
+  width: 100%; /* Use full width of parent */
+  margin: 0 auto; /* Center the container */
+  padding: 0; /* Remove padding that was causing misalignment */
+  font-size: 18px;
 }
 
 .input-container input {
@@ -126,6 +126,8 @@ h2.green-text {
   border-radius: 5px;
   font-size: 16px;
   box-sizing: border-box;
+  color: black; /* Make text black */
+  font-weight: bold; /* Make text bold for visibility */
 }
 
 .input-container .icon {
@@ -135,28 +137,36 @@ h2.green-text {
   transform: translateY(-50%);
   width: 20px;
   height: 20px;
+  filter: brightness(0); /* Make icons black for visibility */
 }
 
 .forgot-password-text {
   align-self: flex-end;
-  color: #666;
+  color: black; /* Darker for better visibility */
   text-decoration: none;
   font-size: 14px;
   margin-top: -10px;
+  font-weight: bold;
 }
 
+/* Submit button - improved with hologram effect like your signup button */
 .submit-button {
+  position: relative;
+  overflow: hidden;
   background: linear-gradient(45deg, #00ad00, #006d00);
   color: white;
   border: none;
   border-radius: 5px;
-  padding: 12px;
+  padding: 12px 40px;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 15px;
+  width: 200px;
+  text-align: center;
 }
+
 
 .submit-button:hover {
   background: linear-gradient(45deg, #009900, #005500);
@@ -172,6 +182,8 @@ h2.green-text {
   text-align: center;
   margin-top: 20px;
   font-size: 14px;
+  color: black; /* Make text black for better visibility */
+  font-weight: bold;
 }
 
 .signup-link {
@@ -188,6 +200,8 @@ h2.green-text {
   border-radius: 5px;
   margin-bottom: 15px;
   font-size: 14px;
+  width: 100%;
+  text-align: center;
 }
 
 /* Right section - Image */
@@ -201,11 +215,9 @@ h2.green-text {
 }
 
 .graduate-image {
-  width: 1000px;
-  height: 1000px;
+  max-width: 200%; 
+  max-height: 100vh;
   margin-left: 10px;
-  object-fit: cover;
-  object-position: center;
 }
 
 /* Responsive adjustments */
@@ -217,6 +229,7 @@ h2.green-text {
   .left-section {
     order: 2;
     padding: 30px 20px;
+    margin-left: 0;
   }
   
   .right-section {
@@ -225,12 +238,17 @@ h2.green-text {
   }
   
   .content {
-    max-width: 100%;
+    max-width: 90%;
+    width: auto;
   }
 }
 
 @media (min-width: 993px) and (max-width: 1200px) {
   .left-section {
     padding: 30px 40px;
+  }
+  
+  .content {
+    width: 400px;
   }
 }
