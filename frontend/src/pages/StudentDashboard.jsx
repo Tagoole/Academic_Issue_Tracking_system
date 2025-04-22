@@ -153,15 +153,29 @@ const StudentDashboard = () => {
           </div>
         </div>
         
-        {/* Search Input */}
         <div className="search-container">
-          <input type="text" placeholder="Search for issues..." className="search-input" />
-          <button className="filter-button">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 16v-4.414L3.293 6.707A1 1 0 013 6V3z" clipRule="evenodd" />
-            </svg>
-          </button>
-          <button className="new-issue-button" onClick={handleNewIssueClick}>+ New Issue</button>
+  <input type="text" placeholder="Search for issues..." className="search-input" />
+  <button className="filter-button">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+      <path fillRule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 16v-4.414L3.293 6.707A1 1 0 013 6V3z" clipRule="evenodd" />
+    </svg>
+  </button>
+  
+  {/* Advanced holographic button with multiple effects */}
+  <div className="hologram-3d-container">
+    <div className="hologram-particles">
+      <div className="hologram-border">
+        <button 
+          className="new-issue-button hologram-button hologram-3d" 
+          onClick={handleNewIssueClick}
+        >
+          + New Issue
+        </button>
+      </div>
+    </div>
+  </div>
+
+
         </div>
         
         {/* Issues Container */}
