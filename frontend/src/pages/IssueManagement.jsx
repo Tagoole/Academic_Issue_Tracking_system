@@ -25,7 +25,7 @@ const IssueManagement = () => {
   
   // New state for editing issue
   const [editingIssue, setEditingIssue] = useState({
-    lecturer_id: '',
+    lecturer: '',
     status: ''
   });
   
@@ -180,7 +180,7 @@ const IssueManagement = () => {
     if (issue) {
       setSelectedIssue(issue);
       setEditingIssue({
-        lecturer_id: issue.lecturer?.id || '',
+        lecturer: issue.lecturer?.id || '',
         status: issue.status || 'pending'
       });
       setShowDetailsModal(true);
@@ -191,7 +191,7 @@ const IssueManagement = () => {
   const closeDetailsModal = () => {
     setShowDetailsModal(false);
     setSelectedIssue(null);
-    setEditingIssue({ lecturer_id: '', status: '' });
+    setEditingIssue({ lecturer: '', status: '' });
   };
 
   const handleEscalateIssue = (issueId) => {
@@ -209,17 +209,18 @@ const IssueManagement = () => {
   
       // Data to send to the backend (for escalation)
       const escalationData = {
-        issue_id: issue.id,
-        lecturer_id: lecturer.id,
         status: 'in_progress',
+        lecturer: lecturer.id
       };
   
       // Get access token for authorization
       const accessToken = localStorage.getItem('accessToken');
       API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+      
+      console.log('Sending escalation data:', escalationData);
   
-      // Send PUT request to escalate the issue
-      const response = await API.put(`api/issues/${issue.id}/`, escalationData);
+      // Send PATCH request to escalate the issue
+      const response = await API.patch(`api/issues/${issue.id}/`, escalationData);
       console.log('Issue escalated successfully:', response.data);
       
       // Update the issue in state to reflect the change
@@ -242,7 +243,12 @@ const IssueManagement = () => {
       
     } catch (error) {
       console.error('Error escalating issue:', error);
-      alert('Failed to escalate issue. Please try again.');
+      if (error.response) {
+        console.error('Error response data:', error.response.data);
+        alert(`Failed to escalate issue: ${JSON.stringify(error.response.data)}`);
+      } else {
+        alert('Failed to escalate issue. Please try again.');
+      }
       setShowLecturersDropdown(false);
     }
   };
@@ -256,7 +262,7 @@ const IssueManagement = () => {
     });
   };
 
-  // New function to save the updated issue
+  // New function to save the updated issue - Now using PATCH instead of PUT
   const handleUpdateIssue = async () => {
     try {
       if (!selectedIssue) return;
@@ -268,20 +274,20 @@ const IssueManagement = () => {
       // Get previous status for count updating
       const previousStatus = selectedIssue.status;
       
-      // Data to send to the backend
+      // Data to send to the backend - Fixed field names to match serializer
       const updateData = {
-        issue_id: selectedIssue.id,
-        lecturer_id: editingIssue.lecturer_id,
-        status: editingIssue.status,
+        lecturer: editingIssue.lecturer, // Changed from lecturer_id
+        status: editingIssue.status
       };
       
-      // Send PUT request to update the issue
-      const response = await API.put(`api/issues/${selectedIssue.id}/`, updateData);
+      console.log('Sending update data:', updateData);
+      
+      // Send PATCH request instead of PUT to update only specific fields
+      const response = await API.patch(`api/issues/${selectedIssue.id}/`, updateData);
       console.log('Issue updated successfully:', response.data);
-      console.log(updateData);
       
       // Get the lecturer object for the updated issue
-      const selectedLecturer = lecturers.find(l => l.id.toString() === editingIssue.lecturer_id.toString());
+      const selectedLecturer = lecturers.find(l => l.id.toString() === editingIssue.lecturer.toString());
       
       // Update the issue in state to reflect the change
       setIssues((prevIssues) =>
@@ -323,7 +329,12 @@ const IssueManagement = () => {
       
     } catch (error) {
       console.error('Error updating issue:', error);
-      alert('Failed to update issue. Please try again.');
+      if (error.response) {
+        console.error('Error response data:', error.response.data);
+        alert(`Failed to update issue: ${JSON.stringify(error.response.data)}`);
+      } else {
+        alert('Failed to update issue. Please try again.');
+      }
     }
   };
 
@@ -610,8 +621,8 @@ const IssueManagement = () => {
                     <span className="detail-label">Assigned To:</span>
                     <div className="detail-input">
                       <select
-                        name="lecturer_id"
-                        value={editingIssue.lecturer_id}
+                        name="lecturer"
+                        value={editingIssue.lecturer}
                         onChange={handleInputChange}
                         className="form-select"
                       >
