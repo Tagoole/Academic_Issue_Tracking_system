@@ -278,6 +278,7 @@ const IssueManagement = () => {
       // Send PUT request to update the issue
       const response = await API.put(`api/issues/${selectedIssue.id}/`, updateData);
       console.log('Issue updated successfully:', response.data);
+      console.log(updateData);
       
       // Get the lecturer object for the updated issue
       const selectedLecturer = lecturers.find(l => l.id.toString() === editingIssue.lecturer_id.toString());
