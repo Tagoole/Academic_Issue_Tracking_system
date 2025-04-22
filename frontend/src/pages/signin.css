@@ -142,7 +142,7 @@ h2.green-text {
 
 .forgot-password-text {
   align-self: flex-end;
-  color: black; /* Darker for better visibility */
+  color: rgb(182, 57, 57); /* Darker for better visibility */
   text-decoration: none;
   font-size: 14px;
   margin-top: -10px;
