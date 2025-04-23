@@ -229,7 +229,7 @@ const ResetVerification = () => {
           //error and status messages
           {error && <p className="error-message">{error}</p>}
           {resendStatus && <p className="success-message">{resendStatus}</p>}
-          
+          // buttons for form submission and resend code
           <button
             type="submit"
             className="next-button"
