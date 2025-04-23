@@ -1,0 +1,268 @@
+/* StudentsProfile.css */
+
+/* Global Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f7fa;
+  color: #333;
+}
+
+/* App Container */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Content Wrapper */
+.content-wrapper {
+  display: flex;
+  flex: 1;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  padding: 20px;
+  
+}
+
+/* Profile Container */
+.profile-container {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Profile Card */
+.profile-card {
+  background-color: hsl(253, 24%, 93%);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 250px;
+  width: 200px;
+  gap: 20px;
+}
+
+/* Profile Header */
+.profile-header {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 20px;
+}
+
+.profile-image-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  cursor: pointer;
+}
+
+.profile-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #ddd;
+}
+
+.image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.image-overlay span {
+  color: #fff;
+  font-size: 14px;
+  text-align: center;
+}
+
+.profile-image-container:hover .image-overlay {
+  opacity: 1;
+}
+
+.profile-details {
+  flex: 1;
+}
+
+.profile-details h2 {
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+.profile-details p {
+  color: #666;
+  font-size: 16px;
+}
+
+/* Info Card */
+.info-card {
+  background-color: #bd2020;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 500px;
+}
+
+/* Personal and Academic Info Cards */
+.info-card.personal-info {
+  margin-top: 0;
+}
+
+.info-card.academic-info {
+  margin-top: 0;
+}
+
+.info-card h3 {
+  font-size: 20px;
+  margin-bottom: 15px;
+  color: #2c3e50;
+}
+
+/* Info Item */
+.info-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-item label {
+  flex: 0 0 200px;
+  font-weight: 600;
+  color: #34495e;
+}
+
+.info-item span {
+  flex: 1;
+  color: #333;
+}
+
+.info-item input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.info-item input.readonly-field {
+  background-color: #f9f9f9;
+  cursor: not-allowed;
+  color: #666;
+}
+
+.readonly-value {
+  color: #666;
+}
+
+/* Edit Button */
+.edit-btn {
+  margin-left: 10px;
+  padding: 6px 12px;
+  background-color: #3498db;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.edit-btn:hover {
+  background-color: #2980b9;
+}
+
+.edit-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .content-wrapper {
+    flex-direction: column;
+  }
+
+  .main-content {
+    padding: 15px;
+  }
+
+  .profile-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .profile-header {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .profile-image-container {
+    margin-bottom: 15px;
+  }
+
+  .info-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .info-item label {
+    flex: none;
+    width: 100%;
+  }
+
+  .info-item input,
+  .info-item span {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-image-container {
+    width: 100px;
+    height: 100px;
+  }
+
+  .profile-details h2 {
+    font-size: 20px;
+  }
+
+  .info-card h3 {
+    font-size: 18px;
+  }
+
+  .edit-btn {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+}
