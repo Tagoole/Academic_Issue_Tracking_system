@@ -125,7 +125,7 @@ const ResetVerification = () => {
       setIsLoading(false);
     }
   };
-
+//resend code handler
   const handleResendCode = async () => {
     if (!email) {
       setError('Email address is missing. Please go back to signup.');
