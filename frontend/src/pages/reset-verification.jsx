@@ -186,7 +186,7 @@ const ResetVerification = () => {
           Help?
         </button>
       </header>
-      
+      // main verification card
       <div className="verification-card">
         <div className="icon-container">
           <img src={emailIcon} alt="Email Verification" className="email-icon" />
