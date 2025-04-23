@@ -169,7 +169,7 @@ const ResetVerification = () => {
       if (timer) clearTimeout(timer);
     };
   }, [countdown, resendDisabled]);
-  
+  //initial focus effect
   useEffect(() => {
     if (inputRefs[0].current) {
       inputRefs[0].current.focus();
