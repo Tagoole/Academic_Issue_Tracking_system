@@ -1,6 +1,6 @@
 .app-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   min-height: 100vh;
   background-color: hsl(216, 33%, 97%);
 }
@@ -8,6 +8,7 @@
 .content-wrapper {
   display: flex;
   flex: 1;
+  background-color: rgba(255, 255, 255, 0.95);
 }
 
 .issue-content {
