@@ -104,7 +104,7 @@ const ResetVerification = () => {
     setIsLoading(true);
     
     try {
-      const response = await API.post('/api/verify_email/', {
+      const response = await API.post('/api/verify_password_reset_code/', {
         email: email,
         code: code
       });
@@ -138,7 +138,7 @@ const ResetVerification = () => {
     setResendStatus('Sending verification code...');
     
     try {
-      const response = await API.post("/api/resend_verify_code/", {
+      const response = await API.post("/api/resend_password_reset_code/", {
         email: email
       });
       
