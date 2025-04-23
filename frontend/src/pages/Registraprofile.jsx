@@ -7,7 +7,7 @@ import './Registraprofile.css';
 const RegistraProfile = () => {
   const fileInputRef = useRef(null);
   const [profileImage, setProfileImage] = useState('/avatar-placeholder.png');
-  
+
   // Initialize state with localStorage data
   const [profile, setProfile] = useState({
     fullName: '[Full Name]',
@@ -27,14 +27,14 @@ const RegistraProfile = () => {
     const userEmail = localStorage.getItem('userEmail') || '[Email Address]';
     const userGender = localStorage.getItem('userGender') || '[Gender]';
     const userId = localStorage.getItem('userId') || '';
-    
+
     // Update profile state with localStorage data
     setProfile(prevProfile => ({
       ...prevProfile,
       fullName: userName,
       email: userEmail,
       gender: userGender,
-      lecturerNumber: userId,
+      RegNumber: userId,
       registrationNumber: userId ? `25/Reg/23-${userId}` : '[Registration]'
     }));
   }, []);
@@ -43,8 +43,8 @@ const RegistraProfile = () => {
 
   const handleEditClick = (field) => {
     // Don't allow editing for readonly fields
-    if (field === 'fullName' || field === 'email' || field === 'gender' || 
-        field === 'RegNumber' || field === 'registrationNumber') {
+    if (field === 'fullName' || field === 'email' || field === 'gender' ||
+      field === 'RegNumber' || field === 'registrationNumber') {
       return;
     }
     setEditableField(field);
@@ -74,7 +74,7 @@ const RegistraProfile = () => {
       // Create a preview URL for the image
       const imageUrl = URL.createObjectURL(file);
       setProfileImage(imageUrl);
-      
+
       console.log('Image file selected:', file);
     }
   };
@@ -99,10 +99,10 @@ const RegistraProfile = () => {
                   <div className="image-overlay">
                     <span>Change Photo</span>
                   </div>
-                  <input 
-                    type="file" 
-                    ref={fileInputRef} 
-                    style={{ display: 'none' }} 
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    style={{ display: 'none' }}
                     accept="image/*"
                     onChange={handleImageChange}
                   />
@@ -113,7 +113,7 @@ const RegistraProfile = () => {
                 </div>
                 {!isReadOnly('fullName') && (
                   <button className="edit-btn" onClick={() => handleEditClick('fullName')}>
-                    Edit 
+                    Edit
                   </button>
                 )}
               </div>
@@ -158,7 +158,7 @@ const RegistraProfile = () => {
             {/* Academic Information Section */}
             <div className="info-card">
               <h3>Academic Information</h3>
-              {['registrationNumber', 'lecturerNumber', 'department'].map((field) => (
+              {['registrationNumber', 'RegNumber', 'department'].map((field) => (
                 <div key={field} className="info-item">
                   <label>{field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}:</label>
                   {editableField === field ? (
