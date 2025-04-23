@@ -1,10 +1,172 @@
-/* Ensure the table container doesn't overflow */
+/* General container styles */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+}
+
+/* Content container with sidebar and main content */
+.content-container {
+  display: flex;
+  flex: 1;
+}
+
+/* Main content area */
+.main-content {
+  flex: 1;
+  padding: 20px;
+  background-color: #f5f5f5;
+}
+
+/* Wrapper for main content */
+.main-content-wrapper {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Dashboard header */
+.dashboard-header {
+  margin-bottom: 20px;
+}
+
+.dashboard-header h1 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+/* Dashboard cards container */
+.dashboard-cards-container {
+  margin-bottom: 30px;
+}
+
+.dashboard-cards {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.dashboard-card {
+  flex: 1;
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-card h3 {
+  font-size: 16px;
+  font-weight: 500;
+  color: #666;
+  margin: 0 0 10px 0;
+}
+
+.card-count {
+  font-size: 32px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.dashboard-card p {
+  font-size: 14px;
+  color: #999;
+  margin: 0;
+}
+
+/* Issues section */
+.issues-container {
+  margin-top: 20px;
+}
+
+.issues-section {
+  background-color: white;
+}
+
+.issues-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.issues-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+/* Search and filter controls */
+.issues-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search-container {
+  position: relative;
+}
+
+.search-input {
+  padding: 8px 30px 8px 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 200px;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #1976d2;
+}
+
+.search-icon::before {
+  content: '🔍';
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+}
+
+.filter-button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 12px;
+  background-color: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.filter-button:hover {
+  background-color: #e0e0e0;
+}
+
+.filter-icon {
+  font-size: 12px;
+}
+
+/* Table container */
 .table-container {
   width: 100%;
   overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
-/* Style the issues table */
+/* Issues table */
 .issues-table {
   width: 100%;
   border-collapse: collapse;
@@ -15,12 +177,14 @@
 .issues-table td {
   padding: 10px;
   text-align: left;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #e0e0e0;
   white-space: normal; /* Allow text to wrap */
   word-wrap: break-word; /* Break long words */
+  font-size: 14px;
+  color: #333;
 }
 
-/* Set column widths to prevent overflow */
+/* Define column widths */
 .issues-table th:nth-child(1),
 .issues-table td:nth-child(1) {
   width: 10%; /* ID */
@@ -58,7 +222,8 @@
 
 .issues-table th {
   background-color: #f5f5f5;
-  font-weight: bold;
+  font-weight: 600;
+  color: #666;
 }
 
 .issues-table tbody tr:hover {
@@ -96,6 +261,7 @@
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 12px;
 }
 
 .view-details-btn:hover {
@@ -107,6 +273,16 @@
   text-align: center;
   padding: 20px;
   color: #666;
+  font-size: 14px;
+}
+
+/* Loading and error messages */
+.loading-message,
+.error-message {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-size: 14px;
 }
 
 /* Modal overlay */
@@ -139,12 +315,14 @@
   justify-content: space-between;
   align-items: center;
   padding: 15px 20px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .issue-modal-header h2 {
   margin: 0;
   font-size: 18px;
+  font-weight: 600;
+  color: #333;
 }
 
 /* Close button */
@@ -167,18 +345,20 @@
 
 .issue-detail-item {
   margin-bottom: 10px;
+  font-size: 14px;
 }
 
 .issue-detail-item strong {
   display: inline-block;
   width: 120px;
   font-weight: 500;
+  color: #333;
 }
 
 /* Modal footer */
 .issue-modal-footer {
   padding: 15px 20px;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid #e0e0e0;
   text-align: right;
 }
 
@@ -190,8 +370,55 @@
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 14px;
 }
 
 .modal-close-btn:hover {
   background-color: #1565c0;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .app-container {
+    width: 100%;
+    padding: 0 10px;
+  }
+
+  .dashboard-cards {
+    flex-direction: column;
+  }
+
+  .dashboard-card {
+    width: 100%;
+  }
+
+  .issues-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .issues-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .search-input {
+    width: 100%;
+  }
+
+  .issues-table th,
+  .issues-table td {
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .view-details-btn {
+    font-size: 10px;
+    padding: 4px 8px;
+  }
+
+  .issue-modal {
+    width: 90%;
+  }
 }
