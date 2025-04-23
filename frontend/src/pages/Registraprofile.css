@@ -120,11 +120,11 @@ body {
 
 /* Info Card */
 .info-card {
-  background-color: #bd2020;
+  background-color: #faf8f8;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  width: 500px;
+  width: 600px;
 }
 
 /* Personal and Academic Info Cards */
