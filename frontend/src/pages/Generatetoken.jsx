@@ -118,15 +118,15 @@ function Registrationtoken() {
             }
           );
 
-          // Show success popup instead of message
+          
           setSuccessMessage(`The registration token has been created and sent to the Email "${email}"`);
           setShowSuccessPopup(true);
 
         } catch (refreshError) {
-          // Error message handled in refreshAccessToken
+          
         }
       } else {
-        // Handle 400 and other errors
+        
         const errorMessage =
           error.response?.data?.errors ||
           error.response?.data?.role?.[0] ||
