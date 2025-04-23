@@ -9,6 +9,7 @@ const AuthScreen = ({ userEmail = "user@example.com" }) => {
     const [isVerifying, setIsVerifying] = useState(false);
     const inputRefs = useRef([]);
 
+
     const handleChange = (e, index) => {
         const value = e.target.value;
         if (/^\d$/.test(value) || value === '') {

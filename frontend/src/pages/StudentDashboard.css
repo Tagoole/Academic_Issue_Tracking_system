@@ -337,3 +337,33 @@
     padding: 8px;
   }
 }
+/* Advanced Holographic Button Animation - Add to StudentDashboard.css */
+
+/* Base button styling update */
+.new-issue-button {
+  position: relative;
+  padding: 10px 20px;
+  background-color: transparent;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  z-index: 10;
+  box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+}
+
+/* Hologram class to apply to the button */
+.hologram-button {
+  background: linear-gradient(135deg, 
+    rgba(0, 86, 179, 0.8) 0%, 
+    rgba(0, 123, 255, 0.9) 50%, 
+    rgba(102, 176, 255, 0.8) 100%);
+  animation: buttonPulse 3s infinite ease-in-out;
+}
+

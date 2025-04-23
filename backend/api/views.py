@@ -42,9 +42,10 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 
 class IssueViewSet(ModelViewSet):
-    permission_classes = [IsAuthenticated, IsStudent]
+    permission_classes = [IsAuthenticated, IsStudentOrRegistrarOrLecturer]
     queryset = Issue.objects.all()
     serializer_class = IssueSerializer
+    http_method_names = ['put','post','patch','get','delete']
     
     def perform_create(self, serializer):
         # Import User model
@@ -417,7 +418,6 @@ def password_reset_code(request):
         
         verification_code, created = Verification_code.objects.get_or_create(user=user)
         verification_code.code = randint(100000, 999999)
-        verification_code.created_at = timezone.now()
         verification_code.is_verified = False
         verification_code.save()
         
@@ -469,6 +469,7 @@ def verify_password_reset_code(request):
         
         
     return Response(serializer.errors,status = status.HTTP_400_BAD_REQUEST)
+        
         
 @api_view(['POST'])
 def final_password_reset(request):

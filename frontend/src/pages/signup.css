@@ -301,3 +301,46 @@ input, select {
   height: 16px;
   transform: scale(0.8); /* Slightly reduce size */
 }
+/* Update text styling in form fields to be bold and black */
+.input-container input,
+.input-container select,
+.input-container textarea {
+  color: black !important; /* Override the white color */
+  font-weight: bold;
+}
+
+/* Make placeholder text darker for better visibility */
+.input-container input::placeholder,
+.input-container select::placeholder,
+.input-container textarea::placeholder {
+  color: #555;
+  opacity: 0.8;
+}
+
+/* Keep labels visible on the glass background */
+.form-group label {
+  color: black;
+  font-weight: 600;
+}
+
+/* Ensure select dropdown options are also visible */
+.input-container select option {
+  background-color: white;
+  color: black;
+  font-weight: bold;
+}
+/* Fix terms & conditions text */
+.terms-group label {
+  color: black;
+  margin-left: 8px;
+}
+
+/* Make bottom text and links brownish */
+.bottom-text, .bottom-text a {
+  color: rgb(157, 121, 35);
+}
+/* Fix the white background on scrollbar mentioned in your original CSS */
+.signup-form::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.3);
+}
+

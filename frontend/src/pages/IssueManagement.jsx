@@ -19,6 +19,16 @@ const IssueManagement = () => {
   const [showActionsDropdown, setShowActionsDropdown] = useState(null);
   const dropdownRef = useRef(null);
   
+  // Added state for issue details modal
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [selectedIssue, setSelectedIssue] = useState(null);
+  
+  // New state for editing issue
+  const [editingIssue, setEditingIssue] = useState({
+    lecturer: '',
+    status: ''
+  });
+  
   // Counters for different issue statuses
   const [pendingCount, setPendingCount] = useState(0);
   const [inProgressCount, setInProgressCount] = useState(0);
@@ -164,8 +174,24 @@ const IssueManagement = () => {
     setSearchTerm(e.target.value);
   };
 
+  // Modified handleViewDetails to display issue details in a modal
   const handleViewDetails = (issueId) => {
-    navigate(`/view-details/${issueId}`);
+    const issue = issues.find(issue => issue.id === issueId);
+    if (issue) {
+      setSelectedIssue(issue);
+      setEditingIssue({
+        lecturer: issue.lecturer?.id || '',
+        status: issue.status || 'pending'
+      });
+      setShowDetailsModal(true);
+      setShowActionsDropdown(null); // Close the actions dropdown
+    }
+  };
+
+  const closeDetailsModal = () => {
+    setShowDetailsModal(false);
+    setSelectedIssue(null);
+    setEditingIssue({ lecturer: '', status: '' });
   };
 
   const handleEscalateIssue = (issueId) => {
@@ -183,17 +209,18 @@ const IssueManagement = () => {
   
       // Data to send to the backend (for escalation)
       const escalationData = {
-        issue_id: issue.id,
-        lecturer_id: lecturer.id,
         status: 'in_progress',
+        lecturer: lecturer.id
       };
   
       // Get access token for authorization
       const accessToken = localStorage.getItem('accessToken');
       API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+      
+      console.log('Sending escalation data:', escalationData);
   
-      // Send POST request to escalate the issue
-      const response = await API.post(`api/escalate-issue/`, escalationData);
+      // Send PATCH request to escalate the issue
+      const response = await API.patch(`api/registrar_issue_management/${issue.id}/`, escalationData);
       console.log('Issue escalated successfully:', response.data);
       
       // Update the issue in state to reflect the change
@@ -211,13 +238,103 @@ const IssueManagement = () => {
       setInProgressCount(prev => prev + 1);
       setPendingCount(prev => prev - 1);
       
-      // Show success message or notification to user (you can add this functionality)
+      // Show success message or notification to user
       alert(`Issue #${issue.id} has been escalated to ${lecturer.username}`);
       
     } catch (error) {
       console.error('Error escalating issue:', error);
-      alert('Failed to escalate issue. Please try again.');
+      if (error.response) {
+        console.error('Error response data:', error.response.data);
+        alert(`Failed to escalate issue: ${JSON.stringify(error.response.data)}`);
+      } else {
+        alert('Failed to escalate issue. Please try again.');
+      }
       setShowLecturersDropdown(false);
+    }
+  };
+
+  // New function to handle input changes in the modal form
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditingIssue({
+      ...editingIssue,
+      [name]: value
+    });
+  };
+
+  // New function to save the updated issue - Now using PATCH instead of PUT
+  const handleUpdateIssue = async () => {
+    try {
+      if (!selectedIssue) return;
+      
+      // Get access token for authorization
+      const accessToken = localStorage.getItem('accessToken');
+      API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+      
+      // Get previous status for count updating
+      const previousStatus = selectedIssue.status;
+      
+      // Data to send to the backend - Fixed field names to match serializer
+      const updateData = {
+        lecturer: editingIssue.lecturer, // Changed from lecturer_id
+        status: editingIssue.status
+      };
+      
+      console.log('Sending update data:', updateData);
+      
+      // Send PATCH request instead of PUT to update only specific fields
+      const response = await API.patch(`api/registrar_issue_management/${selectedIssue.id}/`, updateData);
+      console.log('Issue updated successfully:', response.data);
+      
+      // Get the lecturer object for the updated issue
+      const selectedLecturer = lecturers.find(l => l.id.toString() === editingIssue.lecturer.toString());
+      
+      // Update the issue in state to reflect the change
+      setIssues((prevIssues) =>
+        prevIssues.map((i) =>
+          i.id === selectedIssue.id ? { 
+            ...i, 
+            status: editingIssue.status,
+            lecturer: selectedLecturer || i.lecturer
+          } : i
+        )
+      );
+      
+      // Update status counts
+      if (previousStatus !== editingIssue.status) {
+        // Decrement the previous status count
+        if (previousStatus === 'pending') {
+          setPendingCount(prev => prev - 1);
+        } else if (previousStatus === 'in_progress') {
+          setInProgressCount(prev => prev - 1);
+        } else if (previousStatus === 'resolved') {
+          setResolvedCount(prev => prev - 1);
+        }
+        
+        // Increment the new status count
+        if (editingIssue.status === 'pending') {
+          setPendingCount(prev => prev + 1);
+        } else if (editingIssue.status === 'in_progress') {
+          setInProgressCount(prev => prev + 1);
+        } else if (editingIssue.status === 'resolved') {
+          setResolvedCount(prev => prev + 1);
+        }
+      }
+      
+      // Close the modal
+      closeDetailsModal();
+      
+      // Show success message
+      alert(`Issue #${selectedIssue.id} has been updated successfully`);
+      
+    } catch (error) {
+      console.error('Error updating issue:', error);
+      if (error.response) {
+        console.error('Error response data:', error.response.data);
+        alert(`Failed to update issue: ${JSON.stringify(error.response.data)}`);
+      } else {
+        alert('Failed to update issue. Please try again.');
+      }
     }
   };
 
@@ -437,7 +554,7 @@ const IssueManagement = () => {
               </div>
             </div>
 
-            {/* Table Display Section - Completely Restructured */}
+            {/* Table Display Section */}
             <div className="issues-data-container">
               {filteredIssues.length > 0 ? (
                 <div className="responsive-table-wrapper">
@@ -467,6 +584,107 @@ const IssueManagement = () => {
               )}
             </div>
           </div>
+          
+          {/* Issue Details Modal - Updated to allow editing lecturer and status */}
+          {showDetailsModal && selectedIssue && (
+            <div className="issue-details-modal">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h2>Issue Details - #{selectedIssue.id}</h2>
+                  <button className="close-modal-btn" onClick={closeDetailsModal}>×</button>
+                </div>
+                <div className="modal-body">
+                  {/* Read-only fields */}
+                  <div className="issue-detail-row">
+                    <span className="detail-label">Student:</span>
+                    <span className="detail-value">{selectedIssue.student?.username || 'N/A'}</span>
+                  </div>
+                  <div className="issue-detail-row">
+                    <span className="detail-label">Issue Type:</span>
+                    <span className="detail-value">{selectedIssue.issue_type || 'N/A'}</span>
+                  </div>
+                  <div className="issue-detail-row">
+                    <span className="detail-label">Year of Study:</span>
+                    <span className="detail-value">{selectedIssue.year_of_study?.replace('_', ' ') || 'N/A'}</span>
+                  </div>
+                  <div className="issue-detail-row">
+                    <span className="detail-label">Created:</span>
+                    <span className="detail-value">{formatDate(selectedIssue.created_at)}</span>
+                  </div>
+                  <div className="issue-detail-row">
+                    <span className="detail-label">Last Updated:</span>
+                    <span className="detail-value">{formatDate(selectedIssue.updated_at)}</span>
+                  </div>
+                  
+                  {/* Editable fields */}
+                  <div className="issue-detail-row">
+                    <span className="detail-label">Assigned To:</span>
+                    <div className="detail-input">
+                      <select
+                        name="lecturer"
+                        value={editingIssue.lecturer}
+                        onChange={handleInputChange}
+                        className="form-select"
+                      >
+                        <option value="">Select Lecturer</option>
+                        {lecturers.map(lecturer => (
+                          <option key={lecturer.id} value={lecturer.id}>
+                            {lecturer.username}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <div className="issue-detail-row">
+                    <span className="detail-label">Status:</span>
+                    <div className="detail-input">
+                      <select
+                        name="status"
+                        value={editingIssue.status}
+                        onChange={handleInputChange}
+                        className="form-select"
+                      >
+                        <option value="pending">Pending</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="resolved">Resolved</option>
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <div className="issue-detail-description">
+                    <h3>Description:</h3>
+                    <p>{selectedIssue.description || 'No description provided.'}</p>
+                  </div>
+                  
+                  {/* Display comments if available */}
+                  {selectedIssue.comments && selectedIssue.comments.length > 0 && (
+                    <div className="issue-comments">
+                      <h3>Comments:</h3>
+                      {selectedIssue.comments.map((comment, index) => (
+                        <div key={index} className="comment-item">
+                          <div className="comment-header">
+                            <span className="comment-author">{comment.author || 'Unknown'}</span>
+                            <span className="comment-date">{formatDate(comment.created_at)}</span>
+                          </div>
+                          <p className="comment-text">{comment.text}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <div className="modal-footer">
+                  <button className="btn close-btn" onClick={closeDetailsModal}>Close</button>
+                  <button 
+                    className="btn save-btn"
+                    onClick={handleUpdateIssue}
+                  >
+                    Save Changes
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
