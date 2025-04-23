@@ -153,7 +153,7 @@ const ResetVerification = () => {
       setIsLoading(false);
     }
   };
-
+//countdown effect
   useEffect(() => {
     let timer;
     if (countdown > 0) {
