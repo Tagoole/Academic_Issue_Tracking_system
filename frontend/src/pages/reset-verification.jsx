@@ -37,7 +37,7 @@ const ResetVerification = () => {
       }
     }
   }, [location]);
-  
+  //helper function to check if the verification code is complete
   const isCodeComplete = verificationCode.every(digit => digit !== '');
   
   const handleDigitChange = (index, value) => {
