@@ -231,7 +231,7 @@ const IssueManagement = () => {
       );
       
       // Close the dropdowns
-      setShowLecturersDropdown(false);
+      setShowLecturersdropdown(false);
       setActiveIssueId(null);
       
       // Update status counts
@@ -535,7 +535,9 @@ const IssueManagement = () => {
               </button>
             </div>
 
-            <div className="issues-list-header">
+            {/* Table Display Section - Now directly under status tabs */}
+            <div className="issues-data-container">
+              {/* Search section moved inside the table container */}
               <div className="search-filter-container">
                 <div className="search-container">
                   <input
@@ -552,10 +554,7 @@ const IssueManagement = () => {
                   <span className="filter-icon">▼</span>
                 </button>
               </div>
-            </div>
 
-            {/* Table Display Section */}
-            <div className="issues-data-container">
               {filteredIssues.length > 0 ? (
                 <div className="responsive-table-wrapper">
                   <table>

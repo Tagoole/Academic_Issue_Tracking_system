@@ -417,13 +417,13 @@ def password_reset_code(request):
             return Response({'Error': e})
         
         verification_code, created = Verification_code.objects.get_or_create(user=user)
-        verification_code.code = randint(100000, 999999)
+        verification_code.code = randint(10000, 99999)
         verification_code.is_verified = False
         verification_code.save()
         
         send_mail(
             "Password Reset Code",
-            f"Your password reset code is {verification_code.code}. It will expire in 10 minutes.",
+            f"Your password reset code is {verification_code.code}. It will expire in 30 minutes.",
             "no-reply@aits.com",
             [user.email],
             fail_silently=False,

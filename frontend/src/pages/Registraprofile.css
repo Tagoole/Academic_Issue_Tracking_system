@@ -1,257 +1,268 @@
-/* Reset default margins and paddings */
+/* StudentsProfile.css */
+
+/* Global Reset and Base Styles */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    color:aqua;
-  }
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f7fa;
+  color: #333;
+}
+
+/* App Container */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Content Wrapper */
+.content-wrapper {
+  display: flex;
+  flex: 1;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  padding: 20px;
   
-  body {
-    font-family: 'Arial', sans-serif;
-    background-color: #1358c0;
-    color: #333;
-  }
-  
-  /* Main container */
-  .academic-profile-container {
-    display: flex;
-    flex-direction: row;
-    min-height: 100vh;
-    background: rgba(255, 255, 255, 0.9);
-    overflow: auto;
-  }
-  
-  /* Navigation Bar */
-  .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: rgba(0, 123, 255, 0.9);
-    color: white;
-    position: fixed;
-    width: 100%;
-    top: 0;
-    z-index: 1000;
-  }
-  
-  /* Sidebar */
-  .sidebar {
-    width: 200px;
-    background-color: rgba(52, 58, 64, 0.9);
-    color: white;
-    padding: 20px;
-    position: fixed;
-    top: 60px;
-    bottom: 0;
-    /* Ensure sidebar is scrollable if needed */
-    overflow-y: auto;
-  }
-  
-  .sidebar ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .sidebar li {
-    margin: 15px 0;
-    cursor: pointer;
-  }
-  
-  .sidebar li.active {
-    font-weight: bold;
-    color: #007bff;
-    margin-left: 100px;
-  }
-  
-  /* Content area - this is key for scrolling */
+}
+
+/* Profile Container */
+.profile-container {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Profile Card */
+.profile-card {
+  background-color: hsl(253, 24%, 93%);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 250px;
+  width: 200px;
+  gap: 20px;
+}
+
+/* Profile Header */
+.profile-header {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 20px;
+}
+
+.profile-image-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  cursor: pointer;
+}
+
+.profile-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #ddd;
+}
+
+.image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.image-overlay span {
+  color: #fff;
+  font-size: 14px;
+  text-align: center;
+}
+
+.profile-image-container:hover .image-overlay {
+  opacity: 1;
+}
+
+.profile-details {
+  flex: 1;
+}
+
+.profile-details h2 {
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+.profile-details p {
+  color: #666;
+  font-size: 16px;
+}
+
+/* Info Card */
+.info-card {
+  background-color: #faf8f8;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 700px;
+}
+
+/* Personal and Academic Info Cards */
+.info-card.personal-info {
+  margin-top: 0;
+}
+
+.info-card.academic-info {
+  margin-top: 0;
+}
+
+.info-card h3 {
+  font-size: 20px;
+  margin-bottom: 15px;
+  color: #2c3e50;
+}
+
+/* Info Item */
+.info-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-item label {
+  flex: 0 0 200px;
+  font-weight: 600;
+  color: #34495e;
+}
+
+.info-item span {
+  flex: 1;
+  color: #333;
+}
+
+.info-item input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.info-item input.readonly-field {
+  background-color: #f9f9f9;
+  cursor: not-allowed;
+  color: #666;
+}
+
+.readonly-value {
+  color: #666;
+}
+
+/* Edit Button */
+.edit-btn {
+  margin-left: 10px;
+  padding: 6px 12px;
+  background-color: #3498db;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.edit-btn:hover {
+  background-color: #2980b9;
+}
+
+.edit-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
   .content-wrapper {
-    display: flex;
-    flex: 1;
-    background-color: hsl(0, 83%, 50%);
-    margin: 20px;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Horizontal layout for profile content */
-  .horizontal-layout {
-    display: flex;
     flex-direction: column;
-    gap: 20px;
   }
-  
-  /* Profile header */
+
+  .main-content {
+    padding: 15px;
+  }
+
+  .profile-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .profile-header {
-    padding-bottom: 10px;
-    border-bottom: 1px solid #e0e0e0;
-  }
-  
-  .profile-header h2 {
-    font-size: 24px;
-    font-weight: 600;
-    color: #2c3e50;
-  }
-  
-  /* Profile content row */
-  .profile-content-row {
-    display: flex;
     flex-direction: column;
-    gap: 20px;
+    align-items: flex-start;
+    width: 100%;
   }
-  
-  /* Profile info section (image, title, actions) */
-  .profile-info-section {
-    display: flex;
+
+  .profile-image-container {
+    margin-bottom: 15px;
+  }
+
+  .info-item {
     flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
   }
-  
-  /* Profile top (image + title + actions) */
-  .profile-top {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding: 20px 0;
+
+  .info-item label {
+    flex: none;
+    width: 100%;
   }
-  
-  /* Profile image */
+
+  .info-item input,
+  .info-item span {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
   .profile-image-container {
     width: 100px;
     height: 100px;
   }
-  
-  .profile-image {
-    width: 100%;
-    height: 100%;
-    background-color: #e0e0e0;
-    border-radius: 50%;
-    background-image: url('https://via.placeholder.com/100'); /* Placeholder image */
-    background-size: cover;
-    background-position: center;
-  }
-  
-  /* Profile title */
-  .profile-title h3 {
-    font-size: 20px;
-    font-weight: 600;
-    color: #2c3e50;
-  }
-  
-  .profile-title p {
-    font-size: 16px;
-    color: #7f8c8d;
-  }
-  
-  /* Profile actions */
-  .profile-actions {
-    margin-left: auto;
-  }
-  
-  .edit-button {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
-    background-color: #3498db;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s;
-  }
-  
-  .edit-button:hover {
-    background-color: #2980b9;
-  }
-  
-  .edit-icon {
-    width: 16px;
-    height: 16px;
-  }
-  
-  /* Info section */
-  .info-section {
-    padding: 20px 0;
-  }
-  
-  .section-header h3 {
-    font-size: 18px;
-    font-weight: 600;
-    color: #2c3e50;
-    margin-bottom: 10px;
-  }
-  
-  /* Info grid */
-  .info-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-  
-  /* Info row */
-  .info-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  
-  .info-label {
-    flex: 0 0 150px;
-    font-size: 14px;
-    font-weight: 500;
-    color: #34495e;
-  }
-  
-  .info-value {
-    flex: 1;
-    font-size: 14px;
-    color: #2c3e50;
-  }
-  
-  .info-input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #e0e0e0;
-    border-radius: 4px;
-    font-size: 14px;
-    color: #2c3e50;
-  }
-  
-  .info-input:focus {
-    outline: none;
-    border-color: #3498db;
-    box-shadow: 0 0 4px rgba(52, 152, 219, 0.3);
-  }
-  
-  /* Responsive design */
-  @media (max-width: 768px) {
-    .profile-layout {
-      flex-direction: column;
-    }
-  
-    .profile-card {
-      margin: 10px;
-      padding: 15px;
-    }
-  
-    .profile-top {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-  
-    .profile-actions {
-      margin-left: 0;
-      margin-top: 10px;
-    }
-  
-    .info-row {
-      flex-direction: column;
-      align-items: flex-start;
-    }
 
-    .page-indicator {
-        color: #aaa;
-    }
+  .profile-details h2 {
+    font-size: 20px;
+  }
+
+  .info-card h3 {
+    font-size: 18px;
+  }
+
+  .edit-btn {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
 }
