@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import './LecturerIssueManagement.css'; 
 import Navbar from './NavBar'; 
 import Sidebar2 from './Sidebar2'; 
+import backgroundImage from '../assets/backgroundimage.jpg'; 
+import { ToastContainer, toast } from 'react-toastify'; // Import Toastify
+import 'react-toastify/dist/ReactToastify.css'; // Import Toastify styles
 import API from '../api.js'; // Import the API variable
 
 const LecturerIssueManagement = () => {
@@ -89,13 +92,19 @@ const LecturerIssueManagement = () => {
           is_commented: issueData.is_commented || false
         }));
         
+        // Success toast notification
+        toast.success('Issue details loaded successfully');
+        
         console.log("State after update:", selectedIssue);
       } else {
         console.log(`No issue data found in sessionStorage for ID: ${issueId}`);
-        // You might want to redirect back to dashboard or show an error
+        // Error toast notification
+        toast.error('Issue data not found. Please return to dashboard.');
       }
     } catch (error) {
       console.error("Error parsing issue data from sessionStorage:", error);
+      // Error toast notification
+      toast.error('Error loading issue details. Please try again.');
     }
   }, [issueId]);
 
@@ -342,6 +351,19 @@ const LecturerIssueManagement = () => {
               </div>
             </div>
           )}
+
+          {/* Toast Container - This is where all toast notifications will appear */}
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+          />
         </main>
       </div>
     </div>
