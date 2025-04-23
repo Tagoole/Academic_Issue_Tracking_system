@@ -1,0 +1,197 @@
+/* Ensure the table container doesn't overflow */
+.table-container {
+  width: 100%;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+/* Style the issues table */
+.issues-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* Ensure columns adjust to container width */
+}
+
+.issues-table th,
+.issues-table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  white-space: normal; /* Allow text to wrap */
+  word-wrap: break-word; /* Break long words */
+}
+
+/* Set column widths to prevent overflow */
+.issues-table th:nth-child(1),
+.issues-table td:nth-child(1) {
+  width: 10%; /* ID */
+}
+
+.issues-table th:nth-child(2),
+.issues-table td:nth-child(2) {
+  width: 20%; /* Issue */
+}
+
+.issues-table th:nth-child(3),
+.issues-table td:nth-child(3) {
+  width: 15%; /* Status */
+}
+
+.issues-table th:nth-child(4),
+.issues-table td:nth-child(4) {
+  width: 15%; /* Issue Type */
+}
+
+.issues-table th:nth-child(5),
+.issues-table td:nth-child(5) {
+  width: 15%; /* Created */
+}
+
+.issues-table th:nth-child(6),
+.issues-table td:nth-child(6) {
+  width: 15%; /* Updated */
+}
+
+.issues-table th:nth-child(7),
+.issues-table td:nth-child(7) {
+  width: 10%; /* Actions */
+}
+
+.issues-table th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+}
+
+.issues-table tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* Status tag styling */
+.status-tag {
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-pending {
+  background-color: #ffebee;
+  color: #d32f2f;
+}
+
+.status-in_progress {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.status-resolved {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+/* View details button */
+.view-details-btn {
+  padding: 5px 10px;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.view-details-btn:hover {
+  background-color: #1565c0;
+}
+
+/* No issues message */
+.no-issues-message {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+/* Modal overlay */
+.issue-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Modal */
+.issue-modal {
+  background-color: white;
+  width: 500px;
+  max-height: 80vh;
+  border-radius: 8px;
+  overflow-y: auto;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Modal header */
+.issue-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.issue-modal-header h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+/* Close button */
+.close-modal-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #666;
+}
+
+.close-modal-btn:hover {
+  color: #333;
+}
+
+/* Modal content */
+.issue-modal-content {
+  padding: 20px;
+}
+
+.issue-detail-item {
+  margin-bottom: 10px;
+}
+
+.issue-detail-item strong {
+  display: inline-block;
+  width: 120px;
+  font-weight: 500;
+}
+
+/* Modal footer */
+.issue-modal-footer {
+  padding: 15px 20px;
+  border-top: 1px solid #ddd;
+  text-align: right;
+}
+
+/* Close button in footer */
+.modal-close-btn {
+  padding: 8px 16px;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modal-close-btn:hover {
+  background-color: #1565c0;
+}
