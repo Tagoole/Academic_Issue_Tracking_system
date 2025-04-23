@@ -2,13 +2,10 @@ import React, { useState, useEffect } from 'react';
 import './LecturerIssueManagement.css'; 
 import Navbar from './NavBar'; 
 import Sidebar2 from './Sidebar2'; 
-import backgroundImage from '../assets/backgroundimage.jpg'; 
+import backgroundimage from '../assets/backgroundimage.jpg'; 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import backgroundImage from '../assets/background.jpg'; // Import background image
 
-import { ToastContainer, toast } from 'react-toastify'; // Import Toastify
-import 'react-toastify/dist/ReactToastify.css'; // Import Toastify styles
 import API from '../api.js'; // Import the API variable
 
 const LecturerIssueManagement = () => {
