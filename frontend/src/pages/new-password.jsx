@@ -2,7 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./new-password.css";
-import backgroundimage from "../assets/background.png";
+import backgroundimage from "../assets/backgroundimage.jpg";
 import API from "../api"; // Import the API instance from api.js
 
 const NewPassword = () => {
