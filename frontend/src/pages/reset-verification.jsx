@@ -19,7 +19,7 @@ const ResetVerification = () => {
   const inputRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
   const navigate = useNavigate();
   const location = useLocation();
-  
+  //email initialization effect
   useEffect(() => {
     if (location.state && location.state.email) {
       setEmail(location.state.email);
