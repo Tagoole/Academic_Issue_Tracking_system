@@ -3,8 +3,6 @@ import './LecturerIssueManagement.css';
 import Navbar from './NavBar'; 
 import Sidebar2 from './Sidebar2'; 
 import backgroundImage from '../assets/backgroundimage.jpg'; 
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 const LecturerIssueManagement = () => {
   // Get issue ID from URL
@@ -79,19 +77,12 @@ const LecturerIssueManagement = () => {
           student: issueData.student,
           year_of_study: issueData.year_of_study
         }));
-        
-        // Success toast notification
-        toast.success('Issue details loaded successfully');
       } else {
         console.log(`No issue data found in sessionStorage for ID: ${issueId}`);
-        // Error toast notification
-        toast.error('Issue data not found. Please return to dashboard.');
         // You might want to redirect back to dashboard or show an error
       }
     } catch (error) {
       console.error("Error parsing issue data from sessionStorage:", error);
-      // Error toast notification
-      toast.error('Error loading issue details. Please try again.');
     }
   }, [issueId]);
 
@@ -112,9 +103,6 @@ const LecturerIssueManagement = () => {
     }
     setStatusUpdateMessage(message);
     setShowConfirmation(true);
-    
-    // Info toast notification
-    toast.info(`Status selected: ${newStatus}`);
   };
 
   const handleCommentChange = (event) => {
@@ -125,21 +113,12 @@ const LecturerIssueManagement = () => {
   };
 
   const handleFileChange = (event) => {
-    const selectedFile = event.target.files[0];
-    setFile(selectedFile);
-    
-    if (selectedFile) {
-      // Success toast notification
-      toast.success(`File "${selectedFile.name}" selected`);
-    }
+    setFile(event.target.files[0]);
   };
 
   const handleSave = () => {
     if (!selectedIssue.comments.trim()) {
       setErrorMessage('Please add a comment before saving changes.');
-      
-      // Warning toast notification
-      toast.warning('Please add a comment before saving changes');
       return;
     }
 
@@ -148,41 +127,24 @@ const LecturerIssueManagement = () => {
   };
 
   const handleConfirmSave = () => {
-    try {
-      // Here you would typically make an API call to update the issue
-      // For now, we'll just update the local state
-      setSelectedIssue({
-        ...selectedIssue,
-        status: selectedNewStatus,
-      });
+    // Here you would typically make an API call to update the issue
+    // For now, we'll just update the local state
+    setSelectedIssue({
+      ...selectedIssue,
+      status: selectedNewStatus,
+    });
 
-      console.log('Issue saved with status:', selectedNewStatus, selectedIssue);
-      
-      // Clear the stored issue data before redirecting
-      sessionStorage.removeItem('issueToResolve');
-      
-      // Success toast notification
-      toast.success(`Issue status updated to ${selectedNewStatus} successfully`, {
-        onClose: () => {
-          // Redirect back to dashboard after toast is closed
-          window.location.href = '/Lecturerdashboard';
-        },
-        autoClose: 3000 // Stay open for 3 seconds
-      });
-    } catch (error) {
-      console.error("Error saving issue status:", error);
-      
-      // Error toast notification
-      toast.error('Failed to update issue status. Please try again.');
-      setShowConfirmation(false);
-    }
+    console.log('Issue saved with status:', selectedNewStatus, selectedIssue);
+    
+    // Clear the stored issue data before redirecting
+    sessionStorage.removeItem('issueToResolve');
+    
+    // Redirect back to dashboard
+    window.location.href = '/Lecturerdashboard';
   };
 
   const handleCancelSave = () => {
     setShowConfirmation(false);
-    
-    // Info toast notification
-    toast.info('Status update cancelled');
   };
 
   // Format date for display if available
@@ -221,12 +183,7 @@ const LecturerIssueManagement = () => {
               {selectedIssue.image && (
                 <div className="issue-field issue-image-field">
                   <strong>Attached Image:</strong>
-                  <img 
-                    src={selectedIssue.image} 
-                    alt="Issue attachment" 
-                    className="issue-attachment-image" 
-                    onError={() => toast.error('Failed to load attachment image')}
-                  />
+                  <img src={selectedIssue.image} alt="Issue attachment" className="issue-attachment-image" />
                 </div>
               )}
             </div>
@@ -263,10 +220,7 @@ const LecturerIssueManagement = () => {
                   <button className="status-option in-progress" onClick={() => handleStatusUpdate('In Progress')}>In Progress</button>
                   <button className="status-option resolved" onClick={() => handleStatusUpdate('Resolved')}>Resolved</button>
                 </div>
-                <button className="cancel-button" onClick={() => {
-                  setShowStatusDialog(false);
-                  toast.info('Status selection cancelled');
-                }}>Cancel</button>
+                <button className="cancel-button" onClick={() => setShowStatusDialog(false)}>Cancel</button>
               </div>
             </div>
           )}
@@ -283,19 +237,6 @@ const LecturerIssueManagement = () => {
               </div>
             </div>
           )}
-          
-          {/* Toast Container - This is where all toast notifications will appear */}
-          <ToastContainer
-            position="top-right"
-            autoClose={3000}
-            hideProgressBar={false}
-            newestOnTop
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-          />
         </main>
       </div>
     </div>
