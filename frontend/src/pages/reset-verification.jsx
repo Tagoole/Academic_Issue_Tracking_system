@@ -88,7 +88,7 @@ const ResetVerification = () => {
       return error.message || 'Error submitting request. Please try again.';
     }
   };
-  
+  //form submission handler function
   const handleSubmit = async (e) => {
     e.preventDefault();
     
