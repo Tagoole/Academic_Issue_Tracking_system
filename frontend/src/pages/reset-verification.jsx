@@ -113,12 +113,8 @@ const ResetVerification = () => {
       setResendStatus(response.data.Message || 'Email verified successfully!');
       setError('');
       
-      navigate('/congs', { 
-        state: { 
-          email: email,
-          message: response.data.Message || 'Email verified successfully!'
-        } 
-      });
+      // Navigate to new-password page with verification code as query parameter
+      navigate(`/new-password?code=${code}`);
       
     } catch (error) {
       console.error('Verification error:', error);
