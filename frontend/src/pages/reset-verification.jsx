@@ -226,7 +226,7 @@ const ResetVerification = () => {
               />
             ))}
           </div>
-          
+          //error and status messages
           {error && <p className="error-message">{error}</p>}
           {resendStatus && <p className="success-message">{resendStatus}</p>}
           
