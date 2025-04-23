@@ -193,7 +193,7 @@ const ResetVerification = () => {
         </div>
         
         <h2 className="verification-title">Email Verification</h2>
-        
+        //condition instruction test
         {email ? (
           <>
             <p className="verification-instruction">
