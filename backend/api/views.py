@@ -417,7 +417,7 @@ def password_reset_code(request):
             return Response({'Error': e})
         
         verification_code, created = Verification_code.objects.get_or_create(user=user)
-        verification_code.code = randint(100000, 999999)
+        verification_code.code = randint(10000, 99999)
         verification_code.is_verified = False
         verification_code.save()
         
