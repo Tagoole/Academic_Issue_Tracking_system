@@ -209,6 +209,7 @@ const ResetVerification = () => {
         //verifiction code input form
         
         <form onSubmit={handleSubmit} className="verification-form">
+          // Code input fields
           <div className="code-inputs">
             {verificationCode.map((digit, index) => (
               <input
