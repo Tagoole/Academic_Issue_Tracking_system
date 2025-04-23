@@ -423,7 +423,7 @@ def password_reset_code(request):
         
         send_mail(
             "Password Reset Code",
-            f"Your password reset code is {verification_code.code}. It will expire in 10 minutes.",
+            f"Your password reset code is {verification_code.code}. It will expire in 30 minutes.",
             "no-reply@aits.com",
             [user.email],
             fail_silently=False,
