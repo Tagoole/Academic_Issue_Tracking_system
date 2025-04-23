@@ -175,7 +175,7 @@ const ResetVerification = () => {
       inputRefs[0].current.focus();
     }
   }, []);
-  
+  //component rendering
   return (
     <div className="verification-container">
       <header className="verification-header">
