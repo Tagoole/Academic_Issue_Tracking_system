@@ -59,7 +59,7 @@ const ResetVerification = () => {
       inputRefs[index - 1].current.focus();
     }
   };
-  
+  //error handling function
   const extractErrorMessage = (error) => {
     if (!error) return 'An unknown error occurred';
     
