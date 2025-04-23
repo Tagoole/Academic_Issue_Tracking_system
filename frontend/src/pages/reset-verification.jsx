@@ -8,6 +8,7 @@ import './reset-verification.css';
 
 
 const ResetVerification = () => {
+  // State variables and hooks
   const [verificationCode, setVerificationCode] = useState(['', '', '', '', '']);
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
