@@ -178,6 +178,7 @@ const ResetVerification = () => {
   //component rendering
   return (
     <div className="verification-container">
+    // Header section
       <header className="verification-header">
         <h1 className="header-title">AITS</h1>
         <button className="help-button">
