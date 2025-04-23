@@ -535,6 +535,74 @@ const IssueManagement = () => {
               </button>
             </div>
 
+            {/* Issue Detail Rows moved above the table display section */}
+            <div className="issue-detail-section">
+              {selectedIssue && (
+                <>
+                  <div className="issue-detail-row">
+                    <span className="detail-label">Student:</span>
+                    <span className="detail-value">{selectedIssue.student?.username || 'N/A'}</span>
+                  </div>
+                  <div className="issue-detail-row">
+                    <span className="detail-label">Issue Type:</span>
+                    <span className="detail-value">{selectedIssue.issue_type || 'N/A'}</span>
+                  </div>
+                  <div className="issue-detail-row">
+                    <span className="detail-label">Year of Study:</span>
+                    <span className="detail-value">{selectedIssue.year_of_study?.replace('_', ' ') || 'N/A'}</span>
+                  </div>
+                  <div className="issue-detail-row">
+                    <span className="detail-label">Created:</span>
+                    <span className="detail-value">{formatDate(selectedIssue.created_at)}</span>
+                  </div>
+                  <div className="issue-detail-row">
+                    <span className="detail-label">Last Updated:</span>
+                    <span className="detail-value">{formatDate(selectedIssue.updated_at)}</span>
+                  </div>
+                  <div className="issue-detail-row">
+                    <span className="detail-label">Assigned To:</span>
+                    <div className="detail-input">
+                      <select
+                        name="lecturer"
+                        value={editingIssue.lecturer}
+                        onChange={handleInputChange}
+                        className="form-select"
+                      >
+                        <option value="">Select Lecturer</option>
+                        {lecturers.map(lecturer => (
+                          <option key={lecturer.id} value={lecturer.id}>
+                            {lecturer.username}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="issue-detail-row">
+                    <span className="detail-label">Status:</span>
+                    <div className="detail-input">
+                      <select
+                        name="status"
+                        value={editingIssue.status}
+                        onChange={handleInputChange}
+                        className="form-select"
+                      >
+                        <option value="pending">Pending</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="resolved">Resolved</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="issue-detail-description">
+                    <h3>Description:</h3>
+                    <p>{selectedIssue.description || 'No description provided.'}</p>
+                  </div>
+                  <div className="detail-actions">
+                    <button className="btn save-btn" onClick={handleUpdateIssue}>Save Changes</button>
+                  </div>
+                </>
+              )}
+            </div>
+
             <div className="issues-list-header">
               <div className="search-filter-container">
                 <div className="search-container">
@@ -585,7 +653,7 @@ const IssueManagement = () => {
             </div>
           </div>
           
-          {/* Issue Details Modal - Updated to allow editing lecturer and status */}
+          {/* Issue Details Modal - Keeping for full detailed view if needed */}
           {showDetailsModal && selectedIssue && (
             <div className="issue-details-modal">
               <div className="modal-content">
