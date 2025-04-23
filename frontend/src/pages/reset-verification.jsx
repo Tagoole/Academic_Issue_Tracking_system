@@ -39,7 +39,7 @@ const ResetVerification = () => {
   }, [location]);
   //helper function to check if the verification code is complete
   const isCodeComplete = verificationCode.every(digit => digit !== '');
-  
+  //input handler function
   const handleDigitChange = (index, value) => {
     if (value && !/^\d+$/.test(value)) return;
     
