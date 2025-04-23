@@ -1,3 +1,4 @@
+//import section
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import API from '../api';
@@ -7,6 +8,7 @@ import './reset-verification.css';
 
 
 const ResetVerification = () => {
+  // State variables and hooks
   const [verificationCode, setVerificationCode] = useState(['', '', '', '', '']);
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
@@ -17,7 +19,7 @@ const ResetVerification = () => {
   const inputRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
   const navigate = useNavigate();
   const location = useLocation();
-  
+  //email initialization effect
   useEffect(() => {
     if (location.state && location.state.email) {
       setEmail(location.state.email);
@@ -35,9 +37,9 @@ const ResetVerification = () => {
       }
     }
   }, [location]);
-  
+  //helper function to check if the verification code is complete
   const isCodeComplete = verificationCode.every(digit => digit !== '');
-  
+  //input handler function
   const handleDigitChange = (index, value) => {
     if (value && !/^\d+$/.test(value)) return;
     
