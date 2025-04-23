@@ -1,33 +1,154 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; 
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import NavBar from './NavBar';
 import SideBar from './Sidebar1';
 import './Issues.css';
-import backgroundimage from '../assets/pexels-olia-danilevich-5088017.jpg'; 
+import backgroundimage from '../assets/pexels-olia-danilevich-5088017.jpg';
+import API from '../api';
 
 const Issues = () => {
   const [activeTab, setActiveTab] = useState('Pending');
-  const [issues, setIssues] = useState([
-    { id: 1, issue: 'Wrong Marks', status: 'Pending', category: 'Marks', date: '07th/10/2025' },
-    { id: 2, issue: 'Missed test', status: 'Pending', category: 'Marks', date: '07th/10/2025' },
-  ]);
+  const [issueData, setIssueData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-  const tabs = ['Pending', 'In-progress', 'Resolved'];
-  const navigate = useNavigate(); 
+  useEffect(() => {
+    // Check if user is authenticated when component mounts
+    const checkAuth = () => {
+      const accessToken = localStorage.getItem('accessToken');
+      // If no access token is available, redirect to login
+      if (!accessToken) {
+        navigate('/signin');
+        return false;
+      }
+      return true;
+    };
+    
+    // Fetch student issues when component mounts
+    const fetchStudentIssues = async () => {
+      try {
+        setLoading(true);
+        
+        // Get access token
+        const accessToken = localStorage.getItem('accessToken');
+        
+        // Set authorization header with access token
+        API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+        
+        const response = await API.get('/api/student_issues/');
+        console.log("API Response:", response.data); // Debug log
+        setIssueData(response.data);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching student issues:', err);
+        
+        // Check if error is due to unauthorized access (401)
+        if (err.response && err.response.status === 401) {
+          // Try refreshing the token
+          try {
+            const refreshToken = localStorage.getItem('refreshToken');
+            
+            if (refreshToken) {
+              const refreshResponse = await API.post('/api/refresh_token/', {
+                refresh: refreshToken
+              });
+              
+              // Store the new access token
+              const newAccessToken = refreshResponse.data.access;
+              localStorage.setItem('accessToken', newAccessToken);
+              
+              // Retry the original request with new token
+              API.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
+              const retryResponse = await API.get('/api/student_issues/');
+              setIssueData(retryResponse.data);
+              setLoading(false);
+            } else {
+              // No refresh token available, redirect to login
+              navigate('/signin');
+            }
+          } catch (refreshErr) {
+            console.error('Error refreshing token:', refreshErr);
+            setError('Your session has expired. Please log in again.');
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            navigate('/signin');
+          }
+        } else {
+          setError('Failed to load issues. Please try again later.');
+          setLoading(false);
+        }
+      }
+    };
+
+    // Only fetch data if authentication check passes
+    if (checkAuth()) {
+      fetchStudentIssues();
+    }
+  }, [navigate]);
+
+  // Map UI status labels to backend status values
+  const getStatusMapping = (uiStatus) => {
+    const statusMap = {
+      'Pending': 'pending',
+      'In-progress': 'in_progress',
+      'Resolved': 'resolved'
+    };
+    return statusMap[uiStatus] || uiStatus.toLowerCase();
+  };
+
+  const filteredIssues = issueData.filter(issue => {
+    const backendStatus = getStatusMapping(activeTab);
+    return issue.status === backendStatus;
+  });
 
   const handleNewIssueClick = () => {
-    navigate('/new-issue'); 
+    navigate('/new-issue');
   };
 
   const handleViewDetailsClick = (issueId) => {
-    navigate(`/view-details/${issueId}`); 
+    navigate(`/view-details/${issueId}`);
+  };
+
+  // Format date for display
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    
+    const date = new Date(dateString);
+    
+    // Check if date is valid
+    if (isNaN(date.getTime())) return 'N/A';
+    
+    // Calculate time difference
+    const now = new Date();
+    const diffInSeconds = Math.floor((now - date) / 1000);
+    
+    if (diffInSeconds < 60) {
+      return 'Just now';
+    } else if (diffInSeconds < 3600) {
+      const minutes = Math.floor(diffInSeconds / 60);
+      return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+    } else if (diffInSeconds < 86400) {
+      const hours = Math.floor(diffInSeconds / 3600);
+      return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+    } else if (diffInSeconds < 604800) {
+      const days = Math.floor(diffInSeconds / 86400);
+      return `${days} day${days > 1 ? 's' : ''} ago`;
+    } else {
+      // For older dates, show the full date
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    }
   };
 
   return (
     <div
       className="issues-container"
       style={{
-        backgroundImage: 'url(${backgroundimage})', 
+        backgroundImage: `url(${backgroundimage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -42,7 +163,7 @@ const Issues = () => {
           <h1 className="issues-title">Issues</h1>
           
           <div className="issues-tabs">
-            {tabs.map((tab) => (
+            {['Pending', 'In-progress', 'Resolved'].map((tab) => (
               <button
                 key={tab}
                 className={`issues-tab ${activeTab === tab ? 'active' : ''}`}
@@ -70,39 +191,57 @@ const Issues = () => {
             </button>
           </div>
 
-          <table className="issues-table">
-            <thead>
-              <tr>
-                <th>Issue</th>
-                <th>Status</th>
-                <th>Category</th>
-                <th>Date</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {issues.map((issue) => (
-                <tr key={issue.id}>
-                  <td>{issue.issue}</td>
-                  <td>
-                    <span className="status-pill status-pending">
-                      {issue.status}
-                    </span>
-                  </td>
-                  <td>{issue.category}</td>
-                  <td>{issue.date}</td>
-                  <td>
-                    <button
-                      className="view-details-btn"
-                      onClick={() => handleViewDetailsClick}
-                    >
-                      View details
-                    </button>
-                  </td>
+          {loading ? (
+            <div className="loading-message">Loading issues...</div>
+          ) : error ? (
+            <div className="error-message">{error}</div>
+          ) : (
+            <table className="issues-table">
+              <thead>
+                <tr>
+                  <th>Issue</th>
+                  <th>Status</th>
+                  <th>Category</th>
+                  <th>Created</th>
+                  <th>Updated</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filteredIssues.length > 0 ? (
+                  filteredIssues.map((issue) => (
+                    <tr key={issue.id}>
+                      <td>{issue.issue}</td>
+                      <td>
+                        <span className={`status-pill status-${issue.status}`}>
+                          {issue.status === 'pending' ? 'Pending' : 
+                           issue.status === 'in_progress' ? 'In-progress' : 
+                           issue.status === 'resolved' ? 'Resolved' : issue.status}
+                        </span>
+                      </td>
+                      <td>{issue.issue_type || issue.category}</td>
+                      <td>{formatDate(issue.created_at || issue.date)}</td>
+                      <td>{formatDate(issue.updated_at)}</td>
+                      <td>
+                        <button
+                          className="view-details-btn"
+                          onClick={() => handleViewDetailsClick(issue.id)}
+                        >
+                          View details
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="6" className="no-issues-message">
+                      No {activeTab.toLowerCase()} issues found
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
     </div>

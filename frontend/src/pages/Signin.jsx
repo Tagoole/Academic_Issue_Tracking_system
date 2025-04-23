@@ -32,6 +32,7 @@ const SignIn = () => {
       const data = response.data;
       // Add this right after getting the response
       console.log('API Response:', response.data);
+    
 
       // Store tokens in localStorage
       if (data.email) {
