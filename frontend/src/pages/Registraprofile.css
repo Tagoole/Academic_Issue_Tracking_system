@@ -17,18 +17,56 @@
     display: flex;
     flex-direction: row;
     min-height: 100vh;
-    width: 1000px;
-    background-color: black;
+    background: rgba(255, 255, 255, 0.9);
+    overflow: auto;
   }
   
-  /* Profile layout (sidebar + profile card) */
-  .profile-layout {
+  /* Navigation Bar */
+  .navbar {
     display: flex;
-    flex: 1;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: rgba(0, 123, 255, 0.9);
+    color: white;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
   }
   
-  /* Profile card */
-  .profile-card {
+  /* Sidebar */
+  .sidebar {
+    width: 200px;
+    background-color: rgba(52, 58, 64, 0.9);
+    color: white;
+    padding: 20px;
+    position: fixed;
+    top: 60px;
+    bottom: 0;
+    /* Ensure sidebar is scrollable if needed */
+    overflow-y: auto;
+  }
+  
+  .sidebar ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .sidebar li {
+    margin: 15px 0;
+    cursor: pointer;
+  }
+  
+  .sidebar li.active {
+    font-weight: bold;
+    color: #007bff;
+    margin-left: 100px;
+  }
+  
+  /* Content area - this is key for scrolling */
+  .content-wrapper {
+    display: flex;
     flex: 1;
     background-color: hsl(0, 83%, 50%);
     margin: 20px;
@@ -212,8 +250,8 @@
       flex-direction: column;
       align-items: flex-start;
     }
-  
-    .info-label {
-      flex: none;
+
+    .page-indicator {
+        color: #aaa;
     }
-  }
+}

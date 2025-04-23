@@ -31,6 +31,8 @@ import LecturerIssueManagement from "./pages/LecturerIssueManagement";
 import Settings from "./pages/Settings";
 import StudentsProfile from "./pages/StudentsProfile"
 import RegistraProfile from "./pages/Registraprofile";
+import ResetVerification from "./pages/reset-verification";
+import NewPassword from "./pages/new-password";
 
 // Removed duplicate import of Viewdetails
 
@@ -50,6 +52,8 @@ function App() {
         <Route path="/changepassword" element={<Changepassword />} />
         <Route path="/congs" element={<CONGS />} />
         <Route path="/Generatetoken" element={<Registrationtoken />} />
+        <Route path="/reset-verification" element={<ResetVerification />} />
+        <Route path="/new-password" element={<NewPassword />} />
 
         {/* Profile setup routes */}
         <Route path="/profilesetup" element={<ProfileSetup />} />
