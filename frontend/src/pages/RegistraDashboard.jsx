@@ -169,72 +169,85 @@ const RegistraDashboard = () => {
       <div className="content-container">
         <Sidebar />
         <main className="main-content">
-          <div className="dashboard-cards">
-            <DashboardCard
-              title="Pending issues"
-              count={pendingCount}
-              description={`You currently have ${pendingCount} pending issue${pendingCount !== 1 ? 's' : ''}`}
-            />
-            <DashboardCard
-              title="In-progress issues"
-              count={inProgressCount}
-              description={`You currently have ${inProgressCount} in-progress issue${inProgressCount !== 1 ? 's' : ''}`}
-            />
-            <DashboardCard
-              title="Resolved issues"
-              count={resolvedCount}
-              description={`You currently have ${resolvedCount} resolved issue${resolvedCount !== 1 ? 's' : ''}`}
-            />
-          </div>
-
-          <div className="issues-section">
-            <div className="issues-header">
-              <h2>My issues</h2>
-              <div className="search-container">
-                <input 
-                  type="text" 
-                  placeholder="search for issues" 
-                  className="search-input" 
-                  value={searchTerm}
-                  onChange={handleSearchChange}
-                />
-                <span className="search-icon"></span>
-              </div>
-              <button className="filter-button">
-                <span>Filter</span>
-                <span className="filter-icon">▼</span>
-              </button>
+          <div className="main-content-wrapper">
+            <div className="dashboard-header">
+              <h1>Registrar Dashboard</h1>
             </div>
-
-            <div className="issues-table">
-              {filteredIssues.length > 0 ? (
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Issue ID</th>
-                      <th>Status</th>
-                      <th>Student No</th>
-                      <th>Category</th>
-                      <th>Date</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredIssues.map(issue => (
-                      <tr key={issue.id}>
-                        <td>{issue.id}</td>
-                        <td>{issue.status}</td>
-                        <td>{issue.studentNo}</td>
-                        <td>{issue.category}</td>
-                        <td>{issue.date}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              ) : (
-                <div className="no-issues-message">
-                  {searchTerm ? 'No issues match your search' : 'No issues found'}
+            <div className="dashboard-content">
+              <div className="dashboard-cards-container">
+                <div className="dashboard-cards">
+                  <DashboardCard
+                    title="Pending issues"
+                    count={pendingCount}
+                    description={`You currently have ${pendingCount} pending issue${pendingCount !== 1 ? 's' : ''}`}
+                  />
+                  <DashboardCard
+                    title="In-progress issues"
+                    count={inProgressCount}
+                    description={`You currently have ${inProgressCount} in-progress issue${inProgressCount !== 1 ? 's' : ''}`}
+                  />
+                  <DashboardCard
+                    title="Resolved issues"
+                    count={resolvedCount}
+                    description={`You currently have ${resolvedCount} resolved issue${resolvedCount !== 1 ? 's' : ''}`}
+                  />
                 </div>
-              )}
+              </div>
+              <div className="issues-container">
+                <div className="issues-section">
+                  <div className="issues-header">
+                    <h2>My issues</h2>
+                    <div className="issues-controls">
+                      <div className="search-container">
+                        <input 
+                          type="text" 
+                          placeholder="search for issues" 
+                          className="search-input" 
+                          value={searchTerm}
+                          onChange={handleSearchChange}
+                        />
+                        <span className="search-icon"></span>
+                      </div>
+                      <button className="filter-button">
+                        <span>Filter</span>
+                        <span className="filter-icon">▼</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div className="issues-table-container">
+                    <div className="issues-table">
+                      {filteredIssues.length > 0 ? (
+                        <table>
+                          <thead>
+                            <tr>
+                              <th>Issue ID</th>
+                              <th>Status</th>
+                              <th>Student No</th>
+                              <th>Category</th>
+                              <th>Date</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {filteredIssues.map(issue => (
+                              <tr key={issue.id}>
+                                <td>{issue.id}</td>
+                                <td>{issue.status}</td>
+                                <td>{issue.studentNo}</td>
+                                <td>{issue.category}</td>
+                                <td>{issue.date}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      ) : (
+                        <div className="no-issues-message">
+                          {searchTerm ? 'No issues match your search' : 'No issues found'}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </main>
