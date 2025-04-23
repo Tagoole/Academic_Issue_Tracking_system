@@ -473,6 +473,7 @@ def verify_password_reset_code(request):
         
 @api_view(['POST'])
 def final_password_reset(request):
+    print(request.data)
     serializer = Final_Password_ResetSerializer(data = request.data)
     if serializer.is_valid():
         password = serializer.validated_data.get('password')
