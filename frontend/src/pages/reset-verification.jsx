@@ -7,14 +7,14 @@ import './reset-verification.css';
 
 
 const ResetVerification = () => {
-  const [verificationCode, setVerificationCode] = useState(['', '', '', '', '', '']);
+  const [verificationCode, setVerificationCode] = useState(['', '', '', '', '']);
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [resendStatus, setResendStatus] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [resendDisabled, setResendDisabled] = useState(false);
   const [countdown, setCountdown] = useState(0);
-  const inputRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
+  const inputRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -47,7 +47,7 @@ const ResetVerification = () => {
     
     if (error) setError('');
     
-    if (value && index < 5) {
+    if (value && index < 4) {
       inputRefs[index + 1].current.focus();
     }
   };
@@ -96,7 +96,7 @@ const ResetVerification = () => {
     }
     
     if (!isCodeComplete) {
-      setError('Please enter the complete 6-digit verification code.');
+      setError('Please enter the complete 5-digit verification code.');
       return;
     }
     
