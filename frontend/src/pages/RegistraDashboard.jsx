@@ -12,18 +12,16 @@ const RegistraDashboard = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredIssues, setFilteredIssues] = useState([]);
-  
-  // Counters for different issue statuses
   const [pendingCount, setPendingCount] = useState(0);
   const [inProgressCount, setInProgressCount] = useState(0);
   const [resolvedCount, setResolvedCount] = useState(0);
+  const [showModal, setShowModal] = useState(false); // State for modal visibility
+  const [selectedIssue, setSelectedIssue] = useState(null); // State for selected issue
 
   // Fetch issues when component mounts
   useEffect(() => {
-    // Check if user is authenticated when component mounts
     const checkAuth = () => {
       const accessToken = localStorage.getItem('accessToken');
-      // If no access token is available, redirect to login
       if (!accessToken) {
         navigate('/signin');
         return false;
@@ -34,66 +32,48 @@ const RegistraDashboard = () => {
     const fetchIssues = async () => {
       try {
         setLoading(true);
-        
-        // Get access token
         const accessToken = localStorage.getItem('accessToken');
-        
-        // Set authorization header with access token
         API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-        
         const response = await API.get('api/registrar_issue_management/');
-        console.log("API Response:", response.data); // Debug log
-        
+        console.log("API Response:", response.data);
+
         setIssues(response.data);
         setFilteredIssues(response.data);
-        
-        // Calculate counts for each status
+
         const pending = response.data.filter(issue => issue.status === 'pending').length;
-        const inProgress = response.data.filter(issue => issue.status === 'in_rogress').length;
+        const inProgress = response.data.filter(issue => issue.status === 'in_progress').length; // Fixed typo: 'in_rogress' to 'in_progress'
         const resolved = response.data.filter(issue => issue.status === 'resolved').length;
-        
+
         setPendingCount(pending);
         setInProgressCount(inProgress);
         setResolvedCount(resolved);
-        
         setLoading(false);
       } catch (err) {
         console.error('Error fetching registrar issues:', err);
-        
-        // Check if error is due to unauthorized access (401)
         if (err.response && err.response.status === 401) {
-          // Try refreshing the token
           try {
             const refreshToken = localStorage.getItem('refreshToken');
-            
             if (refreshToken) {
               const refreshResponse = await API.post('/api/refresh_token/', {
-                refresh: refreshToken
+                refresh: refreshToken,
               });
-              
-              // Store the new access token
               const newAccessToken = refreshResponse.data.access;
               localStorage.setItem('accessToken', newAccessToken);
-              
-              // Retry the original request with new token
               API.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
               const retryResponse = await API.get('api/registrar_issue_management/');
-              
+
               setIssues(retryResponse.data);
               setFilteredIssues(retryResponse.data);
-              
-              // Calculate counts for each status
-              const pending = retryResponse.data.filter(issue => issue.status === 'Pending').length;
-              const inProgress = retryResponse.data.filter(issue => issue.status === 'In Progress').length;
-              const resolved = retryResponse.data.filter(issue => issue.status === 'Resolved').length;
-              
+
+              const pending = retryResponse.data.filter(issue => issue.status === 'pending').length;
+              const inProgress = retryResponse.data.filter(issue => issue.status === 'in_progress').length;
+              const resolved = retryResponse.data.filter(issue => issue.status === 'resolved').length;
+
               setPendingCount(pending);
               setInProgressCount(inProgress);
               setResolvedCount(resolved);
-              
               setLoading(false);
             } else {
-              // No refresh token available, redirect to login
               navigate('/signin');
             }
           } catch (refreshErr) {
@@ -110,7 +90,6 @@ const RegistraDashboard = () => {
       }
     };
 
-    // Only fetch data if authentication check passes
     if (checkAuth()) {
       fetchIssues();
     }
@@ -121,7 +100,7 @@ const RegistraDashboard = () => {
     if (searchTerm.trim() === '') {
       setFilteredIssues(issues);
     } else {
-      const filtered = issues.filter(issue => 
+      const filtered = issues.filter(issue =>
         issue.id.toString().includes(searchTerm) ||
         issue.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
         issue.studentNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -133,6 +112,25 @@ const RegistraDashboard = () => {
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
+  };
+
+  // Format date function
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  };
+
+  // Open issue details modal
+  const openIssueDetails = (issue) => {
+    setSelectedIssue(issue);
+    setShowModal(true);
+  };
+
+  // Close modal
+  const closeModal = () => {
+    setShowModal(false);
+    setSelectedIssue(null);
   };
 
   if (loading) {
@@ -199,10 +197,10 @@ const RegistraDashboard = () => {
                     <h2>My issues</h2>
                     <div className="issues-controls">
                       <div className="search-container">
-                        <input 
-                          type="text" 
-                          placeholder="search for issues" 
-                          className="search-input" 
+                        <input
+                          type="text"
+                          placeholder="search for issues"
+                          className="search-input"
                           value={searchTerm}
                           onChange={handleSearchChange}
                         />
@@ -214,40 +212,93 @@ const RegistraDashboard = () => {
                       </button>
                     </div>
                   </div>
-                  <div className="issues-table-container">
-                    <div className="issues-table">
-                      {filteredIssues.length > 0 ? (
-                        <table>
-                          <thead>
-                            <tr>
-                              <th>Issue ID</th>
-                              <th>Status</th>
-                              <th>Student No</th>
-                              <th>Category</th>
-                              <th>Date</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {filteredIssues.map(issue => (
-                              <tr key={issue.id}>
-                                <td>{issue.id}</td>
-                                <td>{issue.status}</td>
-                                <td>{issue.studentNo}</td>
-                                <td>{issue.category}</td>
-                                <td>{issue.date}</td>
+                  {/* New Table Container */}
+                  <div className="table-container">
+                    {loading ? (
+                      <div className="loading-message">Loading issues...</div>
+                    ) : error ? (
+                      <div className="error-message">{error}</div>
+                    ) : (
+                      <table className="issues-table">
+                        <thead>
+                          <tr>
+                            <th>ID</th>
+                            <th>Issue</th>
+                            <th>Status</th>
+                            <th>Issue Type</th>
+                            <th>Created</th>
+                            <th>Updated</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {filteredIssues.length > 0 ? (
+                            filteredIssues.map((issue, index) => (
+                              <tr key={issue.id || index}>
+                                <td>#{issue.id || 'N/A'}</td>
+                                <td>{issue.description || 'N/A'}</td> {/* Adjusted field: assuming 'description' for issue details */}
+                                <td>
+                                  <span className={`status-tag status-${issue.status}`}>
+                                    {issue.status === 'pending' ? 'Pending' :
+                                     issue.status === 'in_progress' ? 'In-progress' :
+                                     issue.status === 'resolved' ? 'Resolved' : issue.status}
+                                  </span>
+                                </td>
+                                <td>{issue.category || 'N/A'}</td> {/* Using 'category' as issue type */}
+                                <td>{formatDate(issue.date || issue.created_at)}</td>
+                                <td>{formatDate(issue.updated_at || issue.date)}</td>
+                                <td>
+                                  <button
+                                    className="view-details-btn"
+                                    onClick={() => openIssueDetails(issue)}
+                                  >
+                                    View Details
+                                  </button>
+                                </td>
                               </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      ) : (
-                        <div className="no-issues-message">
-                          {searchTerm ? 'No issues match your search' : 'No issues found'}
-                        </div>
-                      )}
-                    </div>
+                            ))
+                          ) : (
+                            <tr>
+                              <td colSpan="7" className="no-issues-message">
+                                {searchTerm ? 'No issues match your search' : 'No issues found'}
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    )}
                   </div>
                 </div>
               </div>
+
+              {/* Issue Details Modal */}
+              {showModal && selectedIssue && (
+                <div className="issue-modal-overlay">
+                  <div className="issue-modal">
+                    <div className="issue-modal-header">
+                      <h2>Issue Details</h2>
+                      <button className="close-modal-btn" onClick={closeModal}>×</button>
+                    </div>
+                    <div className="issue-modal-content">
+                      <div className="issue-detail-item">
+                        <strong>ID:</strong> #{selectedIssue.id || 'N/A'}
+                      </div>
+                      {Object.entries(selectedIssue).map(([key, value]) => {
+                        if (key === 'id') return null;
+                        return (
+                          <div key={key} className="issue-detail-item">
+                            <strong>{key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:</strong>
+                            {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <div className="issue-modal-footer">
+                      <button className="modal-close-btn" onClick={closeModal}>Close</button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </main>
