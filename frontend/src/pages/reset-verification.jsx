@@ -249,7 +249,7 @@ const ResetVerification = () => {
              'Resend Code'}
           </button>
         </form>
-        
+        //sign in link
         <Link to="/signin" className="signin-link">
           Sign In
         </Link>
