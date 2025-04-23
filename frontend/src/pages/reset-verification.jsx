@@ -206,6 +206,7 @@ const ResetVerification = () => {
             Email address not found. Please return to signup.
           </p>
         )}
+        //verifiction code input form
         
         <form onSubmit={handleSubmit} className="verification-form">
           <div className="code-inputs">
