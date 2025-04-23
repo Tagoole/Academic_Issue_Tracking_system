@@ -19,7 +19,7 @@ const ResetVerification = () => {
   const inputRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
   const navigate = useNavigate();
   const location = useLocation();
-  
+  //email initialization effect
   useEffect(() => {
     if (location.state && location.state.email) {
       setEmail(location.state.email);
@@ -37,9 +37,9 @@ const ResetVerification = () => {
       }
     }
   }, [location]);
-  
+  //helper function to check if the verification code is complete
   const isCodeComplete = verificationCode.every(digit => digit !== '');
-  
+  //input handler function
   const handleDigitChange = (index, value) => {
     if (value && !/^\d+$/.test(value)) return;
     
@@ -59,7 +59,7 @@ const ResetVerification = () => {
       inputRefs[index - 1].current.focus();
     }
   };
-  
+  //error handling function
   const extractErrorMessage = (error) => {
     if (!error) return 'An unknown error occurred';
     
@@ -88,7 +88,7 @@ const ResetVerification = () => {
       return error.message || 'Error submitting request. Please try again.';
     }
   };
-  
+  //form submission handler function
   const handleSubmit = async (e) => {
     e.preventDefault();
     
