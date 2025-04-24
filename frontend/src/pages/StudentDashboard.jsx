@@ -93,7 +93,8 @@ const StudentDashboard = () => {
     const statusMap = {
       'Pending': 'pending',
       'In-progress': 'in_progress',
-      'Resolved': 'resolved'
+      'Resolved': 'resolved',
+      'Rejected': 'rejected'
     };
     return statusMap[uiStatus] || uiStatus.toLowerCase();
   };
@@ -151,38 +152,40 @@ const StudentDashboard = () => {
             <div className="panel-title">In-progress Issues</div>
             <div className="panel-count">{issueData.filter(issue => issue.status === 'in_progress').length}</div>
           </div>
+          <div className="panel">
+            <div className="panel-title">Rejected Issues</div>
+            <div className="panel-count">{issueData.filter(issue => issue.status === 'rejected').length}</div>
+          </div>
         </div>
         
         <div className="search-container">
-  <input type="text" placeholder="Search for issues..." className="search-input" />
-  <button className="filter-button">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-      <path fillRule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 16v-4.414L3.293 6.707A1 1 0 013 6V3z" clipRule="evenodd" />
-    </svg>
-  </button>
-  
-  {/* Advanced holographic button with multiple effects */}
-  <div className="hologram-3d-container">
-    <div className="hologram-particles">
-      <div className="hologram-border">
-        <button 
-          className="new-issue-button hologram-button hologram-3d" 
-          onClick={handleNewIssueClick}
-        >
-          + New Issue
-        </button>
-      </div>
-    </div>
-  </div>
-
-
+          <input type="text" placeholder="Search for issues..." className="search-input" />
+          <button className="filter-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 16v-4.414L3.293 6.707A1 1 0 013 6V3z" clipRule="evenodd" />
+            </svg>
+          </button>
+          
+          {/* Advanced holographic button with multiple effects */}
+          <div className="hologram-3d-container">
+            <div className="hologram-particles">
+              <div className="hologram-border">
+                <button 
+                  className="new-issue-button hologram-button hologram-3d" 
+                  onClick={handleNewIssueClick}
+                >
+                  + New Issue
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
         
         {/* Issues Container */}
         <div className="issues-container">
           <div className="issues-header">
             <div className="tab-container">
-              {['Pending', 'In-progress', 'Resolved'].map(tab => (
+              {['Pending', 'In-progress', 'Resolved', 'Rejected'].map(tab => (
                 <button
                   key={tab}
                   className={`tab-button ${activeTab === tab ? 'active' : 'inactive'}`}
@@ -211,6 +214,8 @@ const StudentDashboard = () => {
                   <th>Issue Type</th>
                   <th>Created</th>
                   <th>Updated</th>
+                  <th>Is Commented</th>
+                  <th>Comment</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -224,12 +229,15 @@ const StudentDashboard = () => {
                         <span className={`status-tag status-${issue.status}`}>
                           {issue.status === 'pending' ? 'Pending' : 
                            issue.status === 'in_progress' ? 'In-progress' : 
-                           issue.status === 'resolved' ? 'Resolved' : issue.status}
+                           issue.status === 'resolved' ? 'Resolved' : 
+                           issue.status === 'rejected' ? 'Rejected' : issue.status}
                         </span>
                       </td>
                       <td>{issue.issue_type || issue.category}</td>
                       <td>{formatDate(issue.created_at || issue.date)}</td>
                       <td>{formatDate(issue.updated_at)}</td>
+                      <td>{issue.is_commented ? '✓' : '✗'}</td>
+                      <td>{issue.comment || 'No comment'}</td>
                       <td>
                         <button className="view-details-btn" onClick={() => openIssueDetails(issue)}>
                           View Details
@@ -239,7 +247,7 @@ const StudentDashboard = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="7" className="no-issues-message">No {activeTab.toLowerCase()} issues found</td>
+                    <td colSpan="9" className="no-issues-message">No {activeTab.toLowerCase()} issues found</td>
                   </tr>
                 )}
               </tbody>
