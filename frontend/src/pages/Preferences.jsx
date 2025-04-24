@@ -54,6 +54,14 @@ const Preferences = () => {
         autoClose: 3000,
       }
     );
+
+    // Redirect to settings page after 30 seconds
+    setTimeout(() => {
+      toast.info('Redirecting to the settings page...', {
+        autoClose: 3000,
+      });
+      navigate('/settings');
+    }, 30000); // 30 seconds
   };
 
   const toggleEmailUpdates = () => {
@@ -68,6 +76,14 @@ const Preferences = () => {
         autoClose: 3000,
       }
     );
+
+    // Redirect to settings page after 30 seconds
+    setTimeout(() => {
+      toast.info('Redirecting to the settings page...', {
+        autoClose: 3000,
+      });
+      navigate('/settings');
+    }, 30000); // 30 seconds
   };
 
   useEffect(() => {
