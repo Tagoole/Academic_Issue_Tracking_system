@@ -33,6 +33,7 @@ const IssueManagement = () => {
   const [pendingCount, setPendingCount] = useState(0);
   const [inProgressCount, setInProgressCount] = useState(0);
   const [resolvedCount, setResolvedCount] = useState(0);
+  const [rejectedCount, setRejectedCount] = useState(0); // Added rejected count
 
   // Fetch issues when component mounts
   useEffect(() => {
@@ -80,10 +81,12 @@ const IssueManagement = () => {
         const pending = response.data.filter(issue => issue.status === 'pending').length;
         const inProgress = response.data.filter(issue => issue.status === 'in_progress').length;
         const resolved = response.data.filter(issue => issue.status === 'resolved').length;
+        const rejected = response.data.filter(issue => issue.status === 'rejected').length; // Added rejected
         
         setPendingCount(pending);
         setInProgressCount(inProgress);
         setResolvedCount(resolved);
+        setRejectedCount(rejected); // Set rejected count
         
         setLoading(false);
       } catch (err) {
@@ -115,10 +118,12 @@ const IssueManagement = () => {
               const pending = retryResponse.data.filter(issue => issue.status === 'pending').length;
               const inProgress = retryResponse.data.filter(issue => issue.status === 'in_progress').length;
               const resolved = retryResponse.data.filter(issue => issue.status === 'resolved').length;
+              const rejected = retryResponse.data.filter(issue => issue.status === 'rejected').length; // Added rejected
               
               setPendingCount(pending);
               setInProgressCount(inProgress);
               setResolvedCount(resolved);
+              setRejectedCount(rejected); // Set rejected count
               
               setLoading(false);
             } else {
@@ -231,7 +236,7 @@ const IssueManagement = () => {
       );
       
       // Close the dropdowns
-      setShowLecturersdropdown(false);
+      setShowLecturersDropdown(false);
       setActiveIssueId(null);
       
       // Update status counts
@@ -253,7 +258,7 @@ const IssueManagement = () => {
     }
   };
 
-  // New function to handle input changes in the modal form
+  // Handle input changes in the modal form
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEditingIssue({
@@ -262,7 +267,7 @@ const IssueManagement = () => {
     });
   };
 
-  // New function to save the updated issue - Now using PATCH instead of PUT
+  // Function to save the updated issue - Now using PATCH instead of PUT
   const handleUpdateIssue = async () => {
     try {
       if (!selectedIssue) return;
@@ -309,6 +314,8 @@ const IssueManagement = () => {
           setInProgressCount(prev => prev - 1);
         } else if (previousStatus === 'resolved') {
           setResolvedCount(prev => prev - 1);
+        } else if (previousStatus === 'rejected') {
+          setRejectedCount(prev => prev - 1);
         }
         
         // Increment the new status count
@@ -318,6 +325,8 @@ const IssueManagement = () => {
           setInProgressCount(prev => prev + 1);
         } else if (editingIssue.status === 'resolved') {
           setResolvedCount(prev => prev + 1);
+        } else if (editingIssue.status === 'rejected') {
+          setRejectedCount(prev => prev + 1);
         }
       }
       
@@ -334,6 +343,59 @@ const IssueManagement = () => {
         alert(`Failed to update issue: ${JSON.stringify(error.response.data)}`);
       } else {
         alert('Failed to update issue. Please try again.');
+      }
+    }
+  };
+
+  // New function to handle rejecting an issue
+  const handleRejectIssue = async (issueId) => {
+    try {
+      const issue = issues.find((i) => i.id === issueId);
+      if (!issue) return;
+      
+      // Data to send to backend for rejection
+      const rejectionData = {
+        status: 'rejected',
+        lecturer: null // Optionally remove lecturer assignment on rejection
+      };
+      
+      // Get access token for authorization
+      const accessToken = localStorage.getItem('accessToken');
+      API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+      
+      // Send PATCH request to reject the issue
+      const response = await API.patch(`api/registrar_issue_management/${issue.id}/`, rejectionData);
+      console.log('Issue rejected successfully:', response.data);
+      
+      // Update the issue in state to reflect the change
+      setIssues((prevIssues) =>
+        prevIssues.map((i) =>
+          i.id === issue.id ? { ...i, status: 'rejected', lecturer: null } : i
+        )
+      );
+      
+      // Update status counts
+      if (issue.status === 'pending') {
+        setPendingCount(prev => prev - 1);
+      } else if (issue.status === 'in_progress') {
+        setInProgressCount(prev => prev - 1);
+      }
+      
+      setRejectedCount(prev => prev + 1);
+      
+      // Show success message
+      alert(`Issue #${issue.id} has been rejected`);
+      
+      // Close any open dropdowns
+      setShowActionsDropdown(null);
+      
+    } catch (error) {
+      console.error('Error rejecting issue:', error);
+      if (error.response) {
+        console.error('Error response data:', error.response.data);
+        alert(`Failed to reject issue: ${JSON.stringify(error.response.data)}`);
+      } else {
+        alert('Failed to reject issue. Please try again.');
       }
     }
   };
@@ -420,13 +482,21 @@ const IssueManagement = () => {
                   View Details
                 </button>
                 
-                {issue.status === 'pending' && (  // Only show escalate option for pending issues
-                  <button 
-                    className="dropdown-item"
-                    onClick={() => handleEscalateIssue(issue.id)}
-                  >
-                    Escalate Issue
-                  </button>
+                {issue.status === 'pending' && (  // Only show these options for pending issues
+                  <>
+                    <button 
+                      className="dropdown-item"
+                      onClick={() => handleEscalateIssue(issue.id)}
+                    >
+                      Escalate Issue
+                    </button>
+                    <button 
+                      className="dropdown-item reject-btn"
+                      onClick={() => handleRejectIssue(issue.id)}
+                    >
+                      Reject Issue
+                    </button>
+                  </>
                 )}
               </div>
             )}
@@ -493,19 +563,24 @@ const IssueManagement = () => {
         <div className="issue-content">
           <div className="dashboard-cards">
             <DashboardCard
-              title="Pending issues"
+              title="Pending Issues"
               count={pendingCount}
               description={`You currently have ${pendingCount} pending issue${pendingCount !== 1 ? 's' : ''}`}
             />
             <DashboardCard
-              title="In-progress issues"
+              title="In-progress Issues"
               count={inProgressCount}
               description={`You currently have ${inProgressCount} in-progress issue${inProgressCount !== 1 ? 's' : ''}`}
             />
             <DashboardCard
-              title="Resolved issues"
+              title="Resolved Issues"
               count={resolvedCount}
               description={`You currently have ${resolvedCount} resolved issue${resolvedCount !== 1 ? 's' : ''}`}
+            />
+            <DashboardCard
+              title="Rejected Issues"
+              count={rejectedCount}
+              description={`You currently have ${rejectedCount} rejected issue${rejectedCount !== 1 ? 's' : ''}`}
             />
           </div>
 
@@ -532,6 +607,12 @@ const IssueManagement = () => {
                 onClick={() => handleStatusChange('resolved')}
               >
                 Resolved
+              </button>
+              <button
+                className={`status-tab ${issueStatus === 'rejected' ? 'active' : ''}`}
+                onClick={() => handleStatusChange('rejected')}
+              >
+                Rejected
               </button>
             </div>
 
@@ -647,6 +728,7 @@ const IssueManagement = () => {
                         <option value="pending">Pending</option>
                         <option value="in_progress">In Progress</option>
                         <option value="resolved">Resolved</option>
+                        <option value="rejected">Rejected</option>
                       </select>
                     </div>
                   </div>
@@ -669,6 +751,22 @@ const IssueManagement = () => {
                           <p className="comment-text">{comment.text}</p>
                         </div>
                       ))}
+                    </div>
+                  )}
+                  
+                  {/* Add rejection reason field when status is rejected */}
+                  {editingIssue.status === 'rejected' && (
+                    <div className="rejection-reason">
+                      <h3>Rejection Reason:</h3>
+                      <textarea
+                        name="rejection_reason"
+                        placeholder="Enter reason for rejection..."
+                        className="rejection-textarea"
+                        onChange={(e) => setEditingIssue({
+                          ...editingIssue,
+                          rejection_reason: e.target.value
+                        })}
+                      />
                     </div>
                   )}
                 </div>
