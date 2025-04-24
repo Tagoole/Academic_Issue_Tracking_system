@@ -44,19 +44,35 @@ function ChangePassword() {
 
   const handleSaveChanges = () => {
     if (!oldPassword || !newPassword || !confirmPassword) {
-      alert("Please fill in all password fields");
+      toast.error('Please fill in all password fields.', {
+        autoClose: 3000,
+      });
       return;
     }
+  
     if (newPassword.length < 6) {
-      alert("New password must be at least 6 characters");
+      toast.error('New password must be at least 6 characters.', {
+        autoClose: 3000,
+      });
       return;
     }
-
+  
     if (newPassword !== confirmPassword) {
-      alert("New passwords don't match");
+      toast.error("New passwords don't match.", {
+        autoClose: 3000,
+      });
       return;
     }
-    setShowConfirmation(true); 
+  
+    // Simulate wrong old password
+    if (oldPassword !== 'correctOldPassword') {
+      toast.error('Old password is incorrect.', {
+        autoClose: 3000,
+      });
+      return;
+    }
+  
+    setShowConfirmation(true);
   };
 
   const confirmChangePassword = () => {
