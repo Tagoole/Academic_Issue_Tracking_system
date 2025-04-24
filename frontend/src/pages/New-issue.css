@@ -5,10 +5,10 @@
   min-height: 800px;
   width: 100%;
   position: relative;
-  background-color: rgba(255, 255, 255, 1); /* Fixed rgba syntax */
+  background-color: rgba(255, 255, 255, 1); 
   margin-top: 20px;
   display: flex;
-  justify-content: center; /* Center horizontally */
+  justify-content: center; 
 }
 
 /* Page content (below navbar, contains sidebar and form) */
