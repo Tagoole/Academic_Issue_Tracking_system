@@ -3,6 +3,8 @@ import makerereLogo from '../assets/makererelogo.png';
 import hidden from '../assets/hidden.png';
 import './Changepassword.css';
 import NavBar from './NavBar';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
  
 
 function ChangePassword() {
@@ -442,6 +444,18 @@ function ChangePassword() {
           </div>
         </div>
       )}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </div>
   );
 }
