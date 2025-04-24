@@ -111,14 +111,27 @@ const Lecturerdashboard = () => {
         categoryFilter === 'all' || issue.category?.toLowerCase() === categoryFilter.toLowerCase();
       const matchesSearch =
         searchTerm === '' ||
-        (issue.title && issue.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (issue.studentNo && issue.studentNo.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (issue.category && issue.category.toLowerCase().includes(searchTerm.toLowerCase()));
+        (issue.id && issue.id.toString().includes(searchTerm)) || // Search by Issue ID
+        (issue.studentNo && issue.studentNo.toLowerCase().includes(searchTerm.toLowerCase())) || // Search by Student No
+        (issue.category && issue.category.toLowerCase().includes(searchTerm.toLowerCase())); // Search by Category
 
       return matchesStatus && matchesCategory && matchesSearch;
     });
 
     setFilteredIssues(filtered);
+
+    // Show toast notifications
+    if (searchTerm !== '') {
+      if (filtered.length > 0) {
+        toast.success(`Issue(s) found matching "${searchTerm}".`, {
+          autoClose: 3000,
+        });
+      } else {
+        toast.error(`No issues found matching "${searchTerm}".`, {
+          autoClose: 3000,
+        });
+      }
+    }
   }, [statusFilter, categoryFilter, searchTerm, allIssues]);
 
   // Handle issue click
