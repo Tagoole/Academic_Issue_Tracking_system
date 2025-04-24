@@ -280,8 +280,9 @@ const LecturerIssueManagement = () => {
 
   const handleCancelSave = () => {
     setShowConfirmation(false);
-    // Info toast notification
-    toast.info('Status update cancelled');
+    toast.info('Status update cancelled.', {
+      autoClose: 2000,
+    });
   };
 
   // Format date for display if available
