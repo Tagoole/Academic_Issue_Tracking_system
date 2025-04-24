@@ -207,13 +207,21 @@ class Registrar_Issue_ManagementViewSet(ModelViewSet):
     def perform_update(self, serializer):
         issue = self.get_object()  # This retrieves the current issue instance
         previous_state = issue.status  # Store the previous state of the issue
-        
+        previous_lecturer = issue.lecturer
         # Save the updated issue
         updated_issue = serializer.save()
         
         # Send email with previous and current state
         self.send_email_on_update(updated_issue, "updated", previous_state)
         
+        if previous_lecturer != updated_issue.lecturer and updated_issue.lecturer and updated_issue.lecturer.email:
+            subject = f'Issue Assignment Notification'
+            message = (f'Dear {updated_issue.lecturer.username},\n\n'
+                  f'You have been assigned to an issue of type {updated_issue.issue_type}.\n'
+                  f'Student: {updated_issue.student.username if updated_issue.student else "N/A"}\n'
+                  f'Current status: {updated_issue.status}\n\n'
+                  'Best regards,\nAITS')
+            send_success = send_mail(subject, message, settings.EMAIL_HOST_USER, [updated_issue.lecturer.email], fail_silently=False)
         
         return updated_issue
             
