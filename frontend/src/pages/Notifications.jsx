@@ -29,15 +29,34 @@ const Notifications = () => {
       try {
         setLoading(true);
         
-        // Get access token
+        // Get access token and user ID
         const accessToken = localStorage.getItem('accessToken');
+        const userId = localStorage.getItem('userId'); // Make sure you store userId in localStorage on login
+        
+        if (!userId) {
+          setError('User information missing. Please log in again.');
+          navigate('/signin');
+          return;
+        }
         
         // Set authorization header with access token
         API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
         
-        const response = await API.get('/api/user_email_notifications/');
+        
+        // Alternative Method 2: If your backend strictly expects it in the request body
+        const response = await API.get('/api/user_email_notifications/', {
+          userId: userId
+        });
+        
         console.log("Notifications API Response:", response.data); // Debug log
-        setNotifications(response.data);
+        
+        // Check if response has the expected structure
+        if (response.data && response.data.data) {
+          setNotifications(response.data.data); // Access the data array from the response
+        } else {
+          setNotifications(response.data); // Fallback to the direct response
+        }
+        
         setLoading(false);
       } catch (err) {
         console.error('Error fetching notifications:', err);
@@ -59,8 +78,18 @@ const Notifications = () => {
               
               // Retry the original request with new token
               API.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
-              const retryResponse = await API.get('/api/notifications/');
-              setNotifications(retryResponse.data);
+              
+              const userId = localStorage.getItem('userId');
+              const retryResponse = await API.get('/api/user_email_notifications/', {
+                params: { userId: userId }
+              });
+              
+              if (retryResponse.data && retryResponse.data.data) {
+                setNotifications(retryResponse.data.data);
+              } else {
+                setNotifications(retryResponse.data);
+              }
+              
               setLoading(false);
             } else {
               // No refresh token available, redirect to login
