@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import makerereLogo from '../assets/makererelogo.png';
 import './Preferences.css';
 import NavBar from './NavBar';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const Preferences = () => {
@@ -193,6 +195,18 @@ const Preferences = () => {
           </div>
         </div>
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </div>
   );
 };
