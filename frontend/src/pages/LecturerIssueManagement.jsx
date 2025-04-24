@@ -188,124 +188,63 @@ const LecturerIssueManagement = () => {
     try {
       setLoading(true);
       console.log("Saving comment:", selectedIssue.comments);
-      
-      // Get access token for authorization
-      const accessToken = localStorage.getItem('accessToken');
-      
-      // Check if token exists, if not redirect to login
-      if (!accessToken) {
-        window.location.href = '/signin';
-        return;
-      }
-      
-      // Set authorization header with access token
-      API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-      
+
       // Format the status value to match backend expectations
-      // Convert "In Progress" to "in_progress" format if needed
       let formattedStatus = selectedNewStatus.toLowerCase();
       if (formattedStatus === 'in progress') {
         formattedStatus = 'in_progress';
       }
-      
+
       // Data to send to the backend
       const updateData = {
         status: formattedStatus,
-        comments: selectedIssue.comments, // This will be the user's typed comment
-        is_commented: true
+        comments: selectedIssue.comments,
+        is_commented: true,
       };
-      
+
       console.log('Sending update data:', updateData);
-      console.log('Issue ID:', selectedIssue.id);
-      
+
       // Send PATCH request to update the issue
       const response = await API.patch(`api/lecturer_issue_management/${selectedIssue.id}/`, updateData);
       console.log('Issue updated successfully:', response.data);
-      
+
       setLoading(false);
-      
-      // Clear the stored issue data before redirecting
-      sessionStorage.removeItem('issueToResolve');
-      
+
       // Success toast notification
       toast.success(`Issue status updated to ${formattedStatus} successfully`, {
+        autoClose: 3000,
         onClose: () => {
-          // Redirect back to dashboard after toast is closed
           window.location.href = '/Lecturerdashboard';
         },
-        autoClose: 3000 // Stay open for 3 seconds
       });
     } catch (err) {
       setLoading(false);
       console.error('Error updating issue:', err);
-      
-      // Error toast notification
-      toast.error('Failed to update issue status. Please try again.');
-      
-      // Check if error is due to unauthorized access (401)
-      if (err.response && err.response.status === 401) {
-        // Try refreshing the token
-        try {
-          const refreshToken = localStorage.getItem('refreshToken');
-          
-          if (refreshToken) {
-            const refreshResponse = await API.post('/api/refresh_token/', {
-              refresh: refreshToken
-            });
-            
-            // Store the new access token
-            const newAccessToken = refreshResponse.data.access;
-            localStorage.setItem('accessToken', newAccessToken);
-            
-            // Format the status value again
-            let formattedStatus = selectedNewStatus.toLowerCase();
-            if (formattedStatus === 'in progress') {
-              formattedStatus = 'in_progress';
-            }
-            
-            // Retry the original request with new token
-            API.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
-            const retryResponse = await API.patch(`api/lecturer_issue_management/${selectedIssue.id}/`, {
-              status: formattedStatus,
-              comments: selectedIssue.comments,
-              is_commented: true
-            });
-            
-            console.log('Issue updated successfully after token refresh:', retryResponse.data);
-            
-            // Clear the stored issue data before redirecting
-            sessionStorage.removeItem('issueToResolve');
-            
-            // Success toast notification after retry
-            toast.success(`Issue status updated to ${formattedStatus} successfully`, {
-              onClose: () => {
-                // Redirect back to dashboard after toast is closed
-                window.location.href = '/Lecturerdashboard';
-              },
-              autoClose: 3000 // Stay open for 3 seconds
-            });
-          } else {
-            // No refresh token available, redirect to login
-            toast.error('Session expired. Redirecting to login...', {
-              onClose: () => {
-                window.location.href = '/signin';
-              },
-              autoClose: 2000
-            });
-          }
-        } catch (refreshErr) {
-          console.error('Error refreshing token:', refreshErr);
-          toast.error('Your session has expired. Please log in again.', {
-            onClose: () => {
-              localStorage.removeItem('accessToken');
-              localStorage.removeItem('refreshToken');
-              window.location.href = '/signin';
-            },
-            autoClose: 2000
-          });
-        }
+
+      // Handle specific error scenarios
+      if (!navigator.onLine) {
+        // Network connectivity issue
+        toast.error('No internet connection. Please check your network and try again.', {
+          autoClose: 4000,
+        });
+      } else if (err.response && err.response.status === 404) {
+        // 404 error: Issue not found
+        toast.error('Issue not found. It may have been deleted.', {
+          autoClose: 3000,
+          onClose: () => {
+            window.location.href = '/Lecturerdashboard';
+          },
+        });
+      } else if (err.response && err.response.status === 400) {
+        // 400 error: Invalid data
+        toast.error('Invalid data provided. Please check your input and try again.', {
+          autoClose: 4000,
+        });
       } else {
-        toast.error('Failed to update issue. Please try again later.');
+        // General error
+        toast.error('An unexpected error occurred. Please try again later.', {
+          autoClose: 4000,
+        });
       }
     }
   };
