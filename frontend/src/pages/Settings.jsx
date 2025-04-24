@@ -4,7 +4,7 @@ import makerereLogo from '../assets/makererelogo.png';
 import settingsIcon from '../assets/settings.png';
 import './Settings.css';
 import NavBar from './NavBar';
-import backgroundImage from '../assets/pexels-olia-danilevich-5088017.jpg';
+
 
 function Settings() {
   const navigate = useNavigate();
@@ -42,7 +42,6 @@ function Settings() {
   return (
     <div
       style={{
-        backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',

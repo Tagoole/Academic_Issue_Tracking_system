@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import API from '../api';
 import makerereLogo from '../assets/makererelogo.png';
-import backgroundImage from '../assets/pexels-olia-danilevich-5088017.jpg';
 import './Deleteaccount.css';
 
 const DeleteAccount = () => {
@@ -64,7 +63,6 @@ const DeleteAccount = () => {
 
   return (
     <div className="settings-container" style={{
-      backgroundImage: `url(${backgroundImage})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               backgroundRepeat: 'no-repeat',
