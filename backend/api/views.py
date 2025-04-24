@@ -526,7 +526,25 @@ def get_lecturers(request):
     
     return Response(serializer.data, status=status.HTTP_200_OK)
 
+
+
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 def delete_account(request):
-    pass
+    user_id_from_frontend = request.data.get('userId') 
+    if str(request.user.id) != str(user_id_from_frontend):
+        return Response(
+            {"error": "You are not authorized to delete this account."},
+            status=status.HTTP_403_FORBIDDEN
+        )
+
+    user = CustomUser.objects.filter(id=user_id_from_frontend).first()
+    if user:
+        username = user.username
+        user.delete()
+        return Response(
+            {"message": f"Account '{username}' has been deleted successfully."},
+            status=status.HTTP_204_NO_CONTENT
+        )
+    else:
+        return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
