@@ -146,7 +146,7 @@ class Verification_code(models.Model):
         except Exception as e:
             return {'Error':e}
         
-        return {'Message':'Email verification code resent successfully...'}
+        return {'Message':'Code resent successfully...'}
         
     def __str__(self):
         return f'Verification for {self.user.username} --- {self.code}'
