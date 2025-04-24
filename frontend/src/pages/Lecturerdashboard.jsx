@@ -376,9 +376,9 @@ const Lecturerdashboard = () => {
                 </thead>
                 <tbody>
                   {filteredIssues.length > 0 ? (
-                    filteredIssues.map(issue => (
-                      <tr 
-                        key={issue.id} 
+                    filteredIssues.map((issue) => (
+                      <tr
+                        key={issue.id}
                         className={selectedIssue && selectedIssue.id === issue.id ? 'selected-row' : ''}
                       >
                         <td onClick={() => handleIssueClick(issue)}>{issue.id}</td>
@@ -391,11 +391,11 @@ const Lecturerdashboard = () => {
                         <td onClick={() => handleIssueClick(issue)}>{issue.category}</td>
                         <td onClick={() => handleIssueClick(issue)}>{issue.date}</td>
                         <td>
-                          {issue.status !== 'Resolved' && (
-                            <button 
+                          {(issue.status === 'Pending' || issue.status === 'In Progress') && (
+                            <button
                               className="resolve-btn"
                               onClick={(e) => {
-                                e.stopPropagation();
+                                e.stopPropagation(); // Prevent triggering the row click event
                                 handleResolveIssue(issue);
                               }}
                             >
@@ -407,7 +407,9 @@ const Lecturerdashboard = () => {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="6" className="no-issues">No issues match the current filters. Please try another search term</td>
+                      <td colSpan="6" className="no-issues">
+                        No issues match the current filters. Please try another search term
+                      </td>
                     </tr>
                   )}
                 </tbody>
