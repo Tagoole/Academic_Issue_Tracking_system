@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import './Sidebar.css';
+import './Sidebar2.css';
 import makerereLogo from '../assets/makererelogo.png';
 
 function Sidebar() {
