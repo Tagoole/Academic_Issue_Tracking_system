@@ -92,7 +92,8 @@ const Issues = () => {
     const statusMap = {
       'Pending': 'pending',
       'In-progress': 'in_progress',
-      'Resolved': 'resolved'
+      'Resolved': 'resolved',
+      'Rejected': 'rejected'
     };
     return statusMap[uiStatus] || uiStatus.toLowerCase();
   };
@@ -163,7 +164,7 @@ const Issues = () => {
           <h1 className="issues-title">Issues</h1>
           
           <div className="issues-tabs">
-            {['Pending', 'In-progress', 'Resolved'].map((tab) => (
+            {['Pending', 'In-progress', 'Resolved', 'Rejected'].map((tab) => (
               <button
                 key={tab}
                 className={`issues-tab ${activeTab === tab ? 'active' : ''}`}
@@ -216,7 +217,8 @@ const Issues = () => {
                         <span className={`status-pill status-${issue.status}`}>
                           {issue.status === 'pending' ? 'Pending' : 
                            issue.status === 'in_progress' ? 'In-progress' : 
-                           issue.status === 'resolved' ? 'Resolved' : issue.status}
+                           issue.status === 'resolved' ? 'Resolved' : 
+                           issue.status === 'rejected' ? 'Rejected' : issue.status}
                         </span>
                       </td>
                       <td>{issue.issue_type || issue.category}</td>
