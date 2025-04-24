@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import API from '../api';
 import makerereLogo from '../assets/makererelogo.png';
 import './Deleteaccount.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const DeleteAccount = () => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -168,6 +170,18 @@ const DeleteAccount = () => {
           </div>
         </div>
       )}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </div>
   );
 };
