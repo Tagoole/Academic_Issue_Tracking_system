@@ -389,16 +389,16 @@ const LecturerIssueManagement = () => {
         </main>
       </div>
       <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
+        position="top-right" // Position the toasts at the top-right corner
+        autoClose={3000} // Automatically close toasts after 3 seconds
+        hideProgressBar={true} // Hide the progress bar for a cleaner look
+        newestOnTop={true} // Show the newest toasts on top
+        closeOnClick // Allow closing toasts by clicking on them
+        rtl={false} // Disable right-to-left layout
+        pauseOnFocusLoss={false} // Do not pause toasts when the window loses focus
+        draggable // Allow dragging toasts to reposition them
+        pauseOnHover // Pause toasts when hovered over
+        theme="colored" // Use a colored theme for better visibility
       />
     </div>
   );
