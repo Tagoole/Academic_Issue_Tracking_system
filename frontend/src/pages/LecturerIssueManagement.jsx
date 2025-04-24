@@ -163,8 +163,18 @@ const LecturerIssueManagement = () => {
       return;
     }
 
+    // Check if the comment is too short
+    if (selectedIssue.comments.trim().length < 20) {
+      toast.warning('Your comment is quite brief. Consider adding more details to help the student.', {
+        autoClose: 4000, // Toast will disappear after 4 seconds
+      });
+    }
+
     setErrorMessage('');
     setShowStatusDialog(true);
+    toast.info('Please select a status for this issue', {
+      autoClose: 2000, // Toast will disappear after 2 seconds
+    });
   };
 
   const handleConfirmSave = async () => {
