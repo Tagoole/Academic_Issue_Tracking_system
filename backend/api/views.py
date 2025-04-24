@@ -241,6 +241,7 @@ class Course_unitViewSet(ModelViewSet):
     serializer_class = Course_unitSerializer
 
 class ProgramViewSet(ModelViewSet):
+    permission_classes = [AllowAny]
     queryset = Program.objects.all()
     serializer_class = ProgramSerializer
     
