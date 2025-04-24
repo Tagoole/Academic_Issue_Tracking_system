@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import Navbar from './NavBar';
 import Sidebar2 from './Sidebar2';
 import './LecturerProfile.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const LecturerProfile = () => {
   const fileInputRef = useRef(null);
@@ -192,6 +194,18 @@ const LecturerProfile = () => {
           </div>
         </main>
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </div>
   );
 };
