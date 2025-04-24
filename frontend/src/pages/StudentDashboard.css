@@ -572,3 +572,71 @@
     0 0 10px rgba(0, 123, 255, 0.8),
     0 0 20px rgba(0, 123, 255, 0.6);
 }
+
+/* Update table cell spacing for better fit with more columns */
+.issues-table th,
+.issues-table td {
+  padding: 8px 6px; /* Reduced horizontal padding from 12px to 6px */
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  font-size: 13px; /* Slightly smaller font size */
+}
+
+/* Adjust column widths to better fit the space */
+.issues-table th:nth-child(1), /* ID column */
+.issues-table td:nth-child(1) {
+  width: 5%;
+  min-width: 40px;
+}
+
+.issues-table th:nth-child(2), /* Issue column */
+.issues-table td:nth-child(2) {
+  width: 18%;
+}
+
+.issues-table th:nth-child(3), /* Status column */
+.issues-table td:nth-child(3) {
+  width: 8%;
+}
+
+.issues-table th:nth-child(4), /* Issue Type column */
+.issues-table td:nth-child(4) {
+  width: 10%;
+}
+
+.issues-table th:nth-child(5), /* Created column */
+.issues-table td:nth-child(5),
+.issues-table th:nth-child(6), /* Updated column */
+.issues-table td:nth-child(6) {
+  width: 10%;
+}
+
+.issues-table th:nth-child(7), /* Is Commented column */
+.issues-table td:nth-child(7) {
+  width: 8%;
+  text-align: center;
+}
+
+.issues-table th:nth-child(8), /* Comment column */
+.issues-table td:nth-child(8) {
+  width: 15%;
+}
+
+.issues-table th:nth-child(9), /* Actions column */
+.issues-table td:nth-child(9) {
+  width: 8%;
+  text-align: center;
+}
+
+/* Make view details button more compact */
+.view-details-btn {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+/* Status tag adjustments for better fit */
+.status-tag {
+  padding: 3px 6px;
+  border-radius: 10px;
+  font-size: 11px;
+}
