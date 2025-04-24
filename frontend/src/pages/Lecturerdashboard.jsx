@@ -305,40 +305,32 @@ const Lecturerdashboard = () => {
           <div className="dashboard-header">
             <h1>Issue Dashboard</h1>
             <div className="filter-controls">
-              <div className="select-wrapper"> 
-                <select 
-                  className="status-filter" 
-                  value={statusFilter} 
+              <div className="select-wrapper">
+                <select
+                  className="status-filter"
+                  value={statusFilter}
                   onChange={handleStatusFilterChange}
                 >
                   <option value="all">All Statuses</option>
-                  {uniqueStatuses.map(status => (
-                    <option key={status} value={status}>{status}</option>
-                  ))}
+                  <option value="Pending">Pending</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Resolved">Resolved</option>
                 </select>
                 <span className="dropdown-arrow"></span>
               </div>
               <div className="select-wrapper">
-                <select 
-                  className="category-filter" 
-                  value={categoryFilter} 
+                <select
+                  className="category-filter"
+                  value={categoryFilter}
                   onChange={handleCategoryFilterChange}
                 >
                   <option value="all">All Categories</option>
-                  {uniqueCategories.map(category => (
-                    <option key={category} value={category}>{category}</option>
-                  ))}
+                  <option value="Missing Marks">Missing Marks</option>
+                  <option value="Wrong Marks">Wrong Marks</option>
+                  <option value="Other">Other</option>
                 </select>
                 <span className="dropdown-arrow"></span>
               </div>
-
-              <input 
-                type="text" 
-                placeholder="Search issues..." 
-                className="search-input" 
-                value={searchTerm}
-                onChange={handleSearchChange}
-              />
             </div>
           </div>
 
