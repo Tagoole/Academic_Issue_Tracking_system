@@ -48,6 +48,7 @@ const LecturerIssueManagement = () => {
   const [statusUpdateMessage, setStatusUpdateMessage] = useState('');
   const [selectedNewStatus, setSelectedNewStatus] = useState('');
   const [loading, setLoading] = useState(false);
+  const [file, setFile] = useState(null);
 
   // Fetch issue data from sessionStorage when component mounts
   useEffect(() => {
@@ -213,34 +214,45 @@ const LecturerIssueManagement = () => {
     });
   };
 
+  const handleFileChange = (event) => {
+    const selectedFile = event.target.files[0];
+    setFile(selectedFile);
+  
+    if (selectedFile) {
+      toast.success(`File "${selectedFile.name}" selected successfully.`, {
+        autoClose: 3000,
+      });
+    }
+  };
+
   const handleConfirmSave = async () => {
     try {
       setLoading(true);
-      console.log("Saving comment:", selectedIssue.comments);
 
-      // Format the status value to match backend expectations
-      let formattedStatus = selectedNewStatus.toLowerCase();
-      if (formattedStatus === 'in progress') {
-        formattedStatus = 'in_progress';
+      // Create a FormData object to handle file upload
+      const formData = new FormData();
+      formData.append('status', selectedNewStatus.toLowerCase());
+      formData.append('comments', selectedIssue.comments);
+      formData.append('is_commented', true);
+      if (file) {
+        formData.append('attachment', file); // Add the file to the request
       }
 
-      // Data to send to the backend
-      const updateData = {
-        status: formattedStatus,
-        comments: selectedIssue.comments,
-        is_commented: true,
-      };
-
-      console.log('Sending update data:', updateData);
-
       // Send PATCH request to update the issue
-      const response = await API.patch(`api/lecturer_issue_management/${selectedIssue.id}/`, updateData);
-      console.log('Issue updated successfully:', response.data);
+      const response = await API.patch(
+        `api/lecturer_issue_management/${selectedIssue.id}/`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
 
       setLoading(false);
 
       // Success toast notification
-      toast.success(`Issue status updated to ${formattedStatus} successfully`, {
+      toast.success(`Issue updated successfully.`, {
         autoClose: 3000,
         onClose: () => {
           window.location.href = '/Lecturerdashboard';
@@ -250,27 +262,16 @@ const LecturerIssueManagement = () => {
       setLoading(false);
       console.error('Error updating issue:', err);
 
-      // Handle specific error scenarios
+      // Handle errors
       if (!navigator.onLine) {
-        // Network connectivity issue
         toast.error('No internet connection. Please check your network and try again.', {
           autoClose: 4000,
         });
-      } else if (err.response && err.response.status === 404) {
-        // 404 error: Issue not found
-        toast.error('Issue not found. It may have been deleted.', {
-          autoClose: 3000,
-          onClose: () => {
-            window.location.href = '/Lecturerdashboard';
-          },
-        });
       } else if (err.response && err.response.status === 400) {
-        // 400 error: Invalid data
         toast.error('Invalid data provided. Please check your input and try again.', {
           autoClose: 4000,
         });
       } else {
-        // General error
         toast.error('An unexpected error occurred. Please try again later.', {
           autoClose: 4000,
         });
@@ -348,6 +349,16 @@ const LecturerIssueManagement = () => {
               <div className="debug-info" style={{ fontSize: "12px", color: "#666" }}>
                 Current comment: {selectedIssue.comments ? `"${selectedIssue.comments}"` : "(empty)"}
               </div>
+            </div>
+
+            <div className="file-attachment-section">
+              <strong>Attach File</strong>
+              <input
+                type="file"
+                onChange={handleFileChange}
+                accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+              />
+              {file && <p>Selected File: {file.name}</p>}
             </div>
 
             <div className="save-button-container">
