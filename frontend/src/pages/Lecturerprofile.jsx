@@ -44,8 +44,7 @@ const LecturerProfile = () => {
 
   const handleEditClick = (field) => {
     // Don't allow editing for readonly fields
-    if (field === 'fullName' || field === 'email' || field === 'gender' || 
-        field === 'lecturerNumber' || field === 'registrationNumber') {
+    if (isReadOnly(field)) {
       return;
     }
 
@@ -68,10 +67,10 @@ const LecturerProfile = () => {
   const handleSave = () => {
     if (editableField) {
       setEditableField(null);
-  
+
       // Simulate a successful save (replace with API call if needed)
       const isSaveSuccessful = true; // Replace with actual save logic
-  
+
       if (isSaveSuccessful) {
         // Show success toast
         toast.success('Profile updated successfully!', {
