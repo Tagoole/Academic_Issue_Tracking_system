@@ -26,7 +26,7 @@ const LecturerIssueManagement = () => {
     courseUnitCode: '',
     assignedLecturer: '',
     description: '',
-    comments: '', // Initialize with empty string instead of null
+    comment: '', // Changed from "comments" to "comment" to match serializer
     is_commented: false,
     // Additional fields from API response
     course_unit: '',
@@ -83,7 +83,7 @@ const LecturerIssueManagement = () => {
           semester: issueData.semester,
           student: issueData.student,
           year_of_study: issueData.year_of_study,
-          comments: issueData.comments || '',
+          comment: issueData.comment || '', // Changed from "comments" to "comment"
           is_commented: issueData.is_commented || false
         }));
 
@@ -131,7 +131,7 @@ const LecturerIssueManagement = () => {
 
   useEffect(() => {
     const handleBeforeUnload = (e) => {
-      if (selectedIssue.comments && !loading && !showConfirmation) {
+      if (selectedIssue.comment && !loading && !showConfirmation) { // Changed from "comments" to "comment"
         const message = "You have unsaved changes. Are you sure you want to leave?";
         e.returnValue = message; // This is required for the browser to show a confirmation dialog.
         toast.warning('You have unsaved changes', {
@@ -145,7 +145,7 @@ const LecturerIssueManagement = () => {
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [selectedIssue.comments, loading, showConfirmation]);
+  }, [selectedIssue.comment, loading, showConfirmation]); // Changed from "comments" to "comment"
 
   const handleStatusUpdate = (newStatus) => {
     setSelectedNewStatus(newStatus.toLowerCase()); // Convert to lowercase to match API expectations
@@ -175,7 +175,7 @@ const LecturerIssueManagement = () => {
     console.log("Comment changed to:", commentText);
 
     // If the comment exceeds 500 characters, show an informational toast
-    if (commentText.length > 500 && selectedIssue.comments.length <= 500) {
+    if (commentText.length > 500 && selectedIssue.comment.length <= 500) { // Changed from "comments" to "comment"
       toast.info('Your comment is getting quite detailed. You can continue writing or save whenever ready.', {
         autoClose: 3000, // Toast will disappear after 3 seconds
       });
@@ -183,15 +183,15 @@ const LecturerIssueManagement = () => {
 
     setSelectedIssue((prevState) => ({
       ...prevState,
-      comments: commentText,
+      comment: commentText, // Changed from "comments" to "comment"
     }));
   };
 
   const handleSave = () => {
-    console.log("Current comments before save:", selectedIssue.comments);
+    console.log("Current comment before save:", selectedIssue.comment); // Changed from "comments" to "comment"
 
     // Check if the comment is empty or only contains whitespace
-    if (!selectedIssue.comments || !selectedIssue.comments.trim()) {
+    if (!selectedIssue.comment || !selectedIssue.comment.trim()) { // Changed from "comments" to "comment"
       setErrorMessage('Please add a comment before saving changes.');
       // Warning toast notification
       toast.warning('Please add a comment before saving changes', {
@@ -201,7 +201,7 @@ const LecturerIssueManagement = () => {
     }
 
     // Check if the comment is too short
-    if (selectedIssue.comments.trim().length < 20) {
+    if (selectedIssue.comment.trim().length < 20) { // Changed from "comments" to "comment"
       toast.warning('Your comment is quite brief. Consider adding more details to help the student.', {
         autoClose: 4000, // Toast will disappear after 4 seconds
       });
@@ -232,7 +232,7 @@ const LecturerIssueManagement = () => {
       // Create a FormData object to handle file upload
       const formData = new FormData();
       formData.append('status', selectedNewStatus.toLowerCase());
-      formData.append('comments', selectedIssue.comments);
+      formData.append('comment', selectedIssue.comment); // Changed from "comments" to "comment"
       formData.append('is_commented', true);
       if (file) {
         formData.append('attachment', file); // Add the file to the request
@@ -335,7 +335,7 @@ const LecturerIssueManagement = () => {
             <div className="comment-section">
               <strong>Add Comment</strong>
               <textarea
-                value={selectedIssue.comments || ''}
+                value={selectedIssue.comment || ''} // Changed from "comments" to "comment"
                 onChange={handleCommentChange}
                 placeholder="Enter your response to this issue..."
                 rows="4"
@@ -347,7 +347,7 @@ const LecturerIssueManagement = () => {
               />
               {/* Display current comment value for debugging */}
               <div className="debug-info" style={{ fontSize: "12px", color: "#666" }}>
-                Current comment: {selectedIssue.comments ? `"${selectedIssue.comments}"` : "(empty)"}
+                Current comment: {selectedIssue.comment ? `"${selectedIssue.comment}"` : "(empty)"} {/* Changed from "comments" to "comment" */}
               </div>
             </div>
 
@@ -389,7 +389,7 @@ const LecturerIssueManagement = () => {
               <div className="status-dialog">
                 <h3>Status Update</h3>
                 <p>{statusUpdateMessage}</p>
-                <p><strong>Comment:</strong> {selectedIssue.comments}</p>
+                <p><strong>Comment:</strong> {selectedIssue.comment}</p> {/* Changed from "comments" to "comment" */}
                 <div className="confirmation-buttons">
                   <button 
                     className="confirm-button" 
