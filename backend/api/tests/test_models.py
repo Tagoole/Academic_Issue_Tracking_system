@@ -15,6 +15,8 @@ class TestDepartment:
             description="Department of Computer Science and Software Engineering"
         )
         
+        
+        
         assert department.department_name == "Computer Science"
         assert department.description == "Department of Computer Science and Software Engineering"
     
