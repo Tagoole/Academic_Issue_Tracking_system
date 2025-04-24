@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import makerereLogo from '../assets/makererelogo.png';
 import hidden from '../assets/hidden.png';
 import './Changepassword.css';
@@ -17,6 +18,22 @@ function ChangePassword() {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [successMessage, setSuccessMessage] = useState(false);
   const [passwordError, setPasswordError] = useState('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    try {
+      // Simulate successful page load
+      toast.success('Page loaded successfully!', {
+        autoClose: 3000,
+      });
+    } catch (error) {
+      // Redirect to dashboard if page fails to load
+      toast.error('Failed to load page. Redirecting to dashboard...', {
+        autoClose: 3000,
+      });
+      setTimeout(() => navigate('/dashboard'), 3000); // Redirect after 3 seconds
+    }
+  }, [navigate]);
 
   const validatePassword = (password) => {
     if (password.length < 6) {
