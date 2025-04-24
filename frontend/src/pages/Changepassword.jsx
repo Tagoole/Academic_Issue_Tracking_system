@@ -3,7 +3,7 @@ import makerereLogo from '../assets/makererelogo.png';
 import hidden from '../assets/hidden.png';
 import './Changepassword.css';
 import NavBar from './NavBar';
-import backgroundImage from '../assets/pexels-olia-danilevich-5088017.jpg'; 
+ 
 
 function ChangePassword() {
   const [oldPassword, setOldPassword] = useState('');
@@ -72,7 +72,7 @@ function ChangePassword() {
     <div
           className="settings-container"
           style={{
-            backgroundImage: `url(${backgroundImage})`,
+            background: 'rgba(255, 255, 255, 0.8)', // Optional fallback background color
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
