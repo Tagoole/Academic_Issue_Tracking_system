@@ -5,16 +5,12 @@ import "./new-password.css";
 import API from "../api"; // Import the API instance from api.js
 
 const NewPassword = () => {
-  const [newPassword, setNewPassword] = useState("");
+  const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  
-  // Get verification code from URL parameters
-  const queryParams = new URLSearchParams(window.location.search);
-  const verificationCode = queryParams.get("code");
   
   const navigate = useNavigate();
 
@@ -24,29 +20,24 @@ const NewPassword = () => {
     if (storedEmail) {
       setEmail(storedEmail);
     } else {
-      setError("Email address not found");
-    }
-
-    // Redirect to sign-in page if no verification code is provided
-    if (!verificationCode) {
-      setError("Invalid or missing verification code");
+      setError("Email address not found. Please restart the password reset process.");
       setTimeout(() => {
         navigate("/signin");
       }, 3000);
     }
-  }, [verificationCode, navigate]);
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     
     // Validate passwords
-    if (newPassword.length < 8) {
+    if (password.length < 8) {
       setError("Password must be at least 8 characters long");
       return;
     }
     
-    if (newPassword !== confirmPassword) {
+    if (password !== confirmPassword) {
       setError("Passwords do not match");
       return;
     }
@@ -59,14 +50,17 @@ const NewPassword = () => {
     setIsLoading(true);
     
     try {
-      // Call API to reset password with code, new password and email
+      // Call API to reset password with new password fields and email
       const response = await API.post("/api/final_password_reset/", {
-        code: verificationCode,
-        new_password: newPassword,
+        password: password,
+        confirm_password: confirmPassword,
         email: email
       });
       
       setSuccess(true);
+      
+      // Clear localStorage
+      localStorage.removeItem('userEmail');
       
       // Redirect to sign-in page after successful password reset
       setTimeout(() => {
@@ -74,7 +68,24 @@ const NewPassword = () => {
       }, 2000);
       
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to reset password. Please try again.");
+      if (err.response && err.response.data) {
+        // Handle detailed error messages from the backend
+        if (typeof err.response.data === 'string') {
+          setError(err.response.data);
+        } else if (err.response.data.non_field_errors) {
+          setError(err.response.data.non_field_errors.join(', '));
+        } else if (typeof err.response.data === 'object') {
+          const errorMessages = Object.values(err.response.data)
+            .flat()
+            .filter(val => val)
+            .join('. ');
+          setError(errorMessages || "Failed to reset password. Please try again.");
+        } else {
+          setError("Failed to reset password. Please try again.");
+        }
+      } else {
+        setError("Failed to connect to the server. Please check your internet connection.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -95,8 +106,8 @@ const NewPassword = () => {
             <input
               type="password"
               id="new-password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter new password"
               required
               disabled={isLoading || success}
