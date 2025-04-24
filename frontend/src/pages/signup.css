@@ -65,7 +65,7 @@ html, body {
 .left-side, .right-side {
   padding: 20px 25px;
   flex: 1;
-  min-width: 300px; /* Ensure minimum width on small screens */
+  min-width: 300px; 
 }
 
 /* Make left side white */
@@ -76,7 +76,7 @@ html, body {
 /* Keep right side with slight differentiation but lighter */
 .right-side {
   background-color: transparent; 
-  border-left: 1px solid rgba(255, 255, 255, 0.2); /* subtle divider */
+  border-left: 1px solid rgba(255, 255, 255, 0.2); 
 }
 
 /* Make "Create an Account" text bigger */
