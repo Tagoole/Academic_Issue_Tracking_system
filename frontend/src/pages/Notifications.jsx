@@ -35,7 +35,7 @@ const Notifications = () => {
         // Set authorization header with access token
         API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
         
-        const response = await API.get('/api/notifications/');
+        const response = await API.get('/api/user_email_notifications/');
         console.log("Notifications API Response:", response.data); // Debug log
         setNotifications(response.data);
         setLoading(false);
