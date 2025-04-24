@@ -209,7 +209,6 @@ const StudentDashboard = () => {
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>Issue</th>
                   <th>Status</th>
                   <th>Issue Type</th>
                   <th>Created</th>
@@ -224,7 +223,6 @@ const StudentDashboard = () => {
                   filteredIssues.map((issue, index) => (
                     <tr key={issue.id || index}>
                       <td>#{issue.id || 'N/A'}</td>
-                      <td>{issue.issue}</td>
                       <td>
                         <span className={`status-tag status-${issue.status}`}>
                           {issue.status === 'pending' ? 'Pending' : 
@@ -247,7 +245,7 @@ const StudentDashboard = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="9" className="no-issues-message">No {activeTab.toLowerCase()} issues found</td>
+                    <td colSpan="8" className="no-issues-message">No {activeTab.toLowerCase()} issues found</td>
                   </tr>
                 )}
               </tbody>
