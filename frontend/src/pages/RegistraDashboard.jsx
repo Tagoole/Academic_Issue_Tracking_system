@@ -252,9 +252,9 @@ const RegistraDashboard = () => {
                         onChange={(e) => setStatusFilter(e.target.value)}
                       >
                         <option value="all">All Statuses</option>
-                        <option value="Pending">Pending</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Resolved">Resolved</option>
+                        <option value="pending">Pending</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="resolved">Resolved</option>
                       </select>
                       <span className="dropdown-arrow"></span>
                     </div>
