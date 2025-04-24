@@ -32,6 +32,7 @@ urlpatterns = [
     path('resend_password_reset_code/',resend_password_reset_code,name = 'resend_password_reset_code'),
     path('get_registrars/',get_registrars,name = 'get_registrars'),
     path('get_lecturers/',get_lecturers,name = 'get_lecturers'),
+    path('delete_account/',delete_account,name='delete_account'),
 ]
 
 
