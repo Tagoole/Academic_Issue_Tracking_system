@@ -59,6 +59,8 @@ class IssueViewSet(ModelViewSet):
         # Extract usernames from request data
         registrar_username = self.request.data.get('registrar')
         student_username = self.request.data.get('student')
+        issue_type = self.request.data.get('issue_type')
+        
         
         # Handle registrar assignment by username
         registrar = None
@@ -68,7 +70,7 @@ class IssueViewSet(ModelViewSet):
                 registrar_email = registrar.email
                 # Preparing to alert the Registar by email 
                 subject = 'ISSUE HAS BEEN ASSIGNED TO YOU'
-                message = 'You have been requested to Solve the issue..'
+                message = f'You have been requested to Solve the issue of {issue_type} raised by {student_username}'
                 send_mail(subject,message,settings.EMAIL_HOST_USER,[registrar_email],fail_silently=False)
                 print(f"Found registrar user: {registrar}")
             except User.DoesNotExist:
