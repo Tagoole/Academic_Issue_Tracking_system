@@ -118,12 +118,12 @@ const RegistraDashboard = () => {
 
       // Filter by status
       if (statusFilter !== 'all') {
-        filtered = filtered.filter((issue) => issue.status === statusFilter);
+        filtered = filtered.filter((issue) => issue.status.toLowerCase() === statusFilter.toLowerCase());
       }
 
       // Filter by category
       if (categoryFilter !== 'all') {
-        filtered = filtered.filter((issue) => issue.category === categoryFilter);
+        filtered = filtered.filter((issue) => issue.category.toLowerCase() === categoryFilter.toLowerCase());
       }
 
       // Search by Issue ID, Student Number, or Category
@@ -131,8 +131,8 @@ const RegistraDashboard = () => {
         filtered = filtered.filter(
           (issue) =>
             issue.id.toString().includes(searchTerm) ||
-            issue.studentNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            issue.category.toLowerCase().includes(searchTerm.toLowerCase())
+            issue.studentNo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            issue.category?.toLowerCase().includes(searchTerm.toLowerCase())
         );
       }
 
