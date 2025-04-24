@@ -51,7 +51,7 @@
 .search-container {
   display: flex;
   width: 700px; /* Full width to align with table */
-  height: 40px; /* Reduced height for compact look */
+  height: 40px; 
   align-items: center;
   gap: 10px;
   margin-bottom: 20px;
@@ -94,7 +94,7 @@
 
 /* Issues container and tabs */
 .issues-container {
-  width: 300px; /* Full width to align with table */
+  width: 300px; 
   height: 40px; 
   margin-bottom: 10px; 
   display: flex;
