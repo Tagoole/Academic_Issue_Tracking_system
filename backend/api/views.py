@@ -526,7 +526,7 @@ def get_lecturers(request):
     
     return Response(serializer.data, status=status.HTTP_200_OK)
 
-@api_view(['POST'])
+@api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 def delete_account(request):
     pass
