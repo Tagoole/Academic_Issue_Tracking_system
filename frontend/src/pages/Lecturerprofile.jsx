@@ -66,9 +66,25 @@ const LecturerProfile = () => {
   };
 
   const handleSave = () => {
-    setEditableField(null);
-    console.log('Profile updated:', profile);
-    // Add API call to save updated profile data
+    if (editableField) {
+      setEditableField(null);
+  
+      // Simulate a successful save (replace with API call if needed)
+      const isSaveSuccessful = true; // Replace with actual save logic
+  
+      if (isSaveSuccessful) {
+        // Show success toast
+        toast.success('Profile updated successfully!', {
+          autoClose: 3000,
+        });
+        console.log('Profile updated:', profile);
+      } else {
+        // Show error toast
+        toast.error('Failed to update profile. Please try again.', {
+          autoClose: 3000,
+        });
+      }
+    }
   };
 
   const handleImageClick = () => {
