@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import makerereLogo from '../assets/makererelogo.png';
 import './Help.css'; 
-import NavBar from './NavBar';
-import backgroundImage from '../assets/pexels-olia-danilevich-5088017.jpg'; 
+import NavBar from './NavBar'; 
 
 const Help = () => {
   /* --- State for user role --- */
@@ -50,7 +49,6 @@ const Help = () => {
     <div
       className="settings-container"
       style={{
-        backgroundImage: `url(${backgroundImage})`, 
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
