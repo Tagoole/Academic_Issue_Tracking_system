@@ -104,12 +104,12 @@
 .issues-header {
   width: 100%;
   display: flex;
-  justify-content: flex-start; /* Align tabs to the left */
+  justify-content: flex-start; 
 }
 
 .tab-container {
   display: flex;
-  gap: 10px; /* Reduced gap for compactness */
+  gap: 10px; 
   margin-bottom: 10px; 
 }
 
