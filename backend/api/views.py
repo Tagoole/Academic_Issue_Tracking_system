@@ -65,6 +65,11 @@ class IssueViewSet(ModelViewSet):
         if registrar_username:
             try:
                 registrar = User.objects.get(username=registrar_username)
+                registrar_email = registrar.email
+                # Preparing to alert the Registar by email 
+                subject = 'ISSUE HAS BEEN ASSIGNED TO YOU'
+                message = 'You have been requested to Solve the issue..'
+                send_mail(subject,message,settings.EMAIL_HOST_USER,[registrar_email],fail_silently=False)
                 print(f"Found registrar user: {registrar}")
             except User.DoesNotExist:
                 print(f"No user found with username: {registrar_username}")
