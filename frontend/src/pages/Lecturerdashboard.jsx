@@ -335,6 +335,14 @@ const Lecturerdashboard = () => {
                 <span className="dropdown-arrow"></span>
               </div>
             </div>
+            <div className="search-bar">
+              <input
+                type="text"
+                placeholder="Search by Issue ID, Student No, or Category..."
+                value={searchTerm}
+                onChange={handleSearchChange}
+              />
+            </div>
           </div>
 
           {/* Issues table section */}
