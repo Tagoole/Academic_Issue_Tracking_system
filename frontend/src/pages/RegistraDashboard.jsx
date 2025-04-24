@@ -10,6 +10,8 @@ const RegistraDashboard = () => {
   const [issues, setIssues] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredIssues, setFilteredIssues] = useState([]);
   const [pendingCount, setPendingCount] = useState(0);
@@ -109,6 +111,36 @@ const RegistraDashboard = () => {
       setFilteredIssues(filtered);
     }
   }, [searchTerm, issues]);
+
+  useEffect(() => {
+    const applyFilters = () => {
+      let filtered = issues;
+
+      // Filter by status
+      if (statusFilter !== 'all') {
+        filtered = filtered.filter((issue) => issue.status === statusFilter);
+      }
+
+      // Filter by category
+      if (categoryFilter !== 'all') {
+        filtered = filtered.filter((issue) => issue.category === categoryFilter);
+      }
+
+      // Search by Issue ID, Student Number, or Category
+      if (searchTerm.trim() !== '') {
+        filtered = filtered.filter(
+          (issue) =>
+            issue.id.toString().includes(searchTerm) ||
+            issue.studentNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            issue.category.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      }
+
+      setFilteredIssues(filtered);
+    };
+
+    applyFilters();
+  }, [statusFilter, categoryFilter, searchTerm, issues]);
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -210,6 +242,42 @@ const RegistraDashboard = () => {
                         <span>Filter</span>
                         <span className="filter-icon">▼</span>
                       </button>
+                    </div>
+                  </div>
+                  <div className="filter-controls">
+                    <div className="select-wrapper">
+                      <select
+                        className="status-filter"
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                      >
+                        <option value="all">All Statuses</option>
+                        <option value="Pending">Pending</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Resolved">Resolved</option>
+                      </select>
+                      <span className="dropdown-arrow"></span>
+                    </div>
+                    <div className="select-wrapper">
+                      <select
+                        className="category-filter"
+                        value={categoryFilter}
+                        onChange={(e) => setCategoryFilter(e.target.value)}
+                      >
+                        <option value="all">All Categories</option>
+                        <option value="Missing Marks">Missing Marks</option>
+                        <option value="Wrong Marks">Wrong Marks</option>
+                        <option value="Other">Other</option>
+                      </select>
+                      <span className="dropdown-arrow"></span>
+                    </div>
+                    <div className="search-bar">
+                      <input
+                        type="text"
+                        placeholder="Search by Issue ID, Student No, or Category..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                      />
                     </div>
                   </div>
                   {/* New Table Container */}
