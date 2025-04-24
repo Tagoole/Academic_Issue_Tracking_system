@@ -44,7 +44,7 @@ const SignUp = () => {
         const fetchPrograms = async () => {
             try {
                 setIsLoadingPrograms(true);
-                const response = await API.get('api/program/');
+                const response = await API.get('/api/program/');
                 setPrograms(response.data);
                 setIsLoadingPrograms(false);
             } catch (error) {
