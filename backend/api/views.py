@@ -70,7 +70,7 @@ class IssueViewSet(ModelViewSet):
                 registrar_email = registrar.email
                 # Preparing to alert the Registar by email 
                 subject = 'ISSUE HAS BEEN ASSIGNED TO YOU'
-                message = f'You have been requested to Solve the issue of {issue_type} raised by {student_username}'
+                message = f'Dear {registrar_username},\n\n You have been requested to Solve the issue of {issue_type} raised by {student_username}'
                 send_mail(subject,message,settings.EMAIL_HOST_USER,[registrar_email],fail_silently=False)
                 print(f"Found registrar user: {registrar}")
             except User.DoesNotExist:
