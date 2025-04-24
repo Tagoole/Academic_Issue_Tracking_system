@@ -136,6 +136,17 @@ const Lecturerdashboard = () => {
     }
   }, [statusFilter, categoryFilter, searchTerm, allIssues]);
 
+  useEffect(() => {
+    // Generate a dynamic message based on the selected filters
+    const statusMessage = statusFilter === 'all' ? 'All Statuses' : `${statusFilter} Issues`;
+    const categoryMessage = categoryFilter === 'all' ? 'All Categories' : `${categoryFilter} Issues`;
+
+    // Display a toast notification with the current filters
+    toast.info(`${statusMessage} of ${categoryMessage} on display.`, {
+      autoClose: 3000, // Toast will disappear after 3 seconds
+    });
+  }, [statusFilter, categoryFilter]); // Run this effect whenever the filters change
+
   // Handle issue click
   const handleIssueClick = (issue) => {
     setSelectedIssue(issue);
