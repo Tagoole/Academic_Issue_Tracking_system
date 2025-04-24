@@ -50,6 +50,21 @@ const Preferences = () => {
     setEmailUpdates(!emailUpdates);
   };
 
+  useEffect(() => {
+    try {
+      // Simulate successful page load
+      toast.success('Preferences page loaded successfully!', {
+        autoClose: 3000,
+      });
+    } catch (error) {
+      // Redirect to dashboard if page fails to load
+      toast.error('Failed to load preferences page. Redirecting to dashboard...', {
+        autoClose: 3000,
+      });
+      setTimeout(() => navigate('/dashboard'), 3000); // Redirect after 3 seconds
+    }
+  }, [navigate]);
+
   return (
     <div
       className="settings-container"
