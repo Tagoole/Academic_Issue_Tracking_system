@@ -8,6 +8,8 @@ from datetime import timedelta
 
 
 
+
+
 @pytest.mark.django_db
 class TestDepartment:
     def test_department_creation(self):
