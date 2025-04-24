@@ -48,7 +48,7 @@ const Lecturerdashboard = () => {
         API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
         
         const response = await API.get('api/lecturer_issue_management/');
-        console.log("API Response:", response.data); // Debug log
+        console.log("API Response:", response.data); 
         
         setAllIssues(response.data);
         setFilteredIssues(response.data);
@@ -113,7 +113,7 @@ const Lecturerdashboard = () => {
         categoryFilter === 'all' || issue.category?.toLowerCase() === categoryFilter.toLowerCase();
       const matchesSearch =
         searchTerm === '' ||
-        (issue.id && issue.id.toString().includes(searchTerm)) || // Search by Issue ID
+        (issue.id && issue.id.toString().includes(searchTerm)) || 
         (issue.studentNo && issue.studentNo.toLowerCase().includes(searchTerm.toLowerCase())) || // Search by Student No
         (issue.category && issue.category.toLowerCase().includes(searchTerm.toLowerCase())); // Search by Category
 
