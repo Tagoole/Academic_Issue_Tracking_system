@@ -103,18 +103,21 @@ const Lecturerdashboard = () => {
   // Apply filters to issues whenever filters change
   useEffect(() => {
     if (allIssues.length === 0) return;
-    
-    const filtered = allIssues.filter(issue => {
-      const matchesStatus = statusFilter === 'all' || issue.status === statusFilter;
-      const matchesCategory = categoryFilter === 'all' || issue.category === categoryFilter;
-      const matchesSearch = searchTerm === '' || 
+
+    const filtered = allIssues.filter((issue) => {
+      const matchesStatus =
+        statusFilter === 'all' || issue.status?.toLowerCase() === statusFilter.toLowerCase();
+      const matchesCategory =
+        categoryFilter === 'all' || issue.category?.toLowerCase() === categoryFilter.toLowerCase();
+      const matchesSearch =
+        searchTerm === '' ||
         (issue.title && issue.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
         (issue.studentNo && issue.studentNo.toLowerCase().includes(searchTerm.toLowerCase())) ||
         (issue.category && issue.category.toLowerCase().includes(searchTerm.toLowerCase()));
-      
+
       return matchesStatus && matchesCategory && matchesSearch;
     });
-    
+
     setFilteredIssues(filtered);
   }, [statusFilter, categoryFilter, searchTerm, allIssues]);
 
@@ -156,8 +159,8 @@ const Lecturerdashboard = () => {
   }, [selectedIssue]);
 
   // Get unique categories and statuses for filter dropdowns
-  const uniqueCategories = allIssues.length > 0 ? [...new Set(allIssues.map(issue => issue.category))] : [];
-  const uniqueStatuses = allIssues.length > 0 ? [...new Set(allIssues.map(issue => issue.status))] : [];
+  const uniqueCategories = allIssues.length > 0 ? [...new Set(allIssues.map((issue) => issue.category))] : [];
+  const uniqueStatuses = allIssues.length > 0 ? [...new Set(allIssues.map((issue) => issue.status))] : [];
 
   // Handler to close the issue summary from within
   const handleCloseSummary = () => {
