@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import makerereLogo from '../assets/makererelogo.png';
 import './Preferences.css';
 import NavBar from './NavBar';
-import backgroundImage from '../assets/pexels-olia-danilevich-5088017.jpg';
+
 
 const Preferences = () => {
   const navigate = useNavigate();
@@ -52,7 +52,7 @@ const Preferences = () => {
     <div
       className="settings-container"
       style={{
-        backgroundImage: `url(${backgroundImage})`,
+        background:'none',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
