@@ -114,8 +114,8 @@ const Lecturerdashboard = () => {
       const matchesSearch =
         searchTerm === '' ||
         (issue.id && issue.id.toString().includes(searchTerm)) || 
-        (issue.studentNo && issue.studentNo.toLowerCase().includes(searchTerm.toLowerCase())) || // Search by Student No
-        (issue.category && issue.category.toLowerCase().includes(searchTerm.toLowerCase())); // Search by Category
+        (issue.studentNo && issue.studentNo.toLowerCase().includes(searchTerm.toLowerCase())) || 
+        (issue.category && issue.category.toLowerCase().includes(searchTerm.toLowerCase())); 
 
       return matchesStatus && matchesCategory && matchesSearch;
     });
