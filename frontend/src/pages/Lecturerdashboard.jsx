@@ -4,6 +4,8 @@ import './Lecturerdashboard.css';
 import Navbar from './NavBar';
 import Sidebar2 from './Sidebar2';
 import IssueSummary from './IssueSummary';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import API from '../api.js';
 
 const Lecturerdashboard = () => {
@@ -427,6 +429,18 @@ const Lecturerdashboard = () => {
           </div>
         )}
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </div>
   );
 };
