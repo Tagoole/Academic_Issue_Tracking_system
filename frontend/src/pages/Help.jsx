@@ -22,6 +22,20 @@ const Help = () => {
     }
   }, []);
 
+  useEffect(() => {
+    try {
+      // Simulate successful page load
+      toast.success('Help page loaded successfully!', {
+        autoClose: 3000,
+      });
+    } catch (error) {
+      // Display error toast if page fails to load
+      toast.error('Failed to load Help page. Please try again later.', {
+        autoClose: 3000,
+      });
+    }
+  }, []);
+
   /* --- Function to determine dashboard URL based on role --- */
   const getDashboardUrl = () => {
     switch (userRole.toLowerCase()) {
