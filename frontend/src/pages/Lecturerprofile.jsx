@@ -72,11 +72,23 @@ const LecturerProfile = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Create a preview URL for the image
-      const imageUrl = URL.createObjectURL(file);
-      setProfileImage(imageUrl);
-      
-      console.log('Image file selected:', file);
+      try {
+        // Create a preview URL for the image
+        const imageUrl = URL.createObjectURL(file);
+        setProfileImage(imageUrl);
+
+        // Show success toast
+        toast.success('Profile picture updated successfully!', {
+          autoClose: 3000,
+        });
+
+        console.log('Image file selected:', file);
+      } catch (error) {
+        // Show error toast
+        toast.error('Failed to update profile picture. Please try again.', {
+          autoClose: 3000,
+        });
+      }
     }
   };
 
