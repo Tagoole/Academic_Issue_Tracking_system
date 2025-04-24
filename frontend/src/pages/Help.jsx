@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import makerereLogo from '../assets/makererelogo.png';
 import './Help.css'; 
 import NavBar from './NavBar'; 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Help = () => {
   /* --- State for user role --- */
@@ -186,6 +188,18 @@ const Help = () => {
           </div>
         </div>
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </div>
   );
 };
