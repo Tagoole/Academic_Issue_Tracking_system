@@ -22,14 +22,14 @@
   flex: 1;
   padding: 30px;
   margin-top: 50px;
-  margin-left: 100px; /* Width of Sidebar */
+  margin-left: 100px; 
   background-color: #f9f6f6f2;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: 900px;
   margin-right: 250px;
-  max-height: 80vh; /* Set a maximum height relative to viewport height */
-  overflow-y: auto; /* Enable vertical scrolling */
+  max-height: 80vh; 
+  overflow-y: auto; 
   content: center;
 }
 
