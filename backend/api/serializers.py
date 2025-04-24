@@ -209,3 +209,6 @@ class Email_notificationSerializer(serializers.ModelSerializer):
         model =Email_Notification
         fields = '__all__'
         
+
+class Get_Email_notificationSerializer(serializers.Serializer):
+    userId = serializers.IntegerField()
