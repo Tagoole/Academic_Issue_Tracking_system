@@ -406,7 +406,7 @@ const Lecturerdashboard = () => {
                             <button
                               className="resolve-btn"
                               onClick={(e) => {
-                                e.stopPropagation(); // Prevent triggering the row click event
+                                e.stopPropagation(); 
                                 handleResolveIssue(issue);
                               }}
                             >
