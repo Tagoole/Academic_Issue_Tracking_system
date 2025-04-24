@@ -5,7 +5,7 @@
   min-height: 800px;
   width: 100%;
   position: relative;
-  background-color: rgba(red, green, blue, alpha); /* Light background color instead of image */
+  background-color: rgba(red, green, blue, alpha); 
   margin-top: 20px;
   margin-left: 250px;
 }
@@ -13,8 +13,8 @@
 /* Page content (below navbar, contains sidebar and form) */
 .page-content {
   display: flex;
-  padding-top: 0; /* No padding to ensure it's directly under navbar */
-  min-height: 600px; /* Full height minus navbar */
+  padding-top: 0; 
+  min-height: 600px; 
 }
 
 /* Form container */
