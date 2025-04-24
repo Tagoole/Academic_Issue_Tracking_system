@@ -304,15 +304,15 @@ const RegistraDashboard = () => {
                             filteredIssues.map((issue, index) => (
                               <tr key={issue.id || index}>
                                 <td>#{issue.id || 'N/A'}</td>
-                                <td>{issue.description || 'N/A'}</td> {/* Adjusted field: assuming 'description' for issue details */}
+                                <td>{issue.description || 'N/A'}</td>
                                 <td>
                                   <span className={`status-tag status-${issue.status}`}>
                                     {issue.status === 'pending' ? 'Pending' :
-                                     issue.status === 'in_progress' ? 'In-progress' :
+                                     issue.status === 'in_progress' ? 'In Progress' :
                                      issue.status === 'resolved' ? 'Resolved' : issue.status}
                                   </span>
                                 </td>
-                                <td>{issue.category || 'N/A'}</td> {/* Using 'category' as issue type */}
+                                <td>{issue.category || 'N/A'}</td>
                                 <td>{formatDate(issue.date || issue.created_at)}</td>
                                 <td>{formatDate(issue.updated_at || issue.date)}</td>
                                 <td>
