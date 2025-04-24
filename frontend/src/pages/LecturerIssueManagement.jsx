@@ -128,6 +128,24 @@ const LecturerIssueManagement = () => {
     }
   }, [issueId]);
 
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (selectedIssue.comments && !loading && !showConfirmation) {
+        const message = "You have unsaved changes. Are you sure you want to leave?";
+        e.returnValue = message; // This is required for the browser to show a confirmation dialog.
+        toast.warning('You have unsaved changes', {
+          autoClose: 3000, // Toast will disappear after 3 seconds
+        });
+        return message;
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [selectedIssue.comments, loading, showConfirmation]);
+
   const handleStatusUpdate = (newStatus) => {
     setSelectedNewStatus(newStatus.toLowerCase()); // Convert to lowercase to match API expectations
     setShowStatusDialog(false);
