@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import makerereLogo from '../assets/makererelogo.png';
 import hidden from '../assets/hidden.png';
 import './Changepassword.css';
 import NavBar from './NavBar';
-import backgroundImage from '../assets/pexels-olia-danilevich-5088017.jpg'; 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+ 
 
 function ChangePassword() {
   const [oldPassword, setOldPassword] = useState('');
@@ -15,6 +18,22 @@ function ChangePassword() {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [successMessage, setSuccessMessage] = useState(false);
   const [passwordError, setPasswordError] = useState('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    try {
+      // Simulate successful page load
+      toast.success('Page loaded successfully!', {
+        autoClose: 3000,
+      });
+    } catch (error) {
+      // Redirect to dashboard if page fails to load
+      toast.error('Failed to load page. Redirecting to dashboard...', {
+        autoClose: 3000,
+      });
+      setTimeout(() => navigate('/dashboard'), 3000); // Redirect after 3 seconds
+    }
+  }, [navigate]);
 
   const validatePassword = (password) => {
     if (password.length < 6) {
@@ -25,19 +44,35 @@ function ChangePassword() {
 
   const handleSaveChanges = () => {
     if (!oldPassword || !newPassword || !confirmPassword) {
-      alert("Please fill in all password fields");
+      toast.error('Please fill in all password fields.', {
+        autoClose: 3000,
+      });
       return;
     }
+  
     if (newPassword.length < 6) {
-      alert("New password must be at least 6 characters");
+      toast.error('New password must be at least 6 characters.', {
+        autoClose: 3000,
+      });
       return;
     }
-
+  
     if (newPassword !== confirmPassword) {
-      alert("New passwords don't match");
+      toast.error("New passwords don't match.", {
+        autoClose: 3000,
+      });
       return;
     }
-    setShowConfirmation(true); 
+  
+    // Simulate wrong old password
+    if (oldPassword !== 'correctOldPassword') {
+      toast.error('Old password is incorrect.', {
+        autoClose: 3000,
+      });
+      return;
+    }
+  
+    setShowConfirmation(true);
   };
 
   const confirmChangePassword = () => {
@@ -72,7 +107,7 @@ function ChangePassword() {
     <div
           className="settings-container"
           style={{
-            backgroundImage: `url(${backgroundImage})`,
+            background: 'rgba(255, 255, 255, 0.8)', // Optional fallback background color
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
@@ -442,6 +477,18 @@ function ChangePassword() {
           </div>
         </div>
       )}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </div>
   );
 }

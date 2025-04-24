@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import Navbar from './NavBar';
 import Sidebar2 from './Sidebar2';
 import './LecturerProfile.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const LecturerProfile = () => {
   const fileInputRef = useRef(null);
@@ -42,11 +44,16 @@ const LecturerProfile = () => {
 
   const handleEditClick = (field) => {
     // Don't allow editing for readonly fields
-    if (field === 'fullName' || field === 'email' || field === 'gender' || 
-        field === 'lecturerNumber' || field === 'registrationNumber') {
+    if (isReadOnly(field)) {
       return;
     }
+
     setEditableField(field);
+
+    // Show success toast
+    toast.success(`Edit mode enabled for ${field}.`, {
+      autoClose: 3000,
+    });
   };
 
   const handleInputChange = (e) => {
@@ -58,9 +65,25 @@ const LecturerProfile = () => {
   };
 
   const handleSave = () => {
-    setEditableField(null);
-    console.log('Profile updated:', profile);
-    // Add API call to save updated profile data
+    if (editableField) {
+      setEditableField(null);
+
+      // Simulate a successful save (replace with API call if needed)
+      const isSaveSuccessful = true; // Replace with actual save logic
+
+      if (isSaveSuccessful) {
+        // Show success toast
+        toast.success('Profile updated successfully!', {
+          autoClose: 3000,
+        });
+        console.log('Profile updated:', profile);
+      } else {
+        // Show error toast
+        toast.error('Failed to update profile. Please try again.', {
+          autoClose: 3000,
+        });
+      }
+    }
   };
 
   const handleImageClick = () => {
@@ -70,11 +93,23 @@ const LecturerProfile = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Create a preview URL for the image
-      const imageUrl = URL.createObjectURL(file);
-      setProfileImage(imageUrl);
-      
-      console.log('Image file selected:', file);
+      try {
+        // Create a preview URL for the image
+        const imageUrl = URL.createObjectURL(file);
+        setProfileImage(imageUrl);
+
+        // Show success toast
+        toast.success('Profile picture updated successfully!', {
+          autoClose: 3000,
+        });
+
+        console.log('Image file selected:', file);
+      } catch (error) {
+        // Show error toast
+        toast.error('Failed to update profile picture. Please try again.', {
+          autoClose: 3000,
+        });
+      }
     }
   };
 
@@ -192,6 +227,18 @@ const LecturerProfile = () => {
           </div>
         </main>
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </div>
   );
 };

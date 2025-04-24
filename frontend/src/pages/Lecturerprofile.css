@@ -111,6 +111,9 @@ body {
   overflow: hidden;
   cursor: pointer;
   flex-shrink: 0;
+  background: none; /* Remove background */
+  border: none; /* Remove border */
+  box-shadow: none; /* Remove box shadow */
 }
 
 .profile-image {

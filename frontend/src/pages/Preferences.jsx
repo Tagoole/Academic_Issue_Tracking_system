@@ -3,13 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import makerereLogo from '../assets/makererelogo.png';
 import './Preferences.css';
 import NavBar from './NavBar';
-import backgroundImage from '../assets/pexels-olia-danilevich-5088017.jpg';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const Preferences = () => {
   const navigate = useNavigate();
   const [inAppMessaging, setInAppMessaging] = useState(true);
   const [emailUpdates, setEmailUpdates] = useState(true);
   const [userRole, setUserRole] = useState('');
+  const [countdown, setCountdown] = useState(5);
+  const [isRedirectCanceled, setIsRedirectCanceled] = useState(false);
 
   // Determine user role on component mount
   useEffect(() => {
@@ -42,17 +46,148 @@ const Preferences = () => {
 
   const toggleInAppMessaging = () => {
     setInAppMessaging(!inAppMessaging);
+
+    // Show toast notification
+    toast.info(
+      `You have chosen to ${!inAppMessaging ? 'enable' : 'disable'} In-App Messaging. ${
+        !inAppMessaging ? 'Messages will now be received in the app.' : ''
+      }`,
+      {
+        autoClose: 3000,
+      }
+    );
+
+    // Start countdown for redirection
+    let countdownValue = 5;
+    setCountdown(countdownValue);
+    setIsRedirectCanceled(false);
+
+    const interval = setInterval(() => {
+      if (countdownValue > 0) {
+        countdownValue -= 1;
+        setCountdown(countdownValue);
+      } else {
+        clearInterval(interval);
+        if (!isRedirectCanceled) {
+          toast.info('Redirecting to the settings page...', {
+            autoClose: 3000,
+          });
+          navigate('/settings');
+        }
+      }
+    }, 1000);
+
+    // Show toast with cancel button
+    toast.info(
+      <div>
+        Redirecting to the settings page in <strong>{countdown}</strong> seconds.
+        <button
+          onClick={() => {
+            clearInterval(interval);
+            setIsRedirectCanceled(true);
+            toast.dismiss(); // Dismiss the toast
+          }}
+          style={{
+            marginLeft: '10px',
+            padding: '5px 10px',
+            background: '#ff3333',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+          }}
+        >
+          Cancel
+        </button>
+      </div>,
+      {
+        autoClose: false, // Keep the toast open until manually dismissed
+      }
+    );
   };
 
   const toggleEmailUpdates = () => {
     setEmailUpdates(!emailUpdates);
+
+    // Show toast notification
+    toast.info(
+      `You have chosen to ${!emailUpdates ? 'enable' : 'disable'} Email Updates. ${
+        !emailUpdates ? 'Messages will now be sent to your email.' : ''
+      }`,
+      {
+        autoClose: 3000,
+      }
+    );
+
+    // Start countdown for redirection
+    let countdownValue = 5;
+    setCountdown(countdownValue);
+    setIsRedirectCanceled(false);
+
+    const interval = setInterval(() => {
+      if (countdownValue > 0) {
+        countdownValue -= 1;
+        setCountdown(countdownValue);
+      } else {
+        clearInterval(interval);
+        if (!isRedirectCanceled) {
+          toast.info('Redirecting to the settings page...', {
+            autoClose: 3000,
+          });
+          navigate('/settings');
+        }
+      }
+    }, 1000);
+
+    // Show toast with cancel button
+    toast.info(
+      <div>
+        Redirecting to the settings page in <strong>{countdown}</strong> seconds.
+        <button
+          onClick={() => {
+            clearInterval(interval);
+            setIsRedirectCanceled(true);
+            toast.dismiss(); // Dismiss the toast
+          }}
+          style={{
+            marginLeft: '10px',
+            padding: '5px 10px',
+            background: '#ff3333',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+          }}
+        >
+          Cancel
+        </button>
+      </div>,
+      {
+        autoClose: false, // Keep the toast open until manually dismissed
+      }
+    );
   };
+
+  useEffect(() => {
+    try {
+      // Simulate successful page load
+      toast.success('Preferences page loaded successfully!', {
+        autoClose: 3000,
+      });
+    } catch (error) {
+      // Redirect to dashboard if page fails to load
+      toast.error('Failed to load preferences page. Redirecting to dashboard...', {
+        autoClose: 3000,
+      });
+      setTimeout(() => navigate('/dashboard'), 3000); // Redirect after 3 seconds
+    }
+  }, [navigate]);
 
   return (
     <div
       className="settings-container"
       style={{
-        backgroundImage: `url(${backgroundImage})`,
+        background:'none',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -193,6 +328,18 @@ const Preferences = () => {
           </div>
         </div>
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </div>
   );
 };

@@ -1,25 +1,74 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import makerereLogo from '../assets/makererelogo.png';
 import './Help.css'; 
-import NavBar from './NavBar';
-import backgroundImage from '../assets/pexels-olia-danilevich-5088017.jpg'; 
+import NavBar from './NavBar'; 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Help = () => {
+  /* --- State for user role --- */
+  const [userRole, setUserRole] = useState('');
+
+  /* --- Effect to get user role from localStorage or API --- */
+  useEffect(() => {
+    // Get the user role from localStorage or you could fetch it from an API
+    const role = localStorage.getItem('userRole');
+    if (role) {
+      setUserRole(role);
+    } else {
+      // If for some reason the role isn't in localStorage, you may want to redirect to login
+      // or fetch it from an API endpoint
+      console.warn('User role not found in localStorage');
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      // Simulate successful page load
+      toast.success('Help page loaded successfully!', {
+        autoClose: 3000,
+      });
+    } catch (error) {
+      // Display error toast if page fails to load
+      toast.error('Failed to load Help page. Please try again later.', {
+        autoClose: 3000,
+      });
+    }
+  }, []);
+
+  /* --- Function to determine dashboard URL based on role --- */
+  const getDashboardUrl = () => {
+    switch (userRole.toLowerCase()) {
+      case 'lecturer':
+        return '/lecturerdashboard';
+      case 'student':
+        return '/studentdashboard';
+      case 'registrar':
+        return '/registradashboard';
+      default:
+        // Default fallback if role is unknown
+        return '/dashboard';
+    }
+  };
+
   const handleEmailCopy = () => {
     navigator.clipboard.writeText('jjulianahmuhindo@gmail.com');
-    alert('Email copied to clipboard');
+    toast.success('Email copied to clipboard!', {
+      autoClose: 3000,
+    });
   };
 
   const handlePhoneCopy = (phoneNumber) => {
     navigator.clipboard.writeText(phoneNumber);
-    alert('Phone number copied to clipboard');
+    toast.success('Phone number copied to clipboard!', {
+      autoClose: 3000,
+    });
   };
 
   return (
     <div
       className="settings-container"
       style={{
-        backgroundImage: `url(${backgroundImage})`, 
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -51,8 +100,8 @@ const Help = () => {
           <img src={makerereLogo} alt="University Logo" className="logo-sidebar" />
         </div>
 
-        {/* Back to Dashboard Button */}
-        <a href="/dashboard" className="menu-item back-to-dashboard">
+        {/* Back to Dashboard Button - Now using dynamic URL based on role */}
+        <a href={getDashboardUrl()} className="menu-item back-to-dashboard">
           Back to Dashboard
           <svg viewBox="0 0 24 24" className="arrow-icon">
             <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
@@ -157,6 +206,18 @@ const Help = () => {
           </div>
         </div>
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </div>
   );
 };

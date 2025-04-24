@@ -4,6 +4,8 @@ import './Lecturerdashboard.css';
 import Navbar from './NavBar';
 import Sidebar2 from './Sidebar2';
 import IssueSummary from './IssueSummary';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import API from '../api.js';
 
 const Lecturerdashboard = () => {
@@ -103,20 +105,47 @@ const Lecturerdashboard = () => {
   // Apply filters to issues whenever filters change
   useEffect(() => {
     if (allIssues.length === 0) return;
-    
-    const filtered = allIssues.filter(issue => {
-      const matchesStatus = statusFilter === 'all' || issue.status === statusFilter;
-      const matchesCategory = categoryFilter === 'all' || issue.category === categoryFilter;
-      const matchesSearch = searchTerm === '' || 
-        (issue.title && issue.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (issue.studentNo && issue.studentNo.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (issue.category && issue.category.toLowerCase().includes(searchTerm.toLowerCase()));
-      
+
+    const filtered = allIssues.filter((issue) => {
+      const matchesStatus =
+        statusFilter === 'all' || issue.status?.toLowerCase() === statusFilter.toLowerCase();
+      const matchesCategory =
+        categoryFilter === 'all' || issue.category?.toLowerCase() === categoryFilter.toLowerCase();
+      const matchesSearch =
+        searchTerm === '' ||
+        (issue.id && issue.id.toString().includes(searchTerm)) || // Search by Issue ID
+        (issue.studentNo && issue.studentNo.toLowerCase().includes(searchTerm.toLowerCase())) || // Search by Student No
+        (issue.category && issue.category.toLowerCase().includes(searchTerm.toLowerCase())); // Search by Category
+
       return matchesStatus && matchesCategory && matchesSearch;
     });
-    
+
     setFilteredIssues(filtered);
+
+    // Show toast notifications
+    if (searchTerm !== '') {
+      if (filtered.length > 0) {
+        toast.success(`Issue(s) found matching "${searchTerm}".`, {
+          autoClose: 3000,
+        });
+      } else {
+        toast.error(`No issues found matching "${searchTerm}".`, {
+          autoClose: 3000,
+        });
+      }
+    }
   }, [statusFilter, categoryFilter, searchTerm, allIssues]);
+
+  useEffect(() => {
+    // Generate a dynamic message based on the selected filters
+    const statusMessage = statusFilter === 'all' ? 'All Statuses' : `${statusFilter} Issues`;
+    const categoryMessage = categoryFilter === 'all' ? 'All Categories' : `${categoryFilter} Issues`;
+
+    // Display a toast notification with the current filters
+    toast.info(`${statusMessage} of ${categoryMessage} on display.`, {
+      autoClose: 3000, // Toast will disappear after 3 seconds
+    });
+  }, [statusFilter, categoryFilter]); // Run this effect whenever the filters change
 
   // Handle issue click
   const handleIssueClick = (issue) => {
@@ -156,8 +185,8 @@ const Lecturerdashboard = () => {
   }, [selectedIssue]);
 
   // Get unique categories and statuses for filter dropdowns
-  const uniqueCategories = allIssues.length > 0 ? [...new Set(allIssues.map(issue => issue.category))] : [];
-  const uniqueStatuses = allIssues.length > 0 ? [...new Set(allIssues.map(issue => issue.status))] : [];
+  const uniqueCategories = allIssues.length > 0 ? [...new Set(allIssues.map((issue) => issue.category))] : [];
+  const uniqueStatuses = allIssues.length > 0 ? [...new Set(allIssues.map((issue) => issue.status))] : [];
 
   // Handler to close the issue summary from within
   const handleCloseSummary = () => {
@@ -305,37 +334,37 @@ const Lecturerdashboard = () => {
           <div className="dashboard-header">
             <h1>Issue Dashboard</h1>
             <div className="filter-controls">
-              <div className="select-wrapper"> 
-                <select 
-                  className="status-filter" 
-                  value={statusFilter} 
+              <div className="select-wrapper">
+                <select
+                  className="status-filter"
+                  value={statusFilter}
                   onChange={handleStatusFilterChange}
                 >
                   <option value="all">All Statuses</option>
-                  {uniqueStatuses.map(status => (
-                    <option key={status} value={status}>{status}</option>
-                  ))}
+                  <option value="Pending">Pending</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Resolved">Resolved</option>
                 </select>
                 <span className="dropdown-arrow"></span>
               </div>
               <div className="select-wrapper">
-                <select 
-                  className="category-filter" 
-                  value={categoryFilter} 
+                <select
+                  className="category-filter"
+                  value={categoryFilter}
                   onChange={handleCategoryFilterChange}
                 >
                   <option value="all">All Categories</option>
-                  {uniqueCategories.map(category => (
-                    <option key={category} value={category}>{category}</option>
-                  ))}
+                  <option value="Missing Marks">Missing Marks</option>
+                  <option value="Wrong Marks">Wrong Marks</option>
+                  <option value="Other">Other</option>
                 </select>
                 <span className="dropdown-arrow"></span>
               </div>
-
-              <input 
-                type="text" 
-                placeholder="Search issues..." 
-                className="search-input" 
+            </div>
+            <div className="search-bar">
+              <input
+                type="text"
+                placeholder="Search by Issue ID, Student No, or Category..."
                 value={searchTerm}
                 onChange={handleSearchChange}
               />
@@ -358,9 +387,9 @@ const Lecturerdashboard = () => {
                 </thead>
                 <tbody>
                   {filteredIssues.length > 0 ? (
-                    filteredIssues.map(issue => (
-                      <tr 
-                        key={issue.id} 
+                    filteredIssues.map((issue) => (
+                      <tr
+                        key={issue.id}
                         className={selectedIssue && selectedIssue.id === issue.id ? 'selected-row' : ''}
                       >
                         <td onClick={() => handleIssueClick(issue)}>{issue.id}</td>
@@ -373,11 +402,11 @@ const Lecturerdashboard = () => {
                         <td onClick={() => handleIssueClick(issue)}>{issue.category}</td>
                         <td onClick={() => handleIssueClick(issue)}>{issue.date}</td>
                         <td>
-                          {issue.status !== 'Resolved' && (
-                            <button 
+                          {(issue.status === 'Pending' || issue.status === 'In Progress') && (
+                            <button
                               className="resolve-btn"
                               onClick={(e) => {
-                                e.stopPropagation();
+                                e.stopPropagation(); // Prevent triggering the row click event
                                 handleResolveIssue(issue);
                               }}
                             >
@@ -389,7 +418,9 @@ const Lecturerdashboard = () => {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="6" className="no-issues">No issues match the current filters. Please try another search term</td>
+                      <td colSpan="6" className="no-issues">
+                        No issues match the current filters. Please try another search term
+                      </td>
                     </tr>
                   )}
                 </tbody>
@@ -411,6 +442,18 @@ const Lecturerdashboard = () => {
           </div>
         )}
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </div>
   );
 };
