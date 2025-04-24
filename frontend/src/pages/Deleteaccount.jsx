@@ -1,14 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import API from '../api';
 import makerereLogo from '../assets/makererelogo.png';
 import './Deleteaccount.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const DeleteAccount = () => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState(null);
+  const [pageLoadError, setPageLoadError] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    try {
+      // Simulate successful page load
+      toast.success('Delete Account page loaded successfully!', {
+        autoClose: 3000,
+      });
+    } catch (error) {
+      // Handle page load failure
+      setPageLoadError(true);
+      toast.error('Failed to load Delete Account page. Please try again later.', {
+        autoClose: 3000,
+      });
+    }
+  }, []);
 
   const handleDeleteAccount = () => {
     setShowConfirmModal(true);
@@ -76,6 +94,14 @@ const DeleteAccount = () => {
         <div className="university-logo-sidebar">
           <img src={makerereLogo} alt="Makerere University Logo" className="logo-sidebar" />
         </div>
+
+        {/* Back to Dashboard Button */}
+        <Link to="/lecturerdashboard" className="menu-item">
+          Back to Dashboard
+          <svg viewBox="0 0 24 24" className="arrow-icon">
+            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
+          </svg>
+        </Link>
 
         <Link to="/changepassword" className="menu-item">
           Change Password
@@ -160,6 +186,18 @@ const DeleteAccount = () => {
           </div>
         </div>
       )}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </div>
   );
 };
