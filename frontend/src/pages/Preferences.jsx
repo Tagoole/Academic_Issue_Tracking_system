@@ -12,6 +12,8 @@ const Preferences = () => {
   const [inAppMessaging, setInAppMessaging] = useState(true);
   const [emailUpdates, setEmailUpdates] = useState(true);
   const [userRole, setUserRole] = useState('');
+  const [countdown, setCountdown] = useState(5);
+  const [isRedirectCanceled, setIsRedirectCanceled] = useState(false);
 
   // Determine user role on component mount
   useEffect(() => {
@@ -55,13 +57,53 @@ const Preferences = () => {
       }
     );
 
-    // Redirect to settings page after 30 seconds
-    setTimeout(() => {
-      toast.info('Redirecting to the settings page...', {
-        autoClose: 3000,
-      });
-      navigate('/settings');
-    }, 30000); // 30 seconds
+    // Start countdown for redirection
+    let countdownValue = 5;
+    setCountdown(countdownValue);
+    setIsRedirectCanceled(false);
+
+    const interval = setInterval(() => {
+      if (countdownValue > 0) {
+        countdownValue -= 1;
+        setCountdown(countdownValue);
+      } else {
+        clearInterval(interval);
+        if (!isRedirectCanceled) {
+          toast.info('Redirecting to the settings page...', {
+            autoClose: 3000,
+          });
+          navigate('/settings');
+        }
+      }
+    }, 1000);
+
+    // Show toast with cancel button
+    toast.info(
+      <div>
+        Redirecting to the settings page in <strong>{countdown}</strong> seconds.
+        <button
+          onClick={() => {
+            clearInterval(interval);
+            setIsRedirectCanceled(true);
+            toast.dismiss(); // Dismiss the toast
+          }}
+          style={{
+            marginLeft: '10px',
+            padding: '5px 10px',
+            background: '#ff3333',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+          }}
+        >
+          Cancel
+        </button>
+      </div>,
+      {
+        autoClose: false, // Keep the toast open until manually dismissed
+      }
+    );
   };
 
   const toggleEmailUpdates = () => {
@@ -77,13 +119,53 @@ const Preferences = () => {
       }
     );
 
-    // Redirect to settings page after 30 seconds
-    setTimeout(() => {
-      toast.info('Redirecting to the settings page...', {
-        autoClose: 3000,
-      });
-      navigate('/settings');
-    }, 30000); // 30 seconds
+    // Start countdown for redirection
+    let countdownValue = 5;
+    setCountdown(countdownValue);
+    setIsRedirectCanceled(false);
+
+    const interval = setInterval(() => {
+      if (countdownValue > 0) {
+        countdownValue -= 1;
+        setCountdown(countdownValue);
+      } else {
+        clearInterval(interval);
+        if (!isRedirectCanceled) {
+          toast.info('Redirecting to the settings page...', {
+            autoClose: 3000,
+          });
+          navigate('/settings');
+        }
+      }
+    }, 1000);
+
+    // Show toast with cancel button
+    toast.info(
+      <div>
+        Redirecting to the settings page in <strong>{countdown}</strong> seconds.
+        <button
+          onClick={() => {
+            clearInterval(interval);
+            setIsRedirectCanceled(true);
+            toast.dismiss(); // Dismiss the toast
+          }}
+          style={{
+            marginLeft: '10px',
+            padding: '5px 10px',
+            background: '#ff3333',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+          }}
+        >
+          Cancel
+        </button>
+      </div>,
+      {
+        autoClose: false, // Keep the toast open until manually dismissed
+      }
+    );
   };
 
   useEffect(() => {
