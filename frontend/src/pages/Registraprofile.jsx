@@ -1,131 +1,197 @@
-import React, { useState } from 'react';
-import './lecturerprofile.css';
-import Navbar from './NavBar'; // Import Navbar
-import Sidebar from './Sidebar'; // Import Sidebar
-import pencilIcon from '../assets/pencil.png'; // Adjust the path based on your folder structure
+import React, { useState, useRef, useEffect } from 'react';
+import Navbar from './NavBar';
+import Sidebar from './Sidebar';
 
-const RegistraProfile = ({ userData = {} }) => {
-  // Default placeholder data
-  const defaultData = {
-    fullName: 'John Doe',
-    role: 'Assistant Professor',
-    phoneNumber: '+123 456 7890',
-    email: 'john.doe@university.edu',
-    gender: 'Male',
-    college: 'College of Engineering',
-    department: 'Computer Science',
-    office: 'Room 203, Building B'
+import './Registraprofile.css';
+
+const RegistraProfile = () => {
+  const fileInputRef = useRef(null);
+  const [profileImage, setProfileImage] = useState('/avatar-placeholder.png');
+
+  // Initialize state with localStorage data
+  const [profile, setProfile] = useState({
+    fullName: '[Full Name]',
+    role: '[Role]',
+    phoneNumber: '[Phone Number]',
+    email: '[Email Address]',
+    gender: '[Gender]',
+    registrationNumber: '[Registration]',
+    RegNumber: '[Registra Number]',
+    department: '[Department]'
+  });
+
+  // Load data from localStorage on component mount
+  useEffect(() => {
+    // Get user data from localStorage
+    const userName = localStorage.getItem('userName') || '[Full Name]';
+    const userEmail = localStorage.getItem('userEmail') || '[Email Address]';
+    const userGender = localStorage.getItem('userGender') || '[Gender]';
+    const userId = localStorage.getItem('userId') || '';
+
+    // Update profile state with localStorage data
+    setProfile(prevProfile => ({
+      ...prevProfile,
+      fullName: userName,
+      email: userEmail,
+      gender: userGender,
+      RegNumber: userId,
+      registrationNumber: userId ? `25/Reg/23-${userId}` : '[Registration]'
+    }));
+  }, []);
+
+  const [editableField, setEditableField] = useState(null);
+
+  const handleEditClick = (field) => {
+    // Don't allow editing for readonly fields
+    if (field === 'fullName' || field === 'email' || field === 'gender' ||
+      field === 'RegNumber' || field === 'registrationNumber') {
+      return;
+    }
+    setEditableField(field);
   };
 
-  // Combine provided userData with default data
-  const data = { ...defaultData, ...userData };
-
-  // State for tracking edit mode
-  const [isEditing, setIsEditing] = useState(false);
-  const [profileData, setProfileData] = useState(data);
-
-  // Handle saving edited data
-  const handleSave = () => {
-    setIsEditing(false);
-    console.log('Saved profile data:', profileData);
-    // Here you would typically send the data to an API
-  };
-
-  // Handle input changes
-  const handleChange = (e) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setProfileData(prev => ({
-      ...prev,
-      [name]: value
+    setProfile((prevProfile) => ({
+      ...prevProfile,
+      [name]: value,
     }));
   };
 
-  // Profile information fields configuration
-  const personalInfoFields = [
-    { label: 'Full Name', key: 'fullName' },
-    { label: 'Phone Number', key: 'phoneNumber' },
-    { label: 'Email Address', key: 'email' },
-    { label: 'Gender', key: 'gender' },
-    { label: 'College', key: 'college' },
-    { label: 'Department', key: 'department' },
-    { label: 'Office', key: 'office' }
-  ];
+  const handleSave = () => {
+    setEditableField(null);
+    console.log('Profile updated:', profile);
+    // Add API call to save updated profile data
+  };
+
+  const handleImageClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Create a preview URL for the image
+      const imageUrl = URL.createObjectURL(file);
+      setProfileImage(imageUrl);
+
+      console.log('Image file selected:', file);
+    }
+  };
+
+  // Function to determine if a field is readonly
+  const isReadOnly = (field) => {
+    return ['fullName', 'email', 'gender', 'RegNumber', 'registrationNumber'].includes(field);
+  };
 
   return (
-    <div className="academic-profile-container">
-      {/* Include Navbar */}
+    <div className="app-container">
       <Navbar />
-
-      <div className="profile-layout">
-        {/* Include Sidebar */}
-        <Sidebar/>
-
-        <div className="profile-card horizontal-layout">
-          {/* Header Section */}
-          <div className="profile-header">
-            <h2>Profile</h2>
-          </div>
-
-          {/* Content Row */}
-          <div className="profile-content-row">
-            {/* Profile Info Section */}
-            <div className="profile-info-section">
-              {/* Profile Top Section - Now in a row */}
-              <div className="profile-top">
-                <div className="profile-image-container">
-                  {/* Placeholder profile image */}
-                  <div className="profile-image"></div>
+      <div className="content-wrapper">
+        <Sidebar />
+        <main className="main-content">
+          <div className="profile-container">
+            {/* Header Section */}
+            <div className="profile-card">
+              <div className="profile-header">
+                <div className="profile-image-container" onClick={handleImageClick}>
+                  <img src={profileImage} alt="Profile" className="profile-image" />
+                  <div className="image-overlay">
+                    <span>Change Photo</span>
+                  </div>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    style={{ display: 'none' }}
+                    accept="image/*"
+                    onChange={handleImageChange}
+                  />
                 </div>
-
-                <div className="profile-title">
-                  <h3>{profileData.fullName}</h3>
-                  <p>{profileData.role}</p>
+                <div className="profile-details">
+                  <h2>{profile.fullName}</h2>
+                  <p>{profile.role}</p>
                 </div>
-
-                <div className="profile-actions">
-                  {isEditing ? (
-                    <button className="edit-button" onClick={handleSave}>
-                      <span>Save</span>
-                    </button>
-                  ) : (
-                    <button className="edit-button" onClick={() => setIsEditing(true)}>
-                      <img src={pencilIcon} alt="Edit" className="edit-icon" />
-                      <span>Edit</span>
-                    </button>
-                  )}
-                </div>
+                {!isReadOnly('fullName') && (
+                  <button className="edit-btn" onClick={() => handleEditClick('fullName')}>
+                    Edit
+                  </button>
+                )}
               </div>
             </div>
 
             {/* Personal Information Section */}
-            <div className="info-section">
-              <div className="section-header">
-                <h3>Personal Information</h3>
-              </div>
+            <div className="info-card">
+              <h3>Personal Information</h3>
+              {['fullName', 'phoneNumber', 'email', 'gender'].map((field) => (
+                <div key={field} className="info-item">
+                  <label>{field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}:</label>
+                  {editableField === field ? (
+                    <input
+                      type="text"
+                      name={field}
+                      value={profile[field]}
+                      onChange={handleInputChange}
+                      autoFocus
+                      readOnly={isReadOnly(field)}
+                      className={isReadOnly(field) ? 'readonly-field' : ''}
+                    />
+                  ) : (
+                    <span className={isReadOnly(field) ? 'readonly-value' : ''}>
+                      {profile[field]}
+                    </span>
+                  )}
+                  {!isReadOnly(field) && (
+                    editableField === field ? (
+                      <button className="edit-btn" onClick={handleSave}>
+                        Save
+                      </button>
+                    ) : (
+                      <button className="edit-btn" onClick={() => handleEditClick(field)}>
+                        Edit
+                      </button>
+                    )
+                  )}
+                </div>
+              ))}
+            </div>
 
-              <div className="info-grid">
-                {personalInfoFields.map((field) => (
-                  <div className="info-row" key={field.key}>
-                    <div className="info-label">{field.label}:</div>
-                    <div className="info-value">
-                      {isEditing ? (
-                        <input
-                          type="text"
-                          name={field.key}
-                          value={profileData[field.key]}
-                          onChange={handleChange}
-                          className="info-input"
-                        />
-                      ) : (
-                        profileData[field.key]
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
+            {/* Academic Information Section */}
+            <div className="info-card">
+              <h3>Academic Information</h3>
+              {['registrationNumber', 'RegNumber', 'department'].map((field) => (
+                <div key={field} className="info-item">
+                  <label>{field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}:</label>
+                  {editableField === field ? (
+                    <input
+                      type="text"
+                      name={field}
+                      value={profile[field]}
+                      onChange={handleInputChange}
+                      autoFocus
+                      readOnly={isReadOnly(field)}
+                      className={isReadOnly(field) ? 'readonly-field' : ''}
+                    />
+                  ) : (
+                    <span className={isReadOnly(field) ? 'readonly-value' : ''}>
+                      {profile[field]}
+                    </span>
+                  )}
+                  {!isReadOnly(field) && (
+                    editableField === field ? (
+                      <button className="edit-btn" onClick={handleSave}>
+                        Save
+                      </button>
+                    ) : (
+                      <button className="edit-btn" onClick={() => handleEditClick(field)}>
+                        Edit
+                      </button>
+                    )
+                  )}
+                </div>
+              ))}
             </div>
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );

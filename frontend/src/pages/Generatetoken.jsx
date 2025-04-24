@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Navbar from './NavBar';
+import Sidebar from './Sidebar';
 import './Generatetoken.css';
 import token_image from '../assets/ict.png';
 import API from '../api';
@@ -95,7 +97,7 @@ function Registrationtoken() {
       // Show success popup instead of message
       setSuccessMessage(`The registration token has been created and sent to the Email "${email}"`);
       setShowSuccessPopup(true);
-      
+
     } catch (error) {
       console.error('API error:', error.response);
       if (error.response?.status === 401) {
@@ -116,15 +118,15 @@ function Registrationtoken() {
             }
           );
 
-          // Show success popup instead of message
+          
           setSuccessMessage(`The registration token has been created and sent to the Email "${email}"`);
           setShowSuccessPopup(true);
-          
+
         } catch (refreshError) {
-          // Error message handled in refreshAccessToken
+          
         }
       } else {
-        // Handle 400 and other errors
+        
         const errorMessage =
           error.response?.data?.errors ||
           error.response?.data?.role?.[0] ||
@@ -141,6 +143,8 @@ function Registrationtoken() {
 
   return (
     <div className="page-container">
+      <Navbar />
+      <Sidebar />
       <div className="container">
         <div className="form-section">
           <div className="form-group">
@@ -173,11 +177,10 @@ function Registrationtoken() {
 
           {showMessage && (
             <div
-              className={`message ${
-                !email || message.includes('Failed') || message.includes('expired') || message.includes('select')
+              className={`message ${!email || message.includes('Failed') || message.includes('expired') || message.includes('select')
                   ? 'error'
                   : 'success'
-              }`}
+                }`}
             >
               {message}
             </div>

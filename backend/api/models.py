@@ -125,7 +125,7 @@ class Verification_code(models.Model):
     is_verified = models.BooleanField(default=False)
     
     def is_verification_code_expired(self):
-        expiration_time = self.created_at + timezone.timedelta(minutes=10)
+        expiration_time = self.created_at + timezone.timedelta(minutes=30)
         return timezone.now() > expiration_time
     
     @classmethod
@@ -146,7 +146,7 @@ class Verification_code(models.Model):
         except Exception as e:
             return {'Error':e}
         
-        return {'Message':'Email verification code resent successfully...'}
+        return {'Message':'Code resent successfully...'}
         
     def __str__(self):
         return f'Verification for {self.user.username} --- {self.code}'

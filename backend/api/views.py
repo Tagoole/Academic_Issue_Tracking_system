@@ -42,9 +42,10 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 
 class IssueViewSet(ModelViewSet):
-    permission_classes = [IsAuthenticated, IsStudent]
+    permission_classes = [IsAuthenticated, IsStudentOrRegistrarOrLecturer]
     queryset = Issue.objects.all()
     serializer_class = IssueSerializer
+    http_method_names = ['put','post','patch','get','delete']
     
     def perform_create(self, serializer):
         # Import User model
@@ -416,13 +417,13 @@ def password_reset_code(request):
             return Response({'Error': e})
         
         verification_code, created = Verification_code.objects.get_or_create(user=user)
-        verification_code.code = randint(100000, 999999)
+        verification_code.code = randint(10000, 99999)
         verification_code.is_verified = False
         verification_code.save()
         
         send_mail(
             "Password Reset Code",
-            f"Your password reset code is {verification_code.code}. It will expire in 10 minutes.",
+            f"Your password reset code is {verification_code.code}. It will expire in 30 minutes.",
             "no-reply@aits.com",
             [user.email],
             fail_silently=False,
@@ -472,6 +473,7 @@ def verify_password_reset_code(request):
         
 @api_view(['POST'])
 def final_password_reset(request):
+    print(request.data)
     serializer = Final_Password_ResetSerializer(data = request.data)
     if serializer.is_valid():
         password = serializer.validated_data.get('password')
