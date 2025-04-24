@@ -214,6 +214,8 @@ const StudentDashboard = () => {
                   <th>Issue Type</th>
                   <th>Created</th>
                   <th>Updated</th>
+                  <th>Is Commented</th>
+                  <th>Comment</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -234,6 +236,8 @@ const StudentDashboard = () => {
                       <td>{issue.issue_type || issue.category}</td>
                       <td>{formatDate(issue.created_at || issue.date)}</td>
                       <td>{formatDate(issue.updated_at)}</td>
+                      <td>{issue.is_commented ? '✓' : '✗'}</td>
+                      <td>{issue.comment || 'No comment'}</td>
                       <td>
                         <button className="view-details-btn" onClick={() => openIssueDetails(issue)}>
                           View Details
@@ -243,7 +247,7 @@ const StudentDashboard = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="7" className="no-issues-message">No {activeTab.toLowerCase()} issues found</td>
+                    <td colSpan="9" className="no-issues-message">No {activeTab.toLowerCase()} issues found</td>
                   </tr>
                 )}
               </tbody>
