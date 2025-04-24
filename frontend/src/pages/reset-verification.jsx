@@ -1,11 +1,9 @@
-//import section
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import API from '../api';
 import emailIcon from '../assets/mailbulk.png';
 import helpIcon from '../assets/help-icon.png';
 import './reset-verification.css';
-
 
 const ResetVerification = () => {
   // State variables and hooks
@@ -19,6 +17,7 @@ const ResetVerification = () => {
   const inputRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
   const navigate = useNavigate();
   const location = useLocation();
+
   //email initialization effect
   useEffect(() => {
     if (location.state && location.state.email) {
@@ -37,8 +36,10 @@ const ResetVerification = () => {
       }
     }
   }, [location]);
+
   //helper function to check if the verification code is complete
   const isCodeComplete = verificationCode.every(digit => digit !== '');
+
   //input handler function
   const handleDigitChange = (index, value) => {
     if (value && !/^\d+$/.test(value)) return;
@@ -59,6 +60,7 @@ const ResetVerification = () => {
       inputRefs[index - 1].current.focus();
     }
   };
+
   //error handling function
   const extractErrorMessage = (error) => {
     if (!error) return 'An unknown error occurred';
@@ -88,6 +90,7 @@ const ResetVerification = () => {
       return error.message || 'Error submitting request. Please try again.';
     }
   };
+
   //form submission handler function
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -115,8 +118,8 @@ const ResetVerification = () => {
       setResendStatus(response.data.Message || 'Email verified successfully!');
       setError('');
       
-      // Navigate to new-password page with verification code as query parameter
-      navigate(`/new-password?code=${code}`);
+      // Just navigate to new-password page without passing the code
+      navigate('/new-password');
       
     } catch (error) {
       console.error('Verification error:', error);
@@ -125,7 +128,8 @@ const ResetVerification = () => {
       setIsLoading(false);
     }
   };
-//resend code handler
+
+  //resend code handler
   const handleResendCode = async () => {
     if (!email) {
       setError('Email address is missing. Please go back to signup.');
@@ -153,7 +157,8 @@ const ResetVerification = () => {
       setIsLoading(false);
     }
   };
-//countdown effect
+
+  //countdown effect
   useEffect(() => {
     let timer;
     if (countdown > 0) {
@@ -169,16 +174,16 @@ const ResetVerification = () => {
       if (timer) clearTimeout(timer);
     };
   }, [countdown, resendDisabled]);
+
   //initial focus effect
   useEffect(() => {
     if (inputRefs[0].current) {
       inputRefs[0].current.focus();
     }
   }, []);
-  //component rendering
+
   return (
     <div className="verification-container">
-    // Header section
       <header className="verification-header">
         <h1 className="header-title">AITS</h1>
         <button className="help-button">
@@ -186,14 +191,14 @@ const ResetVerification = () => {
           Help?
         </button>
       </header>
-      // main verification card
+      
       <div className="verification-card">
         <div className="icon-container">
           <img src={emailIcon} alt="Email Verification" className="email-icon" />
         </div>
         
         <h2 className="verification-title">Email Verification</h2>
-        //condition instruction test
+        
         {email ? (
           <>
             <p className="verification-instruction">
@@ -206,10 +211,8 @@ const ResetVerification = () => {
             Email address not found. Please return to signup.
           </p>
         )}
-        //verifiction code input form
         
         <form onSubmit={handleSubmit} className="verification-form">
-          // Code input fields
           <div className="code-inputs">
             {verificationCode.map((digit, index) => (
               <input
@@ -226,10 +229,10 @@ const ResetVerification = () => {
               />
             ))}
           </div>
-          //error and status messages
+          
           {error && <p className="error-message">{error}</p>}
           {resendStatus && <p className="success-message">{resendStatus}</p>}
-          // buttons for form submission and resend code
+          
           <button
             type="submit"
             className="next-button"
@@ -249,13 +252,13 @@ const ResetVerification = () => {
              'Resend Code'}
           </button>
         </form>
-        //sign in link
+        
         <Link to="/signin" className="signin-link">
           Sign In
         </Link>
       </div>
     </div>
   );
-}; 
+};
 
 export default ResetVerification;

@@ -68,6 +68,7 @@ class Issue(models.Model):
         ('pending','Pending'),
         ('resolved','Resolved'),
         ('in_progress','In Progress'),
+        ('rejected','Rejected')
     ]
     SEMESTER_CHOICES = [
         ('one','One'),
