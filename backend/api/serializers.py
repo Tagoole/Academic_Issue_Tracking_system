@@ -205,10 +205,8 @@ class Final_Password_ResetSerializer(serializers.Serializer):
         return validated_data
         
 class Email_notificationSerializer(serializers.ModelSerializer):
+    issue_id = serializers.IntegerField(source='issue.id')
     class Meta:
         model =Email_Notification
-        fields = '__all__'
+        fields = ['id', 'subject', 'message', 'created_at', 'issue_id']
         
-
-class Get_Email_notificationSerializer(serializers.Serializer):
-    userId = serializers.IntegerField()

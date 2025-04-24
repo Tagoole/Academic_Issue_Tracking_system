@@ -500,10 +500,9 @@ def final_password_reset(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_user_email_notifications(request):
-    data = request.data
-    notifications = Email_Notification.objects.filter(id = data.get('userId'))
+    notifications = Email_Notification.objects.filter(user = request.user)
     number = notifications.count()
-    serializer = Get_Email_notificationSerializer(notifications,many = True)
+    serializer = Email_notificationSerializer(notifications,many = True)
     return Response ({'number':number,
                       'data':serializer.data})
 
