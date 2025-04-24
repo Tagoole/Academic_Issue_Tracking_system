@@ -149,11 +149,22 @@ const LecturerIssueManagement = () => {
   const handleStatusUpdate = (newStatus) => {
     setSelectedNewStatus(newStatus.toLowerCase()); // Convert to lowercase to match API expectations
     setShowStatusDialog(false);
-
+  
     let message = `Status will be updated to "${newStatus}".`;
-    if (newStatus.toLowerCase() !== 'resolved') {
-      message += " Please remember to come back later and resolve this issue.";
+    if (newStatus.toLowerCase() === 'resolved') {
+      toast.success('Marking this issue as resolved will complete the handling process.', {
+        autoClose: 3000,
+      });
+    } else if (newStatus.toLowerCase() === 'in_progress') {
+      toast.info('This issue is now marked as in progress. You can return to resolve it later.', {
+        autoClose: 3000,
+      });
+    } else {
+      toast.info('This issue is now marked as pending. Please review it later.', {
+        autoClose: 3000,
+      });
     }
+  
     setStatusUpdateMessage(message);
     setShowConfirmation(true);
   };
@@ -390,7 +401,7 @@ const LecturerIssueManagement = () => {
       </div>
       <ToastContainer
         position="top-right" // Position the toasts at the top-right corner
-        autoClose={3000} // Automatically close toasts after 3 seconds
+        autoClose={5000} // Automatically close toasts after 3 seconds
         hideProgressBar={true} // Hide the progress bar for a cleaner look
         newestOnTop={true} // Show the newest toasts on top
         closeOnClick // Allow closing toasts by clicking on them
