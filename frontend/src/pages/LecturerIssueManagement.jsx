@@ -152,11 +152,14 @@ const LecturerIssueManagement = () => {
 
   const handleSave = () => {
     console.log("Current comments before save:", selectedIssue.comments);
-    
+
+    // Check if the comment is empty or only contains whitespace
     if (!selectedIssue.comments || !selectedIssue.comments.trim()) {
       setErrorMessage('Please add a comment before saving changes.');
       // Warning toast notification
-      toast.warning('Please add a comment before saving changes');
+      toast.warning('Please add a comment before saving changes', {
+        autoClose: 3000, // Toast will disappear after 3 seconds
+      });
       return;
     }
 
