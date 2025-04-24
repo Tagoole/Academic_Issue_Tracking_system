@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import API from '../api';
 import makerereLogo from '../assets/makererelogo.png';
@@ -10,7 +10,23 @@ const DeleteAccount = () => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState(null);
+  const [pageLoadError, setPageLoadError] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    try {
+      // Simulate successful page load
+      toast.success('Delete Account page loaded successfully!', {
+        autoClose: 3000,
+      });
+    } catch (error) {
+      // Handle page load failure
+      setPageLoadError(true);
+      toast.error('Failed to load Delete Account page. Please try again later.', {
+        autoClose: 3000,
+      });
+    }
+  }, []);
 
   const handleDeleteAccount = () => {
     setShowConfirmModal(true);
