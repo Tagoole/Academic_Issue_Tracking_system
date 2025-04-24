@@ -39,12 +39,16 @@ const Help = () => {
 
   const handleEmailCopy = () => {
     navigator.clipboard.writeText('jjulianahmuhindo@gmail.com');
-    alert('Email copied to clipboard');
+    toast.success('Email copied to clipboard!', {
+      autoClose: 3000,
+    });
   };
 
   const handlePhoneCopy = (phoneNumber) => {
     navigator.clipboard.writeText(phoneNumber);
-    alert('Phone number copied to clipboard');
+    toast.success('Phone number copied to clipboard!', {
+      autoClose: 3000,
+    });
   };
 
   return (
