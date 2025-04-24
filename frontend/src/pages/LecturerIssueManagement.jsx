@@ -369,6 +369,11 @@ const LecturerIssueManagement = () => {
                 onChange={handleCommentChange}
                 placeholder="Enter your response to this issue..."
                 rows="4"
+                onFocus={() =>
+                  toast.info('Adding a detailed comment helps students understand your response better.', {
+                    autoClose: 3000, // Toast will disappear after 3 seconds
+                  })
+                }
               />
               {/* Display current comment value for debugging */}
               <div className="debug-info" style={{ fontSize: "12px", color: "#666" }}>
