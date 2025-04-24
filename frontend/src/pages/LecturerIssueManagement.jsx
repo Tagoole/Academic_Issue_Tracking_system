@@ -51,35 +51,30 @@ const LecturerIssueManagement = () => {
 
   // Fetch issue data from sessionStorage when component mounts
   useEffect(() => {
+    // Show loading toast
+    const loadingToastId = toast.loading('Loading issue details...');
+
     try {
       // Get the issue data from sessionStorage
       const issueData = JSON.parse(sessionStorage.getItem('issueToResolve'));
       console.log("Initial issue data:", issueData);
-      
+
       if (issueData) {
         console.log("Retrieved issue data:", issueData);
-        console.log("Original comments value:", issueData.comments);
-        
+
         // Map the API response fields to our component's state structure
         setSelectedIssue(prevState => ({
           ...prevState,
-          id: issueData.id || issueId, // Use the ID from the data if available
+          id: issueData.id || issueId,
           status: issueData.status || 'pending',
-          // Map student information
           studentNo: issueData.student?.username || '',
-          // Map category to issue_type
           category: issueData.issue_type || '',
-          // Map description
           description: issueData.description || '',
-          // Map course unit
           courseUnitName: `Course Unit ${issueData.course_unit}`,
           courseUnitCode: `CU-${issueData.course_unit}`,
-          // Map semester and year
           date: new Date().toLocaleDateString(),
           submissionDate: new Date().toISOString().split('T')[0],
-          // Map lecturer
           assignedLecturer: `Lecturer ID: ${issueData.lecturer}`,
-          // Keep the original fields from API
           course_unit: issueData.course_unit,
           image: issueData.image,
           issue_type: issueData.issue_type,
@@ -87,19 +82,49 @@ const LecturerIssueManagement = () => {
           semester: issueData.semester,
           student: issueData.student,
           year_of_study: issueData.year_of_study,
-          comments: issueData.comments || '', // Use empty string as fallback instead of null
+          comments: issueData.comments || '',
           is_commented: issueData.is_commented || false
         }));
-        
-        console.log("State after update:", selectedIssue);
-        // Success toast notification
-        toast.success('Issue details loaded successfully');
+
+        // Update loading toast to success
+        toast.update(loadingToastId, {
+          render: 'Issue details loaded successfully',
+          type: 'success',
+          isLoading: false,
+          autoClose: 2000
+        });
+
+        // Add toast for previously commented issues
+        if (issueData.is_commented) {
+          toast.info('This issue already has your comments', {
+            autoClose: 3000
+          });
+        }
       } else {
         console.log(`No issue data found in sessionStorage for ID: ${issueId}`);
-        // You might want to redirect back to dashboard or show an error
+        // Update loading toast to error
+        toast.update(loadingToastId, {
+          render: 'Issue not found or data is missing',
+          type: 'error',
+          isLoading: false,
+          autoClose: 3000,
+          onClose: () => {
+            // Redirect back to dashboard after toast is closed
+            window.location.href = '/Lecturerdashboard';
+          }
+        });
       }
     } catch (error) {
       console.error("Error parsing issue data from sessionStorage:", error);
+      toast.update(loadingToastId, {
+        render: 'Failed to load issue details. Redirecting to dashboard...',
+        type: 'error',
+        isLoading: false,
+        autoClose: 3000,
+        onClose: () => {
+          window.location.href = '/Lecturerdashboard';
+        }
+      });
     }
   }, [issueId]);
 
