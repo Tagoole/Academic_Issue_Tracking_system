@@ -10,8 +10,6 @@ const RegistraDashboard = () => {
   const [issues, setIssues] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [categoryFilter, setCategoryFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredIssues, setFilteredIssues] = useState([]);
   const [pendingCount, setPendingCount] = useState(0);
@@ -111,36 +109,6 @@ const RegistraDashboard = () => {
       setFilteredIssues(filtered);
     }
   }, [searchTerm, issues]);
-
-  useEffect(() => {
-    const applyFilters = () => {
-      let filtered = issues;
-
-      // Filter by status
-      if (statusFilter !== 'all') {
-        filtered = filtered.filter((issue) => issue.status.toLowerCase() === statusFilter.toLowerCase());
-      }
-
-      // Filter by category
-      if (categoryFilter !== 'all') {
-        filtered = filtered.filter((issue) => issue.category.toLowerCase() === categoryFilter.toLowerCase());
-      }
-
-      // Search by Issue ID, Student Number, or Category
-      if (searchTerm.trim() !== '') {
-        filtered = filtered.filter(
-          (issue) =>
-            issue.id.toString().includes(searchTerm) ||
-            issue.studentNo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            issue.category?.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-      }
-
-      setFilteredIssues(filtered);
-    };
-
-    applyFilters();
-  }, [statusFilter, categoryFilter, searchTerm, issues]);
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -244,42 +212,6 @@ const RegistraDashboard = () => {
                       </button>
                     </div>
                   </div>
-                  <div className="filter-controls">
-                    <div className="select-wrapper">
-                      <select
-                        className="status-filter"
-                        value={statusFilter}
-                        onChange={(e) => setStatusFilter(e.target.value)}
-                      >
-                        <option value="all">All Statuses</option>
-                        <option value="pending">Pending</option>
-                        <option value="in_progress">In Progress</option>
-                        <option value="resolved">Resolved</option>
-                      </select>
-                      <span className="dropdown-arrow"></span>
-                    </div>
-                    <div className="select-wrapper">
-                      <select
-                        className="category-filter"
-                        value={categoryFilter}
-                        onChange={(e) => setCategoryFilter(e.target.value)}
-                      >
-                        <option value="all">All Categories</option>
-                        <option value="Missing Marks">Missing Marks</option>
-                        <option value="Wrong Marks">Wrong Marks</option>
-                        <option value="Other">Other</option>
-                      </select>
-                      <span className="dropdown-arrow"></span>
-                    </div>
-                    <div className="search-bar">
-                      <input
-                        type="text"
-                        placeholder="Search by Issue ID, Student No, or Category..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                      />
-                    </div>
-                  </div>
                   {/* New Table Container */}
                   <div className="table-container">
                     {loading ? (
@@ -304,15 +236,15 @@ const RegistraDashboard = () => {
                             filteredIssues.map((issue, index) => (
                               <tr key={issue.id || index}>
                                 <td>#{issue.id || 'N/A'}</td>
-                                <td>{issue.description || 'N/A'}</td>
+                                <td>{issue.description || 'N/A'}</td> {/* Adjusted field: assuming 'description' for issue details */}
                                 <td>
                                   <span className={`status-tag status-${issue.status}`}>
                                     {issue.status === 'pending' ? 'Pending' :
-                                     issue.status === 'in_progress' ? 'In Progress' :
+                                     issue.status === 'in_progress' ? 'In-progress' :
                                      issue.status === 'resolved' ? 'Resolved' : issue.status}
                                   </span>
                                 </td>
-                                <td>{issue.category || 'N/A'}</td>
+                                <td>{issue.category || 'N/A'}</td> {/* Using 'category' as issue type */}
                                 <td>{formatDate(issue.date || issue.created_at)}</td>
                                 <td>{formatDate(issue.updated_at || issue.date)}</td>
                                 <td>
