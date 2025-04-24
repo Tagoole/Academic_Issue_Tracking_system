@@ -44,10 +44,30 @@ const Preferences = () => {
 
   const toggleInAppMessaging = () => {
     setInAppMessaging(!inAppMessaging);
+
+    // Show toast notification
+    toast.info(
+      `You have chosen to ${!inAppMessaging ? 'enable' : 'disable'} In-App Messaging. ${
+        !inAppMessaging ? 'Messages will now be received in the app.' : ''
+      }`,
+      {
+        autoClose: 3000,
+      }
+    );
   };
 
   const toggleEmailUpdates = () => {
     setEmailUpdates(!emailUpdates);
+
+    // Show toast notification
+    toast.info(
+      `You have chosen to ${!emailUpdates ? 'enable' : 'disable'} Email Updates. ${
+        !emailUpdates ? 'Messages will now be sent to your email.' : ''
+      }`,
+      {
+        autoClose: 3000,
+      }
+    );
   };
 
   useEffect(() => {
