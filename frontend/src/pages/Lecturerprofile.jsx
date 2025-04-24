@@ -48,7 +48,13 @@ const LecturerProfile = () => {
         field === 'lecturerNumber' || field === 'registrationNumber') {
       return;
     }
+
     setEditableField(field);
+
+    // Show success toast
+    toast.success(`Edit mode enabled for ${field}.`, {
+      autoClose: 3000,
+    });
   };
 
   const handleInputChange = (e) => {
