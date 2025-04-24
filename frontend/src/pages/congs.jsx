@@ -5,7 +5,7 @@ import './congs.css';
 const CONGS = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [countdown, setCountdown] = useState(3); // 3 seconds countdown
+  const [countdown, setCountdown] = useState(3); 
   
   // Get email and message from location state
   const email = location.state?.email || localStorage.getItem('userEmail') || '';
