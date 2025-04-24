@@ -318,7 +318,7 @@
   }
 
   .issues-container {
-    height: 80px; /* Slightly taller for mobile to accommodate wrapping */
+    height: 80px; 
   }
 
   .tab-container {
@@ -337,7 +337,7 @@
     padding: 8px;
   }
 }
-/* Advanced Holographic Button Animation - Add to StudentDashboard.css */
+
 
 /* Base button styling update */
 .new-issue-button {
