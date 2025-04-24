@@ -95,8 +95,8 @@
 /* Issues container and tabs */
 .issues-container {
   width: 300px; /* Full width to align with table */
-  height: 40px; /* Reduced height for compact look */
-  margin-bottom: 10px; /* Reduced margin to fit closely above table */
+  height: 40px; 
+  margin-bottom: 10px; 
   display: flex;
   align-items: center;
 }
