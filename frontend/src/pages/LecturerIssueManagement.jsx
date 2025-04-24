@@ -143,8 +143,15 @@ const LecturerIssueManagement = () => {
   const handleCommentChange = (event) => {
     const commentText = event.target.value;
     console.log("Comment changed to:", commentText);
-    
-    setSelectedIssue(prevState => ({
+
+    // If the comment exceeds 500 characters, show an informational toast
+    if (commentText.length > 500 && selectedIssue.comments.length <= 500) {
+      toast.info('Your comment is getting quite detailed. You can continue writing or save whenever ready.', {
+        autoClose: 3000, // Toast will disappear after 3 seconds
+      });
+    }
+
+    setSelectedIssue((prevState) => ({
       ...prevState,
       comments: commentText,
     }));
@@ -419,6 +426,18 @@ const LecturerIssueManagement = () => {
           )}
         </main>
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   );
 };
