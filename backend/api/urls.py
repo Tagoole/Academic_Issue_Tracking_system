@@ -10,7 +10,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 router = DefaultRouter()
 router.register(r'issues', IssueViewSet, 'issues')  # Registers IssueViewSet to handle CRUD operations for issues
 router.register(r'department', DepartmentViewSet, 'department')  # Registers DepartmentViewSet to handle CRUD operations for departments
-router.register(r'course_unit',Course_unitViewSet,'course_unit')
+router.register(r'course_unit', Course_unitViewSet, 'course_unit')  # Registers Course_unitViewSet to handle CRUD operations for course units
 router.register(r'program',ProgramViewSet,'program')
 router.register(r'registration_token',Registration_Token_viewset,'registration_token')
 router.register(r'registrar_issue_management',Registrar_Issue_ManagementViewSet,'registrar_issue_management')
