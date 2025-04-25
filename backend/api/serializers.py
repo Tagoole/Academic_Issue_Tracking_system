@@ -64,6 +64,8 @@ class DepartmentSerializer(serializers.ModelSerializer):
         fields = '__all__'
  
  
+
+ 
             
 class IssueSerializer(serializers.ModelSerializer):
     student = UserSerializer(read_only=True)
