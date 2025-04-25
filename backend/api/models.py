@@ -161,3 +161,7 @@ class Email_Notification(models.Model):
     
     def __str__(self):
         return f'Email Notification to {self.user.username}'
+    
+    
+    
+    
