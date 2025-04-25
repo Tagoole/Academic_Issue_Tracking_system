@@ -23,6 +23,9 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 
 
+
+
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
