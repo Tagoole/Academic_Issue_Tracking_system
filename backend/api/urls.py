@@ -8,7 +8,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 
 #from .views import RegisterAPI
 router = DefaultRouter()
-router.register(r'issues', IssueViewSet,'issues')
+router.register(r'issues', IssueViewSet, 'issues')  # Registers IssueViewSet to handle CRUD operations for issues
 router.register(r'department',DepartmentViewSet,'department')
 router.register(r'course_unit',Course_unitViewSet,'course_unit')
 router.register(r'program',ProgramViewSet,'program')
