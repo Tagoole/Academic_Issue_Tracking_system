@@ -198,9 +198,10 @@ class Verify_Email_serializer(serializers.Serializer):
     code = serializers.IntegerField()
     email = serializers.EmailField()
     
-    
+
 class Resend_Verification_CodeSerializer(serializers.Serializer):
     email = serializers.EmailField() 
+
 
 class Resend_Password_Reset_CodeSerializer(serializers.Serializer):
     email = serializers.EmailField()
