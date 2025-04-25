@@ -19,6 +19,7 @@ router.register(r'student_issues', Student_Issue_ReadOnlyViewset, 'student_issue
 
 
 
+
 urlpatterns = [
     path('',include(router.urls)),
     path('register_student_user/',Student_Registration.as_view(),name = 'register_student_user'),
