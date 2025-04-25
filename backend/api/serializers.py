@@ -33,13 +33,14 @@ class UserSerializer(serializers.ModelSerializer):
         
 
 
+
 class CustomUserprofileSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = "__all__"
     
     
-    
+
         
 class Course_unitSerializer(serializers.ModelSerializer):
     class Meta:
