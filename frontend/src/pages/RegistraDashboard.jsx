@@ -15,8 +15,9 @@ const RegistraDashboard = () => {
   const [pendingCount, setPendingCount] = useState(0);
   const [inProgressCount, setInProgressCount] = useState(0);
   const [resolvedCount, setResolvedCount] = useState(0);
-  const [showModal, setShowModal] = useState(false); // State for modal visibility
-  const [selectedIssue, setSelectedIssue] = useState(null); // State for selected issue
+  const [showModal, setShowModal] = useState(false);
+  const [selectedIssue, setSelectedIssue] = useState(null);
+  const [isSearching, setIsSearching] = useState(false);
 
   // Fetch issues when component mounts
   useEffect(() => {
@@ -41,7 +42,7 @@ const RegistraDashboard = () => {
         setFilteredIssues(response.data);
 
         const pending = response.data.filter(issue => issue.status === 'pending').length;
-        const inProgress = response.data.filter(issue => issue.status === 'in_progress').length; // Fixed typo: 'in_rogress' to 'in_progress'
+        const inProgress = response.data.filter(issue => issue.status === 'in_progress').length;
         const resolved = response.data.filter(issue => issue.status === 'resolved').length;
 
         setPendingCount(pending);
@@ -97,21 +98,82 @@ const RegistraDashboard = () => {
 
   // Handle search functionality
   useEffect(() => {
+    // Debounce search requests by using a timer
+    const debounceTimer = setTimeout(() => {
+      if (searchTerm.trim() === '') {
+        setFilteredIssues(issues);
+        updateCounts(issues);
+      } else {
+        handleSearch();
+      }
+    }, 500); // 500ms delay
+
+    return () => clearTimeout(debounceTimer);
+  }, [searchTerm]);
+
+  const updateCounts = (data) => {
+    const pending = data.filter(issue => issue.status === 'pending').length;
+    const inProgress = data.filter(issue => issue.status === 'in_progress').length;
+    const resolved = data.filter(issue => issue.status === 'resolved').length;
+
+    setPendingCount(pending);
+    setInProgressCount(inProgress);
+    setResolvedCount(resolved);
+  };
+
+  const handleSearch = async () => {
     if (searchTerm.trim() === '') {
       setFilteredIssues(issues);
-    } else {
+      updateCounts(issues);
+      return;
+    }
+
+    try {
+      setIsSearching(true);
+      // Use the filter_results endpoint for server-side filtering
+      const response = await API.get(`api/registrar_issue_management/filter_results/?status=${searchTerm}`);
+      
+      if (response.data && Array.isArray(response.data)) {
+        setFilteredIssues(response.data);
+        updateCounts(response.data);
+      } else if (response.data && response.data.error) {
+        // Handle error response
+        console.error('Search error:', response.data.error);
+        // Fallback to client-side filtering
+        const filtered = issues.filter(issue =>
+          issue.id.toString().includes(searchTerm) ||
+          issue.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (issue.studentNo && issue.studentNo.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (issue.category && issue.category.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (issue.issue_type && issue.issue_type.toLowerCase().includes(searchTerm.toLowerCase()))
+        );
+        setFilteredIssues(filtered);
+        updateCounts(filtered);
+      }
+    } catch (err) {
+      console.error('Error searching issues:', err);
+      // Fallback to client-side filtering
       const filtered = issues.filter(issue =>
         issue.id.toString().includes(searchTerm) ||
         issue.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        issue.studentNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        issue.category.toLowerCase().includes(searchTerm.toLowerCase())
+        (issue.studentNo && issue.studentNo.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (issue.category && issue.category.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (issue.issue_type && issue.issue_type.toLowerCase().includes(searchTerm.toLowerCase()))
       );
       setFilteredIssues(filtered);
+      updateCounts(filtered);
+    } finally {
+      setIsSearching(false);
     }
-  }, [searchTerm, issues]);
+  };
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    handleSearch();
   };
 
   // Format date function
@@ -196,16 +258,18 @@ const RegistraDashboard = () => {
                   <div className="issues-header">
                     <h2>My issues</h2>
                     <div className="issues-controls">
-                      <div className="search-container">
+                      <form onSubmit={handleSearchSubmit} className="search-container">
                         <input
                           type="text"
-                          placeholder="search for issues"
+                          placeholder="Search for issues (status, student, type)"
                           className="search-input"
                           value={searchTerm}
                           onChange={handleSearchChange}
                         />
-                        <span className="search-icon"></span>
-                      </div>
+                        <button type="submit" className="search-button">
+                          <span className="search-icon">🔍</span>
+                        </button>
+                      </form>
                       <button className="filter-button">
                         <span>Filter</span>
                         <span className="filter-icon">▼</span>
@@ -214,8 +278,10 @@ const RegistraDashboard = () => {
                   </div>
                   {/* New Table Container */}
                   <div className="table-container">
-                    {loading ? (
-                      <div className="loading-message">Loading issues...</div>
+                    {loading || isSearching ? (
+                      <div className="loading-message">
+                        {isSearching ? 'Searching issues...' : 'Loading issues...'}
+                      </div>
                     ) : error ? (
                       <div className="error-message">{error}</div>
                     ) : (
@@ -236,7 +302,7 @@ const RegistraDashboard = () => {
                             filteredIssues.map((issue, index) => (
                               <tr key={issue.id || index}>
                                 <td>#{issue.id || 'N/A'}</td>
-                                <td>{issue.description || 'N/A'}</td> {/* Adjusted field: assuming 'description' for issue details */}
+                                <td>{issue.description || issue.issue_description || 'N/A'}</td>
                                 <td>
                                   <span className={`status-tag status-${issue.status}`}>
                                     {issue.status === 'pending' ? 'Pending' :
@@ -244,7 +310,7 @@ const RegistraDashboard = () => {
                                      issue.status === 'resolved' ? 'Resolved' : issue.status}
                                   </span>
                                 </td>
-                                <td>{issue.category || 'N/A'}</td> {/* Using 'category' as issue type */}
+                                <td>{issue.category || issue.issue_type || 'N/A'}</td>
                                 <td>{formatDate(issue.date || issue.created_at)}</td>
                                 <td>{formatDate(issue.updated_at || issue.date)}</td>
                                 <td>
@@ -287,7 +353,7 @@ const RegistraDashboard = () => {
                         if (key === 'id') return null;
                         return (
                           <div key={key} className="issue-detail-item">
-                            <strong>{key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:</strong>
+                            <strong>{key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:</strong>{' '}
                             {typeof value === 'object' ? JSON.stringify(value) : String(value)}
                           </div>
                         );
