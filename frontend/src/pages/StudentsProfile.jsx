@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Navbar from './NavBar';
 import Sidebar from './Sidebar1';
 import './StudentsProfile.css';
+import API from '../api'; // Import the API service
 
 const StudentsProfile = () => {
   const fileInputRef = useRef(null);
@@ -45,12 +46,12 @@ const StudentsProfile = () => {
     }
   }, []);
 
-  // Function to fetch program name from API
+  // Function to fetch program name from API using the imported API service
   const fetchProgramName = async (programId) => {
     try {
-      const response = await fetch(`/api/program/${programId}`);
-      if (response.ok) {
-        const data = await response.json();
+      const response = await API.get(`/api/program/${programId}`);
+      if (response.status === 200) {
+        const data = response.data;
         setProgramName(data.name || '[Program]');
         setProfile(prevProfile => ({
           ...prevProfile,
