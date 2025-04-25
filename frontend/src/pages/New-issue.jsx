@@ -105,7 +105,7 @@ const NewIssue = () => {
     }
 
     try {
-      const response = await API.post('/api/token/refresh/', { refresh: refreshToken });
+      const response = await API.post('/api/refresh_token/', { refresh: refreshToken });
       const newToken = response.data.access;
       localStorage.setItem('accessToken', newToken);
       setAccessToken(newToken);
