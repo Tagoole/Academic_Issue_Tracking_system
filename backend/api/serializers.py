@@ -203,6 +203,7 @@ class Resend_Verification_CodeSerializer(serializers.Serializer):
     email = serializers.EmailField() 
 
 
+
 class Resend_Password_Reset_CodeSerializer(serializers.Serializer):
     email = serializers.EmailField()
     
