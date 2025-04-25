@@ -10,6 +10,8 @@ const NewIssue = () => {
   const [formData, setFormData] = useState({
     registrar: '',
     student: '',
+    registrationNumber: '',
+    program: '',
     issueType: 'missing_marks',
     description: 'I have no marks for OS test yet I merged 86% in it.',
     courseUnitId: '',
@@ -60,6 +62,8 @@ const NewIssue = () => {
     const initializeUser = () => {
       try {
         const username = localStorage.getItem('userName');
+        const userId = localStorage.getItem('userId');
+        const userProgram = localStorage.getItem('userProgram');
         const access = localStorage.getItem('accessToken');
         const refresh = localStorage.getItem('refreshToken');
 
@@ -67,10 +71,18 @@ const NewIssue = () => {
           throw new Error('Missing authentication data');
         }
 
+        // Create registration number format
+        const registrationNumber = userId ? `STD/12333/${userId}` : '';
+
         setCurrentUser(username);
         setAccessToken(access);
         if (refresh) setRefreshToken(refresh);
-        setFormData(prev => ({ ...prev, student: username }));
+        setFormData(prev => ({ 
+          ...prev, 
+          student: username,
+          registrationNumber: registrationNumber,
+          program: userProgram || ''
+        }));
       } catch (err) {
         console.error('Initialization error:', err);
         setErrors(prev => ({ ...prev, user: 'Please sign in again' }));
@@ -236,23 +248,15 @@ const NewIssue = () => {
       setSubmitStatus(null);
       setErrors(prev => ({ ...prev, general: null }));
 
-      // Prepare form data - FIXED
+      // Prepare form data
       const submissionData = new FormData();
       submissionData.append('registrar', formData.registrar);
       submissionData.append('student', formData.student);
-      
-      // Remove the empty lecturer field or provide a default value if required
-      // submissionData.append('lecturer', ''); // Removed this line as it might be causing the issue
-      
+      submissionData.append('registration_number', formData.registrationNumber);
+      submissionData.append('program', formData.program);
       submissionData.append('issue_type', formData.issueType);
       submissionData.append('description', formData.description);
-      
-      // Make sure course_unit is submitted with the correct name and format
       submissionData.append('course_unit', formData.courseUnitId);
-      
-      // Status might be auto-assigned by the backend, removing if causing issues
-      // submissionData.append('status', 'pending');
-      
       submissionData.append('year_of_study', formData.yearOfStudy);
       submissionData.append('semester', formData.semester);
       
@@ -403,6 +407,30 @@ const NewIssue = () => {
                 <input 
                   type="text" 
                   value={currentUser} 
+                  readOnly 
+                  disabled
+                />
+              </div>
+            </div>
+
+            {/* Added Registration Number Field */}
+            <div className="form-row">
+              <div className="form-group">
+                <label>Registration Number</label>
+                <input 
+                  type="text" 
+                  value={formData.registrationNumber} 
+                  readOnly 
+                  disabled
+                />
+              </div>
+              
+              {/* Added Program Field */}
+              <div className="form-group">
+                <label>Program</label>
+                <input 
+                  type="text" 
+                  value={formData.program} 
                   readOnly 
                   disabled
                 />
