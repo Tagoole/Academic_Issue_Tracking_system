@@ -31,10 +31,13 @@ class UserSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ['id','username','email']
         
+
+
 class CustomUserprofileSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = "__all__"
+    
     
     
         
