@@ -192,6 +192,7 @@ class Registration_Token_Serializer(serializers.ModelSerializer):
         if CustomUser.objects.filter(email = data.get('email')).exists():
             raise serializers.ValidationError(f'The email {data.get('email')} is already taken')
         return data
+
     
 class Verify_Email_serializer(serializers.Serializer):
     code = serializers.IntegerField()
