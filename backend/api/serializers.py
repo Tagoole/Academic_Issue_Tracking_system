@@ -69,7 +69,7 @@ class DepartmentSerializer(serializers.ModelSerializer):
 
             
 
-            
+
 class IssueSerializer(serializers.ModelSerializer):
     student = UserSerializer(read_only=True)
     registrar = UserSerializer(read_only=True)
@@ -90,6 +90,7 @@ class Student_RegisterSerializer(serializers.ModelSerializer):
             'password': {'write_only': True},
             'confirm_password': {'write_only': True},
             }
+
 
     def validate(self, data):
         password = data.get('password')
