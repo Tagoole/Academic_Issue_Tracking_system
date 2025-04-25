@@ -819,8 +819,8 @@ const IssueManagement = () => {
                     </div>
                   </div>
                   
-                  <div
-<div className="issue-detail-row">
+                  
+                  <div className="issue-detail-row">
                     <span className="detail-label">Status:</span>
                     <div className="detail-input">
                       <select
