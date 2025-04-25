@@ -23,7 +23,7 @@ router.register(r'student_issues', Student_Issue_ReadOnlyViewset, 'student_issue
 urlpatterns = [
     path('',include(router.urls)),
     path('register_student_user/', Student_Registration.as_view(), name='register_student_user'),  # Endpoint to register a student user
-    path('register_lect_and_registrar/',Lecturer_and_Registrar_Registration.as_view(),name='register_lect_and_registrar'),
+    path('register_lect_and_registrar/', Lecturer_and_Registrar_Registration.as_view(), name='register_lect_and_registrar'),  # Endpoint to register lecturers and registrars
     path("access_token/", CustomTokenObtainPairView.as_view(), name="access_token"),  # Endpoint to obtain access tokens
     path("refresh_token/", TokenRefreshView.as_view(), name="refresh_token"),  # Endpoint to refresh access tokens
     path("verify_email/",verify_email,name='verify_email'),
