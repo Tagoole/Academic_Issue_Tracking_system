@@ -7,7 +7,7 @@ import API from '../api'; // Import the API service
 const StudentsProfile = () => {
   const fileInputRef = useRef(null);
   const [profileImage, setProfileImage] = useState('/avatar-placeholder.png');
-  const [programName, setProgramName] = useState('[Program]');
+  const [loading, setLoading] = useState(false);
   
   // Initialize state with localStorage data
   const [profile, setProfile] = useState({
@@ -23,27 +23,38 @@ const StudentsProfile = () => {
 
   // Load data from localStorage on component mount
   useEffect(() => {
-    // Get user data from localStorage
-    const userName = localStorage.getItem('userName') || '[Full Name]';
-    const userEmail = localStorage.getItem('userEmail') || '[Email Address]';
-    const userGender = localStorage.getItem('userGender') || '[Gender]';
-    const userId = localStorage.getItem('userId') || '';
-    const userProgram = localStorage.getItem('userProgram') || '';
-    
-    // Update profile state with localStorage data
-    setProfile(prevProfile => ({
-      ...prevProfile,
-      fullName: userName,
-      email: userEmail,
-      gender: userGender,
-      studentNumber: userId,
-      registrationNumber: userId ? `25/MAK/23-${userId}` : '[Registration]'
-    }));
+    const loadUserData = async () => {
+      setLoading(true);
+      try {
+        // Get user data from localStorage
+        const userName = localStorage.getItem('userName') || '[Full Name]';
+        const userEmail = localStorage.getItem('userEmail') || '[Email Address]';
+        const userGender = localStorage.getItem('userGender') || '[Gender]';
+        const userId = localStorage.getItem('userId') || '';
+        const userProgram = localStorage.getItem('userProgram') || '';
+        
+        // Update profile state with localStorage data
+        setProfile(prevProfile => ({
+          ...prevProfile,
+          fullName: userName,
+          email: userEmail,
+          gender: userGender,
+          studentNumber: userId,
+          registrationNumber: userId ? `25/MAK/23-${userId}` : '[Registration]'
+        }));
 
-    // Fetch program name from API if userProgram exists
-    if (userProgram) {
-      fetchProgramName(userProgram);
-    }
+        // Fetch program name from API if userProgram exists
+        if (userProgram) {
+          await fetchProgramName(userProgram);
+        }
+      } catch (error) {
+        console.error("Error loading user data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadUserData();
   }, []);
 
   // Function to fetch program name from API using the imported API service
@@ -52,11 +63,15 @@ const StudentsProfile = () => {
       const response = await API.get(`/api/program/${programId}`);
       if (response.status === 200) {
         const data = response.data;
-        setProgramName(data.name || '[Program]');
+        const programName = data.name || '[Program]';
+        
+        // Update the program field in the profile state
         setProfile(prevProfile => ({
           ...prevProfile,
-          program: data.name || '[Program]'
+          program: programName
         }));
+        
+        console.log("Program fetched successfully:", programName);
       } else {
         console.error('Failed to fetch program data');
       }
@@ -110,6 +125,10 @@ const StudentsProfile = () => {
   const isReadOnly = (field) => {
     return ['fullName', 'email', 'gender', 'studentNumber', 'registrationNumber', 'phoneNumber', 'program'].includes(field);
   };
+
+  if (loading) {
+    return <div className="loading">Loading profile data...</div>;
+  }
 
   return (
     <div className="app-container">
