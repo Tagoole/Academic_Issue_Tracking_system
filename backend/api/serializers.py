@@ -193,7 +193,7 @@ class Registration_Token_Serializer(serializers.ModelSerializer):
             raise serializers.ValidationError(f'The email {data.get('email')} is already taken')
         return data
 
-    
+
 class Verify_Email_serializer(serializers.Serializer):
     code = serializers.IntegerField()
     email = serializers.EmailField()
@@ -228,3 +228,5 @@ class Email_notificationSerializer(serializers.ModelSerializer):
         model =Email_Notification
         fields = ['id', 'subject', 'message', 'created_at', 'issue_id']
         
+
+
