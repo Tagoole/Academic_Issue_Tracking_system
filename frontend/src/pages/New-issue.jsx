@@ -76,7 +76,7 @@ const NewIssue = () => {
         }
 
         // Create registration number format
-        const registrationNumber = userId ? `STD/12333/${userId}` : '';
+        const registrationNumber = userId ? `25/MAK/23-${userId}` : '';
 
         setCurrentUser(username);
         setAccessToken(access);

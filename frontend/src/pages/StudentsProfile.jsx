@@ -6,18 +6,18 @@ import './StudentsProfile.css';
 const StudentsProfile = () => {
   const fileInputRef = useRef(null);
   const [profileImage, setProfileImage] = useState('/avatar-placeholder.png');
+  const [programName, setProgramName] = useState('[Program]');
   
   // Initialize state with localStorage data
   const [profile, setProfile] = useState({
     fullName: '[Full Name]',
     role: '[Role]',
-    phoneNumber: '[Phone Number]',
+    phoneNumber: '0723 456678', // Default phone number
     email: '[Email Address]',
     gender: '[Gender]',
     registrationNumber: '[Registration]',
     studentNumber: '[Student Number]',
-    course: '[Course]',
-    semester: '[Semester]',
+    program: '[Program]',
   });
 
   // Load data from localStorage on component mount
@@ -27,6 +27,7 @@ const StudentsProfile = () => {
     const userEmail = localStorage.getItem('userEmail') || '[Email Address]';
     const userGender = localStorage.getItem('userGender') || '[Gender]';
     const userId = localStorage.getItem('userId') || '';
+    const userProgram = localStorage.getItem('userProgram') || '';
     
     // Update profile state with localStorage data
     setProfile(prevProfile => ({
@@ -37,14 +38,39 @@ const StudentsProfile = () => {
       studentNumber: userId,
       registrationNumber: userId ? `25/MAK/23-${userId}` : '[Registration]'
     }));
+
+    // Fetch program name from API if userProgram exists
+    if (userProgram) {
+      fetchProgramName(userProgram);
+    }
   }, []);
+
+  // Function to fetch program name from API
+  const fetchProgramName = async (programId) => {
+    try {
+      const response = await fetch(`/api/program/${programId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setProgramName(data.name || '[Program]');
+        setProfile(prevProfile => ({
+          ...prevProfile,
+          program: data.name || '[Program]'
+        }));
+      } else {
+        console.error('Failed to fetch program data');
+      }
+    } catch (error) {
+      console.error('Error fetching program data:', error);
+    }
+  };
 
   const [editableField, setEditableField] = useState(null);
 
   const handleEditClick = (field) => {
     // Don't allow editing for readonly fields
     if (field === 'fullName' || field === 'email' || field === 'gender' || 
-        field === 'studentNumber' || field === 'registrationNumber') {
+        field === 'studentNumber' || field === 'registrationNumber' || 
+        field === 'phoneNumber' || field === 'program') {
       return;
     }
     setEditableField(field);
@@ -81,7 +107,7 @@ const StudentsProfile = () => {
 
   // Function to determine if a field is readonly
   const isReadOnly = (field) => {
-    return ['fullName', 'email', 'gender', 'studentNumber', 'registrationNumber'].includes(field);
+    return ['fullName', 'email', 'gender', 'studentNumber', 'registrationNumber', 'phoneNumber', 'program'].includes(field);
   };
 
   return (
@@ -158,9 +184,13 @@ const StudentsProfile = () => {
             {/* Academic Information Section */}
             <div className="info-card">
               <h3>Academic Information</h3>
-              {['registrationNumber', 'studentNumber', 'course', 'semester'].map((field) => (
+              {['registrationNumber', 'studentNumber', 'program'].map((field) => (
                 <div key={field} className="info-item">
-                  <label>{field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}:</label>
+                  <label>
+                    {field === 'program' 
+                      ? 'Program' 
+                      : field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}:
+                  </label>
                   {editableField === field ? (
                     <input
                       type="text"
