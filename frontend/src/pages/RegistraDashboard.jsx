@@ -335,7 +335,7 @@ const RegistrarDashboard = () => {
       </form>
       <div className="filter-controls">
         <FilterDropdown />
-        <button className="new-issue-btn">+ New Issue</button>
+        
       </div>
     </div>
   );
