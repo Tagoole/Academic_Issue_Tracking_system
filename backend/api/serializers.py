@@ -236,3 +236,27 @@ class Email_notificationSerializer(serializers.ModelSerializer):
         
 
 
+
+class MessageSerializer(serializers.ModelSerializer):
+    sender_username = serializers.SerializerMethodField()
+    receiver_username = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Message
+        fields = [
+            'id', 'sender', 'receiver', 'sender_username', 
+            'receiver_username', 'content', 'timestamp', 
+            'is_read', 'is_deleted'
+        ]
+        read_only_fields = ['sender', 'timestamp', 'is_read']
+    
+    def get_sender_username(self, obj):
+        return obj.sender.username
+    
+    def get_receiver_username(self, obj):
+        return obj.receiver.username
+    
+    def create(self, validated_data):
+        # Set the sender to the current authenticated user
+        validated_data['sender'] = self.context['request'].user
+        return super().create(validated_data)
