@@ -147,6 +147,11 @@
   color: #2c3e50;
 }
 
+/* Column widths for better layout - Increased issue column width */
+.issues-table th:nth-child(1), .issues-table td:nth-child(1) { 
+  width: 35%; /* Increased from 25% for the Issue column */
+  font-size: 16px; /* Specific font size for issue text */
+}
 
 
 
