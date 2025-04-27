@@ -154,10 +154,10 @@
 /* Updated table column spacing */
 .issues-table th,
 .issues-table td {
-  padding: 8px 4px; /* Further reduced horizontal padding */
+  padding: 8px 4px; 
   text-align: left;
   border-bottom: 1px solid #ddd;
-  font-size: 12px; /* Smaller font size */
+  font-size: 12px; 
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
