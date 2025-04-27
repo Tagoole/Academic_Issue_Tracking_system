@@ -20,6 +20,7 @@ const Messages = () => {
   const [searchLoading, setSearchLoading] = useState(false);
   const [lecturers, setLecturers] = useState([]);
   const [registrars, setRegistrars] = useState([]);
+  const [newContactUsername, setNewContactUsername] = useState('');
   const navigate = useNavigate();
 
   // Authentication check when component mounts
@@ -370,6 +371,33 @@ const Messages = () => {
     }
   };
 
+  // Create new chat from modal
+  const handleCreateNewChat = async () => {
+    if (!newContactUsername.trim()) return;
+    
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+      
+      // Search for user by username
+      const response = await API.get(`/api/users/search/?query=${encodeURIComponent(newContactUsername)}`);
+      
+      if (response.data.length > 0) {
+        const user = response.data[0];
+        await startChatWithUser(user);
+      } else {
+        setError('User not found');
+      }
+    } catch (err) {
+      console.error('Error creating new chat:', err);
+      handleApiError(err);
+    }
+    
+    // Reset input and close modal
+    setNewContactUsername('');
+    setShowNewChatModal(false);
+  };
+
   // Filter contacts by search term
   const filteredContacts = contacts.filter(contact => 
     contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -409,15 +437,14 @@ const Messages = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <div className="search-icon"> 
-            </div>
+            <div className="search-icon"></div>
           </div>
           <button className="new-chat-btn">
             CHATS
           </button>
         </div>
 
-        {/* Display Lecturers Section */}
+        {/* Display Lecturers Section as chat links */}
         <div className="user-category-section">
           <h3>Lecturers</h3>
           <div className="user-list">
@@ -425,19 +452,22 @@ const Messages = () => {
               lecturers.map(lecturer => (
                 <div 
                   key={lecturer.id}
-                  className="user-item"
+                  className="user-item chat-link"
                   onClick={() => startChatWithUser(lecturer)}
                 >
+                  <div className="user-avatar">
+                    {(lecturer.name || lecturer.username).charAt(0).toUpperCase()}
+                  </div>
                   <div className="user-name">{lecturer.name || lecturer.username}</div>
                 </div>
               ))
             ) : (
-              <div className="empty-user-list">Loading...</div>
+              <div className="empty-user-list">Loading lecturers...</div>
             )}
           </div>
         </div>
 
-        {/* Display Registrars Section */}
+        {/* Display Registrars Section as chat links */}
         <div className="user-category-section">
           <h3>Registrars</h3>
           <div className="user-list">
@@ -445,14 +475,17 @@ const Messages = () => {
               registrars.map(registrar => (
                 <div 
                   key={registrar.id}
-                  className="user-item"
+                  className="user-item chat-link"
                   onClick={() => startChatWithUser(registrar)}
                 >
+                  <div className="user-avatar">
+                    {(registrar.name || registrar.username).charAt(0).toUpperCase()}
+                  </div>
                   <div className="user-name">{registrar.name || registrar.username}</div>
                 </div>
               ))
             ) : (
-              <div className="empty-user-list">Loading...</div>
+              <div className="empty-user-list">Loading registrars...</div>
             )}
           </div>
         </div>
@@ -464,9 +497,12 @@ const Messages = () => {
             {searchResults.map(user => (
               <div 
                 key={user.id}
-                className="user-item"
+                className="user-item chat-link"
                 onClick={() => startChatWithUser(user)}
               >
+                <div className="user-avatar">
+                  {(user.name || user.username).charAt(0).toUpperCase()}
+                </div>
                 <div className="user-name">{user.name || user.username}</div>
               </div>
             ))}
@@ -474,9 +510,11 @@ const Messages = () => {
         )}
 
         <div className="contacts-list">
+          <h3>Recent Chats</h3>
           {contacts.length === 0 ? (
             <div className="empty-state">
-              <div className="empty-icon"></div>
+              <div className="empty-icon">💬</div>
+              <p>No recent chats</p>
             </div>
           ) : (
             sortedContacts.map(contact => (
@@ -529,7 +567,7 @@ const Messages = () => {
             <div className="messages-container">
               {messages[selectedContact.id]?.length > 0 ? (
                 messages[selectedContact.id].map(message => {
-                  // Determine if message is from current user (you'll need to get current user ID)
+                  // Determine if message is from current user
                   const currentUserId = localStorage.getItem('userId');
                   const isCurrentUser = message.senderId === currentUserId;
                   
@@ -570,6 +608,7 @@ const Messages = () => {
                 className="send-button"
                 disabled={!messageInput.trim()}
               >
+                Send
               </button>
             </form>
           </>
