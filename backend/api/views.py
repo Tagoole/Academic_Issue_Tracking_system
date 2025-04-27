@@ -689,53 +689,6 @@ class MessageViewSet(ModelViewSet):
         return Response({"unread_count": unread_count})
 
 
-class ConversationViewSet(ModelViewSet):
-    """
-    API endpoint for conversations
-    """
-    serializer_class = ConversationSerializer
-    permission_classes = [IsAuthenticated]
-    
-    def get_queryset(self):
-        """
-        Return conversations that involve the authenticated user
-        """
-        return Conversation.objects.filter(
-            participants=self.request.user
-        ).order_by('-updated_at')
-    
-    @action(detail=True, methods=['get'])
-    def messages(self, request, pk=None):
-        """
-        Get all messages in a conversation
-        """
-        try:
-            conversation = self.get_object()
-        except Conversation.DoesNotExist:
-            return Response(
-                {"error": "Conversation not found"}, 
-                status=status.HTTP_404_NOT_FOUND
-            )
-        
-        # Get all participants except the current user
-        other_participants = conversation.participants.exclude(id=request.user.id)
-        
-        # Get all messages between the current user and other participants
-        messages = Message.objects.filter(
-            (Q(sender=request.user) & Q(receiver__in=other_participants)) | 
-            (Q(sender__in=other_participants) & Q(receiver=request.user)),
-            is_deleted=False
-        ).order_by('timestamp')
-        
-        # Mark messages as read
-        unread_messages = messages.filter(receiver=request.user, is_read=False)
-        for message in unread_messages:
-            message.mark_as_read()
-        
-        serializer = MessageSerializer(messages, many=True)
-        return Response(serializer.data)
-
-
 class UserSearchView(generics.ListAPIView):
     """
     API endpoint to search for users
