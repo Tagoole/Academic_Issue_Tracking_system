@@ -118,6 +118,18 @@
   text-align: center;
 }
 
+.filter-btn:hover {
+  background-color: #2980b9;
+}
+
+/* Table Styles */
+.issues-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* For better column width control */
+  font-size: 16px; /* Increased base font size for table */
+}
+
 
 
 
