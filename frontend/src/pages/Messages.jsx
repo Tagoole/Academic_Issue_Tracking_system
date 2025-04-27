@@ -18,6 +18,8 @@ const Messages = () => {
   const [error, setError] = useState(null);
   const [conversations, setConversations] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
+  const [lecturers, setLecturers] = useState([]);
+  const [registrars, setRegistrars] = useState([]);
   const navigate = useNavigate();
 
   // Authentication check when component mounts
@@ -35,9 +37,39 @@ const Messages = () => {
     // Fetch data only if authentication check passes
     if (checkAuth()) {
       fetchConversations();
+      fetchLecturers();
+      fetchRegistrars();
       loadDataFromStorage();
     }
   }, [navigate]);
+
+  // Fetch lecturers from API
+  const fetchLecturers = async () => {
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+      
+      const response = await API.get('/api/get_lecturers/');
+      setLecturers(response.data);
+    } catch (err) {
+      console.error('Error fetching lecturers:', err);
+      handleApiError(err);
+    }
+  };
+
+  // Fetch registrars from API
+  const fetchRegistrars = async () => {
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+      
+      const response = await API.get('/api/get_registrars/');
+      setRegistrars(response.data);
+    } catch (err) {
+      console.error('Error fetching registrars:', err);
+      handleApiError(err);
+    }
+  };
 
   const fetchConversations = async () => {
     try {
@@ -158,6 +190,8 @@ const Messages = () => {
           
           // Retry fetching data
           fetchConversations();
+          fetchLecturers();
+          fetchRegistrars();
         } else {
           navigate('/signin');
         }
@@ -378,15 +412,52 @@ const Messages = () => {
             <div className="search-icon"> 
             </div>
           </div>
-          <button 
-            className="new-chat-btn"
-            onClick={() => setShowNewChatModal(true)}
-          >
-            START NEW CHAT
+          <button className="new-chat-btn">
+            CHATS
           </button>
         </div>
 
-        {/* Search results */}
+        {/* Display Lecturers Section */}
+        <div className="user-category-section">
+          <h3>Lecturers</h3>
+          <div className="user-list">
+            {lecturers.length > 0 ? (
+              lecturers.map(lecturer => (
+                <div 
+                  key={lecturer.id}
+                  className="user-item"
+                  onClick={() => startChatWithUser(lecturer)}
+                >
+                  <div className="user-name">{lecturer.name || lecturer.username}</div>
+                </div>
+              ))
+            ) : (
+              <div className="empty-user-list">Loading...</div>
+            )}
+          </div>
+        </div>
+
+        {/* Display Registrars Section */}
+        <div className="user-category-section">
+          <h3>Registrars</h3>
+          <div className="user-list">
+            {registrars.length > 0 ? (
+              registrars.map(registrar => (
+                <div 
+                  key={registrar.id}
+                  className="user-item"
+                  onClick={() => startChatWithUser(registrar)}
+                >
+                  <div className="user-name">{registrar.name || registrar.username}</div>
+                </div>
+              ))
+            ) : (
+              <div className="empty-user-list">Loading...</div>
+            )}
+          </div>
+        </div>
+
+        {/* Search results if searching */}
         {searchTerm && searchResults.length > 0 && (
           <div className="search-results">
             <h3>Search Results</h3>
@@ -396,34 +467,16 @@ const Messages = () => {
                 className="user-item"
                 onClick={() => startChatWithUser(user)}
               >
-                <div className="user-avatar">
-                  {user.name ? user.name.charAt(0).toUpperCase() : user.username.charAt(0).toUpperCase()}
-                </div>
-                <div className="user-info">
-                  <div className="user-name">{user.name || user.username}</div>
-                  <div className="user-role">{user.role || "User"}</div>
-                </div>
+                <div className="user-name">{user.name || user.username}</div>
               </div>
             ))}
           </div>
         )}
 
-        {/* Show loading indicator when searching */}
-        {searchTerm && searchLoading && (
-          <div className="search-loading">Searching...</div>
-        )}
-
-        {/* Show no results message */}
-        {searchTerm && !searchLoading && searchResults.length === 0 && (
-          <div className="no-search-results">No users found</div>
-        )}
-
         <div className="contacts-list">
           {contacts.length === 0 ? (
             <div className="empty-state">
-              <div className="empty-icon">💬</div>
-              <p>No conversations yet</p>
-              <p>Start a new chat to begin messaging</p>
+              <div className="empty-icon"></div>
             </div>
           ) : (
             sortedContacts.map(contact => (
@@ -517,7 +570,6 @@ const Messages = () => {
                 className="send-button"
                 disabled={!messageInput.trim()}
               >
-                Send
               </button>
             </form>
           </>
@@ -545,45 +597,26 @@ const Messages = () => {
             <div className="modal-form">
               <input
                 type="text"
-                placeholder="Search for users..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Enter username"
+                value={newContactUsername}
+                onChange={(e) => setNewContactUsername(e.target.value)}
               />
-              
-              {searchLoading ? (
-                <div className="search-loading">Searching...</div>
-              ) : searchResults.length > 0 ? (
-                <div className="search-results-modal">
-                  {searchResults.map(user => (
-                    <div 
-                      key={user.id}
-                      className="user-item"
-                      onClick={() => startChatWithUser(user)}
-                    >
-                      <div className="user-avatar">
-                        {user.name ? user.name.charAt(0).toUpperCase() : user.username.charAt(0).toUpperCase()}
-                      </div>
-                      <div className="user-info">
-                        <div className="user-name">{user.name || user.username}</div>
-                        <div className="user-role">{user.role || "User"}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : searchTerm ? (
-                <div className="no-results">No users found</div>
-              ) : null}
-              
               <div className="modal-buttons">
                 <button 
                   className="cancel-button"
                   onClick={() => {
                     setShowNewChatModal(false);
-                    setSearchTerm('');
-                    setSearchResults([]);
+                    setNewContactUsername('');
                   }}
                 >
                   Cancel
+                </button>
+                <button 
+                  className="start-chat-button"
+                  onClick={handleCreateNewChat}
+                  disabled={!newContactUsername.trim()}
+                >
+                  Start Chat
                 </button>
               </div>
             </div>
