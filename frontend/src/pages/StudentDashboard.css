@@ -182,12 +182,12 @@
 
 .issues-table th:nth-child(4), /* Created column */
 .issues-table td:nth-child(4),
-.issues-table th:nth-child(5), /* Updated column */
+.issues-table th:nth-child(5), 
 .issues-table td:nth-child(5) {
   width: 9%;
 }
 
-.issues-table th:nth-child(6), /* Is Commented column */
+.issues-table th:nth-child(6), 
 .issues-table td:nth-child(6) {
   width: 5%;
   text-align: center;
