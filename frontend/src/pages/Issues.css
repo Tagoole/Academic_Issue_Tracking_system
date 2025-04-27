@@ -149,8 +149,8 @@
 
 /* Column widths for better layout - Increased issue column width */
 .issues-table th:nth-child(1), .issues-table td:nth-child(1) { 
-  width: 35%; /* Increased from 25% for the Issue column */
-  font-size: 16px; /* Specific font size for issue text */
+  width: 35%; 
+  font-size: 16px; 
 }
 
 .issues-table th:nth-child(2), .issues-table td:nth-child(2) { width: 10%; } 
