@@ -170,5 +170,14 @@
   min-width: 85px;
 }
 
+.status-pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.status-in_progress {
+  background-color: #cce5ff;
+  color: #004085;
+}
 
 
