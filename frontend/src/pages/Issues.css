@@ -242,3 +242,11 @@
   padding: 12px 14px;
 }
 
+@media (max-width: 768px) {
+  .issues-container {
+    margin-left: 0;
+    flex-direction: column;
+  }
+  
+
+  }
