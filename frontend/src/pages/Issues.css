@@ -140,6 +140,13 @@
   white-space: nowrap; /* Prevent text wrapping in cells */
 }
 
+.issues-table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  font-size: 17px; /* Increased header font size */
+  color: #2c3e50;
+}
+
 
 
 
