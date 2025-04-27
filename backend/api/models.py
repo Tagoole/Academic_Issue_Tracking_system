@@ -163,5 +163,35 @@ class Email_Notification(models.Model):
         return f'Email Notification to {self.user.username}'
     
     
+
+class Message(models.Model):
+    """
+    Message model for storing chat messages between users
+    """
+    sender = models.ForeignKey(
+        CustomUser, 
+        on_delete=models.CASCADE, 
+        related_name='sent_messages'
+    )
+    receiver = models.ForeignKey(
+        CustomUser, 
+        on_delete=models.CASCADE, 
+        related_name='received_messages'
+    )
+    content = models.TextField()
+    timestamp = models.DateTimeField(default=timezone.now)
+    is_read = models.BooleanField(default=False)
+    is_deleted = models.BooleanField(default=False)
     
+    class Meta:
+        ordering = ['timestamp']
+        
+    def __str__(self):
+        return f"From {self.sender.username} to {self.receiver.username} at {self.timestamp}"
+        
+    def mark_as_read(self):
+        if not self.is_read:
+            self.is_read = True
+            self.save()
+
     
