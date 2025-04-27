@@ -194,4 +194,24 @@ class Message(models.Model):
             self.is_read = True
             self.save()
 
+
+
+class Conversation(models.Model):
+    """
+    Model to keep track of conversations between users
+    """
+    participants = models.ManyToManyField(CustomUser, related_name='conversations')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
+    def __str__(self):
+        participant_names = ", ".join([user.username for user in self.participants.all()])
+        return f"Conversation between {participant_names}"
+    
+    @property
+    def last_message(self):
+        return Message.objects.filter(
+            sender__in=self.participants.all(),
+            receiver__in=self.participants.all(),
+            is_deleted=False
+        ).order_by('-timestamp').first()
