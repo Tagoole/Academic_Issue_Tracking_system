@@ -60,6 +60,10 @@ def custom_user(db, user_data, program):
     )
     return user
 
+
+
+
+
 @pytest.fixture
 def issue(db, custom_user, course_unit):
     return Issue.objects.create(
