@@ -267,7 +267,7 @@ class ConversationSerializer(serializers.ModelSerializer):
     participants = UserSerializer(many=True, read_only=True)
     participant_ids = serializers.PrimaryKeyRelatedField(
         many=True, 
-        queryset=User.objects.all(),
+        queryset=CustomUser.objects.all(),
         write_only=True
     )
     last_message_content = serializers.SerializerMethodField()
