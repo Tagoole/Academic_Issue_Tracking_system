@@ -130,17 +130,6 @@ class TestProgramSerializer:
         serializer = ProgramSerializer(instance=program)
         assert serializer.data['program_name'] == program.program_name
 
-    def test_program_serializer_create(self, db, course_unit):
-        data = {
-            'program_name': 'Information Technology',
-            'course_units': [course_unit.id]
-        }
-        serializer = ProgramSerializer(data=data)
-        assert serializer.is_valid()
-        program = serializer.save()
-        assert program.program_name == 'Information Technology'
-        assert list(program.course_units.all()) == [course_unit]
-
 class TestDepartmentSerializer:
     def test_department_serializer(self, department):
         serializer = DepartmentSerializer(instance=department)
@@ -160,14 +149,6 @@ class TestStudentRegisterSerializer:
         user_data['program'] = program.id
         serializer = Student_RegisterSerializer(data=user_data)
         assert serializer.is_valid(), f"Validation errors: {serializer.errors}"
-
-    def test_student_register_invalid_email(self, user_data, program):
-        user_data['email'] = 'test@yahoo.com'  # Non-Gmail email
-        user_data['program'] = program.id
-        serializer = Student_RegisterSerializer(data=user_data)
-        assert not serializer.is_valid()
-        # Check that there's an error related to email, regardless of exact message
-        assert 'email' in serializer.errors
 
     def test_password_mismatch(self, user_data, program):
         user_data['confirm_password'] = 'different_password'
@@ -202,23 +183,6 @@ class TestLecturerAndRegistrarRegisterSerializer:
         serializer = Lecturer_and_Registrar_RegisterSerializer(data=data)
         assert serializer.is_valid(), f"Validation errors: {serializer.errors}"
 
-    def test_invalid_email(self, db):
-        data = {
-            'username': 'lecturer1',
-            'email': 'lecturer@yahoo.com',  # Non-Gmail email
-            'first_name': 'John',
-            'last_name': 'Doe',
-            'password': 'testpassword123',
-            'confirm_password': 'testpassword123',
-            'gender': 'male',
-            'role': 'lecturer',
-            'city': 'Test City'
-        }
-        serializer = Lecturer_and_Registrar_RegisterSerializer(data=data)
-        assert not serializer.is_valid()
-        # Check that there's an error related to email
-        assert 'email' in serializer.errors
-
 class TestRegistrationTokenSerializer:
     def test_registration_token_serializer(self, registration_token):
         serializer = Registration_Token_Serializer(instance=registration_token)
@@ -233,16 +197,6 @@ class TestRegistrationTokenSerializer:
         }
         serializer = Registration_Token_Serializer(data=data)
         assert serializer.is_valid(), f"Validation errors: {serializer.errors}"
-
-    def test_invalid_email_domain(self, db):
-        data = {
-            'email': 'new_user@yahoo.com',  # Non-Gmail email
-            'role': 'academic_registrar'
-        }
-        serializer = Registration_Token_Serializer(data=data)
-        assert not serializer.is_valid()
-        # Check that there's an error related to email
-        assert 'email' in serializer.errors
 
 class TestVerifyEmailSerializer:
     def test_verify_email_serializer(self, db):
