@@ -542,6 +542,16 @@ def get_lecturers(request):
     
     return Response(serializer.data, status=status.HTTP_200_OK)
 
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_students(request):
+    students = CustomUser.objects.filter(role='student')
+    
+    serializer = UserSerializer(students, many=True)
+    
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 
 
 @api_view(['DELETE'])
