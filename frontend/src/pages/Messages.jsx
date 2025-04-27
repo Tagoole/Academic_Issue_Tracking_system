@@ -894,3 +894,54 @@ const Messages = () => {
                           >
                             <div className="result-avatar">
                               {(user.name || user.username || 'U').charAt(0).toUpperCase()}
+                              </div>
+                            <div className="result-info">
+                              <div className="result-name">{user.name || user.username}</div>
+                              {user.name && user.username && (
+                                <div className="result-username">@{user.username}</div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  ) : (
+                    <div className="no-results">No users found</div>
+                  )}
+                </div>
+              )}
+
+              <div className="modal-buttons">
+                <button 
+                  className="cancel-button"
+                  onClick={() => {
+                    setShowNewChatModal(false);
+                    setNewContactUsername('');
+                    setLocalSearchResults([]);
+                  }}
+                >
+                  Cancel
+                </button>
+                <button 
+                  className="start-chat-button"
+                  onClick={handleCreateNewChat}
+                  disabled={!newContactUsername.trim() || (localSearchResults.length === 0 && searchResults.length === 0) || searchLoading}
+                >
+                  Start Chat
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Error notification */}
+      {error && (
+        <div className="error-notification">
+          {error}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Messages;
