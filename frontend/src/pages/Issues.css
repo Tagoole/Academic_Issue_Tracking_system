@@ -185,5 +185,23 @@
   color: #155724;
 }
 
+.status-rejected {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.view-details-btn {
+  padding: 8px 14px; /* Increased padding */
+  background-color: #f8f9fa;
+  border: 1px solid #696767;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 15px; /* Increased font size */
+  transition: all 0.3s;
+  white-space: nowrap;
+  display: block;
+  text-align: center;
+}
+
 
 
