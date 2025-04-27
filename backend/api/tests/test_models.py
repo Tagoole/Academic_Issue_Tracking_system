@@ -6,6 +6,8 @@ from django.contrib.auth.hashers import check_password
 from django.core import mail
 from datetime import timedelta
 
+
+
 @pytest.mark.django_db
 class TestDepartment:
     def test_department_creation(self):

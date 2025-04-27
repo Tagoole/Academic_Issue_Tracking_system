@@ -2,53 +2,73 @@ import React, { useState, useRef, useEffect } from 'react';
 import Navbar from './NavBar';
 import Sidebar from './Sidebar1';
 import './StudentsProfile.css';
-import API from '../api'; // Import the API service
+import API from '../api';
 
 const StudentsProfile = () => {
   const fileInputRef = useRef(null);
   const [profileImage, setProfileImage] = useState('/avatar-placeholder.png');
-  const [loading, setLoading] = useState(false);
-  
-  // Initialize state with localStorage data
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [editableField, setEditableField] = useState(null);
+
+  // Initialize profile state with default values
   const [profile, setProfile] = useState({
-    fullName: '[Full Name]',
-    role: '[Role]',
-    phoneNumber: '0723 456678', // Default phone number
-    email: '[Email Address]',
-    gender: '[Gender]',
-    registrationNumber: '[Registration]',
-    studentNumber: '[Student Number]',
-    program: '[Program]',
+    fullName: 'Loading...',
+    role: 'Student',
+    phoneNumber: 'Loading...',
+    email: 'Loading...',
+    gender: 'Loading...',
+    registrationNumber: 'Loading...',
+    studentNumber: 'Loading...',
+    program: 'Loading...',
   });
 
-  // Load data from localStorage on component mount
+  // Fields that should be read-only
+  const readOnlyFields = [
+    'fullName', 'email', 'gender', 
+    'studentNumber', 'registrationNumber', 
+    'program'
+  ];
+
+  // Load user data on component mount
   useEffect(() => {
     const loadUserData = async () => {
-      setLoading(true);
       try {
-        // Get user data from localStorage
-        const userName = localStorage.getItem('userName') || '[Full Name]';
-        const userEmail = localStorage.getItem('userEmail') || '[Email Address]';
-        const userGender = localStorage.getItem('userGender') || '[Gender]';
-        const userId = localStorage.getItem('userId') || '';
-        const userProgram = localStorage.getItem('userProgram') || '';
-        
-        // Update profile state with localStorage data
-        setProfile(prevProfile => ({
-          ...prevProfile,
-          fullName: userName,
-          email: userEmail,
-          gender: userGender,
-          studentNumber: userId,
-          registrationNumber: userId ? `25/MAK/23-${userId}` : '[Registration]'
+        // Get basic user data from localStorage
+        const userData = {
+          fullName: localStorage.getItem('userName') || 'Not available',
+          email: localStorage.getItem('userEmail') || 'Not available',
+          gender: localStorage.getItem('userGender') || 'Not specified',
+          studentNumber: localStorage.getItem('userId') || 'Not assigned',
+          programId: localStorage.getItem('userProgram') || null,
+        };
+
+        // Generate registration number if student number exists
+        const registrationNumber = userData.studentNumber 
+          ? `25/MAK/23-${userData.studentNumber}`
+          : 'Not available';
+
+        // Update profile with basic info
+        setProfile(prev => ({
+          ...prev,
+          ...userData,
+          registrationNumber,
+          phoneNumber: '0723 456678', // Default phone number
         }));
 
-        // Fetch program name from API if userProgram exists
-        if (userProgram) {
-          await fetchProgramName(userProgram);
+        // Fetch program details if programId exists
+        if (userData.programId) {
+          await fetchProgramName(userData.programId);
+        } else {
+          setProfile(prev => ({
+            ...prev,
+            program: 'No program assigned'
+          }));
         }
-      } catch (error) {
-        console.error("Error loading user data:", error);
+
+      } catch (err) {
+        console.error("Failed to load user data:", err);
+        setError('Failed to load profile data. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -57,53 +77,48 @@ const StudentsProfile = () => {
     loadUserData();
   }, []);
 
-  // Function to fetch program name from API using the imported API service
+  // Fetch program name from API
   const fetchProgramName = async (programId) => {
     try {
+      setLoading(true);
       const response = await API.get(`/api/program/${programId}`);
-      if (response.status === 200) {
-        const data = response.data;
-        const programName = data.name || '[Program]';
-        
-        // Update the program field in the profile state
-        setProfile(prevProfile => ({
-          ...prevProfile,
+      
+      if (response.data && (response.data.name || response.data.programName)) {
+        const programName = response.data.name || response.data.programName;
+        setProfile(prev => ({
+          ...prev,
           program: programName
         }));
-        
-        console.log("Program fetched successfully:", programName);
+        localStorage.setItem('userProgramName', programName);
       } else {
-        console.error('Failed to fetch program data');
+        throw new Error('Invalid program data format');
       }
-    } catch (error) {
-      console.error('Error fetching program data:', error);
+    } catch (err) {
+      console.error('Error fetching program:', err);
+      setProfile(prev => ({
+        ...prev,
+        program: 'Program info unavailable'
+      }));
+    } finally {
+      setLoading(false);
     }
   };
 
-  const [editableField, setEditableField] = useState(null);
-
   const handleEditClick = (field) => {
-    // Don't allow editing for readonly fields
-    if (field === 'fullName' || field === 'email' || field === 'gender' || 
-        field === 'studentNumber' || field === 'registrationNumber' || 
-        field === 'phoneNumber' || field === 'program') {
-      return;
+    if (!readOnlyFields.includes(field)) {
+      setEditableField(field);
     }
-    setEditableField(field);
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setProfile((prevProfile) => ({
-      ...prevProfile,
-      [name]: value,
-    }));
+    setProfile(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSave = () => {
     setEditableField(null);
-    console.log('Profile updated:', profile);
-    // Add API call to save updated profile data
+    // Here you would typically send the updated data to your API
+    console.log('Updated profile:', profile);
   };
 
   const handleImageClick = () => {
@@ -112,22 +127,54 @@ const StudentsProfile = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      // Create a preview URL for the image
-      const imageUrl = URL.createObjectURL(file);
-      setProfileImage(imageUrl);
-      
-      console.log('Image file selected:', file);
+    if (file && file.type.match('image.*')) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setProfileImage(event.target.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
-  // Function to determine if a field is readonly
-  const isReadOnly = (field) => {
-    return ['fullName', 'email', 'gender', 'studentNumber', 'registrationNumber', 'phoneNumber', 'program'].includes(field);
-  };
-
   if (loading) {
-    return <div className="loading">Loading profile data...</div>;
+    return (
+      <div className="app-container">
+        <Navbar />
+        <div className="content-wrapper">
+          <Sidebar />
+          <main className="main-content">
+            <div className="loading-container">
+              <div className="loading-spinner"></div>
+              <p>Loading your profile...</p>
+            </div>
+          </main>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="app-container">
+        <Navbar />
+        <div className="content-wrapper">
+          <Sidebar />
+          <main className="main-content">
+            <div className="error-container">
+              <div className="error-icon">⚠️</div>
+              <h3>Error Loading Profile</h3>
+              <p>{error}</p>
+              <button 
+                className="retry-btn"
+                onClick={() => window.location.reload()}
+              >
+                Try Again
+              </button>
+            </div>
+          </main>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -137,11 +184,18 @@ const StudentsProfile = () => {
         <Sidebar />
         <main className="main-content">
           <div className="profile-container">
-            {/* Header Section */}
+            {/* Profile Header Card */}
             <div className="profile-card">
               <div className="profile-header">
                 <div className="profile-image-container" onClick={handleImageClick}>
-                  <img src={profileImage} alt="Profile" className="profile-image" />
+                  <img 
+                    src={profileImage} 
+                    alt="Profile" 
+                    className="profile-image" 
+                    onError={(e) => {
+                      e.target.src = '/avatar-placeholder.png';
+                    }}
+                  />
                   <div className="image-overlay">
                     <span>Change Photo</span>
                   </div>
@@ -157,46 +211,51 @@ const StudentsProfile = () => {
                   <h2>{profile.fullName}</h2>
                   <p>{profile.role}</p>
                 </div>
-                {!isReadOnly('fullName') && (
-                  <button className="edit-btn" onClick={() => handleEditClick('fullName')}>
-                    Edit 
-                  </button>
-                )}
               </div>
             </div>
 
             {/* Personal Information Section */}
             <div className="info-card">
               <h3>Personal Information</h3>
-              {['fullName', 'phoneNumber', 'email', 'gender'].map((field) => (
+              {[
+                { field: 'fullName', label: 'Full Name' },
+                { field: 'phoneNumber', label: 'Phone Number' },
+                { field: 'email', label: 'Email Address' },
+                { field: 'gender', label: 'Gender' },
+              ].map(({ field, label }) => (
                 <div key={field} className="info-item">
-                  <label>{field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}:</label>
-                  {editableField === field ? (
-                    <input
-                      type="text"
-                      name={field}
-                      value={profile[field]}
-                      onChange={handleInputChange}
-                      autoFocus
-                      readOnly={isReadOnly(field)}
-                      className={isReadOnly(field) ? 'readonly-field' : ''}
-                    />
-                  ) : (
-                    <span className={isReadOnly(field) ? 'readonly-value' : ''}>
-                      {profile[field]}
-                    </span>
-                  )}
-                  {!isReadOnly(field) && (
-                    editableField === field ? (
-                      <button className="edit-btn" onClick={handleSave}>
-                        Save
-                      </button>
+                  <label>{label}:</label>
+                  <div className="info-value-container">
+                    {editableField === field ? (
+                      <input
+                        type={field === 'email' ? 'email' : 'text'}
+                        name={field}
+                        value={profile[field]}
+                        onChange={handleInputChange}
+                        autoFocus
+                        readOnly={readOnlyFields.includes(field)}
+                        className={readOnlyFields.includes(field) ? 'readonly-field' : ''}
+                      />
                     ) : (
-                      <button className="edit-btn" onClick={() => handleEditClick(field)}>
-                        Edit
-                      </button>
-                    )
-                  )}
+                      <span className={readOnlyFields.includes(field) ? 'readonly-value' : ''}>
+                        {profile[field]}
+                      </span>
+                    )}
+                    {!readOnlyFields.includes(field) && (
+                      editableField === field ? (
+                        <button className="save-btn" onClick={handleSave}>
+                          Save
+                        </button>
+                      ) : (
+                        <button 
+                          className="edit-btn" 
+                          onClick={() => handleEditClick(field)}
+                        >
+                          Edit
+                        </button>
+                      )
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -204,39 +263,18 @@ const StudentsProfile = () => {
             {/* Academic Information Section */}
             <div className="info-card">
               <h3>Academic Information</h3>
-              {['registrationNumber', 'studentNumber', 'program'].map((field) => (
+              {[
+                { field: 'registrationNumber', label: 'Registration Number' },
+                { field: 'studentNumber', label: 'Student Number' },
+                { field: 'program', label: 'Program' },
+              ].map(({ field, label }) => (
                 <div key={field} className="info-item">
-                  <label>
-                    {field === 'program' 
-                      ? 'Program' 
-                      : field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}:
-                  </label>
-                  {editableField === field ? (
-                    <input
-                      type="text"
-                      name={field}
-                      value={profile[field]}
-                      onChange={handleInputChange}
-                      autoFocus
-                      readOnly={isReadOnly(field)}
-                      className={isReadOnly(field) ? 'readonly-field' : ''}
-                    />
-                  ) : (
-                    <span className={isReadOnly(field) ? 'readonly-value' : ''}>
+                  <label>{label}:</label>
+                  <div className="info-value-container">
+                    <span className="readonly-value">
                       {profile[field]}
                     </span>
-                  )}
-                  {!isReadOnly(field) && (
-                    editableField === field ? (
-                      <button className="edit-btn" onClick={handleSave}>
-                        Save
-                      </button>
-                    ) : (
-                      <button className="edit-btn" onClick={() => handleEditClick(field)}>
-                        Edit
-                      </button>
-                    )
-                  )}
+                  </div>
                 </div>
               ))}
             </div>
