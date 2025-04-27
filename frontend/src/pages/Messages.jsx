@@ -120,22 +120,30 @@ const Messages = () => {
       const response = await API.get('/api/conversations/');
       const conversationsData = response.data || [];
       
-      // Process conversations into contacts format
-      const processedContacts = conversationsData.map(conversation => ({
-        id: conversation.id,
-        name: conversation.other_user?.name || conversation.other_user?.username || 'Unknown User',
-        username: conversation.other_user?.username || '',
-        lastMessage: conversation.last_message?.content || "",
-        timestamp: conversation.last_message?.timestamp || conversation.created_at || new Date().toISOString(),
-        userId: conversation.other_user?.id,
-        unreadCount: conversation.unread_count || 0
-      }));
+      // Process conversations into contacts format with better error handling
+      const processedContacts = conversationsData.map(conversation => {
+        // Make sure we have a valid other_user object
+        const otherUser = conversation.other_user || {};
+        
+        return {
+          id: conversation.id,
+          name: otherUser.name || otherUser.username || 'Unknown User',
+          username: otherUser.username || '',
+          lastMessage: conversation.last_message?.content || "",
+          timestamp: conversation.last_message?.timestamp || conversation.created_at || new Date().toISOString(),
+          userId: otherUser.id || null, // Make sure userId is never undefined
+          unreadCount: conversation.unread_count || 0
+        };
+      });
       
-      setContacts(processedContacts);
+      // Filter out contacts with no userId (invalid data)
+      const validContacts = processedContacts.filter(contact => contact.userId !== null);
+      
+      setContacts(validContacts);
       
       // Update unread messages state
       const unreadCounts = {};
-      processedContacts.forEach(contact => {
+      validContacts.forEach(contact => {
         if (contact.unreadCount > 0) {
           unreadCounts[contact.id] = contact.unreadCount;
         }
@@ -146,7 +154,7 @@ const Messages = () => {
       
       // If a conversation was selected, update it with fresh data
       if (selectedContact) {
-        const updatedContact = processedContacts.find(c => c.id === selectedContact.id);
+        const updatedContact = validContacts.find(c => c.id === selectedContact.id);
         if (updatedContact) {
           setSelectedContact(updatedContact);
         }
@@ -331,49 +339,58 @@ const Messages = () => {
     }
   };
 
-  // Modify your handleSendMessage function
-const handleSendMessage = async (e) => {
-  e.preventDefault();
-  
-  if (!messageInput.trim() || !selectedContact) return;
-  
-  try {
-    // Get access token
-    const accessToken = localStorage.getItem('accessToken');
-    API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+  // Updated handleSendMessage function
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
     
-    // Send message to API with receiver_id instead of conversation_id
-    await API.post('/api/messages/', { 
-      receiver_id: selectedContact.userId, // Use userId instead of id for the receiver
-      content: messageInput.trim()
-    });
+    if (!messageInput.trim() || !selectedContact) return;
     
-    // Rest of your function remains the same...
-    setMessageInput('');
-    setDrafts(prev => {
-      const newDrafts = {...prev};
-      delete newDrafts[selectedContact.id];
-      return newDrafts;
-    });
-    
-    setNotification('Message Sent');
-    
-    setTimeout(() => {
-      setNotification(null);
-    }, 2000);
-    
-    // Refresh messages for this conversation
-    fetchMessages(selectedContact.id);
-    
-    // Also refresh conversations list to get updated last message
-    fetchConversations();
-    
-  } catch (err) {
-    console.error('Error sending message:', err);
-    handleApiError(err);
-    setError('Failed to send message. Please try again.');
-  }
-};
+    try {
+      // Get access token
+      const accessToken = localStorage.getItem('accessToken');
+      API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+      
+      // Data to send
+      let messageData = { content: messageInput.trim() };
+      
+      // If we have a userId, use receiver_id approach
+      if (selectedContact.userId) {
+        messageData.receiver_id = selectedContact.userId;
+      } else {
+        // Fallback to conversation_id approach
+        messageData.conversation_id = selectedContact.id;
+      }
+      
+      // Send message to API
+      await API.post('/api/messages/', messageData);
+      
+      // Rest of your function remains the same...
+      setMessageInput('');
+      setDrafts(prev => {
+        const newDrafts = {...prev};
+        delete newDrafts[selectedContact.id];
+        return newDrafts;
+      });
+      
+      setNotification('Message Sent');
+      
+      setTimeout(() => {
+        setNotification(null);
+      }, 2000);
+      
+      // Refresh messages for this conversation
+      fetchMessages(selectedContact.id);
+      
+      // Also refresh conversations list to get updated last message
+      fetchConversations();
+      
+    } catch (err) {
+      console.error('Error sending message:', err);
+      handleApiError(err);
+      setError('Failed to send message. Please try again.');
+    }
+  };
+
   // Search for users with debounce
   const searchUsers = async (query) => {
     if (!query.trim() || query.trim().length < 2) {
@@ -406,7 +423,7 @@ const handleSendMessage = async (e) => {
     return () => clearTimeout(delaySearch);
   }, [searchTerm]);
 
-  // Start a chat with a user
+  // Start a chat with a user, handling both new and existing conversations
   const startChatWithUser = async (user) => {
     if (!user || !user.id) {
       setError('Invalid user data');
@@ -434,33 +451,22 @@ const handleSendMessage = async (e) => {
           throw new Error('Invalid response from server');
         }
         
-        // Refresh conversations to get the new one
+        // Create a temporary contact with the data we have
+        const tempContact = {
+          id: response.data.id,
+          name: user.name || user.username || 'User',
+          username: user.username || '',
+          lastMessage: "",
+          timestamp: new Date().toISOString(),
+          userId: user.id,
+          unreadCount: 0
+        };
+        
+        // Set selected contact immediately so UI responds quickly
+        setSelectedContact(tempContact);
+        
+        // Then refresh conversations to get the full data
         await fetchConversations();
-        
-        // Find the new conversation in the updated contacts list
-        const newContact = contacts.find(c => 
-          c.userId === user.id || 
-          (c.id === response.data.id)
-        );
-        
-        if (newContact) {
-          setSelectedContact(newContact);
-        } else {
-          // In case we can't find it in contacts, create a temporary one
-          const tempContact = {
-            id: response.data.id,
-            name: user.name || user.username || 'User',
-            username: user.username || '',
-            lastMessage: "",
-            timestamp: new Date().toISOString(),
-            userId: user.id,
-            unreadCount: 0
-          };
-          setSelectedContact(tempContact);
-          
-          // Force refresh to make sure we have latest data
-          setRefreshKey(prevKey => prevKey + 1);
-        }
       }
 
       // Close modal if open
@@ -823,7 +829,6 @@ const handleSendMessage = async (e) => {
                     setSearchTerm('');
                   }}
                 >
-                  ×
                 </button>
               </div>
   
