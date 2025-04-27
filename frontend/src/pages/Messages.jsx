@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './Messages.css';
 import { useNavigate } from 'react-router-dom';
 import API from '../api';
 
 const Messages = () => {
+  // State variables
   const [contacts, setContacts] = useState([]);
   const [selectedContact, setSelectedContact] = useState(null);
   const [messageInput, setMessageInput] = useState('');
@@ -21,15 +22,16 @@ const Messages = () => {
   const [lecturers, setLecturers] = useState([]);
   const [registrars, setRegistrars] = useState([]);
   const [newContactUsername, setNewContactUsername] = useState('');
+  const [refreshKey, setRefreshKey] = useState(0); // To force re-renders
+
+  // Refs
+  const messagesEndRef = useRef(null);
   const navigate = useNavigate();
 
-
-  
   // Authentication check when component mounts
   useEffect(() => {
     const checkAuth = () => {
       const accessToken = localStorage.getItem('accessToken');
-      // If no access token is available, redirect to login
       if (!accessToken) {
         navigate('/signin');
         return false;
@@ -37,14 +39,30 @@ const Messages = () => {
       return true;
     };
 
-    // Fetch data only if authentication check passes
     if (checkAuth()) {
-      fetchConversations();
-      fetchLecturers();
-      fetchRegistrars();
-      loadDataFromStorage();
+      fetchData();
+      const interval = setInterval(fetchUnreadCounts, 30000); // Check for unread messages every 30 seconds
+      return () => clearInterval(interval);
     }
   }, [navigate]);
+
+  // Fetch all necessary data
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      await Promise.all([
+        fetchConversations(),
+        fetchLecturers(),
+        fetchRegistrars(),
+        loadDataFromStorage()
+      ]);
+      setLoading(false);
+    } catch (err) {
+      console.error('Error fetching initial data:', err);
+      handleApiError(err);
+      setLoading(false);
+    }
+  };
 
   // Fetch lecturers from API
   const fetchLecturers = async () => {
@@ -53,10 +71,11 @@ const Messages = () => {
       API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
       
       const response = await API.get('/api/get_lecturers/');
-      setLecturers(response.data);
+      setLecturers(response.data || []);
     } catch (err) {
       console.error('Error fetching lecturers:', err);
       handleApiError(err);
+      setLecturers([]); // Set empty array on error
     }
   };
 
@@ -67,29 +86,48 @@ const Messages = () => {
       API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
       
       const response = await API.get('/api/get_registrars/');
-      setRegistrars(response.data);
+      setRegistrars(response.data || []);
     } catch (err) {
       console.error('Error fetching registrars:', err);
+      handleApiError(err);
+      setRegistrars([]); // Set empty array on error
+    }
+  };
+
+  // Fetch unread message counts
+  const fetchUnreadCounts = async () => {
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+      
+      const response = await API.get('/api/messages/unread_count/');
+      if (response.data.unread_count > 0) {
+        // Only refresh conversations if there are new messages
+        fetchConversations();
+      }
+    } catch (err) {
+      console.error('Error fetching unread counts:', err);
       handleApiError(err);
     }
   };
 
+  // Fetch conversations list
   const fetchConversations = async () => {
     try {
-      setLoading(true);
       const accessToken = localStorage.getItem('accessToken');
       API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
       
       const response = await API.get('/api/conversations/');
+      const conversationsData = response.data || [];
       
       // Process conversations into contacts format
-      const processedContacts = response.data.map(conversation => ({
+      const processedContacts = conversationsData.map(conversation => ({
         id: conversation.id,
-        name: conversation.other_user.name || conversation.other_user.username,
-        username: conversation.other_user.username,
+        name: conversation.other_user?.name || conversation.other_user?.username || 'Unknown User',
+        username: conversation.other_user?.username || '',
         lastMessage: conversation.last_message?.content || "",
-        timestamp: conversation.last_message?.timestamp || conversation.created_at,
-        userId: conversation.other_user.id,
+        timestamp: conversation.last_message?.timestamp || conversation.created_at || new Date().toISOString(),
+        userId: conversation.other_user?.id,
         unreadCount: conversation.unread_count || 0
       }));
       
@@ -104,29 +142,43 @@ const Messages = () => {
       });
       setUnreadMessages(unreadCounts);
       
-      setConversations(response.data);
-      setLoading(false);
+      setConversations(conversationsData);
+      
+      // If a conversation was selected, update it with fresh data
+      if (selectedContact) {
+        const updatedContact = processedContacts.find(c => c.id === selectedContact.id);
+        if (updatedContact) {
+          setSelectedContact(updatedContact);
+        }
+      }
+
     } catch (err) {
       console.error('Error fetching conversations:', err);
       handleApiError(err);
-      setLoading(false);
     }
   };
 
   // Fetch messages for a specific conversation
   const fetchMessages = async (conversationId) => {
+    if (!conversationId) return;
+    
     try {
       const accessToken = localStorage.getItem('accessToken');
       API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
       
       const response = await API.get(`/api/conversations/${conversationId}/messages/`);
+      const messagesData = response.data || [];
+      
+      // Get current user id for message direction
+      const currentUserId = localStorage.getItem('userId');
       
       // Process messages
-      const processedMessages = response.data.map(message => ({
+      const processedMessages = messagesData.map(message => ({
         id: message.id,
-        senderId: message.sender.id, // We'll compare this with current user's ID
-        text: message.content,
-        timestamp: message.timestamp
+        senderId: message.sender?.id || '',
+        text: message.content || '',
+        timestamp: message.timestamp || new Date().toISOString(),
+        isCurrentUser: message.sender?.id === currentUserId
       }));
       
       // Update messages state
@@ -135,19 +187,28 @@ const Messages = () => {
         [conversationId]: processedMessages
       }));
       
-      // Mark messages as read if this is the selected conversation
-      if (selectedContact && selectedContact.id === conversationId) {
-        markMessagesAsRead(conversationId);
-      }
+      // Scroll to bottom of messages
+      setTimeout(() => {
+        if (messagesEndRef.current) {
+          messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
       
     } catch (err) {
       console.error(`Error fetching messages for conversation ${conversationId}:`, err);
       handleApiError(err);
+      // Initialize with empty array on error
+      setMessages(prev => ({
+        ...prev,
+        [conversationId]: []
+      }));
     }
   };
 
   // Mark messages as read
   const markMessagesAsRead = async (conversationId) => {
+    if (!conversationId) return;
+    
     try {
       const accessToken = localStorage.getItem('accessToken');
       API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
@@ -155,10 +216,11 @@ const Messages = () => {
       await API.post(`/api/conversations/${conversationId}/mark_read/`);
       
       // Update local unread count
-      setUnreadMessages(prev => ({
-        ...prev,
-        [conversationId]: 0
-      }));
+      setUnreadMessages(prev => {
+        const updated = { ...prev };
+        delete updated[conversationId];
+        return updated;
+      });
       
     } catch (err) {
       console.error(`Error marking messages as read for conversation ${conversationId}:`, err);
@@ -170,19 +232,25 @@ const Messages = () => {
   const loadDataFromStorage = () => {
     try {
       const storedDrafts = localStorage.getItem('messageDrafts');
-      if (storedDrafts) setDrafts(JSON.parse(storedDrafts));
+      if (storedDrafts) {
+        const parsedDrafts = JSON.parse(storedDrafts);
+        setDrafts(parsedDrafts || {});
+      }
     } catch (err) {
       console.error('Error loading drafts:', err);
+      setDrafts({});
     }
   };
 
   // Handle API errors including token refresh
   const handleApiError = async (err) => {
+    // Check if error is unauthorized
     if (err.response && err.response.status === 401) {
       try {
         const refreshToken = localStorage.getItem('refreshToken');
         
         if (refreshToken) {
+          // Try to refresh token
           const refreshResponse = await API.post('/api/refresh_token/', {
             refresh: refreshToken
           });
@@ -192,21 +260,37 @@ const Messages = () => {
           localStorage.setItem('accessToken', newAccessToken);
           
           // Retry fetching data
-          fetchConversations();
-          fetchLecturers();
-          fetchRegistrars();
+          fetchData();
         } else {
+          // No refresh token, redirect to login
+          clearStorage();
           navigate('/signin');
         }
       } catch (refreshErr) {
         console.error('Error refreshing token:', refreshErr);
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
+        clearStorage();
         navigate('/signin');
       }
+    } else if (err.response) {
+      // Handle other API errors
+      setError(`Error: ${err.response.data?.error || err.response.statusText || 'Unknown error'}`);
+      
+      // Clear error after 5 seconds
+      setTimeout(() => setError(null), 5000);
     } else {
-      setError('An error occurred. Please try again later.');
+      // Network or other errors
+      setError('Network error. Please check your connection and try again.');
+      
+      // Clear error after 5 seconds
+      setTimeout(() => setError(null), 5000);
     }
+  };
+  
+  // Clear local storage on logout
+  const clearStorage = () => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('userId');
   };
 
   // Save drafts to localStorage when they change
@@ -261,7 +345,7 @@ const Messages = () => {
       // Send message to API
       await API.post('/api/messages/', { 
         conversation_id: selectedContact.id,
-        content: messageInput
+        content: messageInput.trim()
       });
       
       // Clear message input and draft
@@ -275,10 +359,10 @@ const Messages = () => {
       // Show "Message Sent" notification
       setNotification('Message Sent');
       
-      // Hide notification after 3 seconds
+      // Hide notification after 2 seconds
       setTimeout(() => {
         setNotification(null);
-      }, 3000);
+      }, 2000);
       
       // Refresh messages for this conversation
       fetchMessages(selectedContact.id);
@@ -293,9 +377,9 @@ const Messages = () => {
     }
   };
 
-  // Search for users
+  // Search for users with debounce
   const searchUsers = async (query) => {
-    if (!query.trim()) {
+    if (!query.trim() || query.trim().length < 2) {
       setSearchResults([]);
       return;
     }
@@ -305,12 +389,13 @@ const Messages = () => {
       const accessToken = localStorage.getItem('accessToken');
       API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
       
-      const response = await API.get(`/api/users/search/?query=${encodeURIComponent(query)}`);
-      setSearchResults(response.data);
+      const response = await API.get(`/api/users/search/?query=${encodeURIComponent(query.trim())}`);
+      setSearchResults(response.data || []);
       setSearchLoading(false);
     } catch (err) {
       console.error('Error searching users:', err);
       handleApiError(err);
+      setSearchResults([]);
       setSearchLoading(false);
     }
   };
@@ -326,50 +411,70 @@ const Messages = () => {
 
   // Start a chat with a user
   const startChatWithUser = async (user) => {
+    if (!user || !user.id) {
+      setError('Invalid user data');
+      return;
+    }
+
     try {
+      setLoading(true); // Show loading while processing
       const accessToken = localStorage.getItem('accessToken');
       API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
       
-      // Check if conversation already exists
-      const existingConversation = conversations.find(c => 
-        c.other_user.id === user.id
-      );
+      // First try to find if conversation already exists with this user
+      let existingContact = contacts.find(c => c.userId === user.id);
       
-      if (existingConversation) {
-        // Find corresponding contact
-        const existingContact = contacts.find(c => c.id === existingConversation.id);
-        if (existingContact) {
-          setSelectedContact(existingContact);
-        }
+      if (existingContact) {
+        // Conversation exists, just select it
+        setSelectedContact(existingContact);
       } else {
         // Create new conversation
         const response = await API.post('/api/conversations/', {
           user_id: user.id
         });
         
-        // Refresh conversations to include the new one
+        if (!response.data || !response.data.id) {
+          throw new Error('Invalid response from server');
+        }
+        
+        // Refresh conversations to get the new one
         await fetchConversations();
         
-        // Select the new conversation
-        const newConversation = response.data;
-        const newContact = {
-          id: newConversation.id,
-          name: user.name || user.username,
-          username: user.username,
-          lastMessage: "",
-          timestamp: newConversation.created_at,
-          userId: user.id
-        };
+        // Find the new conversation in the updated contacts list
+        const newContact = contacts.find(c => 
+          c.userId === user.id || 
+          (c.id === response.data.id)
+        );
         
-        setSelectedContact(newContact);
+        if (newContact) {
+          setSelectedContact(newContact);
+        } else {
+          // In case we can't find it in contacts, create a temporary one
+          const tempContact = {
+            id: response.data.id,
+            name: user.name || user.username || 'User',
+            username: user.username || '',
+            lastMessage: "",
+            timestamp: new Date().toISOString(),
+            userId: user.id,
+            unreadCount: 0
+          };
+          setSelectedContact(tempContact);
+          
+          // Force refresh to make sure we have latest data
+          setRefreshKey(prevKey => prevKey + 1);
+        }
       }
-      
+
       // Close modal if open
       setShowNewChatModal(false);
+      setSearchTerm('');
+      setLoading(false);
       
     } catch (err) {
       console.error('Error starting chat:', err);
       handleApiError(err);
+      setLoading(false);
     }
   };
 
@@ -378,21 +483,24 @@ const Messages = () => {
     if (!newContactUsername.trim()) return;
     
     try {
+      setLoading(true);
       const accessToken = localStorage.getItem('accessToken');
       API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
       
       // Search for user by username
-      const response = await API.get(`/api/users/search/?query=${encodeURIComponent(newContactUsername)}`);
+      const response = await API.get(`/api/users/search/?query=${encodeURIComponent(newContactUsername.trim())}`);
       
-      if (response.data.length > 0) {
+      if (response.data && response.data.length > 0) {
         const user = response.data[0];
         await startChatWithUser(user);
       } else {
         setError('User not found');
       }
+      setLoading(false);
     } catch (err) {
       console.error('Error creating new chat:', err);
       handleApiError(err);
+      setLoading(false);
     }
     
     // Reset input and close modal
@@ -400,13 +508,12 @@ const Messages = () => {
     setShowNewChatModal(false);
   };
 
-  // Filter contacts by search term
+  // Filter and sort contacts by search term and recency
   const filteredContacts = contacts.filter(contact => 
     contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     contact.username.toLowerCase().includes(searchTerm.toLowerCase())
   );
   
-  // Sort contacts by most recent message
   const sortedContacts = [...filteredContacts].sort((a, b) => 
     new Date(b.timestamp) - new Date(a.timestamp)
   );
@@ -414,21 +521,50 @@ const Messages = () => {
   // Get total unread message count
   const totalUnreadCount = Object.values(unreadMessages).reduce((sum, count) => sum + count, 0);
 
+  // Format timestamps for display
   const formatTime = (timestamp) => {
-    const date = new Date(timestamp);
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    try {
+      const date = new Date(timestamp);
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } catch (e) {
+      return '';
+    }
+  };
+  
+  const formatDate = (timestamp) => {
+    try {
+      const date = new Date(timestamp);
+      const now = new Date();
+      
+      // If today, show time
+      if (date.toDateString() === now.toDateString()) {
+        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      }
+      
+      // If this year, show month and day
+      if (date.getFullYear() === now.getFullYear()) {
+        return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+      }
+      
+      // Otherwise show full date
+      return date.toLocaleDateString();
+    } catch (e) {
+      return '';
+    }
   };
 
-  if (loading) {
-    return <div className="loading-message">Loading chats...</div>;
-  }
-
-  if (error) {
-    return <div className="error-message">{error}</div>;
+  // Loading state
+  if (loading && !selectedContact) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <div className="loading-message">Loading conversations...</div>
+      </div>
+    );
   }
 
   return (
-    <div className="messages-page">
+    <div className="messages-page" key={refreshKey}>
       {/* Left sidebar with contacts */}
       <div className="contacts-sidebar">
         <div className="sidebar-header">
@@ -441,8 +577,11 @@ const Messages = () => {
             />
             <div className="search-icon"></div>
           </div>
-          <button className="new-chat-btn">
-            CHATS
+          <button 
+            className="new-chat-btn"
+            onClick={() => setShowNewChatModal(true)}
+          >
+            NEW CHAT {totalUnreadCount > 0 && <span className="total-unread">({totalUnreadCount})</span>}
           </button>
         </div>
 
@@ -458,13 +597,13 @@ const Messages = () => {
                   onClick={() => startChatWithUser(lecturer)}
                 >
                   <div className="user-avatar">
-                    {(lecturer.name || lecturer.username).charAt(0).toUpperCase()}
+                    {(lecturer.name || lecturer.username || 'U').charAt(0).toUpperCase()}
                   </div>
-                  <div className="user-name">{lecturer.name || lecturer.username}</div>
+                  <div className="user-name">{lecturer.name || lecturer.username || 'Unknown'}</div>
                 </div>
               ))
             ) : (
-              <div className="empty-user-list">Loading lecturers...</div>
+              <div className="empty-user-list">No lecturers available</div>
             )}
           </div>
         </div>
@@ -481,191 +620,283 @@ const Messages = () => {
                   onClick={() => startChatWithUser(registrar)}
                 >
                   <div className="user-avatar">
-                    {(registrar.name || registrar.username).charAt(0).toUpperCase()}
+                    {(registrar.name || registrar.username || 'U').charAt(0).toUpperCase()}
                   </div>
-                  <div className="user-name">{registrar.name || registrar.username}</div>
+                  <div className="user-name">{registrar.name || registrar.username || 'Unknown'}</div>
                 </div>
               ))
             ) : (
-              <div className="empty-user-list">Loading registrars...</div>
+              <div className="empty-user-list">No registrars available</div>
             )}
           </div>
         </div>
 
         {/* Search results if searching */}
-        {searchTerm && searchResults.length > 0 && (
+        {searchTerm && (
           <div className="search-results">
-            <h3>Search Results</h3>
-            {searchResults.map(user => (
-              <div 
-                key={user.id}
-                className="user-item chat-link"
-                onClick={() => startChatWithUser(user)}
-              >
-                <div className="user-avatar">
-                  {(user.name || user.username).charAt(0).toUpperCase()}
-                </div>
-                <div className="user-name">{user.name || user.username}</div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <div className="contacts-list">
-          <h3>Recent Chats</h3>
-          {contacts.length === 0 ? (
-            <div className="empty-state">
-              <div className="empty-icon">💬</div>
-              <p>No recent chats</p>
-            </div>
-          ) : (
-            sortedContacts.map(contact => (
-              <div
-                key={contact.id}
-                className={`contact-item ${selectedContact?.id === contact.id ? 'selected' : ''}`}
-                onClick={() => setSelectedContact(contact)}
-              >
-                <div className="contact-avatar">
-                  {contact.name.charAt(0).toUpperCase()}
-                </div>
-                <div className="contact-info">
-                  <div className="contact-name">{contact.name}</div>
-                  <div className="contact-last-message">
-                    {contact.lastMessage || "No messages yet"}
+            <h3>Search Results {searchLoading && <span className="search-loading">...</span>}</h3>
+            {searchResults.length > 0 ? (
+              searchResults.map(user => (
+                <div 
+                  key={user.id}
+                  className="user-item chat-link"
+                  onClick={() => startChatWithUser(user)}
+                >
+                  <div className="user-avatar">
+                    {(user.name || user.username || 'U').charAt(0).toUpperCase()}
                   </div>
+                  <div className="user-name">{user.name || user.username || 'Unknown'}</div>
                 </div>
-                <div className="contact-meta">
-                  {contact.timestamp && (
-                    <div className="contact-time">
-                      {new Date(contact.timestamp).toLocaleDateString()}
-                    </div>
-                  )}
-                  {unreadMessages[contact.id] > 0 && (
-                    <div className="unread-badge">{unreadMessages[contact.id]}</div>
-                  )}
-                  {drafts[contact.id] && (
-                    <div className="draft-indicator">Draft</div>
-                  )}
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      </div>
-
-      {/* Right side chat area */}
-      <div className="chat-area">
-        {selectedContact ? (
-          <>
-            <div className="chat-header">
-              <div className="chat-contact-info">
-                <div className="contact-avatar large">
-                  {selectedContact.name.charAt(0).toUpperCase()}
-                </div>
-                <div className="contact-name">{selectedContact.name}</div>
-              </div>
-            </div>
-
-            <div className="messages-container">
-              {messages[selectedContact.id]?.length > 0 ? (
-                messages[selectedContact.id].map(message => {
-                  // Determine if message is from current user
-                  const currentUserId = localStorage.getItem('userId');
-                  const isCurrentUser = message.senderId === currentUserId;
-                  
-                  return (
-                    <div
-                      key={message.id}
-                      className={`message ${isCurrentUser ? 'sent' : 'received'}`}
-                    >
-                      <div className="message-content">{message.text}</div>
-                      <div className="message-time">{formatTime(message.timestamp)}</div>
-                    </div>
-                  );
-                })
+                ))
               ) : (
-                <div className="empty-chat-state">
-                  <p>No messages yet</p>
-                  <p>Send a message to start the conversation</p>
-                </div>
+                searchTerm.length >= 2 && !searchLoading && (
+                  <div className="empty-search">No users found matching "{searchTerm}"</div>
+                )
               )}
             </div>
-
-            {notification && (
-              <div className="notification">
-                {notification}
+          )}
+  
+          <div className="contacts-list">
+            <h3>Recent Chats</h3>
+            {sortedContacts.length === 0 ? (
+              <div className="empty-state">
+                <div className="empty-icon">💬</div>
+                <p>No recent chats</p>
+                <button 
+                  className="start-new-chat-btn"
+                  onClick={() => setShowNewChatModal(true)}
+                >
+                  Start a new conversation
+                </button>
               </div>
+            ) : (
+              sortedContacts.map(contact => (
+                <div
+                  key={contact.id}
+                  className={`contact-item ${selectedContact?.id === contact.id ? 'selected' : ''}`}
+                  onClick={() => setSelectedContact(contact)}
+                >
+                  <div className="contact-avatar">
+                    {(contact.name || 'U').charAt(0).toUpperCase()}
+                  </div>
+                  <div className="contact-info">
+                    <div className="contact-name-row">
+                      <div className="contact-name">{contact.name || contact.username || 'Unknown'}</div>
+                      {contact.timestamp && (
+                        <div className="contact-time">
+                          {formatDate(contact.timestamp)}
+                        </div>
+                      )}
+                    </div>
+                    <div className="contact-details-row">
+                      <div className="contact-last-message">
+                        {contact.lastMessage || "No messages yet"}
+                      </div>
+                      <div className="contact-indicators">
+                        {unreadMessages[contact.id] > 0 && (
+                          <div className="unread-badge">{unreadMessages[contact.id]}</div>
+                        )}
+                        {drafts[contact.id] && (
+                          <div className="draft-indicator">Draft</div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))
             )}
-
-            <form className="message-input-form" onSubmit={handleSendMessage}>
-              <input
-                type="text"
-                placeholder="Type a message..."
-                value={messageInput}
-                onChange={handleMessageChange}
-                className="message-input"
-              />
-              <button 
-                type="submit" 
-                className="send-button"
-                disabled={!messageInput.trim()}
-              >
-                Send
-              </button>
-            </form>
-          </>
-        ) : (
-          <div className="no-chat-selected">
-            <div className="empty-state">
-              <div className="empty-icon large">💬</div>
-              <h2>Select a chat or start a new conversation</h2>
-              <button 
-                className="new-chat-btn large"
-                onClick={() => setShowNewChatModal(true)}
-              >
-                START NEW CHAT
-              </button>
+          </div>
+        </div>
+  
+        {/* Right side chat area */}
+        <div className="chat-area">
+          {selectedContact ? (
+            <>
+              <div className="chat-header">
+                <div className="chat-contact-info">
+                  <div className="contact-avatar large">
+                    {(selectedContact.name || 'U').charAt(0).toUpperCase()}
+                  </div>
+                  <div className="contact-details">
+                    <div className="contact-name">{selectedContact.name || selectedContact.username || 'Unknown'}</div>
+                    {selectedContact.username && selectedContact.name && (
+                      <div className="contact-username">@{selectedContact.username}</div>
+                    )}
+                  </div>
+                </div>
+                <div className="chat-actions">
+                  {/* You can add action buttons here like refresh, delete chat, etc. */}
+                  <button className="refresh-chat" onClick={() => fetchMessages(selectedContact.id)}>
+                    <span className="refresh-icon">↻</span>
+                  </button>
+                </div>
+              </div>
+  
+              <div className="messages-container">
+                {loading ? (
+                  <div className="loading-messages">
+                    <div className="loading-spinner small"></div>
+                    <p>Loading messages...</p>
+                  </div>
+                ) : messages[selectedContact.id]?.length > 0 ? (
+                  <>
+                    {messages[selectedContact.id].map(message => (
+                      <div
+                        key={message.id}
+                        className={`message ${message.isCurrentUser ? 'sent' : 'received'}`}
+                      >
+                        <div className="message-content">{message.text}</div>
+                        <div className="message-time">{formatTime(message.timestamp)}</div>
+                      </div>
+                    ))}
+                    <div ref={messagesEndRef} /> {/* Scroll anchor */}
+                  </>
+                ) : (
+                  <div className="empty-chat-state">
+                    <div className="empty-chat-icon">💬</div>
+                    <p>No messages yet</p>
+                    <p>Send a message to start the conversation</p>
+                  </div>
+                )}
+              </div>
+  
+              {notification && (
+                <div className="notification">
+                  {notification}
+                </div>
+              )}
+  
+              <form className="message-input-form" onSubmit={handleSendMessage}>
+                <input
+                  type="text"
+                  placeholder="Type a message..."
+                  value={messageInput}
+                  onChange={handleMessageChange}
+                  className="message-input"
+                  autoFocus
+                />
+                <button 
+                  type="submit" 
+                  className="send-button"
+                  disabled={!messageInput.trim()}
+                >
+                  Send
+                </button>
+              </form>
+            </>
+          ) : (
+            <div className="no-chat-selected">
+              <div className="empty-state large">
+                <div className="empty-icon large">💬</div>
+                <h2>Welcome to Messages</h2>
+                <p>Select a chat or start a new conversation</p>
+                <button 
+                  className="new-chat-btn large"
+                  onClick={() => setShowNewChatModal(true)}
+                >
+                  START NEW CHAT
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+  
+        {/* Display error message if any */}
+        {error && (
+          <div className="error-popup">
+            <div className="error-content">
+              <div className="error-icon">⚠️</div>
+              <div className="error-message">{error}</div>
+              <button className="close-error" onClick={() => setError(null)}>×</button>
             </div>
           </div>
         )}
-      </div>
-
-      {/* New Chat Modal */}
-      {showNewChatModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h2>Start a New Chat</h2>
-            <div className="modal-form">
-              <input
-                type="text"
-                placeholder="Enter username"
-                value={newContactUsername}
-                onChange={(e) => setNewContactUsername(e.target.value)}
-              />
-              <div className="modal-buttons">
+  
+        {/* New Chat Modal */}
+        {showNewChatModal && (
+          <div className="modal-overlay" onClick={() => setShowNewChatModal(false)}>
+            <div className="modal-content" onClick={e => e.stopPropagation()}>
+              <div className="modal-header">
+                <h2>Start a New Chat</h2>
                 <button 
-                  className="cancel-button"
+                  className="close-modal"
                   onClick={() => {
                     setShowNewChatModal(false);
                     setNewContactUsername('');
+                    setSearchTerm('');
                   }}
                 >
-                  Cancel
+                  ×
                 </button>
-                <button 
-                  className="start-chat-button"
-                  onClick={handleCreateNewChat}
-                  disabled={!newContactUsername.trim()}
-                >
-                  Start Chat
-                </button>
+              </div>
+  
+              <div className="modal-body">
+                <div className="modal-search">
+                  <input
+                    type="text"
+                    placeholder="Search by username or name"
+                    value={newContactUsername}
+                    onChange={(e) => setNewContactUsername(e.target.value)}
+                    autoFocus
+                  />
+                  {searchLoading && <div className="search-spinner"></div>}
+                </div>
+  
+                {/* Search results inside modal */}
+                {newContactUsername.length >= 2 && (
+                  <div className="modal-search-results">
+                    {searchLoading ? (
+                      <div className="loading-results">Searching...</div>
+                    ) : searchResults.length > 0 ? (
+                      <div className="results-list">
+                        {searchResults.map(user => (
+                          <div 
+                            key={user.id}
+                            className="search-result-item"
+                            onClick={() => startChatWithUser(user)}
+                          >
+                            <div className="result-avatar">
+                              {(user.name || user.username || 'U').charAt(0).toUpperCase()}
+                            </div>
+                            <div className="result-info">
+                              <div className="result-name">{user.name || user.username}</div>
+                              {user.name && user.username && (
+                                <div className="result-username">@{user.username}</div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="no-results">No users found</div>
+                    )}
+                  </div>
+                )}
+  
+                <div className="modal-buttons">
+                  <button 
+                    className="cancel-button"
+                    onClick={() => {
+                      setShowNewChatModal(false);
+                      setNewContactUsername('');
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    className="start-chat-button"
+                    onClick={handleCreateNewChat}
+                    disabled={!newContactUsername.trim() || searchLoading}
+                  >
+                    Start Chat
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-export default Messages;
+        )}
+      </div>
+    );
+  };
+  
+  export default Messages;
