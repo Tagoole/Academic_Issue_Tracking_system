@@ -126,8 +126,8 @@
 .issues-table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed; /* For better column width control */
-  font-size: 16px; /* Increased base font size for table */
+  table-layout: fixed; 
+  font-size: 16px; 
 }
 
 .issues-table th,
