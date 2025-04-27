@@ -771,3 +771,21 @@
     max-width: 90%;
   }
 }
+
+/* Change the chat area background color */
+.chat-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #f0f4f8; /* Changed from #f5f7fa to a slightly bluer light gray */
+}
+
+/* Change the received message style (other person's text) */
+.message.received {
+  align-self: flex-start;
+  background-color: #e3f2fd; /* Changed from white to a light blue */
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  color: #1a237e; /* Added darker blue text color */
+  border-left: 3px solid #3f51b5; /* Added a left border accent */
+}
