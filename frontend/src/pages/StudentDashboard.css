@@ -135,13 +135,54 @@
 
 .issues-table th,
 .issues-table td {
-  padding: 1px 2px; /* Extremely minimal padding */
+  padding: 8px 4px; 
   text-align: left;
-  border-bottom: 1px solid #eee; /* Lighter border for less visual weight */
-  line-height: 0.2; /* Reduce line height for more compact rows */
+  border-bottom: 1px solid #ddd;
+  font-size: 12px; 
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+}
+
+/* Optimized column widths for better space utilization */
+.issues-table th:nth-child(1), 
+.issues-table td:nth-child(1) {
+  width: 4%;
+  min-width: 30px;
+}
+
+.issues-table th:nth-child(2), 
+.issues-table td:nth-child(2) {
+  width: 8%;
+}
+
+.issues-table th:nth-child(3), 
+.issues-table td:nth-child(3) {
+  width: 10%;
+}
+
+.issues-table th:nth-child(4), 
+.issues-table td:nth-child(4),
+.issues-table th:nth-child(5), 
+.issues-table td:nth-child(5) {
+  width: 9%;
+}
+
+.issues-table th:nth-child(6), 
+.issues-table td:nth-child(6) {
+  width: 5%;
+  text-align: center;
+}
+
+.issues-table th:nth-child(7), 
+.issues-table td:nth-child(7) {
+  width: 15%;
+}
+
+.issues-table th:nth-child(8), 
+.issues-table td:nth-child(8) {
+  width: 12%;
+  text-align: center;
 }
 
 .issues-table th {
@@ -194,6 +235,13 @@
 .status-rejected {
   background-color: #f8d7da;
   color: #721c24;
+}
+
+.action-buttons-container {
+  display: flex;
+  flex-direction: column; 
+  justify-content: center;
+  gap: 5px; 
 }
 
 .view-details-btn {

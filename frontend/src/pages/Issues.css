@@ -24,14 +24,14 @@
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin-top: 80px;
-  overflow-x: auto; /* Enable horizontal scrolling if needed */
+  overflow-x: auto; 
 }
 
 /* Title */
 .issues-title {
   color: #2c3e50;
   margin-bottom: 20px;
-  font-size: 28px; /* Increased from 24px */
+  font-size: 28px; 
   font-weight: 600;
 }
 
@@ -42,7 +42,7 @@
   margin-bottom: 20px;
   border-bottom: 1px solid #e0e0e0;
   padding-bottom: 10px;
-  flex-wrap: wrap; /* Allow tabs to wrap on smaller screens */
+  flex-wrap: wrap; 
 }
 
 .issues-tab {
@@ -51,11 +51,11 @@
   background: none;
   cursor: pointer;
   font-weight: 500;
-  font-size: 16px; /* Increased font size */
+  font-size: 16px; 
   color: #7f8c8d;
   border-radius: 4px;
   transition: all 0.3s;
-  white-space: nowrap; /* Prevent tab text from wrapping */
+  white-space: nowrap; 
 }
 
 .issues-tab:hover {
@@ -76,9 +76,9 @@
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 16px; /* Increased font size */
+  font-size: 16px; 
   transition: background-color 0.3s;
-  white-space: nowrap; /* Prevent button text from wrapping */
+  white-space: nowrap; 
 }
 .new-issue-btn:hover {
   background-color: #2980b9;
@@ -98,10 +98,10 @@
 
 .search-input {
   width: 100%;
-  padding: 10px 14px; /* Slightly larger input field */
+  padding: 10px 14px; 
   border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 15px; /* Increased from 14px */
+  font-size: 15px; 
   color: black;
 }
 
@@ -112,9 +112,9 @@
   border: 1px solid #ddd;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 15px; /* Increased font size */
+  font-size: 15px; 
   transition: all 0.3s;
-  min-width: 80px; /* Fix the width issue */
+  min-width: 80px; 
   text-align: center;
 }
 
@@ -126,45 +126,45 @@
 .issues-table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed; /* For better column width control */
-  font-size: 16px; /* Increased base font size for table */
+  table-layout: fixed; 
+  font-size: 16px; 
 }
 
 .issues-table th,
 .issues-table td {
-  padding: 14px 16px; /* Increased padding */
+  padding: 14px 16px; 
   text-align: left;
   border-bottom: 1px solid #ddd;
   overflow: hidden;
-  text-overflow: ellipsis; /* Add ellipsis for text that doesn't fit */
-  white-space: nowrap; /* Prevent text wrapping in cells */
+  text-overflow: ellipsis; 
+  white-space: nowrap; 
 }
 
 .issues-table th {
   background-color: #f8f9fa;
   font-weight: 600;
-  font-size: 17px; /* Increased header font size */
+  font-size: 17px; 
   color: #2c3e50;
 }
 
 /* Column widths for better layout - Increased issue column width */
 .issues-table th:nth-child(1), .issues-table td:nth-child(1) { 
-  width: 35%; /* Increased from 25% for the Issue column */
-  font-size: 16px; /* Specific font size for issue text */
+  width: 35%; 
+  font-size: 16px; 
 }
 
-.issues-table th:nth-child(2), .issues-table td:nth-child(2) { width: 10%; } /* Status column */
-.issues-table th:nth-child(3), .issues-table td:nth-child(3) { width: 13%; } /* Category column */
-.issues-table th:nth-child(4), .issues-table td:nth-child(4) { width: 12%; } /* Created column */
-.issues-table th:nth-child(5), .issues-table td:nth-child(5) { width: 12%; } /* Updated column */
-.issues-table th:nth-child(6), .issues-table td:nth-child(6) { width: 18%; } /* Actions column */
+.issues-table th:nth-child(2), .issues-table td:nth-child(2) { width: 10%; } 
+.issues-table th:nth-child(3), .issues-table td:nth-child(3) { width: 13%; } 
+.issues-table th:nth-child(4), .issues-table td:nth-child(4) { width: 12%; } 
+.issues-table th:nth-child(5), .issues-table td:nth-child(5) { width: 12%; } 
+.issues-table th:nth-child(6), .issues-table td:nth-child(6) { width: 18%; } 
 
 /* Status Pills */
 .status-pill {
   display: inline-block;
-  padding: 5px 10px; /* Slightly larger padding */
+  padding: 5px 10px; 
   border-radius: 12px;
-  font-size: 14px; /* Increased from 12px */
+  font-size: 14px; 
   font-weight: 500;
   text-align: center;
   min-width: 85px;
@@ -191,12 +191,12 @@
 }
 
 .view-details-btn {
-  padding: 8px 14px; /* Increased padding */
+  padding: 8px 14px; 
   background-color: #f8f9fa;
   border: 1px solid #696767;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 15px; /* Increased font size */
+  font-size: 15px; 
   transition: all 0.3s;
   white-space: nowrap;
   display: block;
@@ -213,7 +213,7 @@
   text-align: center;
   color: #555;
   font-style: italic;
-  font-size: 16px; /* Increased font size */
+  font-size: 16px; 
 }
 
 /* Responsive adjustments */
@@ -234,7 +234,7 @@
 }
 
 .issues-table {
-  font-size: 15px; /* Adjusted for medium screens */
+  font-size: 15px; 
 }
 
 .issues-table th,
