@@ -24,6 +24,7 @@ const Messages = () => {
   const [students, setStudents] = useState([]);
   const [newContactUsername, setNewContactUsername] = useState('');
   const [refreshKey, setRefreshKey] = useState(0); // To force re-renders
+  const [currentUsername, setCurrentUsername] = useState(''); // Store current user's username
 
   // Refs
   const messagesEndRef = useRef(null);
@@ -41,6 +42,12 @@ const Messages = () => {
     };
 
     if (checkAuth()) {
+      // Get current username from localStorage
+      const userName = localStorage.getItem('userName');
+      if (userName) {
+        setCurrentUsername(userName);
+      }
+      
       fetchData();
       const interval = setInterval(fetchUnreadCounts, 30000); // Check for unread messages every 30 seconds
       return () => clearInterval(interval);
@@ -73,7 +80,16 @@ const Messages = () => {
       API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
       
       const response = await API.get('/api/get_students/');
-      setStudents(response.data || []);
+      
+      // Get current username to filter out current user
+      const userName = localStorage.getItem('userName');
+      
+      // Filter out current user from students list
+      const filteredStudents = response.data ? response.data.filter(student => 
+        student.username !== userName
+      ) : [];
+      
+      setStudents(filteredStudents);
     } catch (err) {
       console.error('Error fetching students:', err);
       handleApiError(err);
@@ -88,7 +104,16 @@ const Messages = () => {
       API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
       
       const response = await API.get('/api/get_lecturers/');
-      setLecturers(response.data || []);
+      
+      // Get current username to filter out current user
+      const userName = localStorage.getItem('userName');
+      
+      // Filter out current user from lecturers list
+      const filteredLecturers = response.data ? response.data.filter(lecturer => 
+        lecturer.username !== userName
+      ) : [];
+      
+      setLecturers(filteredLecturers);
     } catch (err) {
       console.error('Error fetching lecturers:', err);
       handleApiError(err);
@@ -103,7 +128,16 @@ const Messages = () => {
       API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
       
       const response = await API.get('/api/get_registrars/');
-      setRegistrars(response.data || []);
+      
+      // Get current username to filter out current user
+      const userName = localStorage.getItem('userName');
+      
+      // Filter out current user from registrars list
+      const filteredRegistrars = response.data ? response.data.filter(registrar => 
+        registrar.username !== userName
+      ) : [];
+      
+      setRegistrars(filteredRegistrars);
     } catch (err) {
       console.error('Error fetching registrars:', err);
       handleApiError(err);
@@ -316,6 +350,7 @@ const Messages = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('userId');
+    localStorage.removeItem('userName');
   };
 
   // Save drafts to localStorage when they change
@@ -435,7 +470,14 @@ const Messages = () => {
       API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
       
       const response = await API.get(`/api/users/search/?query=${encodeURIComponent(query.trim())}`);
-      setSearchResults(response.data || []);
+      
+      // Filter out current user from search results
+      const userName = localStorage.getItem('userName');
+      const filteredResults = response.data ? response.data.filter(user => 
+        user.username !== userName
+      ) : [];
+      
+      setSearchResults(filteredResults);
       setSearchLoading(false);
     } catch (err) {
       console.error('Error searching users:', err);
@@ -856,7 +898,6 @@ const Messages = () => {
             </div>
           )}
         </div>
-  
         {/* Display error message if any */}
         {error && (
           <div className="error-popup">
