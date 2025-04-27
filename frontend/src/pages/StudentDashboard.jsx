@@ -261,26 +261,18 @@ const StudentDashboard = () => {
                       <td>{formatDate(issue.updated_at)}</td>
                       <td>{issue.is_commented ? '✓' : '✗'}</td>
                       <td>{issue.comment || 'No comment'}</td>
-                      <td className="action-buttons-container">
-                        <button className="view-details-btn" onClick={() => openIssueDetails(issue)}>
-                          Details
-                        </button>
-                        <button 
-                          className="delete-issue-btn" 
-                          onClick={() => handleDeleteIssue(issue.id)}
-                          style={{
-                            backgroundColor: "#ff4d4f",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "4px",
-                            padding: "6px 12px",
-                            marginTop: "5px",
-                            cursor: "pointer",
-                            width: "100%"
-                          }}
-                        >
-                          Delete
-                        </button>
+                      <td>
+                        <div className="action-buttons-container">
+                          <button className="view-details-btn" onClick={() => openIssueDetails(issue)}>
+                            Details
+                          </button>
+                          <button 
+                            className="delete-issue-btn" 
+                            onClick={() => handleDeleteIssue(issue.id)}
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
