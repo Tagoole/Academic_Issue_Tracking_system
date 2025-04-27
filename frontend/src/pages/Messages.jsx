@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Messages.css';
 import { useNavigate } from 'react-router-dom';
+import API from '../api'; // Assuming you have an API file similar to StudentDashboard
 
 const Messages = () => {
   const [contacts, setContacts] = useState([]);
@@ -12,21 +13,50 @@ const Messages = () => {
   const [drafts, setDrafts] = useState({});
   const [messages, setMessages] = useState({});
   const [unreadMessages, setUnreadMessages] = useState({});
-  const [notification, setNotification] = useState(null); // State for notification
+  const [notification, setNotification] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // Load data from localStorage on component mount
+  // Authentication check when component mounts
   useEffect(() => {
-    const storedContacts = localStorage.getItem('chatContacts');
-    const storedMessages = localStorage.getItem('chatMessages');
-    const storedDrafts = localStorage.getItem('messageDrafts');
-    const storedUnread = localStorage.getItem('unreadMessages');
+    const checkAuth = () => {
+      const accessToken = localStorage.getItem('accessToken');
+      // If no access token is available, redirect to login
+      if (!accessToken) {
+        navigate('/signin');
+        return false;
+      }
+      return true;
+    };
 
-    if (storedContacts) setContacts(JSON.parse(storedContacts));
-    if (storedMessages) setMessages(JSON.parse(storedMessages));
-    if (storedDrafts) setDrafts(JSON.parse(storedDrafts));
-    if (storedUnread) setUnreadMessages(JSON.parse(storedUnread));
-  }, []);
+    // Fetch data only if authentication check passes
+    if (checkAuth()) {
+      loadDataFromStorage();
+    }
+  }, [navigate]);
+
+  // Load data from localStorage
+  const loadDataFromStorage = () => {
+    try {
+      setLoading(true);
+      const storedContacts = localStorage.getItem('chatContacts');
+      const storedMessages = localStorage.getItem('chatMessages');
+      const storedDrafts = localStorage.getItem('messageDrafts');
+      const storedUnread = localStorage.getItem('unreadMessages');
+
+      if (storedContacts) setContacts(JSON.parse(storedContacts));
+      if (storedMessages) setMessages(JSON.parse(storedMessages));
+      if (storedDrafts) setDrafts(JSON.parse(storedDrafts));
+      if (storedUnread) setUnreadMessages(JSON.parse(storedUnread));
+      
+      setLoading(false);
+    } catch (err) {
+      console.error('Error loading data:', err);
+      setError('Failed to load chat data. Please try again later.');
+      setLoading(false);
+    }
+  };
 
   // Save data to localStorage whenever they change
   useEffect(() => {
@@ -76,8 +106,8 @@ const Messages = () => {
     }
   };
 
-  // Handle sending a message
-  const handleSendMessage = (e) => {
+  // Handle sending a message with token authentication
+  const handleSendMessage = async (e) => {
     e.preventDefault();
     
     if (!messageInput.trim() || !selectedContact) return;
@@ -89,50 +119,95 @@ const Messages = () => {
       timestamp: new Date().toISOString()
     };
     
-    // Add message to conversation
-    setMessages(prev => {
-      const contactMessages = prev[selectedContact.id] || [];
-      return {
-        ...prev,
-        [selectedContact.id]: [...contactMessages, newMessage]
-      };
-    });
-    
-    // Update last message in contacts list
-    setContacts(prev => 
-      prev.map(contact => {
-        if (contact.id === selectedContact.id) {
-          return {
-            ...contact,
-            lastMessage: messageInput,
-            timestamp: new Date().toISOString()
-          };
-        }
-        return contact;
-      })
-    );
-    
-    // Clear message input and draft
-    setMessageInput('');
-    setDrafts(prev => {
-      const newDrafts = {...prev};
-      delete newDrafts[selectedContact.id];
-      return newDrafts;
+    try {
+      // Get access token
+      const accessToken = localStorage.getItem('accessToken');
       
-    });
-    
-    // Show "Message Sent" notification
-    setNotification('Message Sent');
-    
-    // Hide notification after 3 seconds
-    setTimeout(() => {
-      setNotification(null);
-    }, 3000);
+      // In a real app, you would send the message to the API
+      // Example of how you'd make an authenticated API request:
+      // API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+      // await API.post('/api/messages/', { 
+      //   recipient_id: selectedContact.id,
+      //   content: messageInput
+      // });
+      
+      // Add message to conversation locally
+      setMessages(prev => {
+        const contactMessages = prev[selectedContact.id] || [];
+        return {
+          ...prev,
+          [selectedContact.id]: [...contactMessages, newMessage]
+        };
+      });
+      
+      // Update last message in contacts list
+      setContacts(prev => 
+        prev.map(contact => {
+          if (contact.id === selectedContact.id) {
+            return {
+              ...contact,
+              lastMessage: messageInput,
+              timestamp: new Date().toISOString()
+            };
+          }
+          return contact;
+        })
+      );
+      
+      // Clear message input and draft
+      setMessageInput('');
+      setDrafts(prev => {
+        const newDrafts = {...prev};
+        delete newDrafts[selectedContact.id];
+        return newDrafts;
+      });
+      
+      // Show "Message Sent" notification
+      setNotification('Message Sent');
+      
+      // Hide notification after 3 seconds
+      setTimeout(() => {
+        setNotification(null);
+      }, 3000);
 
-    // Simulate receiving a response after 2 seconds
-    setTimeout(() => {
-      simulateReceivedMessage(selectedContact.id, `Reply from ${selectedContact.name}`);
-    }, 2000);
+      // Simulate receiving a response after 2 seconds
+      setTimeout(() => {
+        simulateReceivedMessage(selectedContact.id, `Reply from ${selectedContact.name}`);
+      }, 2000);
+      
+    } catch (err) {
+      // Handle token expiration or other auth errors
+      if (err.response && err.response.status === 401) {
+        // Try refreshing the token
+        try {
+          const refreshToken = localStorage.getItem('refreshToken');
+          
+          if (refreshToken) {
+            const refreshResponse = await API.post('/api/refresh_token/', {
+              refresh: refreshToken
+            });
+            
+            // Store the new access token
+            const newAccessToken = refreshResponse.data.access;
+            localStorage.setItem('accessToken', newAccessToken);
+            
+            // Retry sending the message with new token
+            // Code to retry would go here
+          } else {
+            // No refresh token available, redirect to login
+            navigate('/signin');
+          }
+        } catch (refreshErr) {
+          console.error('Error refreshing token:', refreshErr);
+          setError('Your session has expired. Please log in again.');
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          navigate('/signin');
+        }
+      } else {
+        setError('Failed to send message. Please try again.');
+      }
+    }
   };
 
   // Function to simulate receiving a message
@@ -214,6 +289,14 @@ const Messages = () => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
+  if (loading) {
+    return <div className="loading-message">Loading chats...</div>;
+  }
+
+  if (error) {
+    return <div className="error-message">{error}</div>;
+  }
+
   return (
     <div className="messages-page">
       {/* Left sidebar with contacts */}
@@ -229,8 +312,9 @@ const Messages = () => {
             <div className="search-icon"> 
             </div>
           </div>
-          <button className="new-chat-btn" onClick={() => setShowNewChatModal(true)}>
-            NEW CHAT
+          {/* Changed from "NEW CHAT" to "CHATS" and removed onClick handler */}
+          <button className="new-chat-btn">
+            CHATS
           </button>
         </div>
 
@@ -327,10 +411,6 @@ const Messages = () => {
                 className="send-button"
                 disabled={!messageInput.trim()}
               >
-                
-                
-                
-              
               </button>
             </form>
           </>
