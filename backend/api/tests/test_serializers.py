@@ -70,6 +70,10 @@ def issue(db, custom_user, course_unit):
         status="pending"
     )
 
+
+
+
+
 @pytest.fixture
 def registration_token(db):
     return Registration_Token.objects.create(
