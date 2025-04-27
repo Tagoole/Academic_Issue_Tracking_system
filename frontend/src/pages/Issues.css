@@ -254,5 +254,10 @@
     padding: 10px;
   }
   
- 
+  .issues-tabs {
+    overflow-x: auto;
+    padding-bottom: 5px;
+  }
+  
+  
   }
