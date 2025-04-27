@@ -239,7 +239,7 @@ function ChangePassword() {
                     width: '100%',
                     padding: '12px 40px 12px 15px',
                     border: 'none',
-                    outline: 'none',
+                    outline: 'none', 
                   }}
                 />
                 <button
