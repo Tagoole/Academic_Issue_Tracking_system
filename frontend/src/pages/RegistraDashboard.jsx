@@ -1,6 +1,6 @@
 import React from 'react';
-import Navbar from './components/Navbar'; // Assuming this is imported
-import Sidebar from './components/Sidebar'; // Assuming this is imported
+import Navbar from './NavBar';
+import Sidebar from './Sidebar'; 
 import './RegistraDashboard.css';
 
 const RegistraDashboard = () => {
