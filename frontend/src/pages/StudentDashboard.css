@@ -640,3 +640,12 @@
   border-radius: 10px;
   font-size: 11px;
 }
+
+.action-buttons-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.delete-issue-btn:hover {
+  background-color: #ff7875;
+}
