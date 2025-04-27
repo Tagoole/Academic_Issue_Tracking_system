@@ -18,7 +18,7 @@ const RegistrarDashboard = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
-  const [activeTab, setActiveTab] = useState('pending');
+  const [activeFilter, setActiveFilter] = useState('all'); // Unified filter/tab state
 
   // Fetch issues when component mounts
   useEffect(() => {
@@ -104,15 +104,15 @@ const RegistrarDashboard = () => {
     // Debounce search requests by using a timer
     const debounceTimer = setTimeout(() => {
       if (searchTerm.trim() === '') {
-        // Reset to show all issues, but apply active tab filter
-        applyFilter(activeTab, issues);
+        // Reset to show all issues, but apply any active filter
+        applyFilter(activeFilter, issues);
       } else {
         handleSearch();
       }
     }, 500); // 500ms delay
 
     return () => clearTimeout(debounceTimer);
-  }, [searchTerm, activeTab, issues]);
+  }, [searchTerm, activeFilter, issues]);
 
   // Function to handle filtering
   const applyFilter = (filter, dataToFilter) => {
@@ -137,16 +137,17 @@ const RegistrarDashboard = () => {
     }
     
     setFilteredIssues(filtered);
+    // Don't update counts here to keep the cards showing total counts
   };
 
-  const handleTabClick = (tab) => {
-    setActiveTab(tab);
-    applyFilter(tab, issues);
+  const handleFilterClick = (filter) => {
+    setActiveFilter(filter);
+    applyFilter(filter, issues);
   };
 
   const handleSearch = async () => {
     if (searchTerm.trim() === '') {
-      applyFilter(activeTab, issues);
+      applyFilter(activeFilter, issues);
       return;
     }
 
@@ -157,7 +158,7 @@ const RegistrarDashboard = () => {
       
       if (response.data && Array.isArray(response.data)) {
         // Apply active filter to search results
-        applyFilter(activeTab, response.data);
+        applyFilter(activeFilter, response.data);
       } else {
         // Fallback to client-side filtering
         const filtered = issues.filter(issue =>
@@ -169,7 +170,7 @@ const RegistrarDashboard = () => {
           issue.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           issue.issue_description?.toLowerCase().includes(searchTerm.toLowerCase())
         );
-        applyFilter(activeTab, filtered);
+        applyFilter(activeFilter, filtered);
       }
     } catch (err) {
       console.error('Error searching issues:', err);
@@ -183,7 +184,7 @@ const RegistrarDashboard = () => {
         issue.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         issue.issue_description?.toLowerCase().includes(searchTerm.toLowerCase())
       );
-      applyFilter(activeTab, filtered);
+      applyFilter(activeFilter, filtered);
     } finally {
       setIsSearching(false);
     }
@@ -217,7 +218,7 @@ const RegistrarDashboard = () => {
     setSelectedIssue(null);
   };
 
-  // Statistics Card Component
+  // Dashboard/Stat Card Component
   const StatCard = ({ title, count, description, onClick, active }) => {
     return (
       <div 
@@ -246,12 +247,73 @@ const RegistrarDashboard = () => {
         {tabs.map(tab => (
           <div
             key={tab.id}
-            className={`tab ${activeTab === tab.id ? 'active' : ''}`}
-            onClick={() => handleTabClick(tab.id)}
+            className={`tab ${activeFilter === tab.id ? 'active' : ''}`}
+            onClick={() => handleFilterClick(tab.id)}
           >
             {tab.label}
           </div>
         ))}
+      </div>
+    );
+  };
+
+  // Filter Dropdown Component (alternative to TabNavigation)
+  const FilterDropdown = () => {
+    const [isOpen, setIsOpen] = useState(false);
+    
+    return (
+      <div className="filter-dropdown">
+        <button 
+          className="filter-button" 
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          <span>Filter: {activeFilter === 'all' ? 'All' : 
+                     activeFilter === 'pending' ? 'Pending' : 
+                     activeFilter === 'in_progress' ? 'In Progress' : 
+                     activeFilter === 'resolved' ? 'Resolved' : 'All'}</span>
+          <span className="filter-icon">▼</span>
+        </button>
+        
+        {isOpen && (
+          <div className="filter-dropdown-content">
+            <button 
+              className={`filter-option ${activeFilter === 'all' ? 'active' : ''}`}
+              onClick={() => {
+                handleFilterClick('all');
+                setIsOpen(false);
+              }}
+            >
+              All Issues
+            </button>
+            <button 
+              className={`filter-option ${activeFilter === 'pending' ? 'active' : ''}`}
+              onClick={() => {
+                handleFilterClick('pending');
+                setIsOpen(false);
+              }}
+            >
+              Pending
+            </button>
+            <button 
+              className={`filter-option ${activeFilter === 'in_progress' ? 'active' : ''}`}
+              onClick={() => {
+                handleFilterClick('in_progress');
+                setIsOpen(false);
+              }}
+            >
+              In Progress
+            </button>
+            <button 
+              className={`filter-option ${activeFilter === 'resolved' ? 'active' : ''}`}
+              onClick={() => {
+                handleFilterClick('resolved');
+                setIsOpen(false);
+              }}
+            >
+              Resolved
+            </button>
+          </div>
+        )}
       </div>
     );
   };
@@ -271,7 +333,10 @@ const RegistrarDashboard = () => {
           <span className="search-icon">🔍</span>
         </button>
       </form>
-      <button className="new-issue-btn">+ New Issue</button>
+      <div className="filter-controls">
+        <FilterDropdown />
+        <button className="new-issue-btn">+ New Issue</button>
+      </div>
     </div>
   );
 
@@ -281,50 +346,53 @@ const RegistrarDashboard = () => {
       {isSearching ? (
         <div className="loading-message">Searching issues...</div>
       ) : (
-        <div className="issues-table">
-          <div className="table-header">
-            <div className="header-cell issue-id-header">ID</div>
-            <div className="header-cell issue-header">Issue</div>
-            <div className="header-cell status-header">Status</div>
-            <div className="header-cell category-header">Issue Type</div>
-            <div className="header-cell date-created-header">Created</div>
-            <div className="header-cell date-updated-header">Updated</div>
-            <div className="header-cell actions-header">Actions</div>
-          </div>
-          
-          {filteredIssues.length > 0 ? (
-            filteredIssues.map((issue, index) => (
-              <div className={`table-row status-row-${issue.status}`} key={issue.id || index}>
-                <div className="cell issue-id-cell">#{issue.id || 'N/A'}</div>
-                <div className="cell issue-cell">{issue.description || issue.issue_description || 'N/A'}</div>
-                <div className="cell status-cell">
-                  <span className={`status-badge ${issue.status}`}>
-                    {issue.status === 'pending' ? 'Pending' :
-                     issue.status === 'in_progress' ? 'In-progress' :
-                     issue.status === 'resolved' ? 'Resolved' : issue.status}
-                  </span>
-                </div>
-                <div className="cell category-cell">{issue.category || issue.issue_type || 'N/A'}</div>
-                <div className="cell date-created-cell">{formatDate(issue.date || issue.created_at)}</div>
-                <div className="cell date-updated-cell">{formatDate(issue.updated_at || issue.date)}</div>
-                <div className="cell actions-cell">
-                  <button
-                    className="view-details-btn"
-                    onClick={() => openIssueDetails(issue)}
-                  >
-                    View Details
-                  </button>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="table-row">
-              <div className="cell no-issues-message" style={{ gridColumn: '1 / span 7' }}>
-                {searchTerm || activeTab !== 'all' ? 'No issues match your criteria' : 'No issues found'}
-              </div>
-            </div>
-          )}
-        </div>
+        <table className="issues-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Issue</th>
+              <th>Status</th>
+              <th>Issue Type</th>
+              <th>Created</th>
+              <th>Updated</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredIssues.length > 0 ? (
+              filteredIssues.map((issue, index) => (
+                <tr key={issue.id || index} className={`status-row-${issue.status}`}>
+                  <td>#{issue.id || 'N/A'}</td>
+                  <td>{issue.description || issue.issue_description || 'N/A'}</td>
+                  <td>
+                    <span className={`status-tag status-${issue.status}`}>
+                      {issue.status === 'pending' ? 'Pending' :
+                       issue.status === 'in_progress' ? 'In-progress' :
+                       issue.status === 'resolved' ? 'Resolved' : issue.status}
+                    </span>
+                  </td>
+                  <td>{issue.category || issue.issue_type || 'N/A'}</td>
+                  <td>{formatDate(issue.date || issue.created_at)}</td>
+                  <td>{formatDate(issue.updated_at || issue.date)}</td>
+                  <td>
+                    <button
+                      className="view-details-btn"
+                      onClick={() => openIssueDetails(issue)}
+                    >
+                      View Details
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="7" className="no-issues-message">
+                  {searchTerm || activeFilter !== 'all' ? 'No issues match your criteria' : 'No issues found'}
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       )}
     </div>
   );
@@ -337,22 +405,22 @@ const RegistrarDashboard = () => {
           title="Pending Issues"
           count={pendingCount}
           description={`You currently have ${pendingCount} pending issue${pendingCount !== 1 ? 's' : ''}`}
-          onClick={() => handleTabClick('pending')}
-          active={activeTab === 'pending'}
+          onClick={() => handleFilterClick('pending')}
+          active={activeFilter === 'pending'}
         />
         <StatCard
           title="In-progress Issues"
           count={inProgressCount}
           description={`You currently have ${inProgressCount} in-progress issue${inProgressCount !== 1 ? 's' : ''}`}
-          onClick={() => handleTabClick('in_progress')}
-          active={activeTab === 'in_progress'}
+          onClick={() => handleFilterClick('in_progress')}
+          active={activeFilter === 'in_progress'}
         />
         <StatCard
           title="Resolved Issues"
           count={resolvedCount}
           description={`You currently have ${resolvedCount} resolved issue${resolvedCount !== 1 ? 's' : ''}`}
-          onClick={() => handleTabClick('resolved')}
-          active={activeTab === 'resolved'}
+          onClick={() => handleFilterClick('resolved')}
+          active={activeFilter === 'resolved'}
         />
       </div>
     );
