@@ -144,7 +144,7 @@ const LandingPage = () => {
       
       {/* Background image */}
       <div className="background-image" style={{ backgroundImage: `url(${landingimage})` }}></div>
-      
+    
       {/* AITS Logo at top right */}
       <div className="aits-header">AITS</div>
       
