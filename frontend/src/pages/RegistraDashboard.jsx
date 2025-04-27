@@ -330,7 +330,7 @@ const RegistrarDashboard = () => {
           onChange={handleSearchChange}
         />
         <button type="submit" className="search-button">
-          <span className="search-icon">🔍</span>
+          <span className="search-icon"></span>
         </button>
       </form>
       <div className="filter-controls">
