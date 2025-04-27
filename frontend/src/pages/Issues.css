@@ -68,4 +68,16 @@
   background-color: #e1f0fa;
   border-bottom: 2px solid #3498db;
 }
+.new-issue-btn {
+  margin-left: auto;
+  padding: 8px 16px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px; /* Increased font size */
+  transition: background-color 0.3s;
+  white-space: nowrap; /* Prevent button text from wrapping */
+}
 
