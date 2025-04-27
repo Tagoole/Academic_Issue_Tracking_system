@@ -383,14 +383,11 @@ const Messages = () => {
                   className="user-item"
                   onClick={() => startChatWithUser(lecturer)}
                 >
-                  <div className="user-avatar">
-                    {lecturer.name ? lecturer.name.charAt(0).toUpperCase() : 'L'}
-                  </div>
                   <div className="user-name">{lecturer.name || lecturer.username}</div>
                 </div>
               ))
             ) : (
-              <div className="empty-user-list">No lecturers available</div>
+              <div className="empty-user-list">Loading...</div>
             )}
           </div>
         </div>
@@ -406,25 +403,19 @@ const Messages = () => {
                   className="user-item"
                   onClick={() => startChatWithUser(registrar)}
                 >
-                  <div className="user-avatar">
-                    {registrar.name ? registrar.name.charAt(0).toUpperCase() : 'R'}
-                  </div>
                   <div className="user-name">{registrar.name || registrar.username}</div>
                 </div>
               ))
             ) : (
-              <div className="empty-user-list">No registrars available</div>
+              <div className="empty-user-list">Loading...</div>
             )}
           </div>
         </div>
 
         <div className="contacts-list">
-          <h3>Recent Chats</h3>
           {contacts.length === 0 ? (
             <div className="empty-state">
               <div className="empty-icon"></div>
-              <p>No chats yet</p>
-              <p>Start a new conversation</p>
             </div>
           ) : (
             sortedContacts.map(contact => (
