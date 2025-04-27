@@ -331,52 +331,49 @@ const Messages = () => {
     }
   };
 
-  // Handle sending a message
-  const handleSendMessage = async (e) => {
-    e.preventDefault();
+  // Modify your handleSendMessage function
+const handleSendMessage = async (e) => {
+  e.preventDefault();
+  
+  if (!messageInput.trim() || !selectedContact) return;
+  
+  try {
+    // Get access token
+    const accessToken = localStorage.getItem('accessToken');
+    API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
     
-    if (!messageInput.trim() || !selectedContact) return;
+    // Send message to API with receiver_id instead of conversation_id
+    await API.post('/api/messages/', { 
+      receiver_id: selectedContact.userId, // Use userId instead of id for the receiver
+      content: messageInput.trim()
+    });
     
-    try {
-      // Get access token
-      const accessToken = localStorage.getItem('accessToken');
-      API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-      
-      // Send message to API
-      await API.post('/api/messages/', { 
-        conversation_id: selectedContact.id,
-        content: messageInput.trim()
-      });
-      
-      // Clear message input and draft
-      setMessageInput('');
-      setDrafts(prev => {
-        const newDrafts = {...prev};
-        delete newDrafts[selectedContact.id];
-        return newDrafts;
-      });
-      
-      // Show "Message Sent" notification
-      setNotification('Message Sent');
-      
-      // Hide notification after 2 seconds
-      setTimeout(() => {
-        setNotification(null);
-      }, 2000);
-      
-      // Refresh messages for this conversation
-      fetchMessages(selectedContact.id);
-      
-      // Also refresh conversations list to get updated last message
-      fetchConversations();
-      
-    } catch (err) {
-      console.error('Error sending message:', err);
-      handleApiError(err);
-      setError('Failed to send message. Please try again.');
-    }
-  };
-
+    // Rest of your function remains the same...
+    setMessageInput('');
+    setDrafts(prev => {
+      const newDrafts = {...prev};
+      delete newDrafts[selectedContact.id];
+      return newDrafts;
+    });
+    
+    setNotification('Message Sent');
+    
+    setTimeout(() => {
+      setNotification(null);
+    }, 2000);
+    
+    // Refresh messages for this conversation
+    fetchMessages(selectedContact.id);
+    
+    // Also refresh conversations list to get updated last message
+    fetchConversations();
+    
+  } catch (err) {
+    console.error('Error sending message:', err);
+    handleApiError(err);
+    setError('Failed to send message. Please try again.');
+  }
+};
   // Search for users with debounce
   const searchUsers = async (query) => {
     if (!query.trim() || query.trim().length < 2) {
