@@ -25,10 +25,6 @@ def create_user():
         return user
     return _create_user
 
-
-
-
-
 @pytest.fixture
 def create_program():
     def _create_program(name='Test Program'):
