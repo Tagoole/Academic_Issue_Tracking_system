@@ -91,6 +91,20 @@
   margin-bottom: 20px;
   gap: 10px;
 }
+.search-container {
+  flex-grow: 1;
+  max-width: 70%;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 14px; /* Slightly larger input field */
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 15px; /* Increased from 14px */
+  color: black;
+}
+
 
 
 
