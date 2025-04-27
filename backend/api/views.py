@@ -149,7 +149,7 @@ class Lecturer_Issue_Manangement(ModelViewSet):
             return Response(serializer.data)
         return Response({'error':'Status parameter required'})
     
-class Student_Issue_ReadOnlyViewset(ReadOnlyModelViewSet):
+class Student_Issue_Viewset(ModelViewSet):
     permission_classes = [IsAuthenticated, IsStudent]
     serializer_class = IssueSerializer
     
