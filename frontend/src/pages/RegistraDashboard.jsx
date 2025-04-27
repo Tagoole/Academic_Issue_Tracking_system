@@ -1,6 +1,6 @@
 import React from 'react';
-import Navbar from './components/Navbar';
-import Sidebar from './components/Sidebar';
+import Navbar from './NavBar';
+import Sidebar from './Sidebar';
 import { Search, Filter } from 'lucide-react';
 
 const RegistraDashboard = () => {
