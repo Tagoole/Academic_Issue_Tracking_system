@@ -164,13 +164,13 @@
 }
 
 /* Optimized column widths for better space utilization */
-.issues-table th:nth-child(1), /* ID column */
+.issues-table th:nth-child(1), 
 .issues-table td:nth-child(1) {
   width: 4%;
   min-width: 30px;
 }
 
-.issues-table th:nth-child(2), /* Status column */
+.issues-table th:nth-child(2), 
 .issues-table td:nth-child(2) {
   width: 8%;
 }
