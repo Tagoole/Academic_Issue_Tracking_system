@@ -193,12 +193,12 @@
   text-align: center;
 }
 
-.issues-table th:nth-child(7), /* Comment column */
+.issues-table th:nth-child(7), 
 .issues-table td:nth-child(7) {
   width: 15%;
 }
 
-.issues-table th:nth-child(8), /* Actions column */
+.issues-table th:nth-child(8), 
 .issues-table td:nth-child(8) {
   width: 12%;
   text-align: center;
