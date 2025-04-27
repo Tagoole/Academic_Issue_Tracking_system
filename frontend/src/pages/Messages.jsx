@@ -16,6 +16,8 @@ const Messages = () => {
   const [notification, setNotification] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [lecturers, setLecturers] = useState([]);
+  const [registrars, setRegistrars] = useState([]);
   const navigate = useNavigate();
 
   // Authentication check when component mounts
@@ -33,6 +35,8 @@ const Messages = () => {
     // Fetch data only if authentication check passes
     if (checkAuth()) {
       loadDataFromStorage();
+      fetchLecturers();
+      fetchRegistrars();
     }
   }, [navigate]);
 
@@ -55,6 +59,64 @@ const Messages = () => {
       console.error('Error loading data:', err);
       setError('Failed to load chat data. Please try again later.');
       setLoading(false);
+    }
+  };
+
+  // Fetch lecturers from API
+  const fetchLecturers = async () => {
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+      
+      const response = await API.get('/api/get_lecturers/');
+      setLecturers(response.data);
+    } catch (err) {
+      console.error('Error fetching lecturers:', err);
+      handleApiError(err);
+    }
+  };
+
+  // Fetch registrars from API
+  const fetchRegistrars = async () => {
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+      
+      const response = await API.get('/api/get_registrars/');
+      setRegistrars(response.data);
+    } catch (err) {
+      console.error('Error fetching registrars:', err);
+      handleApiError(err);
+    }
+  };
+
+  // Handle API errors including token refresh
+  const handleApiError = async (err) => {
+    if (err.response && err.response.status === 401) {
+      try {
+        const refreshToken = localStorage.getItem('refreshToken');
+        
+        if (refreshToken) {
+          const refreshResponse = await API.post('/api/refresh_token/', {
+            refresh: refreshToken
+          });
+          
+          // Store the new access token
+          const newAccessToken = refreshResponse.data.access;
+          localStorage.setItem('accessToken', newAccessToken);
+          
+          // Retry fetching with new token
+          fetchLecturers();
+          fetchRegistrars();
+        } else {
+          navigate('/signin');
+        }
+      } catch (refreshErr) {
+        console.error('Error refreshing token:', refreshErr);
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        navigate('/signin');
+      }
     }
   };
 
@@ -177,36 +239,8 @@ const Messages = () => {
       
     } catch (err) {
       // Handle token expiration or other auth errors
-      if (err.response && err.response.status === 401) {
-        // Try refreshing the token
-        try {
-          const refreshToken = localStorage.getItem('refreshToken');
-          
-          if (refreshToken) {
-            const refreshResponse = await API.post('/api/refresh_token/', {
-              refresh: refreshToken
-            });
-            
-            // Store the new access token
-            const newAccessToken = refreshResponse.data.access;
-            localStorage.setItem('accessToken', newAccessToken);
-            
-            // Retry sending the message with new token
-            // Code to retry would go here
-          } else {
-            // No refresh token available, redirect to login
-            navigate('/signin');
-          }
-        } catch (refreshErr) {
-          console.error('Error refreshing token:', refreshErr);
-          setError('Your session has expired. Please log in again.');
-          localStorage.removeItem('accessToken');
-          localStorage.removeItem('refreshToken');
-          navigate('/signin');
-        }
-      } else {
-        setError('Failed to send message. Please try again.');
-      }
+      handleApiError(err);
+      setError('Failed to send message. Please try again.');
     }
   };
 
@@ -270,6 +304,27 @@ const Messages = () => {
     setNewContactUsername('');
   };
 
+  // Start a chat with a lecturer or registrar
+  const startChatWithUser = (user) => {
+    // Check if chat already exists
+    const existingContact = contacts.find(c => c.id === user.id);
+    
+    if (existingContact) {
+      setSelectedContact(existingContact);
+    } else {
+      const newContact = {
+        id: user.id,
+        name: user.name || user.username,
+        username: user.username,
+        lastMessage: "",
+        timestamp: new Date().toISOString()
+      };
+      
+      setContacts(prev => [newContact, ...prev]);
+      setSelectedContact(newContact);
+    }
+  };
+
   // Filter contacts by search term
   const filteredContacts = contacts.filter(contact => 
     contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -312,13 +367,59 @@ const Messages = () => {
             <div className="search-icon"> 
             </div>
           </div>
-          {/* Changed from "NEW CHAT" to "CHATS" and removed onClick handler */}
           <button className="new-chat-btn">
             CHATS
           </button>
         </div>
 
+        {/* Display Lecturers Section */}
+        <div className="user-category-section">
+          <h3>Lecturers</h3>
+          <div className="user-list">
+            {lecturers.length > 0 ? (
+              lecturers.map(lecturer => (
+                <div 
+                  key={lecturer.id}
+                  className="user-item"
+                  onClick={() => startChatWithUser(lecturer)}
+                >
+                  <div className="user-avatar">
+                    {lecturer.name ? lecturer.name.charAt(0).toUpperCase() : 'L'}
+                  </div>
+                  <div className="user-name">{lecturer.name || lecturer.username}</div>
+                </div>
+              ))
+            ) : (
+              <div className="empty-user-list">No lecturers available</div>
+            )}
+          </div>
+        </div>
+
+        {/* Display Registrars Section */}
+        <div className="user-category-section">
+          <h3>Registrars</h3>
+          <div className="user-list">
+            {registrars.length > 0 ? (
+              registrars.map(registrar => (
+                <div 
+                  key={registrar.id}
+                  className="user-item"
+                  onClick={() => startChatWithUser(registrar)}
+                >
+                  <div className="user-avatar">
+                    {registrar.name ? registrar.name.charAt(0).toUpperCase() : 'R'}
+                  </div>
+                  <div className="user-name">{registrar.name || registrar.username}</div>
+                </div>
+              ))
+            ) : (
+              <div className="empty-user-list">No registrars available</div>
+            )}
+          </div>
+        </div>
+
         <div className="contacts-list">
+          <h3>Recent Chats</h3>
           {contacts.length === 0 ? (
             <div className="empty-state">
               <div className="empty-icon"></div>
