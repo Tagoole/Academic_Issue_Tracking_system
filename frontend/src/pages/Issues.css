@@ -27,3 +27,11 @@
   overflow-x: auto; /* Enable horizontal scrolling if needed */
 }
 
+/* Title */
+.issues-title {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-size: 28px; /* Increased from 24px */
+  font-weight: 600;
+}
+
