@@ -689,6 +689,105 @@ class MessageViewSet(ModelViewSet):
         return Response({"unread_count": unread_count})
 
 
+
+
+
+
+
+
+class ConversationViewSet(ModelViewSet):
+    """
+    API endpoint for conversations
+    """
+    serializer_class = ConversationSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        """
+        Return conversations that involve the authenticated user
+        """
+        return Conversation.objects.filter(
+            participants=self.request.user
+        ).order_by('-updated_at')
+    
+    def create(self, request, *args, **kwargs):
+        """
+        Create a new conversation or get existing one
+        """
+        user_id = request.data.get('user_id')
+        
+        if not user_id:
+            return Response(
+                {"error": "User ID is required"}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            other_user = CustomUser.objects.get(id=user_id)
+        except CustomUser.DoesNotExist:
+            return Response(
+                {"error": "User not found"}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        # Check if conversation already exists
+        existing_conversation = Conversation.objects.filter(
+            participants=request.user
+        ).filter(
+            participants=other_user
+        ).first()
+        
+        if existing_conversation:
+            serializer = self.get_serializer(existing_conversation)
+            return Response(serializer.data)
+        
+        # Create new conversation
+        conversation = Conversation.objects.create()
+        conversation.participants.add(request.user, other_user)
+        
+        serializer = self.get_serializer(conversation)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    @action(detail=True, methods=['get'])
+    def messages(self, request, pk=None):
+        """
+        Get all messages in a conversation
+        """
+        try:
+            conversation = self.get_object()
+            
+            # Verify user is part of conversation
+            if request.user not in conversation.participants.all():
+                return Response(
+                    {"error": "User not authorized to view this conversation"}, 
+                    status=status.HTTP_403_FORBIDDEN
+                )
+            
+        except Conversation.DoesNotExist:
+            return Response(
+                {"error": "Conversation not found"}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        # Get all messages in this conversation
+        messages = Message.objects.filter(
+            conversation=conversation,
+            is_deleted=False
+        ).order_by('timestamp')
+        
+        # Mark messages as read
+        unread_messages = messages.filter(receiver=request.user, is_read=False)
+        for message in unread_messages:
+            message.mark_as_read()
+        
+        serializer = MessageSerializer(messages, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=True, methods=['post'])
+    def mark_read(self, request, pk=None):
+        """
+        Mark all messages in conversation as read
+        """
 class UserSearchView(generics.ListAPIView):
     """
     API endpoint to search for users
