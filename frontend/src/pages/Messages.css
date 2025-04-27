@@ -771,21 +771,72 @@
     max-width: 90%;
   }
 }
-
-/* Change the chat area background color */
-.chat-area {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background-color: #f0f4f8; /* Changed from #f5f7fa to a slightly bluer light gray */
+/* Message bubble styles */
+.message-content {
+  padding: 10px 15px;
+  border-radius: 18px;
+  max-width: 80%;
+  word-wrap: break-word;
+  margin-bottom: 5px;
 }
 
-/* Change the received message style (other person's text) */
-.message.received {
+.sent-bubble {
+  background-color: #0b93f6;
+  color: white;
+  align-self: flex-end;
+  border-bottom-right-radius: 5px;
+  margin-left: auto;
+}
+
+.received-bubble {
+  background-color: #e5e5ea;
+  color: #333;
   align-self: flex-start;
-  background-color: #e3f2fd; /* Changed from white to a light blue */
-  border-bottom-left-radius: 4px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  color: #1a237e; /* Added darker blue text color */
-  border-left: 3px solid #3f51b5; /* Added a left border accent */
+  border-bottom-left-radius: 5px;
+  margin-right: auto;
+}
+
+.message {
+  display: flex;
+  flex-direction: column;
+  margin: 8px 0;
+  padding: 0 15px;
+}
+
+.message.sent {
+  align-items: flex-end;
+}
+
+.message.received {
+  align-items: flex-start;
+}
+
+.message-time {
+  font-size: 11px;
+  color: #8e8e93;
+  margin-top: 2px;
+}
+
+/* Remove search bar styling if you kept any */
+.search-bar {
+  display: none;
+}
+
+/* User list styling */
+.user-category-section {
+  margin-bottom: 20px;
+}
+
+.user-category-section h3 {
+  padding: 10px 15px;
+  margin: 0;
+  background-color: #f6f6f6;
+  border-bottom: 1px solid #e1e1e1;
+  color: #333;
+  font-size: 14px;
+}
+
+.user-list {
+  max-height: 200px;
+  overflow-y: auto;
 }
