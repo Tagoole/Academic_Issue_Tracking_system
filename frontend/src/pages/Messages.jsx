@@ -24,6 +24,7 @@ const Messages = () => {
   const [newContactUsername, setNewContactUsername] = useState('');
   const [refreshKey, setRefreshKey] = useState(0); // To force re-renders
   const [currentUsername, setCurrentUsername] = useState(''); // Store current user's username
+  const [localSearchResults, setLocalSearchResults] = useState([]); // For local search results
 
   // Refs
   const messagesEndRef = useRef(null);
@@ -451,12 +452,42 @@ const Messages = () => {
     }
   };
 
+  // NEW FUNCTION: Search locally among available users
+  const searchLocalUsers = (query) => {
+    if (!query.trim()) {
+      setLocalSearchResults([]);
+      return;
+    }
+    
+    // Normalize query for case-insensitive search
+    const normalizedQuery = query.trim().toLowerCase();
+    
+    // Combine all users into one array
+    const allUsers = [
+      ...lecturers.map(user => ({...user, type: 'Lecturer'})),
+      ...registrars.map(user => ({...user, type: 'Registrar'})),
+      ...students.map(user => ({...user, type: 'Student'}))
+    ];
+    
+    // Filter users that match query in name or username
+    const matchedUsers = allUsers.filter(user => {
+      const name = (user.name || '').toLowerCase();
+      const username = (user.username || '').toLowerCase();
+      return name.includes(normalizedQuery) || username.includes(normalizedQuery);
+    });
+    
+    setLocalSearchResults(matchedUsers);
+  };
+
   // Search for users with debounce
   const searchUsers = async (query) => {
     if (!query.trim() || query.trim().length < 2) {
       setSearchResults([]);
       return;
     }
+    
+    // First, search locally for immediate feedback
+    searchLocalUsers(query);
     
     try {
       setSearchLoading(true);
@@ -530,6 +561,7 @@ const Messages = () => {
       // Close modal if open
       setShowNewChatModal(false);
       setNewContactUsername('');
+      setLocalSearchResults([]); 
       setLoading(false);
       
     } catch (err) {
@@ -548,14 +580,20 @@ const Messages = () => {
       const accessToken = localStorage.getItem('accessToken');
       API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
       
-      // Search for user by username
-      const response = await API.get(`/api/users/search/?query=${encodeURIComponent(newContactUsername.trim())}`);
-      
-      if (response.data && response.data.length > 0) {
-        const user = response.data[0];
-        await startChatWithUser(user);
+      // Check if we have local results to use
+      if (localSearchResults.length > 0) {
+        // Use the first local result
+        await startChatWithUser(localSearchResults[0]);
       } else {
-        setError('User not found');
+        // Search for user by username
+        const response = await API.get(`/api/users/search/?query=${encodeURIComponent(newContactUsername.trim())}`);
+        
+        if (response.data && response.data.length > 0) {
+          const user = response.data[0];
+          await startChatWithUser(user);
+        } else {
+          setError('User not found');
+        }
       }
       setLoading(false);
     } catch (err) {
@@ -566,7 +604,16 @@ const Messages = () => {
     
     // Reset input and close modal
     setNewContactUsername('');
+    setLocalSearchResults([]);
     setShowNewChatModal(false);
+  };
+
+  // Open new chat modal and reset search state
+  const openNewChatModal = () => {
+    setShowNewChatModal(true);
+    setNewContactUsername('');
+    setLocalSearchResults([]);
+    setSearchResults([]);
   };
 
   // Get total unread message count
@@ -599,7 +646,7 @@ const Messages = () => {
         <div className="sidebar-header">
           <button 
             className="new-chat-btn"
-            onClick={() => setShowNewChatModal(true)}
+            onClick={openNewChatModal}
           >
             NEW CHAT {totalUnreadCount > 0 && <span className="total-unread">({totalUnreadCount})</span>}
           </button>
@@ -760,7 +807,7 @@ const Messages = () => {
               <p>Select a user to start chatting</p>
               <button 
                 className="new-chat-btn large"
-                onClick={() => setShowNewChatModal(true)}
+                onClick={openNewChatModal}
               >
                 START NEW CHAT
               </button>
@@ -780,6 +827,7 @@ const Messages = () => {
                 onClick={() => {
                   setShowNewChatModal(false);
                   setNewContactUsername('');
+                  setLocalSearchResults([]);
                 }}
               >×</button>
             </div>
@@ -792,23 +840,29 @@ const Messages = () => {
                   value={newContactUsername}
                   onChange={(e) => {
                     setNewContactUsername(e.target.value);
-                    searchUsers(e.target.value);
+                    searchLocalUsers(e.target.value); // Search locally first
+                    if (e.target.value.trim().length >= 2) {
+                      searchUsers(e.target.value); // Then fetch from API
+                    } else {
+                      setSearchResults([]);
+                    }
                   }}
                   autoFocus
                 />
                 {searchLoading && <div className="search-spinner"></div>}
               </div>
 
-              {/* Search results inside modal */}
-              {newContactUsername.length >= 2 && (
+              {/* Combined search results inside modal */}
+              {newContactUsername.trim() && (
                 <div className="modal-search-results">
-                  {searchLoading ? (
+                  {searchLoading && localSearchResults.length === 0 ? (
                     <div className="loading-results">Searching...</div>
-                  ) : searchResults.length > 0 ? (
+                  ) : (localSearchResults.length > 0 || searchResults.length > 0) ? (
                     <div className="results-list">
-                      {searchResults.map(user => (
+                      {/* Local search results first for immediate feedback */}
+                      {localSearchResults.map(user => (
                         <div 
-                          key={user.id}
+                          key={`local-${user.id}`}
                           className="search-result-item"
                           onClick={() => startChatWithUser(user)}
                         >
@@ -820,40 +874,23 @@ const Messages = () => {
                             {user.name && user.username && (
                               <div className="result-username">@{user.username}</div>
                             )}
+                            {user.type && (
+                              <div className="result-type">{user.type}</div>
+                            )}
                           </div>
                         </div>
                       ))}
-                    </div>
-                  ) : (
-                    <div className="no-results">No users found</div>
-                  )}
-                </div>
-              )}
-
-              <div className="modal-buttons">
-                <button 
-                  className="cancel-button"
-                  onClick={() => {
-                    setShowNewChatModal(false);
-                    setNewContactUsername('');
-                  }}
-                >
-                  Cancel
-                </button>
-                <button 
-                  className="start-chat-button"
-                  onClick={handleCreateNewChat}
-                  disabled={!newContactUsername.trim() || searchLoading}
-                >
-                  Start Chat
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-export default Messages;
+                      
+                      {/* API search results that don't duplicate local results */}
+                      {searchResults
+                        .filter(apiUser => 
+                          !localSearchResults.some(localUser => localUser.id === apiUser.id)
+                        )
+                        .map(user => (
+                          <div 
+                            key={`api-${user.id}`}
+                            className="search-result-item"
+                            onClick={() => startChatWithUser(user)}
+                          >
+                            <div className="result-avatar">
+                              {(user.name || user.username || 'U').charAt(0).toUpperCase()}
