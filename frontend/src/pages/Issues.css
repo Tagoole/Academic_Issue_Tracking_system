@@ -259,5 +259,12 @@
     padding-bottom: 5px;
   }
   
+  .search-filter-container {
+    flex-direction: column;
+  }
   
+  .search-container {
+    max-width: 100%;
+    margin-bottom: 10px;
+  }
   }
