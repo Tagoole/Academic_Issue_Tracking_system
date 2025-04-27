@@ -1,7 +1,6 @@
 import React from 'react';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
-import { Search, Filter } from 'lucide-react';
 import './registration-dashboard-styles.css';
 
 const RegistraDashboard = () => {
@@ -37,3 +36,4 @@ const RegistraDashboard = () => {
     </div>
   );
 };
+export default RegistraDashboard;
