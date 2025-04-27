@@ -1,5 +1,4 @@
 /* Dashboard.css */
-
 * {
   margin: 0;
   padding: 0;
@@ -9,23 +8,50 @@
 
 .dashboard-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: column;;
+  margin: 0 auto;
+  padding: 0 20px;
   height: 100vh;
-  background-color: #f5f5f5;
+  background-color: hsl(0, 0%, 5%);
 }
 
 .main-content {
   display: flex;
   flex: 1;
+  height: calc(100vh - 60px); 
+  margin-left: 250px; /* Adjust based on your sidebar width */
+  padding: 20px;
+  width:1000px;
+  
+  
 }
 
-/* Sidebar styling is assumed to be in the imported component */
+/* Sidebar positioning */
+.sidebar {
+  width: 250px;
+  display:flex;
+  flex-direction: column;
+  min-width: 230px;
+  height: 100%;
+  background-color: white;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+  z-index: 90;
+  position: fixed;
+  padding-top: 80px;
+  left: 0;
+  top: 60px; /* Adjust based on your navbar height */
 
+}
+
+/* Dashboard content positioning to account for fixed sidebar */
 .dashboard-content {
   flex: 1;
+  
+  width:900px;
   padding: 20px;
   overflow-y: auto;
-  background-color: #f5f5f5;
+  background-color: hwb(0 86% 11%);
+
 }
 
 /* Issue Stats Cards */
@@ -136,4 +162,42 @@
 
 .issues-table tbody tr:hover {
   background-color: #f9f9f9;
+}
+
+/* Navbar positioning */
+.navbar {
+  height: 60px;
+  width: 100%;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  position: fixed;
+  top: 0;
+  z-index: 20;
+}
+
+/* Adjusting main content to account for fixed navbar */
+body {
+  padding-top: 60px;
+}
+
+/* Media query for smaller screens */
+@media screen and (max-width: 1024px) {
+  .issue-stats-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .sidebar {
+    width: 200px;
+    min-width: 200px;
+  }
+  
+  .dashboard-content {
+    margin-left: 200px;
+    width: calc(100% - 200px);
+  }
 }
