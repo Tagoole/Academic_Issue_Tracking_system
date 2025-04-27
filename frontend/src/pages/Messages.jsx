@@ -445,11 +445,6 @@ const Messages = () => {
       
     } catch (err) {
       console.error('Error sending message:', err);
-      
-      // Show error notification
-      setError('Failed to send message. Please try again.');
-      setTimeout(() => setError(null), 3000);
-      
       // Refresh everything on error
       setRefreshKey(prevKey => prevKey + 1);
     }
