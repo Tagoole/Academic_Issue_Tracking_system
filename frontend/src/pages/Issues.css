@@ -80,4 +80,17 @@
   transition: background-color 0.3s;
   white-space: nowrap; /* Prevent button text from wrapping */
 }
+.new-issue-btn:hover {
+  background-color: #2980b9;
+}
+
+/* Search and Filter Section */
+.search-filter-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+
 
