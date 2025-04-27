@@ -565,7 +565,7 @@ def delete_account(request):
         return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
 
 
-class MessageViewSet(viewsets.ModelViewSet):
+class MessageViewSet(ModelViewSet):
     """
     API endpoint for messages
     """
@@ -597,8 +597,8 @@ class MessageViewSet(viewsets.ModelViewSet):
             )
         
         try:
-            other_user = User.objects.get(id=other_user_id)
-        except User.DoesNotExist:
+            other_user = CustomUser.objects.get(id=other_user_id)
+        except CustomUser.DoesNotExist:
             return Response(
                 {"error": "User not found"}, 
                 status=status.HTTP_404_NOT_FOUND
