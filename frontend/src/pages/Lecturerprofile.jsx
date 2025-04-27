@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Navbar from './NavBar';
 import Sidebar2 from './Sidebar2';
-import './LecturerProfile.css';
+import './Lecturerprofile.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
