@@ -213,7 +213,7 @@
   text-align: center;
   color: #555;
   font-style: italic;
-  font-size: 16px; /* Increased font size */
+  font-size: 16px; 
 }
 
 /* Responsive adjustments */
@@ -234,7 +234,7 @@
 }
 
 .issues-table {
-  font-size: 15px; /* Adjusted for medium screens */
+  font-size: 15px; 
 }
 
 .issues-table th,
