@@ -175,12 +175,12 @@
   width: 8%;
 }
 
-.issues-table th:nth-child(3), /* Issue Type column */
+.issues-table th:nth-child(3), 
 .issues-table td:nth-child(3) {
   width: 10%;
 }
 
-.issues-table th:nth-child(4), /* Created column */
+.issues-table th:nth-child(4), 
 .issues-table td:nth-child(4),
 .issues-table th:nth-child(5), 
 .issues-table td:nth-child(5) {
