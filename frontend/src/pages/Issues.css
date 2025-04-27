@@ -105,6 +105,19 @@
   color: black;
 }
 
+.filter-btn {
+  padding: 10px 16px;
+  background-color: #327ec9;
+  color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 15px; /* Increased font size */
+  transition: all 0.3s;
+  min-width: 80px; /* Fix the width issue */
+  text-align: center;
+}
+
 
 
 
