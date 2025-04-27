@@ -23,6 +23,8 @@ const Messages = () => {
   const [newContactUsername, setNewContactUsername] = useState('');
   const navigate = useNavigate();
 
+
+  
   // Authentication check when component mounts
   useEffect(() => {
     const checkAuth = () => {
