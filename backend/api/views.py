@@ -565,6 +565,130 @@ def delete_account(request):
     else:
         return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
 
+
+
+class MessageViewSet(ModelViewSet):
+    """
+    API endpoint for messages
+    """
+    serializer_class = MessageSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        """
+        Return messages that involve the authenticated user
+        """
+        user = self.request.user
+        return Message.objects.filter(
+            Q(sender=user) | Q(receiver=user),
+            is_deleted=False
+        ).order_by('timestamp')
+    
+    def create(self, request, *args, **kwargs):
+        """
+        Create a new message with better error handling
+        """
+        data = request.data
+        conversation_id = data.get('conversation_id')
+        content = data.get('content')
+        
+        if not conversation_id or not content:
+            return Response(
+                {"error": "Both conversation_id and content are required"}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            conversation = Conversation.objects.get(id=conversation_id)
+            if request.user not in conversation.participants.all():
+                return Response(
+                    {"error": "User not part of this conversation"}, 
+                    status=status.HTTP_403_FORBIDDEN
+                )
+            
+            # Get the other user
+            other_user = conversation.participants.exclude(id=request.user.id).first()
+            if not other_user:
+                return Response(
+                    {"error": "Invalid conversation"}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Create the message
+            message = Message.objects.create(
+                sender=request.user,
+                receiver=other_user,
+                content=content,
+                conversation=conversation
+            )
+            
+            # Update conversation timestamp
+            conversation.update_timestamp()
+            
+            serializer = self.get_serializer(message)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            
+        except Conversation.DoesNotExist:
+            return Response(
+                {"error": "Conversation not found"}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            return Response(
+                {"error": str(e)}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+    
+    @action(detail=False, methods=['get'])
+    def conversation(self, request):
+        """
+        Get all messages between the authenticated user and a specific user
+        """
+        user = request.user
+        other_user_id = request.query_params.get('user_id')
+        
+        if not other_user_id:
+            return Response(
+                {"error": "User ID parameter is required"}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            other_user = CustomUser.objects.get(id=other_user_id)
+        except CustomUser.DoesNotExist:
+            return Response(
+                {"error": "User not found"}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        messages = Message.objects.filter(
+            (Q(sender=user) & Q(receiver=other_user)) | 
+            (Q(sender=other_user) & Q(receiver=user)),
+            is_deleted=False
+        ).order_by('timestamp')
+        
+        # Mark messages as read
+        unread_messages = messages.filter(receiver=user, is_read=False)
+        for message in unread_messages:
+            message.mark_as_read()
+        
+        serializer = self.get_serializer(messages, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=False, methods=['get'])
+    def unread_count(self, request):
+        """
+        Get the count of unread messages for the authenticated user
+        """
+        unread_count = Message.objects.filter(
+            receiver=request.user,
+            is_read=False,
+            is_deleted=False
+        ).count()
+        
+        return Response({"unread_count": unread_count})
+
+
 class ConversationViewSet(ModelViewSet):
     """
     API endpoint for conversations
