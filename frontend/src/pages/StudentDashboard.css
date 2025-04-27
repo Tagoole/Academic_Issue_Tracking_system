@@ -240,9 +240,9 @@
 
 .action-buttons-container {
   display: flex;
-  flex-direction: column; /* Changed to column for vertical layout */
+  flex-direction: column; 
   justify-content: center;
-  gap: 5px; /* Space between buttons */
+  gap: 5px; 
 }
 
 .view-details-btn {
