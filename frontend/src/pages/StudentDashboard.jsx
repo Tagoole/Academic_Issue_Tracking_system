@@ -279,7 +279,7 @@ const StudentDashboard = () => {
                             width: "100%"
                           }}
                         >
-                          Delete Issue
+                          Delete
                         </button>
                       </td>
                     </tr>
