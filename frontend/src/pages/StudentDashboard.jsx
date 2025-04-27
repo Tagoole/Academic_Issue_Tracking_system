@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import NavBar from './NavBar';
-import SideBar from './Sidebar1';
+import SideBar1 from './Sidebar1';
 import './StudentDashboard.css'; 
 import API from '../api';
 
@@ -157,9 +157,9 @@ const StudentDashboard = () => {
   return (
     <div className="dashboard-container" style={{
       minHeight: '100vh',
-      width: '100%' // Changed from fixed 1205px to be responsive
+      width: '100%'
     }}>
-      <SideBar />
+      <SideBar1 />
       <div className="dashboard-wrapper">
         <NavBar />
         
@@ -191,19 +191,23 @@ const StudentDashboard = () => {
             </svg>
           </button>
           
-          {/* Advanced holographic button with multiple effects */}
-          <div className="hologram-3d-container">
-            <div className="hologram-particles">
-              <div className="hologram-border">
-                <button 
-                  className="new-issue-button hologram-button hologram-3d" 
-                  onClick={handleNewIssueClick}
-                >
-                  + New Issue
-                </button>
-              </div>
-            </div>
-          </div>
+          {/* Standard button instead of holographic */}
+          <button 
+            className="new-issue-button" 
+            onClick={handleNewIssueClick}
+            style={{
+              backgroundColor: '#007bff',
+              padding: '10px 20px',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+              boxShadow: '0 2px 4px rgba(0, 123, 255, 0.4)'
+            }}
+          >
+            + New Issue
+          </button>
         </div>
         
         {/* Issues Container */}
@@ -322,4 +326,3 @@ const StudentDashboard = () => {
 };
 
 export default StudentDashboard;
-
