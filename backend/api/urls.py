@@ -16,6 +16,7 @@ router.register(r'registration_token', Registration_Token_viewset, 'registration
 router.register(r'registrar_issue_management', Registrar_Issue_ManagementViewSet, 'registrar_issue_management')  # Registers Registrar_Issue_ManagementViewSet to handle CRUD operations for registrar issue management
 router.register(r'lecturer_issue_management', Lecturer_Issue_Manangement, 'lecturer_issue_management')  # Registers Lecturer_Issue_Manangement to handle CRUD operations for lecturer issue management
 router.register(r'student_issues', Student_Issue_ReadOnlyViewset, 'student_issues')  # Registers Student_Issue_ReadOnlyViewset to handle read-only operations for student issues
+router.register(r'messages', MessageViewSet, basename='message')
 
 
 
