@@ -39,6 +39,8 @@ urlpatterns = [
     path('get_registrars/', get_registrars, name='get_registrars'),  # Endpoint to retrieve a list of registrars
     path('get_lecturers/',get_lecturers,name = 'get_lecturers'),
     path('delete_account/',delete_account,name='delete_account'),
+    path('users/search/', UserSearchView.as_view(), name='user-search'),
+
 ]
 
 
