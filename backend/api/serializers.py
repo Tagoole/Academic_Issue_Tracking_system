@@ -260,3 +260,58 @@ class MessageSerializer(serializers.ModelSerializer):
         # Set the sender to the current authenticated user
         validated_data['sender'] = self.context['request'].user
         return super().create(validated_data)
+    
+
+
+class ConversationSerializer(serializers.ModelSerializer):
+    participants = UserSerializer(many=True, read_only=True)
+    participant_ids = serializers.PrimaryKeyRelatedField(
+        many=True, 
+        queryset=User.objects.all(),
+        write_only=True
+    )
+    last_message_content = serializers.SerializerMethodField()
+    last_message_time = serializers.SerializerMethodField()
+    unread_count = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Conversation
+        fields = [
+            'id', 'participants', 'participant_ids', 'created_at', 'updated_at',
+            'last_message_content', 'last_message_time', 'unread_count'
+        ]
+        read_only_fields = ['created_at', 'updated_at']
+    
+    def get_last_message_content(self, obj):
+        last_message = obj.last_message
+        if last_message:
+            return last_message.content
+        return ''
+    
+    def get_last_message_time(self, obj):
+        last_message = obj.last_message
+        if last_message:
+            return last_message.timestamp
+        return None
+    
+    def get_unread_count(self, obj):
+        user = self.context['request'].user
+        return Message.objects.filter(
+            receiver=user,
+            sender__in=obj.participants.exclude(id=user.id),
+            is_read=False,
+            is_deleted=False
+        ).count()
+    
+    def create(self, validated_data):
+        participant_ids = validated_data.pop('participant_ids')
+        conversation = Conversation.objects.create(**validated_data)
+        
+        # Add the current user as a participant
+        conversation.participants.add(self.context['request'].user)
+        
+        # Add other participants
+        for user in participant_ids:
+            conversation.participants.add(user)
+        
+        return conversation
