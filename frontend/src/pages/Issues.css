@@ -8,3 +8,12 @@
   min-height: 100vh;
 }
 
+/* Main Content Area */
+.dashboard-content {
+  flex-grow: 1;
+  padding: 20px;
+  margin-left: 120px;
+  margin-right: 20px;
+  width: calc(100% - 140px);
+}
+
