@@ -98,10 +98,10 @@
 
 .search-input {
   width: 100%;
-  padding: 10px 14px; /* Slightly larger input field */
+  padding: 10px 14px; 
   border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 15px; /* Increased from 14px */
+  font-size: 15px; 
   color: black;
 }
 
