@@ -132,11 +132,11 @@
 
 .issues-table th,
 .issues-table td {
-  padding: 14px 16px; /* Increased padding */
+  padding: 14px 16px; 
   text-align: left;
   border-bottom: 1px solid #ddd;
   overflow: hidden;
-  text-overflow: ellipsis; /* Add ellipsis for text that doesn't fit */
+  text-overflow: ellipsis; 
   white-space: nowrap; 
 }
 
