@@ -52,7 +52,7 @@ const Messages = () => {
       const interval = setInterval(fetchUnreadCounts, 30000); // Check for unread messages every 30 seconds
       return () => clearInterval(interval);
     }
-  }, [navigate, refreshKey]); // Added refreshKey to dependencies to trigger refetch on refresh
+  }, [navigate]);
 
   // Fetch all necessary data
   const fetchData = async () => {
@@ -376,7 +376,7 @@ const Messages = () => {
         markMessagesAsRead(selectedContact.id);
       }
     }
-  }, [selectedContact, drafts, unreadMessages]);
+  }, [selectedContact]);
 
   // Save draft when typing
   const handleMessageChange = (e) => {
@@ -391,7 +391,7 @@ const Messages = () => {
     }
   };
 
-  // Modified handleSendMessage function to refresh the page and chat simultaneously
+  // Updated handleSendMessage function that refreshes the page instead of showing error
   const handleSendMessage = async (e) => {
     e.preventDefault();
     
@@ -404,9 +404,6 @@ const Messages = () => {
       
       // Data to send
       let messageData = { content: messageInput.trim() };
-      
-      // Store the current contact ID for refreshing later
-      const currentContactId = selectedContact.id;
       
       // If we have a userId, use receiver_id approach
       if (selectedContact.userId) {
@@ -423,32 +420,26 @@ const Messages = () => {
       setMessageInput('');
       setDrafts(prev => {
         const newDrafts = {...prev};
-        delete newDrafts[currentContactId];
+        delete newDrafts[selectedContact.id];
         return newDrafts;
       });
       
-      // Show notification
       setNotification('Message Sent');
+      
       setTimeout(() => {
         setNotification(null);
       }, 2000);
       
-      // Increment the refresh key to force a complete re-render of the component
-      setRefreshKey(prevKey => prevKey + 1);
+      // Refresh messages for this conversation
+      fetchMessages(selectedContact.id);
       
-      // After a brief delay to allow component to re-render, fetch fresh messages
-      setTimeout(() => {
-        // If the selected contact is still the same after refresh
-        if (selectedContact && selectedContact.id === currentContactId) {
-          // Refresh messages for this specific conversation
-          fetchMessages(currentContactId);
-        }
-      }, 100);
+      // Also refresh conversations list to get updated last message
+      fetchConversations();
       
     } catch (err) {
       console.error('Error sending message:', err);
       
-      // Refresh everything on error
+      // Instead of showing error, refresh the page
       setRefreshKey(prevKey => prevKey + 1);
       
       // Clear input and draft
@@ -460,6 +451,9 @@ const Messages = () => {
           return newDrafts;
         });
       }
+      
+      // Fetch fresh data
+      fetchData();
     }
   };
 
