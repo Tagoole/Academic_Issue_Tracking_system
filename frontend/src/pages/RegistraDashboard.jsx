@@ -5,7 +5,7 @@ import NavBar from './NavBar';
 import Sidebar from './Sidebar';
 import API from '../api.js';
 
-const RegistraDashboard = () => {
+const RegistrarDashboard = () => {
   const navigate = useNavigate();
   const [issues, setIssues] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,8 +15,10 @@ const RegistraDashboard = () => {
   const [pendingCount, setPendingCount] = useState(0);
   const [inProgressCount, setInProgressCount] = useState(0);
   const [resolvedCount, setResolvedCount] = useState(0);
-  const [showModal, setShowModal] = useState(false); // State for modal visibility
-  const [selectedIssue, setSelectedIssue] = useState(null); // State for selected issue
+  const [showModal, setShowModal] = useState(false);
+  const [selectedIssue, setSelectedIssue] = useState(null);
+  const [isSearching, setIsSearching] = useState(false);
+  const [activeFilter, setActiveFilter] = useState('all'); // New state for filtering
 
   // Fetch issues when component mounts
   useEffect(() => {
@@ -37,16 +39,13 @@ const RegistraDashboard = () => {
         const response = await API.get('api/registrar_issue_management/');
         console.log("API Response:", response.data);
 
-        setIssues(response.data);
-        setFilteredIssues(response.data);
+        // Ensure data is processed properly
+        const issuesData = Array.isArray(response.data) ? response.data : [];
+        setIssues(issuesData);
+        setFilteredIssues(issuesData);
 
-        const pending = response.data.filter(issue => issue.status === 'pending').length;
-        const inProgress = response.data.filter(issue => issue.status === 'in_progress').length; // Fixed typo: 'in_rogress' to 'in_progress'
-        const resolved = response.data.filter(issue => issue.status === 'resolved').length;
-
-        setPendingCount(pending);
-        setInProgressCount(inProgress);
-        setResolvedCount(resolved);
+        // Count different issue types
+        updateCounts(issuesData);
         setLoading(false);
       } catch (err) {
         console.error('Error fetching registrar issues:', err);
@@ -62,16 +61,10 @@ const RegistraDashboard = () => {
               API.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
               const retryResponse = await API.get('api/registrar_issue_management/');
 
-              setIssues(retryResponse.data);
-              setFilteredIssues(retryResponse.data);
-
-              const pending = retryResponse.data.filter(issue => issue.status === 'pending').length;
-              const inProgress = retryResponse.data.filter(issue => issue.status === 'in_progress').length;
-              const resolved = retryResponse.data.filter(issue => issue.status === 'resolved').length;
-
-              setPendingCount(pending);
-              setInProgressCount(inProgress);
-              setResolvedCount(resolved);
+              const retryData = Array.isArray(retryResponse.data) ? retryResponse.data : [];
+              setIssues(retryData);
+              setFilteredIssues(retryData);
+              updateCounts(retryData);
               setLoading(false);
             } else {
               navigate('/signin');
@@ -95,23 +88,115 @@ const RegistraDashboard = () => {
     }
   }, [navigate]);
 
+  // Function to update counts
+  const updateCounts = (data) => {
+    const pending = data.filter(issue => issue.status === 'pending').length;
+    const inProgress = data.filter(issue => issue.status === 'in_progress').length;
+    const resolved = data.filter(issue => issue.status === 'resolved').length;
+
+    setPendingCount(pending);
+    setInProgressCount(inProgress);
+    setResolvedCount(resolved);
+  };
+
   // Handle search functionality
   useEffect(() => {
-    if (searchTerm.trim() === '') {
-      setFilteredIssues(issues);
-    } else {
-      const filtered = issues.filter(issue =>
-        issue.id.toString().includes(searchTerm) ||
-        issue.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        issue.studentNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        issue.category.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilteredIssues(filtered);
+    // Debounce search requests by using a timer
+    const debounceTimer = setTimeout(() => {
+      if (searchTerm.trim() === '') {
+        // Reset to show all issues, but apply any active filter
+        applyFilter(activeFilter, issues);
+      } else {
+        handleSearch();
+      }
+    }, 500); // 500ms delay
+
+    return () => clearTimeout(debounceTimer);
+  }, [searchTerm, activeFilter, issues]);
+
+  // New function to handle filtering
+  const applyFilter = (filter, dataToFilter) => {
+    let filtered = [...dataToFilter];
+    
+    // Apply status filter if not "all"
+    if (filter !== 'all') {
+      filtered = filtered.filter(issue => issue.status === filter);
     }
-  }, [searchTerm, issues]);
+    
+    // Also apply any search term if present
+    if (searchTerm.trim() !== '') {
+      filtered = filtered.filter(issue =>
+        issue.id?.toString().includes(searchTerm) ||
+        issue.status?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        issue.studentNo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        issue.category?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        issue.issue_type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        issue.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        issue.issue_description?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    
+    setFilteredIssues(filtered);
+    // Don't update counts here to keep the cards showing total counts
+  };
+
+  const handleFilterClick = (filter) => {
+    setActiveFilter(filter);
+    applyFilter(filter, issues);
+  };
+
+  const handleSearch = async () => {
+    if (searchTerm.trim() === '') {
+      applyFilter(activeFilter, issues);
+      return;
+    }
+
+    try {
+      setIsSearching(true);
+      // Use the filter_results endpoint for server-side filtering
+      const response = await API.get(`api/registrar_issue_management/filter_results/?status=${searchTerm}`);
+      
+      if (response.data && Array.isArray(response.data)) {
+        // Apply active filter to search results
+        applyFilter(activeFilter, response.data);
+      } else {
+        // Fallback to client-side filtering
+        const filtered = issues.filter(issue =>
+          issue.id?.toString().includes(searchTerm) ||
+          issue.status?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          issue.studentNo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          issue.category?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          issue.issue_type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          issue.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          issue.issue_description?.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        applyFilter(activeFilter, filtered);
+      }
+    } catch (err) {
+      console.error('Error searching issues:', err);
+      // Fallback to client-side filtering
+      const filtered = issues.filter(issue =>
+        issue.id?.toString().includes(searchTerm) ||
+        issue.status?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        issue.studentNo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        issue.category?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        issue.issue_type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        issue.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        issue.issue_description?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      applyFilter(activeFilter, filtered);
+    } finally {
+      setIsSearching(false);
+    }
+  };
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    handleSearch();
   };
 
   // Format date function
@@ -133,9 +218,70 @@ const RegistraDashboard = () => {
     setSelectedIssue(null);
   };
 
-  if (loading) {
+  // Filter dropdown component
+  const FilterDropdown = () => {
+    const [isOpen, setIsOpen] = useState(false);
+    
     return (
-      <div className="app-container" style={{ width: '1000px' }}>
+      <div className="filter-dropdown">
+        <button 
+          className="filter-button" 
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          <span>Filter: {activeFilter === 'all' ? 'All' : 
+                     activeFilter === 'pending' ? 'Pending' : 
+                     activeFilter === 'in_progress' ? 'In Progress' : 
+                     activeFilter === 'resolved' ? 'Resolved' : 'All'}</span>
+          <span className="filter-icon">▼</span>
+        </button>
+        
+        {isOpen && (
+          <div className="filter-dropdown-content">
+            <button 
+              className={`filter-option ${activeFilter === 'all' ? 'active' : ''}`}
+              onClick={() => {
+                handleFilterClick('all');
+                setIsOpen(false);
+              }}
+            >
+              All Issues
+            </button>
+            <button 
+              className={`filter-option ${activeFilter === 'pending' ? 'active' : ''}`}
+              onClick={() => {
+                handleFilterClick('pending');
+                setIsOpen(false);
+              }}
+            >
+              Pending
+            </button>
+            <button 
+              className={`filter-option ${activeFilter === 'in_progress' ? 'active' : ''}`}
+              onClick={() => {
+                handleFilterClick('in_progress');
+                setIsOpen(false);
+              }}
+            >
+              In Progress
+            </button>
+            <button 
+              className={`filter-option ${activeFilter === 'resolved' ? 'active' : ''}`}
+              onClick={() => {
+                handleFilterClick('resolved');
+                setIsOpen(false);
+              }}
+            >
+              Resolved
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  if (loading && !isSearching) {
+    return (
+      <div className="app-container">
         <NavBar />
         <div className="content-container">
           <Sidebar />
@@ -147,9 +293,9 @@ const RegistraDashboard = () => {
     );
   }
 
-  if (error) {
+  if (error && !isSearching) {
     return (
-      <div className="app-container" style={{ width: '1000px' }}>
+      <div className="app-container">
         <NavBar />
         <div className="content-container">
           <Sidebar />
@@ -162,7 +308,7 @@ const RegistraDashboard = () => {
   }
 
   return (
-    <div className="app-container" style={{ width: '1000px' }}>
+    <div className="app-container">
       <NavBar />
       <div className="content-container">
         <Sidebar />
@@ -178,16 +324,22 @@ const RegistraDashboard = () => {
                     title="Pending issues"
                     count={pendingCount}
                     description={`You currently have ${pendingCount} pending issue${pendingCount !== 1 ? 's' : ''}`}
+                    onClick={() => handleFilterClick('pending')}
+                    active={activeFilter === 'pending'}
                   />
                   <DashboardCard
                     title="In-progress issues"
                     count={inProgressCount}
                     description={`You currently have ${inProgressCount} in-progress issue${inProgressCount !== 1 ? 's' : ''}`}
+                    onClick={() => handleFilterClick('in_progress')}
+                    active={activeFilter === 'in_progress'}
                   />
                   <DashboardCard
                     title="Resolved issues"
                     count={resolvedCount}
                     description={`You currently have ${resolvedCount} resolved issue${resolvedCount !== 1 ? 's' : ''}`}
+                    onClick={() => handleFilterClick('resolved')}
+                    active={activeFilter === 'resolved'}
                   />
                 </div>
               </div>
@@ -196,28 +348,25 @@ const RegistraDashboard = () => {
                   <div className="issues-header">
                     <h2>My issues</h2>
                     <div className="issues-controls">
-                      <div className="search-container">
+                      <form onSubmit={handleSearchSubmit} className="search-container">
                         <input
                           type="text"
-                          placeholder="search for issues"
+                          placeholder="Search for issues (status, student, type)"
                           className="search-input"
                           value={searchTerm}
                           onChange={handleSearchChange}
                         />
-                        <span className="search-icon"></span>
-                      </div>
-                      <button className="filter-button">
-                        <span>Filter</span>
-                        <span className="filter-icon">▼</span>
-                      </button>
+                        <button type="submit" className="search-button">
+                          <span className="search-icon">🔍</span>
+                        </button>
+                      </form>
+                      <FilterDropdown />
                     </div>
                   </div>
-                  {/* New Table Container */}
+                  {/* Table Container */}
                   <div className="table-container">
-                    {loading ? (
-                      <div className="loading-message">Loading issues...</div>
-                    ) : error ? (
-                      <div className="error-message">{error}</div>
+                    {isSearching ? (
+                      <div className="loading-message">Searching issues...</div>
                     ) : (
                       <table className="issues-table">
                         <thead>
@@ -234,9 +383,9 @@ const RegistraDashboard = () => {
                         <tbody>
                           {filteredIssues.length > 0 ? (
                             filteredIssues.map((issue, index) => (
-                              <tr key={issue.id || index}>
+                              <tr key={issue.id || index} className={`status-row-${issue.status}`}>
                                 <td>#{issue.id || 'N/A'}</td>
-                                <td>{issue.description || 'N/A'}</td> {/* Adjusted field: assuming 'description' for issue details */}
+                                <td>{issue.description || issue.issue_description || 'N/A'}</td>
                                 <td>
                                   <span className={`status-tag status-${issue.status}`}>
                                     {issue.status === 'pending' ? 'Pending' :
@@ -244,7 +393,7 @@ const RegistraDashboard = () => {
                                      issue.status === 'resolved' ? 'Resolved' : issue.status}
                                   </span>
                                 </td>
-                                <td>{issue.category || 'N/A'}</td> {/* Using 'category' as issue type */}
+                                <td>{issue.category || issue.issue_type || 'N/A'}</td>
                                 <td>{formatDate(issue.date || issue.created_at)}</td>
                                 <td>{formatDate(issue.updated_at || issue.date)}</td>
                                 <td>
@@ -260,7 +409,7 @@ const RegistraDashboard = () => {
                           ) : (
                             <tr>
                               <td colSpan="7" className="no-issues-message">
-                                {searchTerm ? 'No issues match your search' : 'No issues found'}
+                                {searchTerm || activeFilter !== 'all' ? 'No issues match your criteria' : 'No issues found'}
                               </td>
                             </tr>
                           )}
@@ -287,7 +436,7 @@ const RegistraDashboard = () => {
                         if (key === 'id') return null;
                         return (
                           <div key={key} className="issue-detail-item">
-                            <strong>{key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:</strong>
+                            <strong>{key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:</strong>{' '}
                             {typeof value === 'object' ? JSON.stringify(value) : String(value)}
                           </div>
                         );
@@ -308,9 +457,13 @@ const RegistraDashboard = () => {
 };
 
 // Dashboard Card Component
-const DashboardCard = ({ title, count, description }) => {
+const DashboardCard = ({ title, count, description, onClick, active }) => {
   return (
-    <div className="dashboard-card">
+    <div 
+      className={`dashboard-card ${active ? 'active-card' : ''}`} 
+      onClick={onClick}
+      style={{ cursor: 'pointer' }}
+    >
       <h3>{title}</h3>
       <div className="card-count">{count}</div>
       <p>{description}</p>
@@ -318,4 +471,4 @@ const DashboardCard = ({ title, count, description }) => {
   );
 };
 
-export default RegistraDashboard;
+export default RegistrarDashboard;

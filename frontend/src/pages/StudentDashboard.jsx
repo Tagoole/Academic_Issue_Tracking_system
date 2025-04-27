@@ -118,6 +118,31 @@ const StudentDashboard = () => {
     setSelectedIssue(null);
   };
 
+  // New function to handle issue deletion
+  const handleDeleteIssue = async (issueId) => {
+    if (window.confirm('Are you sure you want to delete this issue? This action cannot be undone.')) {
+      try {
+        // Get access token
+        const accessToken = localStorage.getItem('accessToken');
+        
+        // Set authorization header with access token
+        API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+        
+        // Send delete request to API
+        await API.delete(`/api/student_issues/${issueId}/`);
+        
+        // Update the state by removing the deleted issue
+        setIssueData(prevIssues => prevIssues.filter(issue => issue.id !== issueId));
+        
+        // Show success message
+        alert('Issue deleted successfully');
+      } catch (err) {
+        console.error('Error deleting issue:', err);
+        alert('Failed to delete issue. Please try again.');
+      }
+    }
+  };
+
   // Format date for display
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -237,9 +262,17 @@ const StudentDashboard = () => {
                       <td>{issue.is_commented ? '✓' : '✗'}</td>
                       <td>{issue.comment || 'No comment'}</td>
                       <td>
-                        <button className="view-details-btn" onClick={() => openIssueDetails(issue)}>
-                          View Details
-                        </button>
+                        <div className="action-buttons-container">
+                          <button className="view-details-btn" onClick={() => openIssueDetails(issue)}>
+                            Details
+                          </button>
+                          <button 
+                            className="delete-issue-btn" 
+                            onClick={() => handleDeleteIssue(issue.id)}
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))

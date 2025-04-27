@@ -5,9 +5,7 @@ import notificationIcon from '../assets/notification.png';
 import messageIcon from '../assets/mail.png';
 import { useNavigate } from 'react-router-dom';
 
-
 const NavBar = () => {
-  const [searchQuery, setSearchQuery] = useState('');
   const [userName, setUserName] = useState('');
   const navigate = useNavigate();
 
@@ -22,15 +20,6 @@ const NavBar = () => {
     }
   }, []);
 
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
-
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    navigate(`/search?query=${searchQuery}`);
-  };
-
   const handleMailClick = () => {
     navigate('/messages');
   };
@@ -44,24 +33,8 @@ const NavBar = () => {
       {/* Left Section: Profile */}
       <div className="navbar-left">
         <div className="profile-container">
-          <span className="profile-name"> Hello,{userName}</span>
+          <span className="profile-name">Hello, {userName}</span>
         </div>
-      </div>
-
-
-      {/* Center Section: Search Bar */}
-      <div className="search-container">
-        <form onSubmit={handleSearchSubmit} className="search-form">
-          <div className="search-wrapper">
-            <input
-              type="text"
-              placeholder="Search for anything..."
-              value={searchQuery}
-              onChange={handleSearchChange}
-              className="search-input"
-            />
-          </div>
-        </form>
       </div>
 
       {/* Right Section: Icons and Title */}

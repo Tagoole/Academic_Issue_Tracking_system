@@ -48,4 +48,4 @@ const  Congragulation = () => {
   );
 };
 
-export default Congragulation; ;
+export default Congragulation; 

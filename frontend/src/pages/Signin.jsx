@@ -117,8 +117,8 @@ const SignIn = () => {
       <div className="split-layout">
         <div className="left-section">
           <div className="header">
-            <h1 className="green-text">WELCOME TO THE ACADEMIC TRACKING SYSTEM</h1>
-            <h2 className="green-text">AITS</h2>
+            <h1 className="green-text">WELCOME TO THE ACADEMIC ISSUE TRACKING SYSTEM</h1>
+            
           </div>
 
           <div className="content">

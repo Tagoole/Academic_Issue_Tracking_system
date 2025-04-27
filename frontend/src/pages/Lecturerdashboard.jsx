@@ -100,23 +100,112 @@ const Lecturerdashboard = () => {
     }
   }, [navigate]);
 
+  // Handle API-based filtering and searching
+  const fetchFilteredResults = async () => {
+    try {
+      setLoading(true);
+      
+      // Get access token
+      const accessToken = localStorage.getItem('accessToken');
+      
+      // Set authorization header with access token
+      API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+      
+      // Build the search query based on filters
+      let queryParams = '';
+      
+      // If we have a search term, use the filter_results endpoint
+      if (searchTerm) {
+        queryParams = `status=${encodeURIComponent(searchTerm)}`;
+        const response = await API.get(`api/lecturer_issue_management/filter_results/?${queryParams}`);
+        console.log("Filtered API Response:", response.data);
+        setFilteredIssues(response.data);
+      } else {
+        // If no search term, use the basic fetch and apply client-side filtering
+        const response = await API.get('api/lecturer_issue_management/');
+        const issues = response.data;
+        
+        // Apply client-side filters for category and status
+        const filtered = issues.filter(issue => {
+          const matchesStatus = statusFilter === 'all' || issue.status === statusFilter;
+          const matchesCategory = categoryFilter === 'all' || issue.category === categoryFilter;
+          return matchesStatus && matchesCategory;
+        });
+        
+        setAllIssues(issues);
+        setFilteredIssues(filtered);
+      }
+      
+      setLoading(false);
+    } catch (err) {
+      console.error('Error fetching filtered issues:', err);
+      
+      // Handle token refresh similar to fetchIssues
+      if (err.response && err.response.status === 401) {
+        try {
+          const refreshToken = localStorage.getItem('refreshToken');
+          
+          if (refreshToken) {
+            const refreshResponse = await API.post('/api/refresh_token/', {
+              refresh: refreshToken
+            });
+            
+            const newAccessToken = refreshResponse.data.access;
+            localStorage.setItem('accessToken', newAccessToken);
+            
+            // Retry the filtered fetch with new token
+            API.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
+            
+            // Repeat the same query logic as above
+            let queryParams = '';
+            if (searchTerm) {
+              queryParams = `status=${encodeURIComponent(searchTerm)}`;
+              const response = await API.get(`api/lecturer_issue_management/filter_results/?${queryParams}`);
+              setFilteredIssues(response.data);
+            } else {
+              const response = await API.get('api/lecturer_issue_management/');
+              const issues = response.data;
+              
+              const filtered = issues.filter(issue => {
+                const matchesStatus = statusFilter === 'all' || issue.status === statusFilter;
+                const matchesCategory = categoryFilter === 'all' || issue.category === categoryFilter;
+                return matchesStatus && matchesCategory;
+              });
+              
+              setAllIssues(issues);
+              setFilteredIssues(filtered);
+            }
+            
+            setLoading(false);
+          } else {
+            navigate('/signin');
+          }
+        } catch (refreshErr) {
+          console.error('Error refreshing token:', refreshErr);
+          setError('Your session has expired. Please log in again.');
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          navigate('/signin');
+        }
+      } else {
+        setError('Failed to fetch filtered issues. Please try again later.');
+        setLoading(false);
+      }
+    }
+  };
+
   // Apply filters to issues whenever filters change
   useEffect(() => {
-    if (allIssues.length === 0) return;
+    // Only run if we have loaded issues initially
+    if (loading) return;
     
-    const filtered = allIssues.filter(issue => {
-      const matchesStatus = statusFilter === 'all' || issue.status === statusFilter;
-      const matchesCategory = categoryFilter === 'all' || issue.category === categoryFilter;
-      const matchesSearch = searchTerm === '' || 
-        (issue.title && issue.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (issue.studentNo && issue.studentNo.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (issue.category && issue.category.toLowerCase().includes(searchTerm.toLowerCase()));
-      
-      return matchesStatus && matchesCategory && matchesSearch;
-    });
+    // Set a small delay to prevent too many API calls while typing
+    const delaySearch = setTimeout(() => {
+      fetchFilteredResults();
+    }, 500);
     
-    setFilteredIssues(filtered);
-  }, [statusFilter, categoryFilter, searchTerm, allIssues]);
+    return () => clearTimeout(delaySearch);
+  }, [statusFilter, categoryFilter, searchTerm]);
 
   // Handle issue click
   const handleIssueClick = (issue) => {
@@ -175,19 +264,12 @@ const Lecturerdashboard = () => {
         status: newStatus
       });
       
-      // Update local state
-      const updatedIssues = allIssues.map(issue => {
-        if (issue.id === issueId) {
-          return { ...issue, status: newStatus };
-        }
-        return issue;
-      });
-      
-      setAllIssues(updatedIssues);
+      // After successful update, fetch the latest issues
+      fetchFilteredResults();
       
       // If the selected issue is the one being updated, update it too
       if (selectedIssue && selectedIssue.id === issueId) {
-        setSelectedIssue({ ...selectedIssue, status: newStatus });
+        setSelectedIssue(prev => ({ ...prev, status: newStatus }));
       }
       
       console.log(`Issue ${issueId} status updated to ${newStatus}`);
@@ -212,18 +294,11 @@ const Lecturerdashboard = () => {
               status: newStatus
             });
             
-            // Update local state (same as above)
-            const updatedIssues = allIssues.map(issue => {
-              if (issue.id === issueId) {
-                return { ...issue, status: newStatus };
-              }
-              return issue;
-            });
-            
-            setAllIssues(updatedIssues);
+            // Fetch the latest data
+            fetchFilteredResults();
             
             if (selectedIssue && selectedIssue.id === issueId) {
-              setSelectedIssue({ ...selectedIssue, status: newStatus });
+              setSelectedIssue(prev => ({ ...prev, status: newStatus }));
             }
           } else {
             navigate('/signin');
@@ -334,7 +409,7 @@ const Lecturerdashboard = () => {
 
               <input 
                 type="text" 
-                placeholder="Search issues..." 
+                placeholder="Search issues by status, student, or issue type..." 
                 className="search-input" 
                 value={searchTerm}
                 onChange={handleSearchChange}

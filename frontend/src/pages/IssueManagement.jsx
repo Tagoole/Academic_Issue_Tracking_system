@@ -18,6 +18,7 @@ const IssueManagement = () => {
   const [activeIssueId, setActiveIssueId] = useState(null);
   const [showActionsDropdown, setShowActionsDropdown] = useState(null);
   const dropdownRef = useRef(null);
+  const [isSearching, setIsSearching] = useState(false);
   
   // Added state for issue details modal
   const [showDetailsModal, setShowDetailsModal] = useState(false);
@@ -75,7 +76,7 @@ const IssueManagement = () => {
         console.log("API Response:", response.data); // Debug log
         
         setIssues(response.data);
-        setFilteredIssues(response.data);
+        setFilteredIssues(response.data.filter(issue => issue.status === issueStatus));
         
         // Calculate counts for each status
         const pending = response.data.filter(issue => issue.status === 'pending').length;
@@ -112,7 +113,7 @@ const IssueManagement = () => {
               const retryResponse = await API.get('api/registrar_issue_management/');
               
               setIssues(retryResponse.data);
-              setFilteredIssues(retryResponse.data);
+              setFilteredIssues(retryResponse.data.filter(issue => issue.status === issueStatus));
               
               // Calculate counts for each status
               const pending = retryResponse.data.filter(issue => issue.status === 'pending').length;
@@ -149,19 +150,39 @@ const IssueManagement = () => {
       fetchIssues();
       fetchLecturers();
     }
-  }, [navigate]);
+  }, [navigate, issueStatus]);
 
-  // Handle search functionality
-  useEffect(() => {
-    if (searchTerm.trim() === '') {
-      // Filter by current status
-      const statusFiltered = issues.filter(issue => 
-        issue.status.toLowerCase() === issueStatus.toLowerCase()
+  // New function to perform the search using the API endpoint
+  const performSearch = async () => {
+    if (!searchTerm.trim()) {
+      // If search term is empty, reset to filtered by status
+      setFilteredIssues(issues.filter(issue => issue.status === issueStatus));
+      setIsSearching(false);
+      return;
+    }
+
+    try {
+      setIsSearching(true);
+      const accessToken = localStorage.getItem('accessToken');
+      API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+      
+      // Use the filter_results action endpoint with the search term
+      const response = await API.get(`api/registrar_issue_management/filter_results/?status=${searchTerm}`);
+      console.log("Search Response:", response.data);
+      
+      // Further filter by current status tab
+      const statusFiltered = response.data.filter(
+        issue => issue.status === issueStatus
       );
+      
       setFilteredIssues(statusFiltered);
-    } else {
+      setIsSearching(false);
+    } catch (err) {
+      console.error('Error searching issues:', err);
+      setIsSearching(false);
+      // If search fails, fallback to client-side filtering
       const filtered = issues.filter(issue => 
-        issue.status.toLowerCase() === issueStatus.toLowerCase() &&
+        issue.status === issueStatus &&
         (issue.id.toString().includes(searchTerm) ||
         (issue.student?.username && issue.student.username.toLowerCase().includes(searchTerm.toLowerCase())) ||
         (issue.description && issue.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
@@ -169,14 +190,27 @@ const IssueManagement = () => {
       );
       setFilteredIssues(filtered);
     }
-  }, [searchTerm, issues, issueStatus]);
-
-  const handleStatusChange = (status) => {
-    setIssueStatus(status.toLowerCase());
   };
 
+  // Handle search term changes
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
+  };
+
+  // Perform search when search term changes with a debounce
+  useEffect(() => {
+    const delaySearch = setTimeout(() => {
+      performSearch();
+    }, 500); // 500ms delay
+
+    return () => clearTimeout(delaySearch);
+  }, [searchTerm]);
+
+  // When status tab changes, reset search and update filtered issues
+  const handleStatusChange = (status) => {
+    setIssueStatus(status.toLowerCase());
+    setSearchTerm(''); // Clear search when changing tabs
+    setFilteredIssues(issues.filter(issue => issue.status.toLowerCase() === status.toLowerCase()));
   };
 
   // Modified handleViewDetails to display issue details in a modal
@@ -243,6 +277,20 @@ const IssueManagement = () => {
       setInProgressCount(prev => prev + 1);
       setPendingCount(prev => prev - 1);
       
+      // Update filtered issues
+      setFilteredIssues((prevFiltered) => {
+        if (issueStatus === 'pending') {
+          // Remove from filtered list if we're on pending tab
+          return prevFiltered.filter((i) => i.id !== issue.id);
+        } else if (issueStatus === 'in_progress') {
+          // Update in filtered list if we're on in_progress tab
+          return prevFiltered.map((i) => 
+            i.id === issue.id ? { ...i, status: 'in_progress', lecturer: lecturer } : i
+          );
+        }
+        return prevFiltered;
+      });
+      
       // Show success message or notification to user
       alert(`Issue #${issue.id} has been escalated to ${lecturer.username}`);
       
@@ -304,6 +352,25 @@ const IssueManagement = () => {
           } : i
         )
       );
+      
+      // Update filtered issues
+      setFilteredIssues((prevFiltered) => {
+        // If the status changed to something other than current tab, remove from list
+        if (previousStatus === issueStatus && editingIssue.status !== issueStatus) {
+          return prevFiltered.filter((i) => i.id !== selectedIssue.id);
+        } 
+        // If status changed to match current tab, update the item
+        else if (editingIssue.status === issueStatus) {
+          return prevFiltered.map((i) =>
+            i.id === selectedIssue.id ? { 
+              ...i, 
+              status: editingIssue.status,
+              lecturer: selectedLecturer || i.lecturer
+            } : i
+          );
+        }
+        return prevFiltered;
+      });
       
       // Update status counts
       if (previousStatus !== editingIssue.status) {
@@ -374,6 +441,17 @@ const IssueManagement = () => {
         )
       );
       
+      // Update filtered issues
+      setFilteredIssues((prevFiltered) => {
+        if (issueStatus !== 'rejected') {
+          // Remove from filtered list if we're not on rejected tab
+          return prevFiltered.filter((i) => i.id !== issue.id);
+        } else {
+          // Add to filtered list if we're on rejected tab
+          return [...prevFiltered, { ...issue, status: 'rejected', lecturer: null }];
+        }
+      });
+      
       // Update status counts
       if (issue.status === 'pending') {
         setPendingCount(prev => prev - 1);
@@ -437,6 +515,18 @@ const IssueManagement = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  // Handle search form submission - More explicit form submission
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    performSearch();
+  };
+
+  // Clear search results
+  const handleClearSearch = () => {
+    setSearchTerm('');
+    setFilteredIssues(issues.filter(issue => issue.status === issueStatus));
+  };
 
   // Render table rows
   const renderIssueRows = () => {
@@ -618,23 +708,36 @@ const IssueManagement = () => {
 
             {/* Table Display Section - Now directly under status tabs */}
             <div className="issues-data-container">
-              {/* Search section moved inside the table container */}
-              <div className="search-filter-container">
+              {/* Enhanced search section */}
+              <form onSubmit={handleSearchSubmit} className="search-filter-container">
                 <div className="search-container">
                   <input
                     type="text"
-                    placeholder="Search for issues..."
+                    placeholder="Search by ID, student, issue type..."
                     value={searchTerm}
                     onChange={handleSearchChange}
                     className="search-input"
                   />
-                  <span className="search-icon"></span>
+                  {searchTerm && (
+                    <button 
+                      type="button" 
+                      className="clear-search" 
+                      onClick={handleClearSearch}
+                    >
+                      ×
+                    </button>
+                  )}
+                  <button type="submit" className="search-button">
+                    {isSearching ? 'Searching...' : 'Search'}
+                  </button>
                 </div>
-                <button className="filter-button">
-                  <span>Filter</span>
-                  <span className="filter-icon">▼</span>
-                </button>
-              </div>
+                <div className="filter-options">
+                  <button type="button" className="filter-button">
+                    <span>Filter</span>
+                    <span className="filter-icon">▼</span>
+                  </button>
+                </div>
+              </form>
 
               {filteredIssues.length > 0 ? (
                 <div className="responsive-table-wrapper">
@@ -659,7 +762,7 @@ const IssueManagement = () => {
                 </div>
               ) : (
                 <div className="no-issues-message">
-                  {searchTerm ? 'No issues match your search' : 'No issues found'}
+                  {searchTerm ? 'No issues match your search' : `No ${issueStatus} issues found`}
                 </div>
               )}
             </div>
@@ -716,6 +819,7 @@ const IssueManagement = () => {
                     </div>
                   </div>
                   
+                  
                   <div className="issue-detail-row">
                     <span className="detail-label">Status:</span>
                     <div className="detail-input">
@@ -733,51 +837,16 @@ const IssueManagement = () => {
                     </div>
                   </div>
                   
-                  <div className="issue-detail-description">
-                    <h3>Description:</h3>
-                    <p>{selectedIssue.description || 'No description provided.'}</p>
+                  <div className="issue-detail-row">
+                    <span className="detail-label">Description:</span>
+                    <div className="detail-value description-box">
+                      {selectedIssue.description || 'No description provided'}
+                    </div>
                   </div>
-                  
-                  {/* Display comments if available */}
-                  {selectedIssue.comments && selectedIssue.comments.length > 0 && (
-                    <div className="issue-comments">
-                      <h3>Comments:</h3>
-                      {selectedIssue.comments.map((comment, index) => (
-                        <div key={index} className="comment-item">
-                          <div className="comment-header">
-                            <span className="comment-author">{comment.author || 'Unknown'}</span>
-                            <span className="comment-date">{formatDate(comment.created_at)}</span>
-                          </div>
-                          <p className="comment-text">{comment.text}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  
-                  {/* Add rejection reason field when status is rejected */}
-                  {editingIssue.status === 'rejected' && (
-                    <div className="rejection-reason">
-                      <h3>Rejection Reason:</h3>
-                      <textarea
-                        name="rejection_reason"
-                        placeholder="Enter reason for rejection..."
-                        className="rejection-textarea"
-                        onChange={(e) => setEditingIssue({
-                          ...editingIssue,
-                          rejection_reason: e.target.value
-                        })}
-                      />
-                    </div>
-                  )}
                 </div>
                 <div className="modal-footer">
-                  <button className="btn close-btn" onClick={closeDetailsModal}>Close</button>
-                  <button 
-                    className="btn save-btn"
-                    onClick={handleUpdateIssue}
-                  >
-                    Save Changes
-                  </button>
+                  <button className="cancel-btn" onClick={closeDetailsModal}>Cancel</button>
+                  <button className="save-btn" onClick={handleUpdateIssue}>Save Changes</button>
                 </div>
               </div>
             </div>
@@ -792,9 +861,11 @@ const IssueManagement = () => {
 const DashboardCard = ({ title, count, description }) => {
   return (
     <div className="dashboard-card">
-      <h3>{title}</h3>
-      <div className="card-count">{count}</div>
-      <p>{description}</p>
+      <div className="card-header">
+        <h3>{title}</h3>
+        <span className="card-count">{count}</span>
+      </div>
+      <p className="card-description">{description}</p>
     </div>
   );
 };

@@ -10,6 +10,9 @@ const NewIssue = () => {
   const [formData, setFormData] = useState({
     registrar: '',
     student: '',
+    registrationNumber: '',
+    programId: '',
+    programName: '',
     issueType: 'missing_marks',
     description: 'I have no marks for OS test yet I merged 86% in it.',
     courseUnitId: '',
@@ -19,16 +22,19 @@ const NewIssue = () => {
   });
   const [registrars, setRegistrars] = useState([]);
   const [courseUnits, setCourseUnits] = useState([]);
+  const [programs, setPrograms] = useState([]);
   const [registrarDisplayNames, setRegistrarDisplayNames] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
   const [isLoading, setIsLoading] = useState({
     registrars: true,
     courseUnits: true,
+    programs: true
   });
   const [errors, setErrors] = useState({
     registrars: null,
     courseUnits: null,
+    programs: null,
     general: null
   });
   const [currentUser, setCurrentUser] = useState('');
@@ -60,6 +66,8 @@ const NewIssue = () => {
     const initializeUser = () => {
       try {
         const username = localStorage.getItem('userName');
+        const userId = localStorage.getItem('userId');
+        const userProgramId = localStorage.getItem('userProgram');
         const access = localStorage.getItem('accessToken');
         const refresh = localStorage.getItem('refreshToken');
 
@@ -67,10 +75,18 @@ const NewIssue = () => {
           throw new Error('Missing authentication data');
         }
 
+        // Create registration number format
+        const registrationNumber = userId ? `25/MAK/23-${userId}` : '';
+
         setCurrentUser(username);
         setAccessToken(access);
         if (refresh) setRefreshToken(refresh);
-        setFormData(prev => ({ ...prev, student: username }));
+        setFormData(prev => ({ 
+          ...prev, 
+          student: username,
+          registrationNumber: registrationNumber,
+          programId: userProgramId || ''
+        }));
       } catch (err) {
         console.error('Initialization error:', err);
         setErrors(prev => ({ ...prev, user: 'Please sign in again' }));
@@ -89,7 +105,7 @@ const NewIssue = () => {
     }
 
     try {
-      const response = await API.post('/api/token/refresh/', { refresh: refreshToken });
+      const response = await API.post('/api/refresh_token/', { refresh: refreshToken });
       const newToken = response.data.access;
       localStorage.setItem('accessToken', newToken);
       setAccessToken(newToken);
@@ -115,6 +131,51 @@ const NewIssue = () => {
       throw err;
     }
   };
+
+  // Fetch programs
+  useEffect(() => {
+    if (!accessToken) return;
+
+    const fetchPrograms = async () => {
+      try {
+        setIsLoading(prev => ({ ...prev, programs: true }));
+        setErrors(prev => ({ ...prev, programs: null }));
+
+        const response = await makeAuthRequest(async (token) => {
+          return API.get('/api/program/', {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+        });
+
+        if (response?.data?.length > 0) {
+          setPrograms(response.data);
+          
+          // Find the program name that matches the user's program ID
+          const userProgramId = formData.programId;
+          if (userProgramId) {
+            const userProgram = response.data.find(p => 
+              p.id?.toString() === userProgramId.toString() || 
+              p.program_id?.toString() === userProgramId.toString()
+            );
+            
+            if (userProgram) {
+              const programName = userProgram.name || userProgram.program_name || 'Unknown Program';
+              setFormData(prev => ({ ...prev, programName }));
+            }
+          }
+        } else {
+          setErrors(prev => ({ ...prev, programs: 'No programs found' }));
+        }
+      } catch (err) {
+        console.error('Fetch programs error:', err);
+        setErrors(prev => ({ ...prev, programs: 'Failed to load programs' }));
+      } finally {
+        setIsLoading(prev => ({ ...prev, programs: false }));
+      }
+    };
+
+    fetchPrograms();
+  }, [accessToken, refreshToken, formData.programId]);
 
   // Fetch registrars
   useEffect(() => {
@@ -236,23 +297,15 @@ const NewIssue = () => {
       setSubmitStatus(null);
       setErrors(prev => ({ ...prev, general: null }));
 
-      // Prepare form data - FIXED
+      // Prepare form data
       const submissionData = new FormData();
       submissionData.append('registrar', formData.registrar);
       submissionData.append('student', formData.student);
-      
-      // Remove the empty lecturer field or provide a default value if required
-      // submissionData.append('lecturer', ''); // Removed this line as it might be causing the issue
-      
+      submissionData.append('registration_number', formData.registrationNumber);
+      submissionData.append('program', formData.programId); // Send program ID for backend
       submissionData.append('issue_type', formData.issueType);
       submissionData.append('description', formData.description);
-      
-      // Make sure course_unit is submitted with the correct name and format
       submissionData.append('course_unit', formData.courseUnitId);
-      
-      // Status might be auto-assigned by the backend, removing if causing issues
-      // submissionData.append('status', 'pending');
-      
       submissionData.append('year_of_study', formData.yearOfStudy);
       submissionData.append('semester', formData.semester);
       
@@ -362,182 +415,237 @@ const NewIssue = () => {
           )}
           
           <form onSubmit={handleSubmit}>
-            <div className="form-row">
-              <div className="form-group">
-                <label>Registrar's Name</label>
-                {isLoading.registrars ? (
-                  <div className="loading-field">
-                    <select disabled>
-                      <option>Loading...</option>
-                    </select>
-                  </div>
-                ) : errors.registrars ? (
-                  <div className="error-field">
-                    <select disabled>
-                      <option>Error loading registrars</option>
-                    </select>
-                    <button type="button" onClick={() => window.location.reload()}>Retry</button>
-                  </div>
-                ) : (
-                  <select
-                    name="registrar"
-                    value={formData.registrar}
-                    onChange={handleChange}
-                    required
-                  >
-                    {registrars.map((reg, index) => {
-                      const username = reg.username || reg;
-                      const displayName = registrarDisplayNames[username] || username;
-                      return (
-                        <option key={index} value={username}>
-                          {displayName}
-                        </option>
-                      );
-                    })}
-                  </select>
-                )}
-              </div>
+            {/* Student Information Section */}
+            <div className="form-section">
+              <h2>Student Information</h2>
               
-              <div className="form-group">
-                <label>Student's Name</label>
-                <input 
-                  type="text" 
-                  value={currentUser} 
-                  readOnly 
-                  disabled
-                />
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Student's Name</label>
+                  <input 
+                    type="text" 
+                    value={currentUser} 
+                    readOnly 
+                    disabled
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label>Registration Number</label>
+                  <input 
+                    type="text" 
+                    value={formData.registrationNumber} 
+                    readOnly 
+                    disabled
+                  />
+                </div>
               </div>
-            </div>
 
-            <div className="form-row">
-              <div className="form-group">
-                <label>Issue Type</label>
-                <select
-                  name="issueType"
-                  value={formData.issueType}
-                  onChange={handleChange}
-                >
-                  {issueTypes.map(type => (
-                    <option key={type.value} value={type.value}>
-                      {type.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              
-              <div className="form-group">
-                <label>Status</label>
-                <input type="text" value="Pending" readOnly disabled />
-              </div>
-            </div>
-
-            <div className="form-row">
-              <div className="form-group">
-                <label>Year of Study</label>
-                <select
-                  name="yearOfStudy"
-                  value={formData.yearOfStudy}
-                  onChange={handleChange}
-                >
-                  {yearOfStudyOptions.map(option => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              
-              <div className="form-group">
-                <label>Semester</label>
-                <select
-                  name="semester"
-                  value={formData.semester}
-                  onChange={handleChange}
-                >
-                  {semesterOptions.map(option => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div className="form-row">
-              <div className="form-group full-width">
-                <label>Description</label>
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="form-row">
-              <div className="form-group">
-                <label>Attachments</label>
-                <div className="attachment-area">
-                  {formData.attachment ? (
-                    <div className="attachment-preview">
-                      <img 
-                        src={URL.createObjectURL(formData.attachment)} 
-                        alt="Attachment preview" 
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Program</label>
+                  {isLoading.programs ? (
+                    <div className="loading-field">
+                      <input
+                        type="text"
+                        value="Loading..."
+                        readOnly
+                        disabled
                       />
-                      <button 
-                        type="button" 
-                        className="clear-icon" 
-                        onClick={removeAttachment}
-                      >
-                        ×
-                      </button>
+                    </div>
+                  ) : errors.programs ? (
+                    <div className="error-field">
+                      <input
+                        type="text"
+                        value="Error loading program"
+                        readOnly
+                        disabled
+                      />
+                      <button type="button" onClick={() => window.location.reload()}>Retry</button>
                     </div>
                   ) : (
-                    <div className="attachment-placeholder">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFileChange}
-                      />
+                    <input
+                      type="text"
+                      value={formData.programName || "Program not found"}
+                      readOnly
+                      disabled
+                    />
+                  )}
+                </div>
+                
+                <div className="form-group">
+                  <label>Year of Study</label>
+                  <select
+                    name="yearOfStudy"
+                    value={formData.yearOfStudy}
+                    onChange={handleChange}
+                  >
+                    {yearOfStudyOptions.map(option => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Issue Details Section */}
+            <div className="form-section">
+              <h2>Issue Details</h2>
+              
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Registrar's Name</label>
+                  {isLoading.registrars ? (
+                    <div className="loading-field">
+                      <select disabled>
+                        <option>Loading...</option>
+                      </select>
                     </div>
+                  ) : errors.registrars ? (
+                    <div className="error-field">
+                      <select disabled>
+                        <option>Error loading registrars</option>
+                      </select>
+                      <button type="button" onClick={() => window.location.reload()}>Retry</button>
+                    </div>
+                  ) : (
+                    <select
+                      name="registrar"
+                      value={formData.registrar}
+                      onChange={handleChange}
+                      required
+                    >
+                      {registrars.map((reg, index) => {
+                        const username = reg.username || reg;
+                        const displayName = registrarDisplayNames[username] || username;
+                        return (
+                          <option key={index} value={username}>
+                            {displayName}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  )}
+                </div>
+                
+                <div className="form-group">
+                  <label>Course Unit</label>
+                  {isLoading.courseUnits ? (
+                    <div className="loading-field">
+                      <select disabled>
+                        <option>Loading...</option>
+                      </select>
+                    </div>
+                  ) : errors.courseUnits ? (
+                    <div className="error-field">
+                      <select disabled>
+                        <option>Error loading course units</option>
+                      </select>
+                      <button type="button" onClick={() => window.location.reload()}>Retry</button>
+                    </div>
+                  ) : (
+                    <select
+                      name="courseUnitId"
+                      value={formData.courseUnitId}
+                      onChange={handleChange}
+                      required
+                    >
+                      {courseUnits.map((unit, index) => {
+                        const id = unit.id || unit;
+                        const name = unit.name || unit.course_unit_name || unit;
+                        return (
+                          <option key={index} value={id}>
+                            {name}
+                          </option>
+                        );
+                      })}
+                    </select>
                   )}
                 </div>
               </div>
-              
-              <div className="form-group">
-                <label>Course Unit</label>
-                {isLoading.courseUnits ? (
-                  <div className="loading-field">
-                    <select disabled>
-                      <option>Loading...</option>
-                    </select>
-                  </div>
-                ) : errors.courseUnits ? (
-                  <div className="error-field">
-                    <select disabled>
-                      <option>Error loading course units</option>
-                    </select>
-                    <button type="button" onClick={() => window.location.reload()}>Retry</button>
-                  </div>
-                ) : (
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Issue Type</label>
                   <select
-                    name="courseUnitId"
-                    value={formData.courseUnitId}
+                    name="issueType"
+                    value={formData.issueType}
+                    onChange={handleChange}
+                  >
+                    {issueTypes.map(type => (
+                      <option key={type.value} value={type.value}>
+                        {type.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                
+                <div className="form-group">
+                  <label>Semester</label>
+                  <select
+                    name="semester"
+                    value={formData.semester}
+                    onChange={handleChange}
+                  >
+                    {semesterOptions.map(option => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Status</label>
+                  <input type="text" value="Pending" readOnly disabled />
+                </div>
+                
+                <div className="form-group">
+                  <label>Attachments</label>
+                  <div className="attachment-area">
+                    {formData.attachment ? (
+                      <div className="attachment-preview">
+                        <img 
+                          src={URL.createObjectURL(formData.attachment)} 
+                          alt="Attachment preview" 
+                        />
+                        <button 
+                          type="button" 
+                          className="clear-icon" 
+                          onClick={removeAttachment}
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="attachment-placeholder">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleFileChange}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group full-width">
+                  <label>Description</label>
+                  <textarea
+                    name="description"
+                    value={formData.description}
                     onChange={handleChange}
                     required
-                  >
-                    {courseUnits.map((unit, index) => {
-                      const id = unit.id || unit;
-                      const name = unit.name || unit.course_unit_name || unit;
-                      return (
-                        <option key={index} value={id}>
-                          {name}
-                        </option>
-                      );
-                    })}
-                  </select>
-                )}
+                    placeholder="Describe your issue in detail..."
+                    rows="5"
+                  />
+                </div>
               </div>
             </div>
 
