@@ -263,7 +263,7 @@ const StudentDashboard = () => {
                       <td>{issue.comment || 'No comment'}</td>
                       <td className="action-buttons-container">
                         <button className="view-details-btn" onClick={() => openIssueDetails(issue)}>
-                          View Details
+                          Details
                         </button>
                         <button 
                           className="delete-issue-btn" 
