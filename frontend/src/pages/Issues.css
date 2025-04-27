@@ -137,13 +137,13 @@
   border-bottom: 1px solid #ddd;
   overflow: hidden;
   text-overflow: ellipsis; /* Add ellipsis for text that doesn't fit */
-  white-space: nowrap; /* Prevent text wrapping in cells */
+  white-space: nowrap; 
 }
 
 .issues-table th {
   background-color: #f8f9fa;
   font-weight: 600;
-  font-size: 17px; /* Increased header font size */
+  font-size: 17px; 
   color: #2c3e50;
 }
 
