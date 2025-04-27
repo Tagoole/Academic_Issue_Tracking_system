@@ -130,6 +130,16 @@
   font-size: 16px; /* Increased base font size for table */
 }
 
+.issues-table th,
+.issues-table td {
+  padding: 14px 16px; /* Increased padding */
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Add ellipsis for text that doesn't fit */
+  white-space: nowrap; /* Prevent text wrapping in cells */
+}
+
 
 
 
