@@ -390,10 +390,8 @@ const Messages = () => {
       }));
     }
   };
-
-  // Modified handleSendMessage function to refresh the page and chat simultaneously
   const handleSendMessage = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // This prevents default form submission behavior
     
     if (!messageInput.trim() || !selectedContact) return;
     
@@ -416,16 +414,16 @@ const Messages = () => {
         messageData.conversation_id = selectedContact.id;
       }
       
-      // Send message to API
-      await API.post('/api/messages/', messageData);
-      
-      // Clear input and draft
+      // Clear input and draft immediately (before API call)
       setMessageInput('');
       setDrafts(prev => {
         const newDrafts = {...prev};
         delete newDrafts[currentContactId];
         return newDrafts;
       });
+      
+      // Send message to API
+      await API.post('/api/messages/', messageData);
       
       // Show notification
       setNotification('Message Sent');
@@ -448,21 +446,14 @@ const Messages = () => {
     } catch (err) {
       console.error('Error sending message:', err);
       
+      // Show error notification
+      setError('Failed to send message. Please try again.');
+      setTimeout(() => setError(null), 3000);
+      
       // Refresh everything on error
       setRefreshKey(prevKey => prevKey + 1);
-      
-      // Clear input and draft
-      setMessageInput('');
-      if (selectedContact) {
-        setDrafts(prev => {
-          const newDrafts = {...prev};
-          delete newDrafts[selectedContact.id];
-          return newDrafts;
-        });
-      }
     }
   };
-
   // Search for users with debounce
   const searchUsers = async (query) => {
     if (!query.trim() || query.trim().length < 2) {
