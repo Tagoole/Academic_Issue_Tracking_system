@@ -164,6 +164,8 @@ class TestStudentIssueReadOnlyViewset:
         
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data) >= 1
+
+@pytest.mark.django_db
 class TestModelViewSets:
     def test_department_list(self, api_client, create_user, create_department):
         user = create_user(username='deptviewer')
@@ -258,6 +260,7 @@ class TestRegistrationViews:
         if response.status_code == status.HTTP_201_CREATED:
             assert 'User Created Successfully' in response.data['message']
 
+@pytest.mark.django_db
 class TestEmailVerification:
     def test_verify_email(self, api_client, create_user):
         user = create_user(username='verifyuser', is_email_verified=False)
