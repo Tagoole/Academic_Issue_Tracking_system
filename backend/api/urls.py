@@ -38,6 +38,7 @@ urlpatterns = [
     path('resend_password_reset_code/',resend_password_reset_code,name = 'resend_password_reset_code'),
     path('get_registrars/', get_registrars, name='get_registrars'),  # Endpoint to retrieve a list of registrars
     path('get_lecturers/',get_lecturers,name = 'get_lecturers'),
+    path('get_students/',get_students,name = 'get_students'),
     path('delete_account/',delete_account,name='delete_account'),
     path('users/search/', UserSearchView.as_view(), name='user-search'),
 

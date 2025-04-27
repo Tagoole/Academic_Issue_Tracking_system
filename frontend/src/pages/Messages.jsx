@@ -21,6 +21,7 @@ const Messages = () => {
   const [searchLoading, setSearchLoading] = useState(false);
   const [lecturers, setLecturers] = useState([]);
   const [registrars, setRegistrars] = useState([]);
+  const [students, setStudents] = useState([]);
   const [newContactUsername, setNewContactUsername] = useState('');
   const [refreshKey, setRefreshKey] = useState(0); // To force re-renders
 
@@ -54,6 +55,7 @@ const Messages = () => {
         fetchConversations(),
         fetchLecturers(),
         fetchRegistrars(),
+        fetchStudents(),
         loadDataFromStorage()
       ]);
       setLoading(false);
@@ -61,6 +63,21 @@ const Messages = () => {
       console.error('Error fetching initial data:', err);
       handleApiError(err);
       setLoading(false);
+    }
+  };
+
+  // Fetch students from API
+  const fetchStudents = async () => {
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+      
+      const response = await API.get('/api/get_students/');
+      setStudents(response.data || []);
+    } catch (err) {
+      console.error('Error fetching students:', err);
+      handleApiError(err);
+      setStudents([]); // Set empty array on error
     }
   };
 
@@ -339,7 +356,7 @@ const Messages = () => {
     }
   };
 
-  // Updated handleSendMessage function
+  // Updated handleSendMessage function that refreshes the page instead of showing error
   const handleSendMessage = async (e) => {
     e.preventDefault();
     
@@ -364,7 +381,7 @@ const Messages = () => {
       // Send message to API
       await API.post('/api/messages/', messageData);
       
-      // Rest of your function remains the same...
+      // Clear input and draft
       setMessageInput('');
       setDrafts(prev => {
         const newDrafts = {...prev};
@@ -386,8 +403,22 @@ const Messages = () => {
       
     } catch (err) {
       console.error('Error sending message:', err);
-      handleApiError(err);
-      setError('Failed to send message. Please try again.');
+      
+      // Instead of showing error, refresh the page
+      setRefreshKey(prevKey => prevKey + 1);
+      
+      // Clear input and draft
+      setMessageInput('');
+      if (selectedContact) {
+        setDrafts(prev => {
+          const newDrafts = {...prev};
+          delete newDrafts[selectedContact.id];
+          return newDrafts;
+        });
+      }
+      
+      // Fetch fresh data
+      fetchData();
     }
   };
 
@@ -634,6 +665,29 @@ const Messages = () => {
           </div>
         </div>
 
+        {/* Display Students Section as chat links */}
+        <div className="user-category-section">
+          <h3>Students</h3>
+          <div className="user-list">
+            {students.length > 0 ? (
+              students.map(student => (
+                <div 
+                  key={student.id}
+                  className="user-item chat-link"
+                  onClick={() => startChatWithUser(student)}
+                >
+                  <div className="user-avatar">
+                    {(student.name || student.username || 'U').charAt(0).toUpperCase()}
+                  </div>
+                  <div className="user-name">{student.name || student.username || 'Unknown'}</div>
+                </div>
+              ))
+            ) : (
+              <div className="empty-user-list">No students available</div>
+            )}
+          </div>
+        </div>
+
         {/* Search results if searching */}
         {searchTerm && (
           <div className="search-results">
@@ -728,7 +782,6 @@ const Messages = () => {
                   </div>
                 </div>
                 <div className="chat-actions">
-                  {/* You can add action buttons here like refresh, delete chat, etc. */}
                   <button className="refresh-chat" onClick={() => fetchMessages(selectedContact.id)}>
                     <span className="refresh-icon">↻</span>
                   </button>
@@ -847,58 +900,58 @@ const Messages = () => {
                 {/* Search results inside modal */}
                 {newContactUsername.length >= 2 && (
                   <div className="modal-search-results">
-                    {searchLoading ? (
-                      <div className="loading-results">Searching...</div>
-                    ) : searchResults.length > 0 ? (
-                      <div className="results-list">
-                        {searchResults.map(user => (
-                          <div 
-                            key={user.id}
-                            className="search-result-item"
-                            onClick={() => startChatWithUser(user)}
-                          >
-                            <div className="result-avatar">
-                              {(user.name || user.username || 'U').charAt(0).toUpperCase()}
-                            </div>
-                            <div className="result-info">
-                              <div className="result-name">{user.name || user.username}</div>
-                              {user.name && user.username && (
-                                <div className="result-username">@{user.username}</div>
-                              )}
-                            </div>
+                  {searchLoading ? (
+                    <div className="loading-results">Searching...</div>
+                  ) : searchResults.length > 0 ? (
+                    <div className="results-list">
+                      {searchResults.map(user => (
+                        <div 
+                          key={user.id}
+                          className="search-result-item"
+                          onClick={() => startChatWithUser(user)}
+                        >
+                          <div className="result-avatar">
+                            {(user.name || user.username || 'U').charAt(0).toUpperCase()}
                           </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="no-results">No users found</div>
-                    )}
-                  </div>
-                )}
-  
-                <div className="modal-buttons">
-                  <button 
-                    className="cancel-button"
-                    onClick={() => {
-                      setShowNewChatModal(false);
-                      setNewContactUsername('');
-                    }}
-                  >
-                    Cancel
-                  </button>
-                  <button 
-                    className="start-chat-button"
-                    onClick={handleCreateNewChat}
-                    disabled={!newContactUsername.trim() || searchLoading}
-                  >
-                    Start Chat
-                  </button>
+                          <div className="result-info">
+                            <div className="result-name">{user.name || user.username}</div>
+                            {user.name && user.username && (
+                              <div className="result-username">@{user.username}</div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="no-results">No users found</div>
+                  )}
                 </div>
+              )}
+
+              <div className="modal-buttons">
+                <button 
+                  className="cancel-button"
+                  onClick={() => {
+                    setShowNewChatModal(false);
+                    setNewContactUsername('');
+                  }}
+                >
+                  Cancel
+                </button>
+                <button 
+                  className="start-chat-button"
+                  onClick={handleCreateNewChat}
+                  disabled={!newContactUsername.trim() || searchLoading}
+                >
+                  Start Chat
+                </button>
               </div>
             </div>
           </div>
-        )}
-      </div>
-    );
-  };
-  
-  export default Messages;
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Messages;
