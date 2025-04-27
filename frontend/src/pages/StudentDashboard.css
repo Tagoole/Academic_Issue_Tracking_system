@@ -3,9 +3,9 @@
 /* General container for the dashboard */
 .dashboard-container {
   display: flex;
-  background-color:white;
+  background-color: white;
   background-color: rgba(255, 255, 255, 0.7); 
-  width:1200px 
+  width: 100%;
 }
 
 /* Wrapper for the main content */
@@ -13,10 +13,9 @@
   flex: 1;
   padding: 20px;
   margin-left: 250px;
-  width: 1200px;
+  width: 100%;
   margin-top: 50px;
   background-color: transparent; 
-  
 }
 
 /* Dashboard panels for resolved, pending, and in-progress issues */
@@ -28,7 +27,7 @@
 
 .panel {
   flex: 1;
-  background-color:white;
+  background-color: white;
   border-radius: 8px;
   padding: 20px;
   text-align: center;
@@ -55,7 +54,6 @@
   align-items: center;
   gap: 10px;
   margin-bottom: 20px;
-
 }
 
 .search-input {
@@ -150,13 +148,60 @@
 .issues-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
+/* Updated table column spacing */
 .issues-table th,
 .issues-table td {
-  padding: 12px;
+  padding: 8px 4px; /* Further reduced horizontal padding */
   text-align: left;
   border-bottom: 1px solid #ddd;
+  font-size: 12px; /* Smaller font size */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Optimized column widths for better space utilization */
+.issues-table th:nth-child(1), /* ID column */
+.issues-table td:nth-child(1) {
+  width: 4%;
+  min-width: 30px;
+}
+
+.issues-table th:nth-child(2), /* Status column */
+.issues-table td:nth-child(2) {
+  width: 8%;
+}
+
+.issues-table th:nth-child(3), /* Issue Type column */
+.issues-table td:nth-child(3) {
+  width: 10%;
+}
+
+.issues-table th:nth-child(4), /* Created column */
+.issues-table td:nth-child(4),
+.issues-table th:nth-child(5), /* Updated column */
+.issues-table td:nth-child(5) {
+  width: 9%;
+}
+
+.issues-table th:nth-child(6), /* Is Commented column */
+.issues-table td:nth-child(6) {
+  width: 5%;
+  text-align: center;
+}
+
+.issues-table th:nth-child(7), /* Comment column */
+.issues-table td:nth-child(7) {
+  width: 15%;
+}
+
+.issues-table th:nth-child(8), /* Actions column */
+.issues-table td:nth-child(8) {
+  width: 12%;
+  text-align: center;
 }
 
 .issues-table th {
@@ -166,10 +211,11 @@
 }
 
 .status-tag {
-  padding: 5px 10px;
-  border-radius: 12px;
-  font-size: 12px;
+  padding: 3px 6px;
+  border-radius: 10px;
+  font-size: 11px;
   text-transform: capitalize;
+  display: inline-block;
 }
 
 .status-pending {
@@ -187,17 +233,51 @@
   color: #155724;
 }
 
+.status-rejected {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* Action buttons container - modified for horizontal layout */
+.action-buttons-container {
+  display: flex;
+  flex-direction: row; /* Changed to row for horizontal layout */
+  justify-content: center;
+  gap: 5px; /* Add gap between buttons */
+}
+
+/* View details button styling - made more compact */
 .view-details-btn {
-  padding: 6px 12px;
+  padding: 4px 6px;
   background-color: #007bff;
   color: #fff;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 11px;
+  white-space: nowrap;
+  min-width: 50px;
 }
 
 .view-details-btn:hover {
   background-color: #0056b3;
+}
+
+/* Delete button styling - made more compact and inline */
+.delete-issue-btn {
+  padding: 4px 6px;
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+  white-space: nowrap;
+  min-width: 40px;
+}
+
+.delete-issue-btn:hover {
+  background-color: #ff7875;
 }
 
 .no-issues-message {
@@ -301,24 +381,50 @@
 }
 
 /* Responsive design */
+@media (max-width: 992px) {
+  .dashboard-wrapper {
+    margin-left: 200px;
+  }
+  
+  .action-buttons-container {
+    flex-direction: column;
+    gap: 3px;
+  }
+  
+  .view-details-btn, 
+  .delete-issue-btn {
+    width: 100%;
+  }
+}
+
 @media (max-width: 768px) {
+  .dashboard-wrapper {
+    margin-left: 0;
+    padding: 15px;
+  }
+  
   .dashboard-panels {
     flex-direction: column;
+    gap: 10px;
   }
 
   .search-container {
+    width: 100%;
     flex-direction: column;
     align-items: stretch;
+    height: auto;
   }
 
   .search-input,
   .filter-button,
   .new-issue-button {
     width: 100%;
+    margin-bottom: 5px;
   }
 
   .issues-container {
-    height: 80px; 
+    width: 100%;
+    height: auto;
   }
 
   .tab-container {
@@ -330,14 +436,7 @@
     padding: 5px 10px;
     font-size: 11px;
   }
-
-  .issues-table th,
-  .issues-table td {
-    font-size: 14px;
-    padding: 8px;
-  }
 }
-
 
 /* Base button styling update */
 .new-issue-button {
@@ -571,81 +670,4 @@
   box-shadow: 
     0 0 10px rgba(0, 123, 255, 0.8),
     0 0 20px rgba(0, 123, 255, 0.6);
-}
-
-/* Update table cell spacing for better fit with more columns */
-.issues-table th,
-.issues-table td {
-  padding: 8px 6px; /* Reduced horizontal padding from 12px to 6px */
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-  font-size: 13px; /* Slightly smaller font size */
-}
-
-/* Adjust column widths to better fit the space */
-.issues-table th:nth-child(1), /* ID column */
-.issues-table td:nth-child(1) {
-  width: 5%;
-  min-width: 40px;
-}
-
-.issues-table th:nth-child(2), /* Issue column */
-.issues-table td:nth-child(2) {
-  width: 18%;
-}
-
-.issues-table th:nth-child(3), /* Status column */
-.issues-table td:nth-child(3) {
-  width: 8%;
-}
-
-.issues-table th:nth-child(4), /* Issue Type column */
-.issues-table td:nth-child(4) {
-  width: 10%;
-}
-
-.issues-table th:nth-child(5), /* Created column */
-.issues-table td:nth-child(5),
-.issues-table th:nth-child(6), /* Updated column */
-.issues-table td:nth-child(6) {
-  width: 10%;
-}
-
-.issues-table th:nth-child(7), /* Is Commented column */
-.issues-table td:nth-child(7) {
-  width: 8%;
-  text-align: center;
-}
-
-.issues-table th:nth-child(8), /* Comment column */
-.issues-table td:nth-child(8) {
-  width: 15%;
-}
-
-.issues-table th:nth-child(9), /* Actions column */
-.issues-table td:nth-child(9) {
-  width: 8%;
-  text-align: center;
-}
-
-/* Make view details button more compact */
-.view-details-btn {
-  padding: 4px 8px;
-  font-size: 12px;
-}
-
-/* Status tag adjustments for better fit */
-.status-tag {
-  padding: 3px 6px;
-  border-radius: 10px;
-  font-size: 11px;
-}
-
-.action-buttons-container {
-  display: flex;
-  flex-direction: column;
-}
-
-.delete-issue-btn:hover {
-  background-color: #ff7875;
 }
