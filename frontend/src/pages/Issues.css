@@ -228,3 +228,17 @@
 }
 
 
+.dashboard-content {
+  margin-left: 40px;
+  margin-right: 10px;
+}
+
+.issues-table {
+  font-size: 15px; /* Adjusted for medium screens */
+}
+
+.issues-table th,
+.issues-table td {
+  padding: 12px 14px;
+}
+
