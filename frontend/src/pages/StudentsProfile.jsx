@@ -71,6 +71,8 @@ const StudentsProfile = () => {
           }));
         }
 
+        // Show success toast when profile is loaded
+        toast.success("Profile loaded successfully!");
       } catch (err) {
         console.error("Failed to load user data:", err);
         setError('Failed to load profile data. Please try again later.');
