@@ -134,6 +134,10 @@ const Issues = () => {
     }
   };
 
+  const handleFilter = () => {
+    toast.info("Filter functionality coming soon!");
+  };
+
   // Format date for display
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -224,7 +228,7 @@ const Issues = () => {
                 onChange={handleSearch}
               />
             </div>
-            <button className="filter-btn">
+            <button className="filter-btn" onClick={handleFilter}>
               Filter
             </button>
           </div>
