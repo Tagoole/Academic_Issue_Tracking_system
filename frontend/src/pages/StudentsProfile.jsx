@@ -87,7 +87,6 @@ const StudentsProfile = () => {
   // Fetch program name from API
   const fetchProgramName = async (programId) => {
     try {
-      setLoading(true);
       const response = await API.get(`/api/program/${programId}`);
       
       if (response.data && (response.data.name || response.data.programName)) {
@@ -97,6 +96,9 @@ const StudentsProfile = () => {
           program: programName
         }));
         localStorage.setItem('userProgramName', programName);
+
+        // Show success toast when program information is loaded
+        toast.success("Program information loaded");
       } else {
         throw new Error('Invalid program data format');
       }
@@ -106,8 +108,7 @@ const StudentsProfile = () => {
         ...prev,
         program: 'Program info unavailable'
       }));
-    } finally {
-      setLoading(false);
+      toast.warning("Couldn't retrieve program information");
     }
   };
 
