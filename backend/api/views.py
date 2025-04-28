@@ -149,7 +149,7 @@ class Lecturer_Issue_Manangement(ModelViewSet):
             return Response(serializer.data)
         return Response({'error':'Status parameter required'})
     
-class Student_Issue_ReadOnlyViewset(ReadOnlyModelViewSet):
+class Student_Issue_Viewset(ModelViewSet):
     permission_classes = [IsAuthenticated, IsStudent]
     serializer_class = IssueSerializer
     
@@ -541,6 +541,16 @@ def get_lecturers(request):
     serializer = UserSerializer(lecturers, many=True)
     
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_students(request):
+    students = CustomUser.objects.filter(role='student')
+    
+    serializer = UserSerializer(students, many=True)
+    
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 
 

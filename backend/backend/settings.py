@@ -147,7 +147,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # Adjust to match your React dev server
+    "http://localhost:5173",
+    "https://fluffy-biscuit-9cbf4f.netlify.app",
+    "https://academic-issue-tracking-system-sodo.vercel.app"
+    
 ]
 CORS_ALLOWS_CREDENTIALS = True
 

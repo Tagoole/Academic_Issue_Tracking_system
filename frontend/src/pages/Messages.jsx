@@ -8,7 +8,6 @@ const Messages = () => {
   const [contacts, setContacts] = useState([]);
   const [selectedContact, setSelectedContact] = useState(null);
   const [messageInput, setMessageInput] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
   const [showNewChatModal, setShowNewChatModal] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const [drafts, setDrafts] = useState({});
@@ -21,8 +20,11 @@ const Messages = () => {
   const [searchLoading, setSearchLoading] = useState(false);
   const [lecturers, setLecturers] = useState([]);
   const [registrars, setRegistrars] = useState([]);
+  const [students, setStudents] = useState([]);
   const [newContactUsername, setNewContactUsername] = useState('');
   const [refreshKey, setRefreshKey] = useState(0); // To force re-renders
+  const [currentUsername, setCurrentUsername] = useState(''); // Store current user's username
+  const [localSearchResults, setLocalSearchResults] = useState([]); // For local search results
 
   // Refs
   const messagesEndRef = useRef(null);
@@ -40,11 +42,17 @@ const Messages = () => {
     };
 
     if (checkAuth()) {
+      // Get current username from localStorage
+      const userName = localStorage.getItem('userName');
+      if (userName) {
+        setCurrentUsername(userName);
+      }
+      
       fetchData();
       const interval = setInterval(fetchUnreadCounts, 30000); // Check for unread messages every 30 seconds
       return () => clearInterval(interval);
     }
-  }, [navigate]);
+  }, [navigate, refreshKey]); // Added refreshKey to dependencies to trigger refetch on refresh
 
   // Fetch all necessary data
   const fetchData = async () => {
@@ -54,6 +62,7 @@ const Messages = () => {
         fetchConversations(),
         fetchLecturers(),
         fetchRegistrars(),
+        fetchStudents(),
         loadDataFromStorage()
       ]);
       setLoading(false);
@@ -64,6 +73,30 @@ const Messages = () => {
     }
   };
 
+  // Fetch students from API
+  const fetchStudents = async () => {
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+      
+      const response = await API.get('/api/get_students/');
+      
+      // Get current username to filter out current user
+      const userName = localStorage.getItem('userName');
+      
+      // Filter out current user from students list
+      const filteredStudents = response.data ? response.data.filter(student => 
+        student.username !== userName
+      ) : [];
+      
+      setStudents(filteredStudents);
+    } catch (err) {
+      console.error('Error fetching students:', err);
+      handleApiError(err);
+      setStudents([]); // Set empty array on error
+    }
+  };
+
   // Fetch lecturers from API
   const fetchLecturers = async () => {
     try {
@@ -71,7 +104,16 @@ const Messages = () => {
       API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
       
       const response = await API.get('/api/get_lecturers/');
-      setLecturers(response.data || []);
+      
+      // Get current username to filter out current user
+      const userName = localStorage.getItem('userName');
+      
+      // Filter out current user from lecturers list
+      const filteredLecturers = response.data ? response.data.filter(lecturer => 
+        lecturer.username !== userName
+      ) : [];
+      
+      setLecturers(filteredLecturers);
     } catch (err) {
       console.error('Error fetching lecturers:', err);
       handleApiError(err);
@@ -86,7 +128,16 @@ const Messages = () => {
       API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
       
       const response = await API.get('/api/get_registrars/');
-      setRegistrars(response.data || []);
+      
+      // Get current username to filter out current user
+      const userName = localStorage.getItem('userName');
+      
+      // Filter out current user from registrars list
+      const filteredRegistrars = response.data ? response.data.filter(registrar => 
+        registrar.username !== userName
+      ) : [];
+      
+      setRegistrars(filteredRegistrars);
     } catch (err) {
       console.error('Error fetching registrars:', err);
       handleApiError(err);
@@ -299,6 +350,7 @@ const Messages = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('userId');
+    localStorage.removeItem('userName');
   };
 
   // Save drafts to localStorage when they change
@@ -324,7 +376,7 @@ const Messages = () => {
         markMessagesAsRead(selectedContact.id);
       }
     }
-  }, [selectedContact]);
+  }, [selectedContact, drafts, unreadMessages]);
 
   // Save draft when typing
   const handleMessageChange = (e) => {
@@ -339,9 +391,8 @@ const Messages = () => {
     }
   };
 
-  // Updated handleSendMessage function
   const handleSendMessage = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // This prevents default form submission behavior
     
     if (!messageInput.trim() || !selectedContact) return;
     
@@ -353,6 +404,9 @@ const Messages = () => {
       // Data to send
       let messageData = { content: messageInput.trim() };
       
+      // Store the current contact ID for refreshing later
+      const currentContactId = selectedContact.id;
+      
       // If we have a userId, use receiver_id approach
       if (selectedContact.userId) {
         messageData.receiver_id = selectedContact.userId;
@@ -361,34 +415,68 @@ const Messages = () => {
         messageData.conversation_id = selectedContact.id;
       }
       
-      // Send message to API
-      await API.post('/api/messages/', messageData);
-      
-      // Rest of your function remains the same...
+      // Clear input and draft immediately (before API call)
       setMessageInput('');
       setDrafts(prev => {
         const newDrafts = {...prev};
-        delete newDrafts[selectedContact.id];
+        delete newDrafts[currentContactId];
         return newDrafts;
       });
       
-      setNotification('Message Sent');
+      // Send message to API
+      await API.post('/api/messages/', messageData);
       
+      // Show notification
+      setNotification('Message Sent');
       setTimeout(() => {
         setNotification(null);
       }, 2000);
       
-      // Refresh messages for this conversation
-      fetchMessages(selectedContact.id);
+      // Increment the refresh key to force a complete re-render of the component
+      setRefreshKey(prevKey => prevKey + 1);
       
-      // Also refresh conversations list to get updated last message
-      fetchConversations();
+      // After a brief delay to allow component to re-render, fetch fresh messages
+      setTimeout(() => {
+        // If the selected contact is still the same after refresh
+        if (selectedContact && selectedContact.id === currentContactId) {
+          // Refresh messages for this specific conversation
+          fetchMessages(currentContactId);
+        }
+      }, 100);
       
     } catch (err) {
       console.error('Error sending message:', err);
-      handleApiError(err);
-      setError('Failed to send message. Please try again.');
+      
+      // Silently refresh everything on error without showing error to user
+      setRefreshKey(prevKey => prevKey + 1);
     }
+  };
+
+  // NEW FUNCTION: Search locally among available users
+  const searchLocalUsers = (query) => {
+    if (!query.trim()) {
+      setLocalSearchResults([]);
+      return;
+    }
+    
+    // Normalize query for case-insensitive search
+    const normalizedQuery = query.trim().toLowerCase();
+    
+    // Combine all users into one array
+    const allUsers = [
+      ...lecturers.map(user => ({...user, type: 'Lecturer'})),
+      ...registrars.map(user => ({...user, type: 'Registrar'})),
+      ...students.map(user => ({...user, type: 'Student'}))
+    ];
+    
+    // Filter users that match query in name or username
+    const matchedUsers = allUsers.filter(user => {
+      const name = (user.name || '').toLowerCase();
+      const username = (user.username || '').toLowerCase();
+      return name.includes(normalizedQuery) || username.includes(normalizedQuery);
+    });
+    
+    setLocalSearchResults(matchedUsers);
   };
 
   // Search for users with debounce
@@ -398,13 +486,23 @@ const Messages = () => {
       return;
     }
     
+    // First, search locally for immediate feedback
+    searchLocalUsers(query);
+    
     try {
       setSearchLoading(true);
       const accessToken = localStorage.getItem('accessToken');
       API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
       
       const response = await API.get(`/api/users/search/?query=${encodeURIComponent(query.trim())}`);
-      setSearchResults(response.data || []);
+      
+      // Filter out current user from search results
+      const userName = localStorage.getItem('userName');
+      const filteredResults = response.data ? response.data.filter(user => 
+        user.username !== userName
+      ) : [];
+      
+      setSearchResults(filteredResults);
       setSearchLoading(false);
     } catch (err) {
       console.error('Error searching users:', err);
@@ -413,15 +511,6 @@ const Messages = () => {
       setSearchLoading(false);
     }
   };
-
-  // Debounce search input
-  useEffect(() => {
-    const delaySearch = setTimeout(() => {
-      searchUsers(searchTerm);
-    }, 500);
-    
-    return () => clearTimeout(delaySearch);
-  }, [searchTerm]);
 
   // Start a chat with a user, handling both new and existing conversations
   const startChatWithUser = async (user) => {
@@ -471,7 +560,8 @@ const Messages = () => {
 
       // Close modal if open
       setShowNewChatModal(false);
-      setSearchTerm('');
+      setNewContactUsername('');
+      setLocalSearchResults([]); 
       setLoading(false);
       
     } catch (err) {
@@ -490,14 +580,20 @@ const Messages = () => {
       const accessToken = localStorage.getItem('accessToken');
       API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
       
-      // Search for user by username
-      const response = await API.get(`/api/users/search/?query=${encodeURIComponent(newContactUsername.trim())}`);
-      
-      if (response.data && response.data.length > 0) {
-        const user = response.data[0];
-        await startChatWithUser(user);
+      // Check if we have local results to use
+      if (localSearchResults.length > 0) {
+        // Use the first local result
+        await startChatWithUser(localSearchResults[0]);
       } else {
-        setError('User not found');
+        // Search for user by username
+        const response = await API.get(`/api/users/search/?query=${encodeURIComponent(newContactUsername.trim())}`);
+        
+        if (response.data && response.data.length > 0) {
+          const user = response.data[0];
+          await startChatWithUser(user);
+        } else {
+          setError('User not found');
+        }
       }
       setLoading(false);
     } catch (err) {
@@ -508,18 +604,17 @@ const Messages = () => {
     
     // Reset input and close modal
     setNewContactUsername('');
+    setLocalSearchResults([]);
     setShowNewChatModal(false);
   };
 
-  // Filter and sort contacts by search term and recency
-  const filteredContacts = contacts.filter(contact => 
-    contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    contact.username.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-  
-  const sortedContacts = [...filteredContacts].sort((a, b) => 
-    new Date(b.timestamp) - new Date(a.timestamp)
-  );
+  // Open new chat modal and reset search state
+  const openNewChatModal = () => {
+    setShowNewChatModal(true);
+    setNewContactUsername('');
+    setLocalSearchResults([]);
+    setSearchResults([]);
+  };
 
   // Get total unread message count
   const totalUnreadCount = Object.values(unreadMessages).reduce((sum, count) => sum + count, 0);
@@ -529,28 +624,6 @@ const Messages = () => {
     try {
       const date = new Date(timestamp);
       return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    } catch (e) {
-      return '';
-    }
-  };
-  
-  const formatDate = (timestamp) => {
-    try {
-      const date = new Date(timestamp);
-      const now = new Date();
-      
-      // If today, show time
-      if (date.toDateString() === now.toDateString()) {
-        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      }
-      
-      // If this year, show month and day
-      if (date.getFullYear() === now.getFullYear()) {
-        return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
-      }
-      
-      // Otherwise show full date
-      return date.toLocaleDateString();
     } catch (e) {
       return '';
     }
@@ -568,27 +641,18 @@ const Messages = () => {
 
   return (
     <div className="messages-page" key={refreshKey}>
-      {/* Left sidebar with contacts */}
+      {/* Left sidebar with user categories */}
       <div className="contacts-sidebar">
         <div className="sidebar-header">
-          <div className="search-bar">
-            <input
-              type="text"
-              placeholder="Search contacts"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <div className="search-icon"></div>
-          </div>
           <button 
             className="new-chat-btn"
-            onClick={() => setShowNewChatModal(true)}
+            onClick={openNewChatModal}
           >
             NEW CHAT {totalUnreadCount > 0 && <span className="total-unread">({totalUnreadCount})</span>}
           </button>
         </div>
 
-        {/* Display Lecturers Section as chat links */}
+        {/* Display Lecturers Section */}
         <div className="user-category-section">
           <h3>Lecturers</h3>
           <div className="user-list">
@@ -611,7 +675,7 @@ const Messages = () => {
           </div>
         </div>
 
-        {/* Display Registrars Section as chat links */}
+        {/* Display Registrars Section */}
         <div className="user-category-section">
           <h3>Registrars</h3>
           <div className="user-list">
@@ -634,232 +698,203 @@ const Messages = () => {
           </div>
         </div>
 
-        {/* Search results if searching */}
-        {searchTerm && (
-          <div className="search-results">
-            <h3>Search Results {searchLoading && <span className="search-loading">...</span>}</h3>
-            {searchResults.length > 0 ? (
-              searchResults.map(user => (
+        {/* Display Students Section */}
+        <div className="user-category-section">
+          <h3>Students</h3>
+          <div className="user-list">
+            {students.length > 0 ? (
+              students.map(student => (
                 <div 
-                  key={user.id}
+                  key={student.id}
                   className="user-item chat-link"
-                  onClick={() => startChatWithUser(user)}
+                  onClick={() => startChatWithUser(student)}
                 >
                   <div className="user-avatar">
-                    {(user.name || user.username || 'U').charAt(0).toUpperCase()}
+                    {(student.name || student.username || 'U').charAt(0).toUpperCase()}
                   </div>
-                  <div className="user-name">{user.name || user.username || 'Unknown'}</div>
-                </div>
-                ))
-              ) : (
-                searchTerm.length >= 2 && !searchLoading && (
-                  <div className="empty-search">No users found matching "{searchTerm}"</div>
-                )
-              )}
-            </div>
-          )}
-  
-          <div className="contacts-list">
-            <h3>Recent Chats</h3>
-            {sortedContacts.length === 0 ? (
-              <div className="empty-state">
-                <div className="empty-icon">💬</div>
-                <p>No recent chats</p>
-                <button 
-                  className="start-new-chat-btn"
-                  onClick={() => setShowNewChatModal(true)}
-                >
-                  Start a new conversation
-                </button>
-              </div>
-            ) : (
-              sortedContacts.map(contact => (
-                <div
-                  key={contact.id}
-                  className={`contact-item ${selectedContact?.id === contact.id ? 'selected' : ''}`}
-                  onClick={() => setSelectedContact(contact)}
-                >
-                  <div className="contact-avatar">
-                    {(contact.name || 'U').charAt(0).toUpperCase()}
-                  </div>
-                  <div className="contact-info">
-                    <div className="contact-name-row">
-                      <div className="contact-name">{contact.name || contact.username || 'Unknown'}</div>
-                      {contact.timestamp && (
-                        <div className="contact-time">
-                          {formatDate(contact.timestamp)}
-                        </div>
-                      )}
-                    </div>
-                    <div className="contact-details-row">
-                      <div className="contact-last-message">
-                        {contact.lastMessage || "No messages yet"}
-                      </div>
-                      <div className="contact-indicators">
-                        {unreadMessages[contact.id] > 0 && (
-                          <div className="unread-badge">{unreadMessages[contact.id]}</div>
-                        )}
-                        {drafts[contact.id] && (
-                          <div className="draft-indicator">Draft</div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
+                  <div className="user-name">{student.name || student.username || 'Unknown'}</div>
                 </div>
               ))
+            ) : (
+              <div className="empty-user-list">No students available</div>
             )}
           </div>
         </div>
-  
-        {/* Right side chat area */}
-        <div className="chat-area">
-          {selectedContact ? (
-            <>
-              <div className="chat-header">
-                <div className="chat-contact-info">
-                  <div className="contact-avatar large">
-                    {(selectedContact.name || 'U').charAt(0).toUpperCase()}
-                  </div>
-                  <div className="contact-details">
-                    <div className="contact-name">{selectedContact.name || selectedContact.username || 'Unknown'}</div>
-                    {selectedContact.username && selectedContact.name && (
-                      <div className="contact-username">@{selectedContact.username}</div>
-                    )}
-                  </div>
+      </div>
+
+      {/* Right side chat area */}
+      <div className="chat-area">
+        {selectedContact ? (
+          <>
+            <div className="chat-header">
+              <div className="chat-contact-info">
+                <div className="contact-avatar large">
+                  {(selectedContact.name || 'U').charAt(0).toUpperCase()}
                 </div>
-                <div className="chat-actions">
-                  {/* You can add action buttons here like refresh, delete chat, etc. */}
-                  <button className="refresh-chat" onClick={() => fetchMessages(selectedContact.id)}>
-                    <span className="refresh-icon">↻</span>
-                  </button>
+                <div className="contact-details">
+                  <div className="contact-name">{selectedContact.name || selectedContact.username || 'Unknown'}</div>
+                  {selectedContact.username && selectedContact.name && (
+                    <div className="contact-username">@{selectedContact.username}</div>
+                  )}
                 </div>
               </div>
-  
-              <div className="messages-container">
-                {loading ? (
-                  <div className="loading-messages">
-                    <div className="loading-spinner small"></div>
-                    <p>Loading messages...</p>
-                  </div>
-                ) : messages[selectedContact.id]?.length > 0 ? (
-                  <>
-                    {messages[selectedContact.id].map(message => (
-                      <div
-                        key={message.id}
-                        className={`message ${message.isCurrentUser ? 'sent' : 'received'}`}
-                      >
-                        <div className="message-content">{message.text}</div>
-                        <div className="message-time">{formatTime(message.timestamp)}</div>
-                      </div>
-                    ))}
-                    <div ref={messagesEndRef} /> {/* Scroll anchor */}
-                  </>
-                ) : (
-                  <div className="empty-chat-state">
-                    <div className="empty-chat-icon">💬</div>
-                    <p>No messages yet</p>
-                    <p>Send a message to start the conversation</p>
-                  </div>
-                )}
-              </div>
-  
-              {notification && (
-                <div className="notification">
-                  {notification}
-                </div>
-              )}
-  
-              <form className="message-input-form" onSubmit={handleSendMessage}>
-                <input
-                  type="text"
-                  placeholder="Type a message..."
-                  value={messageInput}
-                  onChange={handleMessageChange}
-                  className="message-input"
-                  autoFocus
-                />
-                <button 
-                  type="submit" 
-                  className="send-button"
-                  disabled={!messageInput.trim()}
-                >
-                  Send
-                </button>
-              </form>
-            </>
-          ) : (
-            <div className="no-chat-selected">
-              <div className="empty-state large">
-                <div className="empty-icon large">💬</div>
-                <h2>Welcome to Messages</h2>
-                <p>Select a chat or start a new conversation</p>
-                <button 
-                  className="new-chat-btn large"
-                  onClick={() => setShowNewChatModal(true)}
-                >
-                  START NEW CHAT
+              <div className="chat-actions">
+                <button className="refresh-chat" onClick={() => fetchMessages(selectedContact.id)}>
+                  <span className="refresh-icon">↻</span>
                 </button>
               </div>
             </div>
-          )}
-        </div>
-  
-        {/* Display error message if any */}
-        {error && (
-          <div className="error-popup">
-            <div className="error-content">
-              <div className="error-icon">⚠️</div>
-              <div className="error-message">{error}</div>
-              <button className="close-error" onClick={() => setError(null)}>×</button>
+
+            <div className="messages-container">
+              {loading ? (
+                <div className="loading-messages">
+                  <div className="loading-spinner small"></div>
+                  <p>Loading messages...</p>
+                </div>
+              ) : messages[selectedContact.id]?.length > 0 ? (
+                <>
+                  {messages[selectedContact.id].map(message => (
+                    <div
+                      key={message.id}
+                      className={`message ${message.isCurrentUser ? 'sent' : 'received'}`}
+                    >
+                      <div className={`message-content ${message.isCurrentUser ? 'sent-bubble' : 'received-bubble'}`}>
+                        {message.text}
+                      </div>
+                      <div className="message-time">{formatTime(message.timestamp)}</div>
+                    </div>
+                  ))}
+                  <div ref={messagesEndRef} /> {/* Scroll anchor */}
+                </>
+              ) : (
+                <div className="empty-chat-state">
+                  <div className="empty-chat-icon">💬</div>
+                  <p>No messages yet</p>
+                  <p>Send a message to start the conversation</p>
+                </div>
+              )}
+            </div>
+
+            {notification && (
+              <div className="notification">
+                {notification}
+              </div>
+            )}
+
+            <form className="message-input-form" onSubmit={handleSendMessage}>
+              <input
+                type="text"
+                placeholder="Type a message..."
+                value={messageInput}
+                onChange={handleMessageChange}
+                className="message-input"
+                autoFocus
+              />
+              <button 
+                type="submit" 
+                className="send-button"
+                disabled={!messageInput.trim()}
+              >
+                Send
+              </button>
+            </form>
+          </>
+        ) : (
+          <div className="no-chat-selected">
+            <div className="empty-state large">
+              <div className="empty-icon large">💬</div>
+              <h2>Welcome to Messages</h2>
+              <p>Select a user to start chatting</p>
+              <button 
+                className="new-chat-btn large"
+                onClick={openNewChatModal}
+              >
+                START NEW CHAT
+              </button>
             </div>
           </div>
         )}
-  
-        {/* New Chat Modal */}
-        {showNewChatModal && (
-          <div className="modal-overlay" onClick={() => setShowNewChatModal(false)}>
-            <div className="modal-content" onClick={e => e.stopPropagation()}>
-              <div className="modal-header">
-                <h2>Start a New Chat</h2>
-                <button 
-                  className="close-modal"
-                  onClick={() => {
-                    setShowNewChatModal(false);
-                    setNewContactUsername('');
-                    setSearchTerm('');
+      </div>
+
+      {/* New Chat Modal */}
+      {showNewChatModal && (
+        <div className="modal-overlay" onClick={() => setShowNewChatModal(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Start a New Chat</h2>
+              <button 
+                className="close-modal"
+                onClick={() => {
+                  setShowNewChatModal(false);
+                  setNewContactUsername('');
+                  setLocalSearchResults([]);
+                }}
+              >×</button>
+            </div>
+
+            <div className="modal-body">
+              <div className="modal-search">
+                <input
+                  type="text"
+                  placeholder="Search by username or name"
+                  value={newContactUsername}
+                  onChange={(e) => {
+                    setNewContactUsername(e.target.value);
+                    searchLocalUsers(e.target.value); // Search locally first
+                    if (e.target.value.trim().length >= 2) {
+                      searchUsers(e.target.value); // Then fetch from API
+                    } else {
+                      setSearchResults([]);
+                    }
                   }}
-                >
-                </button>
+                  autoFocus
+                />
+                {searchLoading && <div className="search-spinner"></div>}
               </div>
-  
-              <div className="modal-body">
-                <div className="modal-search">
-                  <input
-                    type="text"
-                    placeholder="Search by username or name"
-                    value={newContactUsername}
-                    onChange={(e) => setNewContactUsername(e.target.value)}
-                    autoFocus
-                  />
-                  {searchLoading && <div className="search-spinner"></div>}
-                </div>
-  
-                {/* Search results inside modal */}
-                {newContactUsername.length >= 2 && (
-                  <div className="modal-search-results">
-                    {searchLoading ? (
-                      <div className="loading-results">Searching...</div>
-                    ) : searchResults.length > 0 ? (
-                      <div className="results-list">
-                        {searchResults.map(user => (
+
+              {/* Combined search results inside modal */}
+              {newContactUsername.trim() && (
+                <div className="modal-search-results">
+                  {searchLoading && localSearchResults.length === 0 ? (
+                    <div className="loading-results">Searching...</div>
+                  ) : (localSearchResults.length > 0 || searchResults.length > 0) ? (
+                    <div className="results-list">
+                      {/* Local search results first for immediate feedback */}
+                      {localSearchResults.map(user => (
+                        <div 
+                          key={`local-${user.id}`}
+                          className="search-result-item"
+                          onClick={() => startChatWithUser(user)}
+                        >
+                          <div className="result-avatar">
+                            {(user.name || user.username || 'U').charAt(0).toUpperCase()}
+                          </div>
+                          <div className="result-info">
+                            <div className="result-name">{user.name || user.username}</div>
+                            {user.name && user.username && (
+                              <div className="result-username">@{user.username}</div>
+                            )}
+                            {user.type && (
+                              <div className="result-type">{user.type}</div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                      
+                      {/* API search results that don't duplicate local results */}
+                      {searchResults
+                        .filter(apiUser => 
+                          !localSearchResults.some(localUser => localUser.id === apiUser.id)
+                        )
+                        .map(user => (
                           <div 
-                            key={user.id}
+                            key={`api-${user.id}`}
                             className="search-result-item"
                             onClick={() => startChatWithUser(user)}
                           >
                             <div className="result-avatar">
                               {(user.name || user.username || 'U').charAt(0).toUpperCase()}
-                            </div>
+                              </div>
                             <div className="result-info">
                               <div className="result-name">{user.name || user.username}</div>
                               {user.name && user.username && (
@@ -868,37 +903,45 @@ const Messages = () => {
                             </div>
                           </div>
                         ))}
-                      </div>
-                    ) : (
-                      <div className="no-results">No users found</div>
-                    )}
-                  </div>
-                )}
-  
-                <div className="modal-buttons">
-                  <button 
-                    className="cancel-button"
-                    onClick={() => {
-                      setShowNewChatModal(false);
-                      setNewContactUsername('');
-                    }}
-                  >
-                    Cancel
-                  </button>
-                  <button 
-                    className="start-chat-button"
-                    onClick={handleCreateNewChat}
-                    disabled={!newContactUsername.trim() || searchLoading}
-                  >
-                    Start Chat
-                  </button>
+                    </div>
+                  ) : (
+                    <div className="no-results">No users found</div>
+                  )}
                 </div>
+              )}
+
+              <div className="modal-buttons">
+                <button 
+                  className="cancel-button"
+                  onClick={() => {
+                    setShowNewChatModal(false);
+                    setNewContactUsername('');
+                    setLocalSearchResults([]);
+                  }}
+                >
+                  Cancel
+                </button>
+                <button 
+                  className="start-chat-button"
+                  onClick={handleCreateNewChat}
+                  disabled={!newContactUsername.trim() || (localSearchResults.length === 0 && searchResults.length === 0) || searchLoading}
+                >
+                  Start Chat
+                </button>
               </div>
             </div>
           </div>
-        )}
-      </div>
-    );
-  };
-  
-  export default Messages;
+        </div>
+      )}
+
+      {/* Error notification */}
+      {error && (
+        <div className="error-notification">
+          {error}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Messages;

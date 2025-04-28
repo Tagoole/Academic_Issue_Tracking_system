@@ -143,8 +143,8 @@ const LandingPage = () => {
       <div className="particles" ref={particlesContainerRef}></div>
       
       {/* Background image */}
-      <div className="background-image" style={{ backgroundImage: `url(${landingimage})` }}></div>
-    
+      {/*<div className="background-image" style={{ backgroundImage: `url(${landingimage})` }}></div>*/}
+      
       {/* AITS Logo at top right */}
       <div className="aits-header">AITS</div>
       

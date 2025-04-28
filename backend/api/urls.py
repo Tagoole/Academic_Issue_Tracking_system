@@ -15,7 +15,7 @@ router.register(r'program', ProgramViewSet, 'program')  # Registers ProgramViewS
 router.register(r'registration_token', Registration_Token_viewset, 'registration_token')  # Registers Registration_Token_viewset to handle CRUD operations for registration tokens
 router.register(r'registrar_issue_management', Registrar_Issue_ManagementViewSet, 'registrar_issue_management')  # Registers Registrar_Issue_ManagementViewSet to handle CRUD operations for registrar issue management
 router.register(r'lecturer_issue_management', Lecturer_Issue_Manangement, 'lecturer_issue_management')  # Registers Lecturer_Issue_Manangement to handle CRUD operations for lecturer issue management
-router.register(r'student_issues', Student_Issue_ReadOnlyViewset, 'student_issues')  # Registers Student_Issue_ReadOnlyViewset to handle read-only operations for student issues
+router.register(r'student_issues', Student_Issue_Viewset, 'student_issues')  # Registers Student_Issue_ReadOnlyViewset to handle read-only operations for student issues
 router.register(r'messages', MessageViewSet, basename='message')
 router.register(r'conversations', ConversationViewSet, basename='conversation')
 
@@ -38,6 +38,7 @@ urlpatterns = [
     path('resend_password_reset_code/',resend_password_reset_code,name = 'resend_password_reset_code'),
     path('get_registrars/', get_registrars, name='get_registrars'),  # Endpoint to retrieve a list of registrars
     path('get_lecturers/',get_lecturers,name = 'get_lecturers'),
+    path('get_students/',get_students,name = 'get_students'),
     path('delete_account/',delete_account,name='delete_account'),
     path('users/search/', UserSearchView.as_view(), name='user-search'),
 
