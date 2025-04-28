@@ -17,7 +17,7 @@ function Sidebar() {
     // Navigate to home/login page
     navigate('/');
   };
-  
+
 
   return (
     <div className="sidebar-container">
@@ -73,7 +73,7 @@ function Sidebar() {
         </svg>
       </Link>
 
-      {/* Logout Link */}
+      {/* Logout link */}
       <Link to="/logout" className="menu-item delete-account" onClick={handleLogout}>
         Logout
         <svg viewBox="0 0 24 24" className="arrow-icon">
