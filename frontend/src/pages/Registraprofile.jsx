@@ -12,12 +12,12 @@ const RegistraProfile = () => {
   const [profile, setProfile] = useState({
     fullName: '[Full Name]',
     role: '[Role]',
-    phoneNumber: '[Phone Number]',
+    phoneNumber: '0712 346587',
     email: '[Email Address]',
     gender: '[Gender]',
     registrationNumber: '[Registration]',
     RegNumber: '[Registra Number]',
-    department: '[Department]'
+    department: 'Department of Computer Science'
   });
 
   // Load data from localStorage on component mount
