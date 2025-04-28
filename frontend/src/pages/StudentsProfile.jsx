@@ -371,6 +371,14 @@ const StudentsProfile = () => {
                     <span className="readonly-value">
                       {profile[field]}
                     </span>
+                    {field === 'program' && (
+                      <button 
+                        className="info-btn"
+                        onClick={() => toast.info("Program information is managed by administration")}
+                      >
+                        i
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
