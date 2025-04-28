@@ -178,6 +178,7 @@ const StudentsProfile = () => {
       };
       reader.readAsDataURL(file);
     } else if (file) {
+      // Show toast notification for invalid file type
       toast.error("Selected file is not an image. Please select a valid image file.");
     }
   };
