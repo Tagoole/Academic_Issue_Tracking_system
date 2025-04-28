@@ -7,7 +7,7 @@
 
 /* Style the logout button to make it more visible */
 .logout-button {
-display :flex;
+display :inline-block;
 align-items: center;
 justify-content: flex-start;
 width: 90%;
