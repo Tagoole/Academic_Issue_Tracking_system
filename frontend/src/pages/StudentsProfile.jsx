@@ -160,11 +160,25 @@ const StudentsProfile = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file && file.type.match('image.*')) {
+      if (file.size > 5 * 1024 * 1024) { // Check if file size exceeds 5MB
+        toast.error("Image is too large. Maximum size is 5MB.");
+        return;
+      }
+
+      // Show toast notification for uploading profile image
+      toast.info("Uploading profile image...");
+
       const reader = new FileReader();
       reader.onload = (event) => {
         setProfileImage(event.target.result);
+        toast.success("Profile image updated successfully!");
+      };
+      reader.onerror = () => {
+        toast.error("Failed to process the image. Please try another.");
       };
       reader.readAsDataURL(file);
+    } else if (file) {
+      toast.error("Selected file is not an image. Please select a valid image file.");
     }
   };
 
