@@ -17,6 +17,7 @@ function Sidebar() {
     // Navigate to home/login page
     navigate('/');
   };
+  
 
   return (
     <div className="sidebar-container">
