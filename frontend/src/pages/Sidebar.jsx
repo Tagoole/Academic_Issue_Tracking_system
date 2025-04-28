@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate,link } from 'react-router-dom';
+import { useNavigate,Link } from 'react-router-dom';
 import './Sidebar.css';
 import makerereLogo from '../assets/makererelogo.png';
 
