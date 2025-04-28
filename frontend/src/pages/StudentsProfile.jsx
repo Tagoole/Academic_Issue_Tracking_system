@@ -36,6 +36,9 @@ const StudentsProfile = () => {
   useEffect(() => {
     const loadUserData = async () => {
       try {
+        // Show toast notification for loading profile data
+        toast.info("Loading your profile data...");
+        
         // Get basic user data from localStorage
         const userData = {
           fullName: localStorage.getItem('userName') || 'Not available',
