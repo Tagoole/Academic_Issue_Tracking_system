@@ -174,11 +174,11 @@ const StudentsProfile = () => {
         toast.success("Profile image updated successfully!");
       };
       reader.onerror = () => {
+        // Show toast notification for image processing failure
         toast.error("Failed to process the image. Please try another.");
       };
       reader.readAsDataURL(file);
     } else if (file) {
-      // Show toast notification for invalid file type
       toast.error("Selected file is not an image. Please select a valid image file.");
     }
   };
