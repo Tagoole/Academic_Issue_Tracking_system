@@ -148,6 +148,11 @@ const StudentsProfile = () => {
     }
   };
 
+  const handleCancel = () => {
+    setEditableField(null); // Reset the editable field
+    toast.info("Edit cancelled");
+  };
+
   const handleImageClick = () => {
     fileInputRef.current.click();
   };
