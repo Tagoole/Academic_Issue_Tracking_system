@@ -12,6 +12,7 @@ const Issues = () => {
   const [issueData, setIssueData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -126,6 +127,13 @@ const Issues = () => {
     toast.info(`Showing ${tab} issues`);
   };
 
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+    if (e.target.value) {
+      toast.info(`Searching for "${e.target.value}"`);
+    }
+  };
+
   // Format date for display
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -213,6 +221,7 @@ const Issues = () => {
                 placeholder="Search"
                 className="search-input"
                 style={{ color: 'black' }}
+                onChange={handleSearch}
               />
             </div>
             <button className="filter-btn">
