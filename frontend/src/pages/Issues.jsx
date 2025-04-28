@@ -4,6 +4,7 @@ import NavBar from './NavBar';
 import SideBar from './Sidebar1';
 import './Issues.css';
 import API from '../api';
+import { toast } from 'react-toastify';
 
 const Issues = () => {
   const [activeTab, setActiveTab] = useState('Pending');
@@ -18,52 +19,59 @@ const Issues = () => {
       const accessToken = localStorage.getItem('accessToken');
       // If no access token is available, redirect to login
       if (!accessToken) {
+        toast.error("Authentication required. Please sign in.");
         navigate('/signin');
         return false;
       }
       return true;
     };
-    
+
     // Fetch student issues when component mounts
     const fetchStudentIssues = async () => {
       try {
         setLoading(true);
-        
+
         // Get access token
         const accessToken = localStorage.getItem('accessToken');
-        
+
         // Set authorization header with access token
         API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-        
+
         const response = await API.get('/api/student_issues/');
         console.log("API Response:", response.data); // Debug log
         setIssueData(response.data);
         setLoading(false);
+
+        // Show success toast when data is loaded
+        toast.success("Issues loaded successfully");
       } catch (err) {
         console.error('Error fetching student issues:', err);
-        
+
         // Check if error is due to unauthorized access (401)
         if (err.response && err.response.status === 401) {
           // Try refreshing the token
           try {
+            toast.info("Refreshing your session...");
             const refreshToken = localStorage.getItem('refreshToken');
-            
+
             if (refreshToken) {
               const refreshResponse = await API.post('/api/refresh_token/', {
-                refresh: refreshToken
+                refresh: refreshToken,
               });
-              
+
               // Store the new access token
               const newAccessToken = refreshResponse.data.access;
               localStorage.setItem('accessToken', newAccessToken);
-              
+
               // Retry the original request with new token
               API.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
               const retryResponse = await API.get('/api/student_issues/');
               setIssueData(retryResponse.data);
               setLoading(false);
+              toast.success("Session refreshed, issues loaded successfully");
             } else {
               // No refresh token available, redirect to login
+              toast.error("Session expired. Please sign in again.");
               navigate('/signin');
             }
           } catch (refreshErr) {
@@ -71,10 +79,12 @@ const Issues = () => {
             setError('Your session has expired. Please log in again.');
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
+            toast.error("Authentication failed. Please sign in again.");
             navigate('/signin');
           }
         } else {
           setError('Failed to load issues. Please try again later.');
+          toast.error("Failed to load issues. Please try again later.");
           setLoading(false);
         }
       }
