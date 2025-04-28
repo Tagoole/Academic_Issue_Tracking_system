@@ -303,8 +303,12 @@ const StudentsProfile = () => {
                     )}
                     {!readOnlyFields.includes(field) && (
                       editableField === field ? (
-                        <button className="save-btn" onClick={handleSave}>
-                          Save
+                        <button 
+                          className="save-btn" 
+                          onClick={handleSave}
+                          disabled={saveLoading} // Optional: Disable button while saving
+                        >
+                          {saveLoading ? 'Saving...' : 'Save'}
                         </button>
                       ) : (
                         <button 
