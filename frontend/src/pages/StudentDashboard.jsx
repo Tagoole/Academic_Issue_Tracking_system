@@ -155,48 +155,48 @@ const StudentDashboard = () => {
   };
 
   return (
-    <div className="dashboard-container" style={{
+    <div className="student-main-container" style={{
       minHeight: '100vh',
       width: '100%' // Changed from fixed 1205px to be responsive
     }}>
       <SideBar />
-      <div className="dashboard-wrapper">
+      <div className="student-content-wrapper">
         <NavBar />
         
         {/* Dashboard Panels */}
-        <div className="dashboard-panels">
-          <div className="panel">
-            <div className="panel-title">Resolved Issues</div>
-            <div className="panel-count">{issueData.filter(issue => issue.status === 'resolved').length}</div>
+        <div className="stats-card-group">
+          <div className="stat-card">
+            <div className="stat-card-heading">Resolved Issues</div>
+            <div className="stat-card-value">{issueData.filter(issue => issue.status === 'resolved').length}</div>
           </div>
-          <div className="panel">
-            <div className="panel-title">Pending Issues</div>
-            <div className="panel-count">{issueData.filter(issue => issue.status === 'pending').length}</div>
+          <div className="stat-card">
+            <div className="stat-card-heading">Pending Issues</div>
+            <div className="stat-card-value">{issueData.filter(issue => issue.status === 'pending').length}</div>
           </div>
-          <div className="panel">
-            <div className="panel-title">In-progress Issues</div>
-            <div className="panel-count">{issueData.filter(issue => issue.status === 'in_progress').length}</div>
+          <div className="stat-card">
+            <div className="stat-card-heading">In-progress Issues</div>
+            <div className="stat-card-value">{issueData.filter(issue => issue.status === 'in_progress').length}</div>
           </div>
-          <div className="panel">
-            <div className="panel-title">Rejected Issues</div>
-            <div className="panel-count">{issueData.filter(issue => issue.status === 'rejected').length}</div>
+          <div className="stat-card">
+            <div className="stat-card-heading">Rejected Issues</div>
+            <div className="stat-card-value">{issueData.filter(issue => issue.status === 'rejected').length}</div>
           </div>
         </div>
         
-        <div className="search-container">
-          <input type="text" placeholder="Search for issues..." className="search-input" />
-          <button className="filter-button">
+        <div className="query-controls">
+          <input type="text" placeholder="Search for issues..." className="query-input" />
+          <button className="query-filter-btn">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 16v-4.414L3.293 6.707A1 1 0 013 6V3z" clipRule="evenodd" />
             </svg>
           </button>
           
           {/* Advanced holographic button with multiple effects */}
-          <div className="hologram-3d-container">
-            <div className="hologram-particles">
-              <div className="hologram-border">
+          <div className="holo-button-wrapper">
+            <div className="holo-button-effects">
+              <div className="holo-button-border">
                 <button 
-                  className="new-issue-button hologram-button hologram-3d" 
+                  className="create-issue-btn holo-effect-btn holo-3d-effect" 
                   onClick={handleNewIssueClick}
                 >
                   + New Issue
@@ -207,13 +207,13 @@ const StudentDashboard = () => {
         </div>
         
         {/* Issues Container */}
-        <div className="issues-container">
-          <div className="issues-header">
-            <div className="tab-container">
+        <div className="issues-view-container">
+          <div className="issues-view-header">
+            <div className="status-filter-wrapper">
               {['Pending', 'In-progress', 'Resolved', 'Rejected'].map(tab => (
                 <button
                   key={tab}
-                  className={`tab-button ${activeTab === tab ? 'active' : 'inactive'}`}
+                  className={`status-filter-btn ${activeTab === tab ? 'selected-status' : 'unselected-status'}`}
                   onClick={() => setActiveTab(tab)}
                 >
                   {tab}
@@ -224,13 +224,13 @@ const StudentDashboard = () => {
         </div>
         
         {/* Table Container */}
-        <div className="table-container">
+        <div className="data-grid-wrapper">
           {loading ? (
-            <div className="loading-message">Loading issues...</div>
+            <div className="loader-text">Loading issues...</div>
           ) : error ? (
-            <div className="error-message">{error}</div>
+            <div className="error-notification">{error}</div>
           ) : (
-            <table className="issues-table">
+            <table className="data-grid">
               <thead>
                 <tr>
                   <th>ID</th>
@@ -249,7 +249,7 @@ const StudentDashboard = () => {
                     <tr key={issue.id || index}>
                       <td>#{issue.id || 'N/A'}</td>
                       <td>
-                        <span className={`status-tag status-${issue.status}`}>
+                        <span className={`status-indicator status-color-${issue.status}`}>
                           {issue.status === 'pending' ? 'Pending' : 
                            issue.status === 'in_progress' ? 'In-progress' : 
                            issue.status === 'resolved' ? 'Resolved' : 
@@ -262,12 +262,12 @@ const StudentDashboard = () => {
                       <td>{issue.is_commented ? '✓' : '✗'}</td>
                       <td>{issue.comment || 'No comment'}</td>
                       <td>
-                        <div className="action-buttons-container">
-                          <button className="view-details-btn" onClick={() => openIssueDetails(issue)}>
+                        <div className="row-actions-group">
+                          <button className="details-action-btn" onClick={() => openIssueDetails(issue)}>
                             Details
                           </button>
                           <button 
-                            className="delete-issue-btn" 
+                            className="remove-action-btn" 
                             onClick={() => handleDeleteIssue(issue.id)}
                           >
                             Delete
@@ -278,7 +278,7 @@ const StudentDashboard = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="8" className="no-issues-message">No {activeTab.toLowerCase()} issues found</td>
+                    <td colSpan="8" className="empty-state-message">No {activeTab.toLowerCase()} issues found</td>
                   </tr>
                 )}
               </tbody>
@@ -289,14 +289,14 @@ const StudentDashboard = () => {
 
       {/* Issue Details Modal */}
       {showModal && selectedIssue && (
-        <div className="issue-modal-overlay">
-          <div className="issue-modal">
-            <div className="issue-modal-header">
+        <div className="modal-backdrop">
+          <div className="modal-window">
+            <div className="modal-title-bar">
               <h2>Issue Details</h2>
-              <button className="close-modal-btn" onClick={closeModal}>×</button>
+              <button className="modal-close-icon" onClick={closeModal}>×</button>
             </div>
-            <div className="issue-modal-content">
-              <div className="issue-detail-item">
+            <div className="modal-body">
+              <div className="detail-row">
                 <strong>ID:</strong> #{selectedIssue.id || 'N/A'}
               </div>
               {Object.entries(selectedIssue).map(([key, value]) => {
@@ -304,15 +304,15 @@ const StudentDashboard = () => {
                 if (key === 'id') return null;
                 
                 return (
-                  <div key={key} className="issue-detail-item">
+                  <div key={key} className="detail-row">
                     <strong>{key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:</strong> 
                     {typeof value === 'object' ? JSON.stringify(value) : String(value)}
                   </div>
                 );
               })}
             </div>
-            <div className="issue-modal-footer">
-              <button className="modal-close-btn" onClick={closeModal}>Close</button>
+            <div className="modal-actions">
+              <button className="modal-dismiss-btn" onClick={closeModal}>Close</button>
             </div>
           </div>
         </div>
