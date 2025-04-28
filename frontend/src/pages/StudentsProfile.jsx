@@ -77,6 +77,7 @@ const StudentsProfile = () => {
       } catch (err) {
         console.error("Failed to load user data:", err);
         setError('Failed to load profile data. Please try again later.');
+        toast.error("Failed to load profile data. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -235,7 +236,10 @@ const StudentsProfile = () => {
               <p>{error}</p>
               <button 
                 className="retry-btn"
-                onClick={() => window.location.reload()}
+                onClick={() => {
+                  toast.info("Retrying...");
+                  window.location.reload();
+                }}
               >
                 Try Again
               </button>
