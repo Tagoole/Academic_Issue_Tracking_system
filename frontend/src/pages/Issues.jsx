@@ -4,7 +4,8 @@ import NavBar from './NavBar';
 import SideBar from './Sidebar1';
 import './Issues.css';
 import API from '../api';
-import { toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Issues = () => {
   const [activeTab, setActiveTab] = useState('Pending');
