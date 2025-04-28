@@ -121,6 +121,11 @@ const Issues = () => {
     navigate(`/view-details/${issueId}`);
   };
 
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    toast.info(`Showing ${tab} issues`);
+  };
+
   // Format date for display
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -191,7 +196,7 @@ const Issues = () => {
               <button
                 key={tab}
                 className={`issues-tab ${activeTab === tab ? 'active' : ''}`}
-                onClick={() => setActiveTab(tab)}
+                onClick={() => handleTabChange(tab)}
               >
                 {tab}
               </button>
