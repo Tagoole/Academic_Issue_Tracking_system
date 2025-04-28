@@ -12,6 +12,7 @@ const StudentsProfile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editableField, setEditableField] = useState(null);
+  const [saveLoading, setSaveLoading] = useState(false);
 
   // Initialize profile state with default values
   const [profile, setProfile] = useState({
@@ -126,10 +127,25 @@ const StudentsProfile = () => {
     setProfile(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = () => {
-    setEditableField(null);
-    // Here you would typically send the updated data to your API
-    console.log('Updated profile:', profile);
+  const handleSave = async () => {
+    try {
+      setSaveLoading(true); // Optional: Add a loading state for the save button
+      toast.info("Saving your changes...");
+      
+      // Simulate API call with a timeout
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      // Here you would typically send the updated data to your API
+      console.log('Updated profile:', profile);
+
+      setEditableField(null);
+      toast.success(`${editableField.replace(/([A-Z])/g, ' $1').toLowerCase()} updated successfully!`);
+    } catch (err) {
+      console.error('Error saving profile:', err);
+      toast.error("Failed to save changes. Please try again.");
+    } finally {
+      setSaveLoading(false); // Reset loading state
+    }
   };
 
   const handleImageClick = () => {
