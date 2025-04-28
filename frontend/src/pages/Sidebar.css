@@ -1,48 +1,42 @@
-.sidebar {
-  width: 250px;
-  height: 100px;
-  background-color: transparent;
-  display: flex;
-  flex-direction: column;
-  padding: 20px 0;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-  border-radius: 5%;
+/* Add these styles to your existing Sidebar.css file */
+
+/* Create space to push logout to bottom */
+.sidebar-spacer {
+  flex-grow: 1;
 }
 
-.sidebar-item {
+/* Style the logout button to make it more visible */
+.logout-button {
   display: flex;
   align-items: center;
-  padding: 15px 25px;
+  justify-content: flex-start;
+  width: 90%;
+  margin: 10px auto;
+  padding: 12px 15px;
+  background-color: #e4d0cf; 
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s;
 }
 
-.sidebar-item:hover {
-  background-color: #f0f0f0;
+.logout-button:hover {
+  background-color: #d32f2f; /* Darker red on hover */
 }
 
-.sidebar-item i {
-  margin-right: 15px;
-  width: 30px;
-  height: 30px;
-  background-size: contain;
-  background-repeat: no-repeat;
-}
-
-/* General Sidebar Icon Styling */
-.sidebar-icon {
-  width: 35px; 
-  height: 30px; 
-  margin-right: 10px;
-}
-
-
-.sidebar-item .sidebar-link img[alt="Help Icon"] {
-  width: 20px; 
+.logout-icon {
+  width: 20px;
   height: 20px;
+  margin-right: 10px;
+  fill: currentColor;
 }
 
-.logout {
-  margin-top: auto;
-  border-top: 1px solid #e0e0e0;
+/* Make sure the sidebar container uses flex to allow the spacer to work */
+.sidebar-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Full height */
 }
