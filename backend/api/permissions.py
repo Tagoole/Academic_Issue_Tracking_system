@@ -19,7 +19,7 @@ class IsStudentOrRegistrarOrLecturer(BasePermission):
         if not request.user.is_authenticated:
             return False
             
-        # Check if user has any of the required roles
+        # Check if user has any of the required roles as seen below 
         return (
             IsStudent().has_permission(request, view) or
             IsAcademicRegistrar().has_permission(request, view) or

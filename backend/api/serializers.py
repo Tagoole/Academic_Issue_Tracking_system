@@ -5,6 +5,10 @@ from django.contrib.auth.models import Group
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
+
+
+
+
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def get_token(self, user):
         token = super().get_token(user)
@@ -19,17 +23,24 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 
 
+
+
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['id','username','email']
         
+
+
+
 class CustomUserprofileSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = "__all__"
     
     
+
         
 class Course_unitSerializer(serializers.ModelSerializer):
     class Meta:
@@ -51,9 +62,17 @@ class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Department
         fields = '__all__'
+        
+        
+        
  
  
+
+
+
             
+
+
 class IssueSerializer(serializers.ModelSerializer):
     student = UserSerializer(read_only=True)
     registrar = UserSerializer(read_only=True)
@@ -74,6 +93,7 @@ class Student_RegisterSerializer(serializers.ModelSerializer):
             'password': {'write_only': True},
             'confirm_password': {'write_only': True},
             }
+
 
     def validate(self, data):
         password = data.get('password')
@@ -175,13 +195,17 @@ class Registration_Token_Serializer(serializers.ModelSerializer):
         if CustomUser.objects.filter(email = data.get('email')).exists():
             raise serializers.ValidationError(f'The email {data.get('email')} is already taken')
         return data
-    
+
+
 class Verify_Email_serializer(serializers.Serializer):
     code = serializers.IntegerField()
     email = serializers.EmailField()
     
+
 class Resend_Verification_CodeSerializer(serializers.Serializer):
     email = serializers.EmailField() 
+
+
 
 class Resend_Password_Reset_CodeSerializer(serializers.Serializer):
     email = serializers.EmailField()
@@ -205,7 +229,89 @@ class Final_Password_ResetSerializer(serializers.Serializer):
         return validated_data
         
 class Email_notificationSerializer(serializers.ModelSerializer):
+    issue_id = serializers.IntegerField(source='issue.id')
     class Meta:
         model =Email_Notification
-        fields = '__all__'
+        fields = ['id', 'subject', 'message', 'created_at', 'issue_id']
         
+
+
+
+class MessageSerializer(serializers.ModelSerializer):
+    sender_username = serializers.SerializerMethodField()
+    receiver_username = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Message
+        fields = [
+            'id', 'sender', 'receiver', 'sender_username', 
+            'receiver_username', 'content', 'timestamp', 
+            'is_read', 'is_deleted'
+        ]
+        read_only_fields = ['sender', 'timestamp', 'is_read']
+    
+    def get_sender_username(self, obj):
+        return obj.sender.username
+    
+    def get_receiver_username(self, obj):
+        return obj.receiver.username
+    
+    def create(self, validated_data):
+        # Set the sender to the current authenticated user
+        validated_data['sender'] = self.context['request'].user
+        return super().create(validated_data)
+    
+
+
+class ConversationSerializer(serializers.ModelSerializer):
+    participants = UserSerializer(many=True, read_only=True)
+    participant_ids = serializers.PrimaryKeyRelatedField(
+        many=True, 
+        queryset=CustomUser.objects.all(),
+        write_only=True
+    )
+    last_message_content = serializers.SerializerMethodField()
+    last_message_time = serializers.SerializerMethodField()
+    unread_count = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Conversation
+        fields = [
+            'id', 'participants', 'participant_ids', 'created_at', 'updated_at',
+            'last_message_content', 'last_message_time', 'unread_count'
+        ]
+        read_only_fields = ['created_at', 'updated_at']
+    
+    def get_last_message_content(self, obj):
+        last_message = obj.last_message
+        if last_message:
+            return last_message.content
+        return ''
+    
+    def get_last_message_time(self, obj):
+        last_message = obj.last_message
+        if last_message:
+            return last_message.timestamp
+        return None
+    
+    def get_unread_count(self, obj):
+        user = self.context['request'].user
+        return Message.objects.filter(
+            receiver=user,
+            sender__in=obj.participants.exclude(id=user.id),
+            is_read=False,
+            is_deleted=False
+        ).count()
+    
+    def create(self, validated_data):
+        participant_ids = validated_data.pop('participant_ids')
+        conversation = Conversation.objects.create(**validated_data)
+        
+        # Add the current user as a participant
+        conversation.participants.add(self.context['request'].user)
+        
+        # Add other participants
+        for user in participant_ids:
+            conversation.participants.add(user)
+        
+        return conversation

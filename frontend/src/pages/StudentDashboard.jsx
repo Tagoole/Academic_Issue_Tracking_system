@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import NavBar from './NavBar';
-import SideBar from './Sidebar1';
+import SideBar1 from './Sidebar1';
 import './StudentDashboard.css'; 
 import API from '../api';
 
@@ -118,6 +118,31 @@ const StudentDashboard = () => {
     setSelectedIssue(null);
   };
 
+  // New function to handle issue deletion
+  const handleDeleteIssue = async (issueId) => {
+    if (window.confirm('Are you sure you want to delete this issue? This action cannot be undone.')) {
+      try {
+        // Get access token
+        const accessToken = localStorage.getItem('accessToken');
+        
+        // Set authorization header with access token
+        API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+        
+        // Send delete request to API
+        await API.delete(`/api/student_issues/${issueId}/`);
+        
+        // Update the state by removing the deleted issue
+        setIssueData(prevIssues => prevIssues.filter(issue => issue.id !== issueId));
+        
+        // Show success message
+        alert('Issue deleted successfully');
+      } catch (err) {
+        console.error('Error deleting issue:', err);
+        alert('Failed to delete issue. Please try again.');
+      }
+    }
+  };
+
   // Format date for display
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -132,9 +157,9 @@ const StudentDashboard = () => {
   return (
     <div className="dashboard-container" style={{
       minHeight: '100vh',
-      width: '100%' // Changed from fixed 1205px to be responsive
+      width: '100%'
     }}>
-      <SideBar />
+      <SideBar1 />
       <div className="dashboard-wrapper">
         <NavBar />
         
@@ -166,19 +191,23 @@ const StudentDashboard = () => {
             </svg>
           </button>
           
-          {/* Advanced holographic button with multiple effects */}
-          <div className="hologram-3d-container">
-            <div className="hologram-particles">
-              <div className="hologram-border">
-                <button 
-                  className="new-issue-button hologram-button hologram-3d" 
-                  onClick={handleNewIssueClick}
-                >
-                  + New Issue
-                </button>
-              </div>
-            </div>
-          </div>
+          {/* Standard button instead of holographic */}
+          <button 
+            className="new-issue-button" 
+            onClick={handleNewIssueClick}
+            style={{
+              backgroundColor: '#007bff',
+              padding: '10px 20px',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+              boxShadow: '0 2px 4px rgba(0, 123, 255, 0.4)'
+            }}
+          >
+            + New Issue
+          </button>
         </div>
         
         {/* Issues Container */}
@@ -209,7 +238,6 @@ const StudentDashboard = () => {
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>Issue</th>
                   <th>Status</th>
                   <th>Issue Type</th>
                   <th>Created</th>
@@ -224,7 +252,6 @@ const StudentDashboard = () => {
                   filteredIssues.map((issue, index) => (
                     <tr key={issue.id || index}>
                       <td>#{issue.id || 'N/A'}</td>
-                      <td>{issue.issue}</td>
                       <td>
                         <span className={`status-tag status-${issue.status}`}>
                           {issue.status === 'pending' ? 'Pending' : 
@@ -239,15 +266,23 @@ const StudentDashboard = () => {
                       <td>{issue.is_commented ? '✓' : '✗'}</td>
                       <td>{issue.comment || 'No comment'}</td>
                       <td>
-                        <button className="view-details-btn" onClick={() => openIssueDetails(issue)}>
-                          View Details
-                        </button>
+                        <div className="action-buttons-container">
+                          <button className="view-details-btn" onClick={() => openIssueDetails(issue)}>
+                            Details
+                          </button>
+                          <button 
+                            className="delete-issue-btn" 
+                            onClick={() => handleDeleteIssue(issue.id)}
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="9" className="no-issues-message">No {activeTab.toLowerCase()} issues found</td>
+                    <td colSpan="8" className="no-issues-message">No {activeTab.toLowerCase()} issues found</td>
                   </tr>
                 )}
               </tbody>

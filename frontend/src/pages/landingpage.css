@@ -40,7 +40,7 @@
   right: 40px;
   font-size: 28px;
   font-weight: bold;
-  color: white;
+  color: rgb(186, 118, 9);
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
   z-index: 10;
   animation: float 3s ease-in-out infinite, glowText 2s ease-in-out infinite;
@@ -115,11 +115,11 @@
 /* Welcome text with animation */
 .welcome-text {
   text-align: center;
-  font-size: 50px;
+  font-size: 70px;
   font-weight: bold;
   margin: 20px 0 40px;
-  color: white;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  color:rgb(186, 118, 9);
+  text-shadow: 2px 2px 4px rgba(203, 146, 14, 0.8);
   max-width: 80%;
   opacity: 0;
   transform: translateY(30px);

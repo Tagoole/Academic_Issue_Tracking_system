@@ -15,6 +15,13 @@ const DeleteAccount = () => {
 
   useEffect(() => {
     try {
+      // Check authentication on page load
+      const accessToken = localStorage.getItem('accessToken');
+      if (!accessToken) {
+        navigate('/signin');
+        return;
+      }
+      
       // Simulate successful page load
       toast.success('Delete Account page loaded successfully!', {
         autoClose: 3000,
@@ -26,7 +33,7 @@ const DeleteAccount = () => {
         autoClose: 3000,
       });
     }
-  }, []);
+  }, [navigate]);
 
   const handleDeleteAccount = () => {
     setShowConfirmModal(true);
@@ -45,11 +52,13 @@ const DeleteAccount = () => {
         throw new Error('Authentication information not found. Please log in again.');
       }
       
-      // Send delete request to Django backend using your API module
-      await API.delete(`/users/delete-account/${userId}/`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`
-        }
+      // Set the authorization header
+      API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+      
+      // Send delete request to Django backend using the correct endpoint
+      // and passing userId in the request body as expected by the view
+      await API.delete('/api/delete_account/', {
+        data: { userId: userId }  // This is important for DELETE requests with a body
       });
       
       // Clear all data from local storage
@@ -60,13 +69,68 @@ const DeleteAccount = () => {
       
       setShowConfirmModal(false);
       
-      // Show brief success message before redirecting
-      alert('Account deleted successfully');
+      // Show success message
+      toast.success('Account deleted successfully', {
+        autoClose: 2000,
+        onClose: () => {
+          // Navigate to the landing page after toast is closed or times out
+          navigate('/');
+        }
+      });
       
-      // Navigate to the landing page
-      navigate('/');
     } catch (err) {
-      const errorMessage = err.response?.data?.message || err.response?.data?.detail || err.message || 'Failed to delete account';
+      // Handle errors, including token refresh if necessary
+      if (err.response && err.response.status === 401) {
+        // Try refreshing the token
+        try {
+          const refreshToken = localStorage.getItem('refreshToken');
+          
+          if (refreshToken) {
+            const refreshResponse = await API.post('/api/refresh_token/', {
+              refresh: refreshToken
+            });
+            
+            // Store the new access token
+            const newAccessToken = refreshResponse.data.access;
+            localStorage.setItem('accessToken', newAccessToken);
+            
+            // Retry the delete operation with new token
+            API.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
+            
+            // Retry the delete request with refreshed token
+            await API.delete('/api/delete_account/', {
+              data: { userId: localStorage.getItem('userId') }
+            });
+            
+            // Clear local storage and navigate away
+            localStorage.clear();
+            setShowConfirmModal(false);
+            
+            toast.success('Account deleted successfully', {
+              autoClose: 2000,
+              onClose: () => navigate('/')
+            });
+            
+            return;
+          }
+        } catch (refreshErr) {
+          console.error('Error refreshing token:', refreshErr);
+          setError('Your session has expired. Please log in again.');
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          
+          // Give user time to see the error before redirecting
+          setTimeout(() => navigate('/signin'), 3000);
+          return;
+        }
+      }
+      
+      // Handle other error cases
+      const errorMessage = err.response?.data?.error || 
+                          err.response?.data?.message || 
+                          err.response?.data?.detail || 
+                          err.message || 
+                          'Failed to delete account';
       setError(errorMessage);
       console.error('Error deleting account:', err);
     } finally {

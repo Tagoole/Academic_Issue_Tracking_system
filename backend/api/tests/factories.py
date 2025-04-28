@@ -5,6 +5,15 @@ from api.models import *
 import shortuuid
 from random import randint
 
+
+class DepartmentFactory(DjangoModelFactory):
+    class Meta:
+        model = Department
+    
+    department_name = "Test Department"
+    description = "This is a test department"
+    
+    
 class CustomUserFactory(DjangoModelFactory):
     class Meta:
         model = CustomUser

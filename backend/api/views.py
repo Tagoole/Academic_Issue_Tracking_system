@@ -12,6 +12,7 @@ from random import randint
 from django.db.models import Q
 from .serializers import CustomTokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework import generics
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -59,12 +60,19 @@ class IssueViewSet(ModelViewSet):
         # Extract usernames from request data
         registrar_username = self.request.data.get('registrar')
         student_username = self.request.data.get('student')
+        issue_type = self.request.data.get('issue_type')
+        
         
         # Handle registrar assignment by username
         registrar = None
         if registrar_username:
             try:
                 registrar = User.objects.get(username=registrar_username)
+                registrar_email = registrar.email
+                # Preparing to alert the Registar by email 
+                subject = 'ISSUE HAS BEEN ASSIGNED TO YOU'
+                message = f'Dear {registrar_username},\n\n You have been requested to Solve the issue of {issue_type} raised by {student_username}'
+                send_mail(subject,message,settings.EMAIL_HOST_USER,[registrar_email],fail_silently=False)
                 print(f"Found registrar user: {registrar}")
             except User.DoesNotExist:
                 print(f"No user found with username: {registrar_username}")
@@ -141,7 +149,7 @@ class Lecturer_Issue_Manangement(ModelViewSet):
             return Response(serializer.data)
         return Response({'error':'Status parameter required'})
     
-class Student_Issue_ReadOnlyViewset(ReadOnlyModelViewSet):
+class Student_Issue_Viewset(ModelViewSet):
     permission_classes = [IsAuthenticated, IsStudent]
     serializer_class = IssueSerializer
     
@@ -200,13 +208,21 @@ class Registrar_Issue_ManagementViewSet(ModelViewSet):
     def perform_update(self, serializer):
         issue = self.get_object()  # This retrieves the current issue instance
         previous_state = issue.status  # Store the previous state of the issue
-        
+        previous_lecturer = issue.lecturer
         # Save the updated issue
         updated_issue = serializer.save()
         
         # Send email with previous and current state
         self.send_email_on_update(updated_issue, "updated", previous_state)
         
+        if previous_lecturer != updated_issue.lecturer and updated_issue.lecturer and updated_issue.lecturer.email:
+            subject = f'Issue Assignment Notification'
+            message = (f'Dear {updated_issue.lecturer.username},\n\n'
+                  f'You have been assigned to an issue of type {updated_issue.issue_type}.\n'
+                  f'Student: {updated_issue.student.username if updated_issue.student else "N/A"}\n'
+                  f'Current status: {updated_issue.status}\n\n'
+                  'Best regards,\nAITS')
+            send_success = send_mail(subject, message, settings.EMAIL_HOST_USER, [updated_issue.lecturer.email], fail_silently=False)
         
         return updated_issue
             
@@ -241,6 +257,7 @@ class Course_unitViewSet(ModelViewSet):
     serializer_class = Course_unitSerializer
 
 class ProgramViewSet(ModelViewSet):
+    permission_classes = [AllowAny]
     queryset = Program.objects.all()
     serializer_class = ProgramSerializer
     
@@ -499,8 +516,7 @@ def final_password_reset(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_user_email_notifications(request):
-    data = request.data
-    notifications = Email_Notification.objects.filter(user = data.get('user'))
+    notifications = Email_Notification.objects.filter(user = request.user)
     number = notifications.count()
     serializer = Email_notificationSerializer(notifications,many = True)
     return Response ({'number':number,
@@ -526,3 +542,320 @@ def get_lecturers(request):
     
     return Response(serializer.data, status=status.HTTP_200_OK)
 
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_students(request):
+    students = CustomUser.objects.filter(role='student')
+    
+    serializer = UserSerializer(students, many=True)
+    
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_account(request):
+    user_id_from_frontend = request.data.get('userId') 
+    if str(request.user.id) != str(user_id_from_frontend):
+        return Response(
+            {"error": "You are not authorized to delete this account."},
+            status=status.HTTP_403_FORBIDDEN
+        )
+
+    user = CustomUser.objects.filter(id=user_id_from_frontend).first()
+    if user:
+        username = user.username
+        user.delete()
+        return Response(
+            {"message": f"Account '{username}' has been deleted successfully."},
+            status=status.HTTP_204_NO_CONTENT
+        )
+    else:
+        return Response({"error": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+
+
+
+
+
+
+
+class ConversationViewSet(ModelViewSet):
+    """
+    API endpoint for conversations
+    """
+    serializer_class = ConversationSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        """
+        Return conversations that involve the authenticated user
+        """
+        return Conversation.objects.filter(
+            participants=self.request.user
+        ).order_by('-updated_at')
+    
+    def create(self, request, *args, **kwargs):
+        """
+        Create a new conversation or get existing one
+        """
+        user_id = request.data.get('user_id')
+        
+        if not user_id:
+            return Response(
+                {"error": "User ID is required"}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            other_user = CustomUser.objects.get(id=user_id)
+        except CustomUser.DoesNotExist:
+            return Response(
+                {"error": "User not found"}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        # Check if conversation already exists
+        existing_conversation = Conversation.objects.filter(
+            participants=request.user
+        ).filter(
+            participants=other_user
+        ).first()
+        
+        if existing_conversation:
+            serializer = self.get_serializer(existing_conversation)
+            return Response(serializer.data)
+        
+        # Create new conversation
+        conversation = Conversation.objects.create()
+        conversation.participants.add(request.user, other_user)
+        
+        serializer = self.get_serializer(conversation)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    @action(detail=True, methods=['get'])
+    def messages(self, request, pk=None):
+        """
+        Get all messages in a conversation
+        """
+        try:
+            conversation = self.get_object()
+            
+            # Verify user is part of conversation
+            if request.user not in conversation.participants.all():
+                return Response(
+                    {"error": "User not authorized to view this conversation"}, 
+                    status=status.HTTP_403_FORBIDDEN
+                )
+            
+        except Conversation.DoesNotExist:
+            return Response(
+                {"error": "Conversation not found"}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        # Get all messages in this conversation
+        messages = Message.objects.filter(
+            conversation=conversation,
+            is_deleted=False
+        ).order_by('timestamp')
+        
+        # Mark messages as read
+        unread_messages = messages.filter(receiver=request.user, is_read=False)
+        for message in unread_messages:
+            message.mark_as_read()
+        
+        serializer = MessageSerializer(messages, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=True, methods=['post'])
+    def mark_read(self, request, pk=None):
+        """
+        Mark all messages in conversation as read
+        """
+class UserSearchView(generics.ListAPIView):
+    """
+    API endpoint to search for users
+    """
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        """
+        Return users matching the search query
+        """
+        query = self.request.query_params.get('q', '')
+        if not query:
+            return CustomUser.objects.none()
+        
+        return CustomUser.objects.filter(
+            Q(username__icontains=query) | 
+            Q(first_name__icontains=query) | 
+            Q(last_name__icontains=query) | 
+            Q(email__icontains=query)
+        ).exclude(id=self.request.user.id)
+        
+        
+        
+class MessageViewSet(ModelViewSet):
+    """
+    API endpoint for messages
+    """
+    serializer_class = MessageSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        """
+        Return messages that involve the authenticated user
+        """
+        user = self.request.user
+        return Message.objects.filter(
+            Q(sender=user) | Q(receiver=user),
+            is_deleted=False
+        ).order_by('timestamp')
+    
+    def create(self, request, *args, **kwargs):
+        """
+        Create a new message with support for both conversation_id and receiver_id
+        """
+        data = request.data
+        conversation_id = data.get('conversation_id')
+        receiver_id = data.get('receiver_id')
+        content = data.get('content')
+        
+        if not content:
+            return Response(
+                {"error": "Message content is required"}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            # Case 1: Using receiver_id to send a message
+            if receiver_id:
+                try:
+                    receiver = CustomUser.objects.get(id=receiver_id)
+                except CustomUser.DoesNotExist:
+                    return Response(
+                        {"error": "Receiver not found"}, 
+                        status=status.HTTP_404_NOT_FOUND
+                    )
+                
+                # Find or create a conversation between these users
+                conversation = Conversation.objects.filter(
+                    participants=request.user
+                ).filter(
+                    participants=receiver
+                ).first()
+                
+                if not conversation:
+                    # Create a new conversation
+                    conversation = Conversation.objects.create()
+                    conversation.participants.add(request.user, receiver)
+                
+                # Create the message
+                message = Message.objects.create(
+                    sender=request.user,
+                    receiver=receiver,
+                    content=content,
+                    conversation=conversation
+                )
+                
+            # Case 2: Using conversation_id to send a message
+            elif conversation_id:
+                try:
+                    conversation = Conversation.objects.get(id=conversation_id)
+                except Conversation.DoesNotExist:
+                    return Response(
+                        {"error": "Conversation not found"}, 
+                        status=status.HTTP_404_NOT_FOUND
+                    )
+                
+                if request.user not in conversation.participants.all():
+                    return Response(
+                        {"error": "User not part of this conversation"}, 
+                        status=status.HTTP_403_FORBIDDEN
+                    )
+                
+                # Get the other user
+                receiver = conversation.participants.exclude(id=request.user.id).first()
+                if not receiver:
+                    return Response(
+                        {"error": "Invalid conversation"}, 
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+                
+                # Create the message
+                message = Message.objects.create(
+                    sender=request.user,
+                    receiver=receiver,
+                    content=content,
+                    conversation=conversation
+                )
+            else:
+                return Response(
+                    {"error": "Either conversation_id or receiver_id is required"}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Update conversation timestamp
+            conversation.update_timestamp()
+            
+            serializer = self.get_serializer(message)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            
+        except Exception as e:
+            return Response(
+                {"error": str(e)}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+    
+    @action(detail=False, methods=['get'])
+    def conversation(self, request):
+        """
+        Get all messages between the authenticated user and a specific user
+        """
+        user = request.user
+        other_user_id = request.query_params.get('user_id')
+        
+        if not other_user_id:
+            return Response(
+                {"error": "User ID parameter is required"}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            other_user = CustomUser.objects.get(id=other_user_id)
+        except CustomUser.DoesNotExist:
+            return Response(
+                {"error": "User not found"}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        messages = Message.objects.filter(
+            (Q(sender=user) & Q(receiver=other_user)) | 
+            (Q(sender=other_user) & Q(receiver=user)),
+            is_deleted=False
+        ).order_by('timestamp')
+        
+        # Mark messages as read
+        unread_messages = messages.filter(receiver=user, is_read=False)
+        for message in unread_messages:
+            message.mark_as_read()
+        
+        serializer = self.get_serializer(messages, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=False, methods=['get'])
+    def unread_count(self, request):
+        """
+        Get the count of unread messages for the authenticated user
+        """
+        unread_count = Message.objects.filter(
+            receiver=request.user,
+            is_read=False,
+            is_deleted=False
+        ).count()
+        
+        return Response({"unread_count": unread_count})

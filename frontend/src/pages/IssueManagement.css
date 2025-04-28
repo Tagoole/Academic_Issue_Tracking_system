@@ -270,3 +270,36 @@ td {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   z-index: 10;
 }
+
+/* Status badge styles */
+.status-badge.rejected {
+  background-color: #ef4444;
+  color: white;
+}
+
+/* Status tab styles */
+.status-tab[data-status="rejected"] {
+  color: #ef4444;
+  border-color: #ef4444;
+}
+
+.status-tab[data-status="rejected"].active {
+  background-color: #ef4444;
+  color: white;
+}
+
+/* Rejection textarea */
+.rejection-reason {
+  margin-top: 20px;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 20px;
+}
+
+.rejection-reason h3 {
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+
+
