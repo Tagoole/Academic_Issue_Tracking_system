@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import NavBar from './NavBar';
 import SideBar from './Sidebar1';
 import './Issues.css';
-import backgroundimage from '../assets/pexels-olia-danilevich-5088017.jpg';
 import API from '../api';
 
 const Issues = () => {
@@ -149,7 +148,6 @@ const Issues = () => {
     <div
       className="issues-container"
       style={{
-        backgroundImage: `url(${backgroundimage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
