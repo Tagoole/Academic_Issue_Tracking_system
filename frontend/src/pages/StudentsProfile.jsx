@@ -3,6 +3,8 @@ import Navbar from './NavBar';
 import Sidebar from './Sidebar1';
 import './StudentsProfile.css';
 import API from '../api';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const StudentsProfile = () => {
   const fileInputRef = useRef(null);
@@ -139,6 +141,17 @@ const StudentsProfile = () => {
   if (loading) {
     return (
       <div className="app-container">
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
         <Navbar />
         <div className="content-wrapper">
           <Sidebar />
@@ -156,6 +169,17 @@ const StudentsProfile = () => {
   if (error) {
     return (
       <div className="app-container">
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
         <Navbar />
         <div className="content-wrapper">
           <Sidebar />
@@ -179,6 +203,17 @@ const StudentsProfile = () => {
 
   return (
     <div className="app-container">
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <Navbar />
       <div className="content-wrapper">
         <Sidebar />
