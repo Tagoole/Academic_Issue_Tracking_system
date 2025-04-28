@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,link } from 'react-router-dom';
 import './Sidebar.css';
 import makerereLogo from '../assets/makererelogo.png';
 
@@ -25,12 +25,12 @@ function Sidebar() {
       </div>
 
       {/* Registrar Dashboard Link */}
-      <a href="/RegistraDashboard" className="menu-item">
+      <Link to="/RegistraDashboard" className="menu-item">
         Registrar Dashboard
         <svg viewBox="0 0 24 24" className="arrow-icon">
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
-      </a>
+      </Link>
 
       {/* Issue Management Link */}
       <a href="/IssueManagement" className="menu-item">
