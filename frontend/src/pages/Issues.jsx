@@ -225,6 +225,7 @@ const Issues = () => {
                 placeholder="Search"
                 className="search-input"
                 style={{ color: 'black' }}
+                value={searchTerm}
                 onChange={handleSearch}
               />
             </div>
