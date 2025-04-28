@@ -7,20 +7,8 @@
 
 /* Style the logout button to make it more visible */
 .logout-button {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  width: 90%;
-  margin: 10px auto;
-  padding: 12px 15px;
-  background-color: #e4d0cf; 
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s;
+display :flex;
+
 }
 
 .logout-button:hover {
