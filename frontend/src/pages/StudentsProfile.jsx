@@ -115,6 +115,9 @@ const StudentsProfile = () => {
   const handleEditClick = (field) => {
     if (!readOnlyFields.includes(field)) {
       setEditableField(field);
+      toast.info(`Editing ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
+    } else {
+      toast.warning("This field cannot be edited");
     }
   };
 
