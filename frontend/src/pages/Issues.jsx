@@ -166,6 +166,20 @@ const Issues = () => {
         width: '1000px',
       }}
     >
+      {/* Add the ToastContainer here */}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
+
       <SideBar />
       <div className="dashboard-content">
         <NavBar />
