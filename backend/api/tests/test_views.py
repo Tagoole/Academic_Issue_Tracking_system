@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model
 from unittest.mock import patch, MagicMock
 from api.models import Issue, Department, Course_unit, Program, Registration_Token, Verification_code, Email_Notification, CustomUser
 
+
 User = get_user_model()
 
 @pytest.fixture
