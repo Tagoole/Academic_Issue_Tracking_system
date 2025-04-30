@@ -36,7 +36,7 @@ const RegistrarDashboard = () => {
         setLoading(true);
         const accessToken = localStorage.getItem('accessToken');
         API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-        const response = await API.get('api/registrar_issue_management/');
+        const response = await API.get('/api/registrar_issue_management/');
         console.log("API Response:", response.data);
 
         // Ensure data is processed properly
