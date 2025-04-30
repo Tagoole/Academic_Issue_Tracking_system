@@ -342,6 +342,9 @@ const IssueManagement = () => {
   };
 
   const toggleActionsDropdown = (issueId) => {
+    // Debugging: Log the current state and the issue ID being toggled
+    console.log('Toggle dropdown for issue:', issueId, 'Current state:', showActionsDropdown);
+
     if (showActionsDropdown === issueId) {
       setShowActionsDropdown(null);
     } else {
@@ -349,6 +352,9 @@ const IssueManagement = () => {
       setShowLecturersDropdown(false);
       setActiveIssueId(null);
     }
+
+    // Debugging: Log the new state after the toggle
+    console.log('New dropdown state will be:', showActionsDropdown === issueId ? null : issueId);
   };
 
   const formatDate = (dateString) => {
