@@ -6,6 +6,10 @@ import Sidebar2 from './Sidebar2';
 import IssueSummary from './IssueSummary';
 import API from '../api.js';
 
+// Predefined categories and statuses
+const predefinedCategories = ['Missing Marks', 'Wrong Marks', 'Others'];
+const predefinedStatuses = ['Pending', 'In Progress', 'Resolved'];
+
 const Lecturerdashboard = () => {
   const navigate = useNavigate();
   const [selectedIssue, setSelectedIssue] = useState(null);
