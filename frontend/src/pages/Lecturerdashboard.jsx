@@ -5,6 +5,8 @@ import Navbar from './NavBar';
 import Sidebar2 from './Sidebar2';
 import IssueSummary from './IssueSummary';
 import API from '../api.js';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Predefined categories and statuses
 const predefinedCategories = ['Missing Marks', 'Wrong Marks', 'Others'];
