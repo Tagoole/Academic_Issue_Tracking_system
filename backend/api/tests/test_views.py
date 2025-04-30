@@ -430,3 +430,5 @@ class TestOtherAPIs:
         # Check if user was deleted
         with pytest.raises(User.DoesNotExist):
             User.objects.get(id=user.id)
+
+            
