@@ -304,6 +304,7 @@ class TestEmailVerification:
         assert 'Successful' in response.data['Message']
         assert mock_resend.called
 
+
 # Tests for Password Reset
 @pytest.mark.django_db
 class TestPasswordReset:
@@ -432,5 +433,4 @@ class TestOtherAPIs:
             User.objects.get(id=user.id)
 
             
-        
-            
+
