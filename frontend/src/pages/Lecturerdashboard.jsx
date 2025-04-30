@@ -57,6 +57,9 @@ const Lecturerdashboard = () => {
         setAllIssues(response.data);
         setFilteredIssues(response.data);
         setLoading(false);
+
+        // Show success toast when issues are loaded
+        toast.success('Issues loaded successfully');
       } catch (err) {
         console.error('Error fetching lecturer issues:', err);
         
