@@ -263,6 +263,7 @@ class TestRegistrationViews:
         if response.status_code == status.HTTP_201_CREATED:
             assert 'User Created Successfully' in response.data['message']
 
+
 @pytest.mark.django_db
 class TestEmailVerification:
     def test_verify_email(self, api_client, create_user):
