@@ -481,29 +481,41 @@ const IssueManagement = () => {
                         <div className="dropdown-container" ref={dropdownRef}>
                           <button
                             className="action-dropdown-btn"
-                            onClick={() => toggleActionsDropdown(issue.id)}
+                            onClick={(e) => {
+                              e.stopPropagation(); // Prevent event bubbling
+                              toggleActionsDropdown(issue.id);
+                            }}
                           >
-                            :
+                            ⋮ {/* Using a better vertical ellipsis character */}
                           </button>
                           {showActionsDropdown === issue.id && (
                             <div className="actions-dropdown">
                               <button
                                 className="dropdown-item view-details-btn"
-                                onClick={() => handleViewDetails(issue.id)}
+                                onClick={(e) => {
+                                  e.stopPropagation(); // Prevent event bubbling
+                                  handleViewDetails(issue.id);
+                                }}
                               >
                                 View Details
                               </button>
                               {issue.status === 'pending' && (
                                 <>
                                   <button
-                                    className="dropdown-item"
-                                    onClick={() => handleEscalateIssue(issue.id)}
+                                    className="dropdown-item escalate-btn"
+                                    onClick={(e) => {
+                                      e.stopPropagation(); // Prevent event bubbling
+                                      handleEscalateIssue(issue.id);
+                                    }}
                                   >
                                     Escalate Issue
                                   </button>
                                   <button
                                     className="dropdown-item reject-btn"
-                                    onClick={() => handleRejectIssue(issue.id)}
+                                    onClick={(e) => {
+                                      e.stopPropagation(); // Prevent event bubbling
+                                      handleRejectIssue(issue.id);
+                                    }}
                                   >
                                     Reject Issue
                                   </button>
@@ -519,7 +531,10 @@ const IssueManagement = () => {
                                   <button
                                     key={lecturer.id}
                                     className="dropdown-item lecturer-item"
-                                    onClick={() => handleLecturerSelect(lecturer.id)}
+                                    onClick={(e) => {
+                                      e.stopPropagation(); // Prevent event bubbling
+                                      handleLecturerSelect(lecturer.id);
+                                    }}
                                   >
                                     {lecturer.username}
                                   </button>
