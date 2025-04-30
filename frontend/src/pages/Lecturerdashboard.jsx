@@ -227,6 +227,9 @@ const Lecturerdashboard = () => {
   // Handle issue click
   const handleIssueClick = (issue) => {
     setSelectedIssue(issue);
+
+    // Show toast notification for viewing the issue
+    toast.info(`Viewing issue #${issue.id}`);
   };
 
   // Handle status filter change
