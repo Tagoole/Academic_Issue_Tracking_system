@@ -389,7 +389,18 @@ const Lecturerdashboard = () => {
         <div className="content-container">
           <Sidebar2 />
           <main className="main-content">
-            <div className="error-message">{error}</div>
+            <div className="error-message">
+              {error}
+              <button 
+                className="retry-btn"
+                onClick={() => {
+                  toast.info("Retrying...");
+                  window.location.reload();
+                }}
+              >
+                Try Again
+              </button>
+            </div>
           </main>
         </div>
       </div>
