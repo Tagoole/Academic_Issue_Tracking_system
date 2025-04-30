@@ -390,19 +390,6 @@ const Lecturerdashboard = () => {
           <div className="dashboard-header">
             <h1>Issue Dashboard</h1>
             <div className="filter-controls">
-              <div className="select-wrapper"> 
-                <select 
-                  className="status-filter" 
-                  value={statusFilter} 
-                  onChange={handleStatusFilterChange}
-                >
-                  <option value="all">All Statuses</option>
-                  {uniqueStatuses.map(status => (
-                    <option key={status} value={status}>{status}</option>
-                  ))}
-                </select>
-                <span className="dropdown-arrow"></span>
-              </div>
               <div className="select-wrapper">
                 <select 
                   className="category-filter" 
@@ -412,6 +399,20 @@ const Lecturerdashboard = () => {
                   <option value="all">All Categories</option>
                   {uniqueCategories.map(category => (
                     <option key={category} value={category}>{category}</option>
+                  ))}
+                </select>
+                <span className="dropdown-arrow"></span>
+              </div>
+
+              <div className="select-wrapper">
+                <select 
+                  className="status-filter" 
+                  value={statusFilter} 
+                  onChange={handleStatusFilterChange}
+                >
+                  <option value="all">All Statuses</option>
+                  {uniqueStatuses.map(status => (
+                    <option key={status} value={status}>{status}</option>
                   ))}
                 </select>
                 <span className="dropdown-arrow"></span>
