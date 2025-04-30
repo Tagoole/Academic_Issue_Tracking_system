@@ -454,49 +454,92 @@ const IssueManagement = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredIssues.length > 0 ? filteredIssues.map((issue) => (
-                  <tr key={issue.id} className="issue-row">
-                    <td>{issue.id}</td>
-                    <td>{issue.student?.username || 'N/A'}</td>
-                    <td>{issue.issue_type || 'N/A'}</td>
-                    <td>{issue.lecturer?.username || 'Not Assigned'}</td>
-                    <td>{issue.year_of_study?.replace('_', ' ') || 'N/A'}</td>
-                    <td>{formatDate(issue.created_at)}</td>
-                    <td>{formatDate(issue.updated_at)}</td>
-                    <td><span className={`status-pill status-${issue.status}`}>
-                      {issue.status === 'pending' ? 'Pending' :
-                        issue.status === 'in_progress' ? 'In-progress' :
-                          issue.status === 'resolved' ? 'Resolved' :
-                            issue.status === 'rejected' ? 'Rejected' : issue.status}
-                    </span></td>
-                    <td className="action-column" ref={dropdownRef}>
-                      <div className="dropdown-container">
-                        <button className="action-dropdown-btn" onClick={() => toggleActionsDropdown(issue.id)}>:</button>
-                        {showActionsDropdown === issue.id && (
-                          <div className="actions-dropdown">
-                            <button className="dropdown-item view-details-btn" onClick={() => handleViewDetails(issue.id)}>View Details</button>
-                            {issue.status === 'pending' && (
-                              <>
-                                <button className="dropdown-item" onClick={() => handleEscalateIssue(issue.id)}>Escalate Issue</button>
-                                <button className="dropdown-item reject-btn" onClick={() => handleRejectIssue(issue.id)}>Reject Issue</button>
-                              </>
-                            )}
-                          </div>
-                        )}
-                        {showLecturersDropdown && activeIssueId === issue.id && (
-                          <div className="lecturers-dropdown">
-                            <div className="dropdown-header">Select Lecturer:</div>
-                            {lecturers.length > 0 ? lecturers.map((lecturer) => (
-                              <button key={lecturer.id} className="dropdown-item lecturer-item" onClick={() => handleLecturerSelect(lecturer.id)}>{lecturer.username}</button>
-                            )) : <div className="no-lecturers">No lecturers available</div>}
-                          </div>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                )) : (
+                {filteredIssues.length > 0 ? (
+                  filteredIssues.map((issue) => (
+                    <tr key={issue.id} className="issue-row">
+                      <td>{issue.id || 'N/A'}</td>
+                      <td>{issue.student?.username || 'N/A'}</td>
+                      <td>{issue.issue_type || 'N/A'}</td>
+                      <td>{issue.lecturer?.username || 'Not Assigned'}</td>
+                      <td>{issue.year_of_study?.replace('_', ' ') || 'N/A'}</td>
+                      <td>{formatDate(issue.created_at)}</td>
+                      <td>{formatDate(issue.updated_at)}</td>
+                      <td>
+                        <span className={`status-pill status-${issue.status}`}>
+                          {issue.status === 'pending'
+                            ? 'Pending'
+                            : issue.status === 'in_progress'
+                            ? 'In-progress'
+                            : issue.status === 'resolved'
+                            ? 'Resolved'
+                            : issue.status === 'rejected'
+                            ? 'Rejected'
+                            : issue.status}
+                        </span>
+                      </td>
+                      <td className="action-column">
+                        <div className="dropdown-container" ref={dropdownRef}>
+                          <button
+                            className="action-dropdown-btn"
+                            onClick={() => toggleActionsDropdown(issue.id)}
+                          >
+                            :
+                          </button>
+                          {showActionsDropdown === issue.id && (
+                            <div className="actions-dropdown">
+                              <button
+                                className="dropdown-item view-details-btn"
+                                onClick={() => handleViewDetails(issue.id)}
+                              >
+                                View Details
+                              </button>
+                              {issue.status === 'pending' && (
+                                <>
+                                  <button
+                                    className="dropdown-item"
+                                    onClick={() => handleEscalateIssue(issue.id)}
+                                  >
+                                    Escalate Issue
+                                  </button>
+                                  <button
+                                    className="dropdown-item reject-btn"
+                                    onClick={() => handleRejectIssue(issue.id)}
+                                  >
+                                    Reject Issue
+                                  </button>
+                                </>
+                              )}
+                            </div>
+                          )}
+                          {showLecturersDropdown && activeIssueId === issue.id && (
+                            <div className="lecturers-dropdown">
+                              <div className="dropdown-header">Select Lecturer:</div>
+                              {lecturers.length > 0 ? (
+                                lecturers.map((lecturer) => (
+                                  <button
+                                    key={lecturer.id}
+                                    className="dropdown-item lecturer-item"
+                                    onClick={() => handleLecturerSelect(lecturer.id)}
+                                  >
+                                    {lecturer.username}
+                                  </button>
+                                ))
+                              ) : (
+                                <div className="no-lecturers">No lecturers available</div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
                   <tr>
-                    <td colSpan="9" className="no-issues-message">{searchTerm ? 'No issues match your search' : `No ${issueStatus} issues found`}</td>
+                    <td colSpan="9" className="no-issues-message">
+                      {searchTerm
+                        ? 'No issues match your search'
+                        : `No ${issueStatus} issues found`}
+                    </td>
                   </tr>
                 )}
               </tbody>
