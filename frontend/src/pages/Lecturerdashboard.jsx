@@ -99,6 +99,9 @@ const Lecturerdashboard = () => {
         } else {
           setError('Failed to load issues. Please try again later.');
           setLoading(false);
+
+          // Show error toast when issues fail to load
+          toast.error('Failed to load issues. Please try again later.');
         }
       }
     };
