@@ -405,7 +405,7 @@ class TestOtherAPIs:
         response = api_client.get(url)  # Sends a GET request to retrieve the list of registrars
         
         assert response.status_code == status.HTTP_200_OK  # Asserts that the response status is 200 (OK)
-        assert len(response.data) == 2
+        assert len(response.data) == 2  # Asserts that the response contains exactly 2 registrars
     
     def test_get_lecturers(self, api_client, create_user):
         create_user(username='lecturer1', role='lecturer')
