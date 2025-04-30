@@ -167,6 +167,8 @@
 .issues-data-container {
   margin-top: 380px;
   margin-right: 1000px;
+  background-color: hsl(149, 92%, 43%);
+  width:600px;
 }
 
 .responsive-table-wrapper {
@@ -174,9 +176,10 @@
 }
 
 table {
-  width: 100%;
+  width: 600px;
   border-collapse: collapse;
   margin-top: 10px;
+
 }
 
 thead {

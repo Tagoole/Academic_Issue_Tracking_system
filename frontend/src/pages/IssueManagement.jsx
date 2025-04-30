@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import NavBar from './NavBar';
-import SideBar from './Sidebar';
+import Navbar from './NavBar';
+import Sidebar from './Sidebar';
 import './IssueManagement.css';
 import API from '../api.js';
 
@@ -387,9 +387,9 @@ const IssueManagement = () => {
   if (loading) {
     return (
       <div className="app-container">
-        <NavBar />
+        <Navbar />
         <div className="content-wrapper">
-          <SideBar />
+          <Sidebar />
           <div className="issue-content">
             <div className="loading-message">Loading issues...</div>
           </div>
@@ -401,9 +401,9 @@ const IssueManagement = () => {
   if (error) {
     return (
       <div className="app-container">
-        <NavBar />
+        <Navbar />
         <div className="content-wrapper">
-          <SideBar />
+          <Sidebar />
           <div className="issue-content">
             <div className="error-message">{error}</div>
           </div>
@@ -414,9 +414,9 @@ const IssueManagement = () => {
 
   return (
     <div className="app-container">
-      <NavBar />
+      <Navbar />
       <div className="content-wrapper">
-        <SideBar />
+        <Sidebar />
         <div className="issue-content">
           <h1 className="issues-title">Issues <span className="subtitle">(Kindly click on the issue to open it.)</span></h1>
           <div className="dashboard-cards">
@@ -427,7 +427,7 @@ const IssueManagement = () => {
           </div>
           <div className="issues-tabs">
             <button className={`issues-tab ${issueStatus === 'pending' ? 'active' : ''}`} onClick={() => handleStatusChange('pending')}>Pending</button>
-            <button className={`issues-tab ${issueStatus === ' Oregonin_progress' ? 'active' : ''}`} onClick={() => handleStatusChange('in_progress')}>In-progress</button>
+            <button className={`issues-tab ${issueStatus === 'in_progress' ? 'active' : ''}`} onClick={() => handleStatusChange('in_progress')}>In-progress</button>
             <button className={`issues-tab ${issueStatus === 'resolved' ? 'active' : ''}`} onClick={() => handleStatusChange('resolved')}>Resolved</button>
             <button className={`issues-tab ${issueStatus === 'rejected' ? 'active' : ''}`} onClick={() => handleStatusChange('rejected')}>Rejected</button>
           </div>
@@ -532,7 +532,7 @@ const IssueManagement = () => {
                   </div>
                   <div className="issue-detail-row">
                     <span className="detail-label">Assigned To:</span>
-                    <div className="detailvans-input">
+                    <div className="detail-input">
                       <select name="lecturer" value={editingIssue.lecturer} onChange={handleInputChange} className="form-select">
                         <option value="">Select Lecturer</option>
                         {lecturers.map(lecturer => (

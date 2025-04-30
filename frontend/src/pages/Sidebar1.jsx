@@ -9,13 +9,13 @@ function Sidebar1() {
   // Function to handle logout
   const handleLogout = (e) => {
     e.preventDefault(); // Prevent default link behavior
-    
+
     // Clear all items from localStorage
     localStorage.clear();
-    
+
     // Log for debugging
     console.log('All localStorage items cleared for logout');
-    
+
     // Navigate to home/login page
     navigate('/');
   };
@@ -25,7 +25,7 @@ function Sidebar1() {
       <div className="university-logo-sidebar">
         <img src={makerereLogo} alt="Makerere University Logo" className="logo-sidebar" />
       </div>
-      
+
       {/* Student Dashboard Link */}
       <Link to="/studentdashboard" className="menu-item">
         Student Dashboard
@@ -33,7 +33,7 @@ function Sidebar1() {
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
       </Link>
-      
+
       {/* Issues Link */}
       <Link to="/issues" className="menu-item">
         Issues
@@ -41,7 +41,7 @@ function Sidebar1() {
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
       </Link>
-      
+
       {/* Profile Link */}
       <Link to="/StudentsProfile" className="menu-item">
         Student Profile
@@ -49,7 +49,7 @@ function Sidebar1() {
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
       </Link>
-      
+
       {/* Settings Link */}
       <Link to="/settings" className="menu-item">
         Settings
@@ -57,7 +57,7 @@ function Sidebar1() {
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
       </Link>
-      
+
       {/* Help and Support Link */}
       <Link to="/help" className="menu-item">
         Help and Support
@@ -65,7 +65,7 @@ function Sidebar1() {
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
       </Link>
-      
+
       {/* Logout Link - Modified to use onClick handler */}
       <a href="/" onClick={handleLogout} className="menu-item delete-account">
         Logout

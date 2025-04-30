@@ -1,65 +1,48 @@
-.sidebar-container {
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 0 10px 10px 0;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-  position: fixed;
-  left: 0;
+.sidebar {
   width: 250px;
-  height: 100vh;
-  z-index: 90;
-  padding-top: 80px;
+  height: 100px;
+  background-color: transparent;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  padding: 20px 0;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  border-radius: 5%;
 }
 
-.university-logo-sidebar {
+.sidebar-item {
   display: flex;
-  justify-content: center;
-  width: 100%;
-  padding-bottom: 30px;
-}
-
-.logo-sidebar {
-  width: 120px;
-  height: auto;
-  object-fit: contain;
-}
-
-.menu-item {
-  color: white;
-  padding: 12px 20px;
-  text-decoration: none;
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  width: 100%;
-  transition: background 0.2s ease;
-  font-size: 16px;
+  padding: 15px 25px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.menu-item:hover {
-  background: rgba(255, 255, 255, 0.1);
+.sidebar-item:hover {
+  background-color: #f0f0f0;
 }
 
-.menu-item.active {
-  font-weight: bold;
-  background: rgba(255, 255, 255, 0.15);
+.sidebar-item i {
+  margin-right: 15px;
+  width: 30px;
+  height: 30px;
+  background-size: contain;
+  background-repeat: no-repeat;
 }
 
-.arrow-icon {
-  fill: white;
-  width: 20px;
+/* General Sidebar Icon Styling */
+.sidebar-icon {
+  width: 35px; 
+  height: 30px; 
+  margin-right: 10px;
+}
+
+
+.sidebar-item .sidebar-link img[alt="Help Icon"] {
+  width: 20px; 
   height: 20px;
 }
 
-.delete-account {
-  color: #ff4d4f;
-}
-
-.delete-account:hover {
-  background: rgba(255, 77, 79, 0.2);
+.logout {
+  margin-top: auto;
+  border-top: 1px solid #e0e0e0;
 }

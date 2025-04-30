@@ -21,19 +21,8 @@
   margin-bottom: 50px;
 }
 
-/* Sidebar positioning */
-.sidebar {
-  width: 240px;
-  min-width: 240px;
-  height: calc(100vh - 60px); /* Adjust based on your navbar height */
-  background-color: #f8f9fa;
-  border-right: 1px solid #e9ecef;
-  position: fixed;
-  left: 0;
-  top: 60px; /* Adjust based on your navbar height */
-  overflow-y: auto;
-  z-index: 100;
-}
+
+
 
 /* Main content area */
 .dashboard-content {
