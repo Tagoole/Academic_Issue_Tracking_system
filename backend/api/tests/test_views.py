@@ -402,7 +402,7 @@ class TestOtherAPIs:
         
         url = reverse('get_registrars')
         
-        response = api_client.get(url)
+        response = api_client.get(url)  # Sends a GET request to retrieve the list of registrars
         
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data) == 2
