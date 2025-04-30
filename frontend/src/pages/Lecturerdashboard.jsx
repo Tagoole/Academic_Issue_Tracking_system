@@ -249,8 +249,14 @@ const Lecturerdashboard = () => {
   }, [selectedIssue]);
 
   // Get unique categories and statuses for filter dropdowns
-  const uniqueCategories = allIssues.length > 0 ? [...new Set(allIssues.map(issue => issue.category))] : [];
-  const uniqueStatuses = allIssues.length > 0 ? [...new Set(allIssues.map(issue => issue.status))] : [];
+  const getUniqueFilterOptions = (predefinedOptions, apiData, field) => {
+    const uniqueFromAPI = apiData.length > 0 ? [...new Set(apiData.map(item => item[field]))] : [];
+    const combinedOptions = [...new Set([...predefinedOptions, ...uniqueFromAPI])];
+    return combinedOptions;
+  };
+
+  const uniqueCategories = getUniqueFilterOptions(predefinedCategories, allIssues, 'category');
+  const uniqueStatuses = getUniqueFilterOptions(predefinedStatuses, allIssues, 'status');
 
   // Handler to close the issue summary from within
   const handleCloseSummary = () => {
