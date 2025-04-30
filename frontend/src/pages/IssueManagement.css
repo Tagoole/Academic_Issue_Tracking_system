@@ -1,0 +1,309 @@
+/* General container styling */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  font-family: Arial, sans-serif;
+  background-color: #f5f7fa;
+}
+
+/* Content wrapper with sidebar and main content */
+.content-wrapper {
+  display: flex;
+  flex: 1;
+}
+
+/* Sidebar styles */
+.sidebar {
+  width: 250px;
+  background-color: #ffffff;
+  border-right: 1px solid #e1e4e8;
+}
+
+/* Main content area */
+.issue-content {
+  flex: 1;
+  width:100px;
+  padding: 24px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+}
+
+/* Dashboard cards */
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.dashboard-card {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.dashboard-card h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  color: #333;
+}
+
+.card-count {
+  font-size: 24px;
+  font-weight: bold;
+  color: #2563eb;
+  margin: 8px 0;
+}
+
+.dashboard-card p {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+}
+
+/* Issues container */
+.issues-container {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.issues-title {
+  margin: 0 0 16px;
+  font-size: 20px;
+  color: #333;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #666;
+  font-weight: normal;
+}
+
+/* Status tabs */
+.status-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.status-tab {
+  padding: 10px 20px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  background-color: #e5e7eb;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.status-tab.active {
+  background-color: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+}
+
+.status-tab:hover {
+  background-color: #d1d5db;
+  color: #4c75f2;
+}
+
+/* Search and filter */
+.search-filter-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.search-container {
+  position: relative;
+  flex: 1;
+  max-width: 300px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px 12px 8px 36px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>') no-repeat;
+  background-size: contain;
+}
+
+.filter-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.filter-icon {
+  font-size: 12px;
+}
+
+/* Table styling */
+.issues-data-container {
+  margin-top: 380px;
+  margin-right: 1000px;
+  background-color: hsl(149, 92%, 43%);
+  width:600px
+}
+
+.responsive-table-wrapper {
+  overflow: auto;
+}
+
+table {
+  width: 600px;
+  border-collapse: collapse;
+  margin-top: 10px;
+
+}
+
+thead {
+  background-color: #f8fafc;
+}
+
+th, td {
+  text-align: left;
+  padding: 12px;
+  font-size: 14px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+th {
+  font-weight: 600;
+  color: #333;
+  text-transform: uppercase;
+}
+
+td {
+  color: #555;
+}
+
+.issue-row:hover {
+  background-color: #f8fafc;
+  cursor: pointer;
+}
+
+/* Status badges */
+.status-badge {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.status-badge.pending {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.status-badge.in_progress {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.status-badge.resolved {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+/* Action buttons and dropdown */
+.action-btn {
+  padding: 8px 12px;
+  background-color: #007bff;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.action-btn:hover {
+  background-color: #0056b3;
+}
+
+.action-column {
+  position: relative;
+}
+
+.dropdown-container {
+  position: relative;
+}
+
+.action-dropdown-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.actions-dropdown{
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #ffffff;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+/* Status badge styles */
+.status-badge.rejected {
+  background-color: #ef4444;
+  color: white;
+}
+
+/* Status tab styles */
+.status-tab[data-status="rejected"] {
+  color: #ef4444;
+  border-color: #ef4444;
+}
+
+.status-tab[data-status="rejected"].active {
+  background-color: #ef4444;
+  color: white;
+}
+
+/* Rejection textarea */
+.rejection-reason {
+  margin-top: 20px;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 20px;
+}
+
+.rejection-reason h3 {
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+
+
