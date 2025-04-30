@@ -390,7 +390,7 @@ class TestOtherAPIs:
         api_client.force_authenticate(user=user)
         url = reverse('user_email_notifications')
         
-        response = api_client.get(url)
+        response = api_client.get(url)  # Sends a GET request to retrieve user email notifications
         
         assert response.status_code == status.HTTP_200_OK
         assert response.data['number'] == 1
@@ -434,5 +434,5 @@ class TestOtherAPIs:
         with pytest.raises(User.DoesNotExist):
             User.objects.get(id=user.id)
 
-            
+
 
