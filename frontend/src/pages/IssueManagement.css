@@ -1,0 +1,279 @@
+/* General container styling */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  font-family: Arial, sans-serif;
+  background-color: #f5f7fa;
+}
+
+/* Content wrapper with sidebar and main content */
+.content-wrapper {
+  display: flex;
+  flex: 1;
+}
+
+/* Sidebar styles */
+.sidebar {
+  width: 250px;
+  background-color: #ffffff;
+  border-right: 1px solid #e1e4e8;
+}
+
+/* Main content area */
+.issue-content {
+  flex: 1;
+  width:1400px;
+  padding: 24px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+}
+
+/* Dashboard cards */
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.dashboard-card {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.dashboard-card h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  color: #333;
+}
+
+.card-count {
+  font-size: 24px;
+  font-weight: bold;
+  color: #2563eb;
+  margin: 8px 0;
+}
+
+.dashboard-card p {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+}
+
+/* Issues container */
+.issues-container {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.issues-title {
+  margin: 0 0 16px;
+  font-size: 20px;
+  color: #333;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #666;
+  font-weight: normal;
+}
+
+/* Status tabs */
+.status-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.status-tab {
+  padding: 10px 20px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  background-color: #e5e7eb;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.status-tab.active {
+  background-color: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+}
+
+.status-tab:hover {
+  background-color: #d1d5db;
+  color: #4c75f2;
+}
+
+/* Search and filter */
+.search-filter-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.search-container {
+  position: relative;
+  flex: 1;
+  max-width: 300px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px 12px 8px 36px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>') no-repeat;
+  background-size: contain;
+}
+
+.filter-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.filter-icon {
+  font-size: 12px;
+}
+
+/* Table styling */
+.issues-data-container {
+  margin-top: 380px;
+  margin-right: 1000px;
+  background-color: hsl(149, 92%, 43%);
+  width:600px
+}
+
+.responsive-table-wrapper {
+  overflow-x: auto;
+  margin-top: 20px;
+}
+
+.issues-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.issues-table th,
+.issues-table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+.issues-table th {
+  background-color: #f4f4f4;
+}
+
+.status-pill {
+  padding: 5px 10px;
+  border-radius: 15px;
+  color: #fff;
+  font-size: 0.9em;
+  text-transform: capitalize;
+}
+
+.status-pending {
+  background-color: #f0ad4e;
+}
+
+.status-in_progress {
+  background-color: #5bc0de;
+}
+
+.status-resolved {
+  background-color: #5cb85c;
+}
+
+.status-rejected {
+  background-color: #d9534f;
+}
+
+.action-column {
+  position: relative;
+  min-width: 80px; /* Ensure enough width for dropdown */
+}
+
+.dropdown-container {
+  position: relative;
+  display: inline-block;
+}
+
+.action-dropdown-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 5px 10px;
+}
+
+.actions-dropdown, .lecturers-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  min-width: 150px;
+  z-index: 1000; /* Ensure it appears above other elements */
+}
+
+.dropdown-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background-color: #f5f5f5;
+}
+
+.dropdown-header {
+  padding: 8px 12px;
+  font-weight: bold;
+  border-bottom: 1px solid #eee;
+}
+
+.escalate-btn:hover {
+  color: #0056b3;
+}
+
+.reject-btn:hover {
+  color: #dc3545;
+}
+
+
+
