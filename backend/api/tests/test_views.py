@@ -204,6 +204,7 @@ class TestModelViewSets:
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data) >= 1
 
+
 # Tests for Registration views
 @pytest.mark.django_db
 class TestRegistrationViews:
