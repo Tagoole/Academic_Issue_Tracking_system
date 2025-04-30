@@ -17,7 +17,7 @@ const IssueManagement = () => {
   const [showLecturersDropdown, setShowLecturersDropdown] = useState(false);
   const [activeIssueId, setActiveIssueId] = useState(null);
   const [showActionsDropdown, setShowActionsDropdown] = useState(null);
-  const dropdownRef = useRef(null);
+  const dropdownRefs = useRef({});  // Use an object to store refs for each dropdown
   const [isSearching, setIsSearching] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState(null);
@@ -341,11 +341,16 @@ const IssueManagement = () => {
     }
   };
 
-  const toggleActionsDropdown = (issueId) => {
-    if (showActionsDropdown === issueId) {
-      setShowActionsDropdown(null);
-    } else {
-      setShowActionsDropdown(issueId);
+  const toggleActionsDropdown = (issueId, event) => {
+    // Stop event propagation to prevent immediate closing
+    if (event) {
+      event.stopPropagation();
+    }
+    
+    setShowActionsDropdown(prevState => prevState === issueId ? null : issueId);
+    
+    // Close any open lecturers dropdown
+    if (showLecturersDropdown) {
       setShowLecturersDropdown(false);
       setActiveIssueId(null);
     }
@@ -365,11 +370,23 @@ const IssueManagement = () => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      // Check if clicked outside any dropdown
+      let clickedOutside = true;
+      
+      // Check each dropdown ref
+      Object.keys(dropdownRefs.current).forEach(key => {
+        const ref = dropdownRefs.current[key];
+        if (ref && ref.contains(event.target)) {
+          clickedOutside = false;
+        }
+      });
+      
+      if (clickedOutside) {
         setShowActionsDropdown(null);
         setShowLecturersDropdown(false);
       }
     };
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
@@ -382,6 +399,13 @@ const IssueManagement = () => {
   const handleClearSearch = () => {
     setSearchTerm('');
     setFilteredIssues(issues.filter(issue => issue.status === issueStatus));
+  };
+
+  // Add a ref for each dropdown when it's rendered
+  const addDropdownRef = (id, element) => {
+    if (element) {
+      dropdownRefs.current[id] = element;
+    }
   };
 
   if (loading) {
@@ -454,49 +478,111 @@ const IssueManagement = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredIssues.length > 0 ? filteredIssues.map((issue) => (
-                  <tr key={issue.id} className="issue-row">
-                    <td>{issue.id}</td>
-                    <td>{issue.student?.username || 'N/A'}</td>
-                    <td>{issue.issue_type || 'N/A'}</td>
-                    <td>{issue.lecturer?.username || 'Not Assigned'}</td>
-                    <td>{issue.year_of_study?.replace('_', ' ') || 'N/A'}</td>
-                    <td>{formatDate(issue.created_at)}</td>
-                    <td>{formatDate(issue.updated_at)}</td>
-                    <td><span className={`status-pill status-${issue.status}`}>
-                      {issue.status === 'pending' ? 'Pending' :
-                        issue.status === 'in_progress' ? 'In-progress' :
-                          issue.status === 'resolved' ? 'Resolved' :
-                            issue.status === 'rejected' ? 'Rejected' : issue.status}
-                    </span></td>
-                    <td className="action-column" ref={dropdownRef}>
-                      <div className="dropdown-container">
-                        <button className="action-dropdown-btn" onClick={() => toggleActionsDropdown(issue.id)}>:</button>
-                        {showActionsDropdown === issue.id && (
-                          <div className="actions-dropdown">
-                            <button className="dropdown-item view-details-btn" onClick={() => handleViewDetails(issue.id)}>View Details</button>
-                            {issue.status === 'pending' && (
-                              <>
-                                <button className="dropdown-item" onClick={() => handleEscalateIssue(issue.id)}>Escalate Issue</button>
-                                <button className="dropdown-item reject-btn" onClick={() => handleRejectIssue(issue.id)}>Reject Issue</button>
-                              </>
-                            )}
-                          </div>
-                        )}
-                        {showLecturersDropdown && activeIssueId === issue.id && (
-                          <div className="lecturers-dropdown">
-                            <div className="dropdown-header">Select Lecturer:</div>
-                            {lecturers.length > 0 ? lecturers.map((lecturer) => (
-                              <button key={lecturer.id} className="dropdown-item lecturer-item" onClick={() => handleLecturerSelect(lecturer.id)}>{lecturer.username}</button>
-                            )) : <div className="no-lecturers">No lecturers available</div>}
-                          </div>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                )) : (
+                {filteredIssues.length > 0 ? (
+                  filteredIssues.map((issue) => (
+                    <tr 
+                      key={issue.id} 
+                      className="issue-row"
+                      onClick={() => handleViewDetails(issue.id)}
+                    >
+                      <td>{issue.id || 'N/A'}</td>
+                      <td>{issue.student?.username || 'N/A'}</td>
+                      <td>{issue.issue_type || 'N/A'}</td>
+                      <td>{issue.lecturer?.username || 'Not Assigned'}</td>
+                      <td>{issue.year_of_study?.replace('_', ' ') || 'N/A'}</td>
+                      <td>{formatDate(issue.created_at)}</td>
+                      <td>{formatDate(issue.updated_at)}</td>
+                      <td>
+                        <span className={`status-pill status-${issue.status}`}>
+                          {issue.status === 'pending'
+                            ? 'Pending'
+                            : issue.status === 'in_progress'
+                            ? 'In-progress'
+                            : issue.status === 'resolved'
+                            ? 'Resolved'
+                            : issue.status === 'rejected'
+                            ? 'Rejected'
+                            : issue.status}
+                        </span>
+                      </td>
+                      <td className="action-column" onClick={(e) => e.stopPropagation()}>
+                        <div 
+                          className="dropdown-container" 
+                          ref={(el) => addDropdownRef(`dropdown-${issue.id}`, el)}
+                        >
+                          <button
+                            className="action-dropdown-btn"
+                            onClick={(e) => toggleActionsDropdown(issue.id, e)}
+                          >
+                            ⋮
+                          </button>
+                          {showActionsDropdown === issue.id && (
+                            <div className="actions-dropdown">
+                              <button
+                                className="dropdown-item view-details-btn"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleViewDetails(issue.id);
+                                }}
+                              >
+                                View Details
+                              </button>
+                              {issue.status === 'pending' && (
+                                <>
+                                  <button
+                                    className="dropdown-item escalate-btn"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleEscalateIssue(issue.id);
+                                    }}
+                                  >
+                                    Escalate Issue
+                                  </button>
+                                  <button
+                                    className="dropdown-item reject-btn"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleRejectIssue(issue.id);
+                                    }}
+                                  >
+                                    Reject Issue
+                                  </button>
+                                </>
+                              )}
+                            </div>
+                          )}
+                          {showLecturersDropdown && activeIssueId === issue.id && (
+                            <div className="lecturers-dropdown">
+                              <div className="dropdown-header">Select Lecturer:</div>
+                              {lecturers.length > 0 ? (
+                                lecturers.map((lecturer) => (
+                                  <button
+                                    key={lecturer.id}
+                                    className="dropdown-item lecturer-item"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleLecturerSelect(lecturer.id);
+                                    }}
+                                  >
+                                    {lecturer.username}
+                                  </button>
+                                ))
+                              ) : (
+                                <div className="no-lecturers">No lecturers available</div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
                   <tr>
-                    <td colSpan="9" className="no-issues-message">{searchTerm ? 'No issues match your search' : `No ${issueStatus} issues found`}</td>
+                    <td colSpan="9" className="no-issues-message">
+                      {searchTerm
+                        ? 'No issues match your search'
+                        : `No ${issueStatus} issues found`}
+                    </td>
                   </tr>
                 )}
               </tbody>

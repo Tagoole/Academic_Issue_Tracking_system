@@ -18,7 +18,7 @@
   display: flex;
   flex: 1;
   position: relative;
-  margin-bottom: 50px;
+  margin-bottom: 50px; /* Space for footer */
 }
 
 

@@ -15,12 +15,12 @@ const RegistrarDashboard = () => {
   const [pendingCount, setPendingCount] = useState(0);
   const [inProgressCount, setInProgressCount] = useState(0);
   const [resolvedCount, setResolvedCount] = useState(0);
+  const [rejectedCount, setRejectedCount] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
-  const [activeFilter, setActiveFilter] = useState('all'); // Unified filter/tab state
+  const [activeFilter, setActiveFilter] = useState('all');
 
-  // Fetch issues when component mounts
   useEffect(() => {
     const checkAuth = () => {
       const accessToken = localStorage.getItem('accessToken');
@@ -36,15 +36,13 @@ const RegistrarDashboard = () => {
         setLoading(true);
         const accessToken = localStorage.getItem('accessToken');
         API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-        const response = await API.get('api/registrar_issue_management/');
+        const response = await API.get('/api/registrar_issue_management/');
         console.log("API Response:", response.data);
 
-        // Ensure data is processed properly
         const issuesData = Array.isArray(response.data) ? response.data : [];
         setIssues(issuesData);
         setFilteredIssues(issuesData);
 
-        // Count different issue types
         updateCounts(issuesData);
         setLoading(false);
       } catch (err) {
@@ -88,42 +86,37 @@ const RegistrarDashboard = () => {
     }
   }, [navigate]);
 
-  // Function to update counts
   const updateCounts = (data) => {
     const pending = data.filter(issue => issue.status === 'pending').length;
     const inProgress = data.filter(issue => issue.status === 'in_progress').length;
     const resolved = data.filter(issue => issue.status === 'resolved').length;
+    const rejected = data.filter(issue => issue.status === 'rejected').length;
 
     setPendingCount(pending);
     setInProgressCount(inProgress);
     setResolvedCount(resolved);
+    setRejectedCount(rejected);
   };
 
-  // Handle search functionality
   useEffect(() => {
-    // Debounce search requests by using a timer
     const debounceTimer = setTimeout(() => {
       if (searchTerm.trim() === '') {
-        // Reset to show all issues, but apply any active filter
         applyFilter(activeFilter, issues);
       } else {
         handleSearch();
       }
-    }, 500); // 500ms delay
+    }, 500);
 
     return () => clearTimeout(debounceTimer);
   }, [searchTerm, activeFilter, issues]);
 
-  // Function to handle filtering
   const applyFilter = (filter, dataToFilter) => {
     let filtered = [...dataToFilter];
     
-    // Apply status filter if not "all"
     if (filter !== 'all') {
       filtered = filtered.filter(issue => issue.status === filter);
     }
     
-    // Also apply any search term if present
     if (searchTerm.trim() !== '') {
       filtered = filtered.filter(issue =>
         issue.id?.toString().includes(searchTerm) ||
@@ -137,7 +130,6 @@ const RegistrarDashboard = () => {
     }
     
     setFilteredIssues(filtered);
-    // Don't update counts here to keep the cards showing total counts
   };
 
   const handleFilterClick = (filter) => {
@@ -153,14 +145,11 @@ const RegistrarDashboard = () => {
 
     try {
       setIsSearching(true);
-      // Use the filter_results endpoint for server-side filtering
       const response = await API.get(`api/registrar_issue_management/filter_results/?status=${searchTerm}`);
       
       if (response.data && Array.isArray(response.data)) {
-        // Apply active filter to search results
         applyFilter(activeFilter, response.data);
       } else {
-        // Fallback to client-side filtering
         const filtered = issues.filter(issue =>
           issue.id?.toString().includes(searchTerm) ||
           issue.status?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -174,7 +163,6 @@ const RegistrarDashboard = () => {
       }
     } catch (err) {
       console.error('Error searching issues:', err);
-      // Fallback to client-side filtering
       const filtered = issues.filter(issue =>
         issue.id?.toString().includes(searchTerm) ||
         issue.status?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -199,26 +187,22 @@ const RegistrarDashboard = () => {
     handleSearch();
   };
 
-  // Format date function
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
   };
 
-  // Open issue details modal
   const openIssueDetails = (issue) => {
     setSelectedIssue(issue);
     setShowModal(true);
   };
 
-  // Close modal
   const closeModal = () => {
     setShowModal(false);
     setSelectedIssue(null);
   };
 
-  // Dashboard/Stat Card Component
   const StatCard = ({ title, count, description, onClick, active }) => {
     return (
       <div 
@@ -233,13 +217,13 @@ const RegistrarDashboard = () => {
     );
   };
 
-  // Tab Navigation Component
   const TabNavigation = () => {
     const tabs = [
       { id: 'all', label: 'All' },
       { id: 'pending', label: 'Pending' },
       { id: 'in_progress', label: 'In-progress' },
-      { id: 'resolved', label: 'Resolved' }
+      { id: 'resolved', label: 'Resolved' },
+      { id: 'rejected', label: 'Rejected' }
     ];
     
     return (
@@ -257,7 +241,6 @@ const RegistrarDashboard = () => {
     );
   };
 
-  // Filter Dropdown Component (alternative to TabNavigation)
   const FilterDropdown = () => {
     const [isOpen, setIsOpen] = useState(false);
     
@@ -270,7 +253,8 @@ const RegistrarDashboard = () => {
           <span>Filter: {activeFilter === 'all' ? 'All' : 
                      activeFilter === 'pending' ? 'Pending' : 
                      activeFilter === 'in_progress' ? 'In Progress' : 
-                     activeFilter === 'resolved' ? 'Resolved' : 'All'}</span>
+                     activeFilter === 'resolved' ? 'Resolved' : 
+                     activeFilter === 'rejected' ? 'Rejected' : 'All'}</span>
           <span className="filter-icon">▼</span>
         </button>
         
@@ -312,13 +296,21 @@ const RegistrarDashboard = () => {
             >
               Resolved
             </button>
+            <button 
+              className={`filter-option ${activeFilter === 'rejected' ? 'active' : ''}`}
+              onClick={() => {
+                handleFilterClick('rejected');
+                setIsOpen(false);
+              }}
+            >
+              Rejected
+            </button>
           </div>
         )}
       </div>
     );
   };
 
-  // Search and Filter Bar Component
   const SearchFilterBar = () => (
     <div className="search-filter-row">
       <form onSubmit={handleSearchSubmit} className="search-container">
@@ -335,12 +327,10 @@ const RegistrarDashboard = () => {
       </form>
       <div className="filter-controls">
         <FilterDropdown />
-        
       </div>
     </div>
   );
 
-  // Issue Table Component
   const IssueTable = () => (
     <div className="table-container">
       {isSearching ? (
@@ -368,7 +358,8 @@ const RegistrarDashboard = () => {
                     <span className={`status-tag status-${issue.status}`}>
                       {issue.status === 'pending' ? 'Pending' :
                        issue.status === 'in_progress' ? 'In-progress' :
-                       issue.status === 'resolved' ? 'Resolved' : issue.status}
+                       issue.status === 'resolved' ? 'Resolved' :
+                       issue.status === 'rejected' ? 'Rejected' : issue.status}
                     </span>
                   </td>
                   <td>{issue.category || issue.issue_type || 'N/A'}</td>
@@ -397,7 +388,6 @@ const RegistrarDashboard = () => {
     </div>
   );
 
-  // Stats Overview Component
   const StatsOverview = () => {
     return (
       <div className="stats-cards">
@@ -421,6 +411,13 @@ const RegistrarDashboard = () => {
           description={`You currently have ${resolvedCount} resolved issue${resolvedCount !== 1 ? 's' : ''}`}
           onClick={() => handleFilterClick('resolved')}
           active={activeFilter === 'resolved'}
+        />
+        <StatCard
+          title="Rejected Issues"
+          count={rejectedCount}
+          description={`You currently have ${rejectedCount} rejected issue${rejectedCount !== 1 ? 's' : ''}`}
+          onClick={() => handleFilterClick('rejected')}
+          active={activeFilter === 'rejected'}
         />
       </div>
     );
@@ -472,7 +469,6 @@ const RegistrarDashboard = () => {
             <IssueTable />
           </div>
           
-          {/* Issue Details Modal */}
           {showModal && selectedIssue && (
             <div className="issue-modal-overlay">
               <div className="issue-modal">
