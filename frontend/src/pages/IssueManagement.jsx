@@ -17,7 +17,7 @@ const IssueManagement = () => {
   const [showLecturersDropdown, setShowLecturersDropdown] = useState(false);
   const [activeIssueId, setActiveIssueId] = useState(null);
   const [showActionsDropdown, setShowActionsDropdown] = useState(null);
-  const dropdownRef = useRef(null);
+  const dropdownRefs = useRef({});  // Use an object to store refs for each dropdown
   const [isSearching, setIsSearching] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState(null);
@@ -341,20 +341,19 @@ const IssueManagement = () => {
     }
   };
 
-  const toggleActionsDropdown = (issueId) => {
-    // Debugging: Log the current state and the issue ID being toggled
-    console.log('Toggle dropdown for issue:', issueId, 'Current state:', showActionsDropdown);
-
-    if (showActionsDropdown === issueId) {
-      setShowActionsDropdown(null);
-    } else {
-      setShowActionsDropdown(issueId);
+  const toggleActionsDropdown = (issueId, event) => {
+    // Stop event propagation to prevent immediate closing
+    if (event) {
+      event.stopPropagation();
+    }
+    
+    setShowActionsDropdown(prevState => prevState === issueId ? null : issueId);
+    
+    // Close any open lecturers dropdown
+    if (showLecturersDropdown) {
       setShowLecturersDropdown(false);
       setActiveIssueId(null);
     }
-
-    // Debugging: Log the new state after the toggle
-    console.log('New dropdown state will be:', showActionsDropdown === issueId ? null : issueId);
   };
 
   const formatDate = (dateString) => {
@@ -371,7 +370,18 @@ const IssueManagement = () => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      // Check if clicked outside any dropdown
+      let clickedOutside = true;
+      
+      // Check each dropdown ref
+      Object.keys(dropdownRefs.current).forEach(key => {
+        const ref = dropdownRefs.current[key];
+        if (ref && ref.contains(event.target)) {
+          clickedOutside = false;
+        }
+      });
+      
+      if (clickedOutside) {
         setShowActionsDropdown(null);
         setShowLecturersDropdown(false);
       }
@@ -389,6 +399,13 @@ const IssueManagement = () => {
   const handleClearSearch = () => {
     setSearchTerm('');
     setFilteredIssues(issues.filter(issue => issue.status === issueStatus));
+  };
+
+  // Add a ref for each dropdown when it's rendered
+  const addDropdownRef = (id, element) => {
+    if (element) {
+      dropdownRefs.current[id] = element;
+    }
   };
 
   if (loading) {
@@ -463,7 +480,11 @@ const IssueManagement = () => {
               <tbody>
                 {filteredIssues.length > 0 ? (
                   filteredIssues.map((issue) => (
-                    <tr key={issue.id} className="issue-row">
+                    <tr 
+                      key={issue.id} 
+                      className="issue-row"
+                      onClick={() => handleViewDetails(issue.id)}
+                    >
                       <td>{issue.id || 'N/A'}</td>
                       <td>{issue.student?.username || 'N/A'}</td>
                       <td>{issue.issue_type || 'N/A'}</td>
@@ -484,23 +505,23 @@ const IssueManagement = () => {
                             : issue.status}
                         </span>
                       </td>
-                      <td className="action-column">
-                        <div className="dropdown-container" ref={dropdownRef}>
+                      <td className="action-column" onClick={(e) => e.stopPropagation()}>
+                        <div 
+                          className="dropdown-container" 
+                          ref={(el) => addDropdownRef(`dropdown-${issue.id}`, el)}
+                        >
                           <button
                             className="action-dropdown-btn"
-                            onClick={(e) => {
-                              e.stopPropagation(); // Prevent event bubbling
-                              toggleActionsDropdown(issue.id);
-                            }}
+                            onClick={(e) => toggleActionsDropdown(issue.id, e)}
                           >
-                            ⋮ {/* Using a better vertical ellipsis character */}
+                            ⋮
                           </button>
                           {showActionsDropdown === issue.id && (
                             <div className="actions-dropdown">
                               <button
                                 className="dropdown-item view-details-btn"
                                 onClick={(e) => {
-                                  e.stopPropagation(); // Prevent event bubbling
+                                  e.stopPropagation();
                                   handleViewDetails(issue.id);
                                 }}
                               >
@@ -511,7 +532,7 @@ const IssueManagement = () => {
                                   <button
                                     className="dropdown-item escalate-btn"
                                     onClick={(e) => {
-                                      e.stopPropagation(); // Prevent event bubbling
+                                      e.stopPropagation();
                                       handleEscalateIssue(issue.id);
                                     }}
                                   >
@@ -520,7 +541,7 @@ const IssueManagement = () => {
                                   <button
                                     className="dropdown-item reject-btn"
                                     onClick={(e) => {
-                                      e.stopPropagation(); // Prevent event bubbling
+                                      e.stopPropagation();
                                       handleRejectIssue(issue.id);
                                     }}
                                   >
@@ -539,7 +560,7 @@ const IssueManagement = () => {
                                     key={lecturer.id}
                                     className="dropdown-item lecturer-item"
                                     onClick={(e) => {
-                                      e.stopPropagation(); // Prevent event bubbling
+                                      e.stopPropagation();
                                       handleLecturerSelect(lecturer.id);
                                     }}
                                   >
