@@ -26,7 +26,15 @@ const IssueManagement = () => {
   const [resolvedCount, setResolvedCount] = useState(0);
   const [rejectedCount, setRejectedCount] = useState(0);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
-  const dropdownRef = useRef(null);
+  const dropdownRefs = useRef({}); // Store refs for each issue's dropdown
+
+  // Helper to get or create a ref for an issue
+  const getDropdownRef = (issueId) => {
+    if (!dropdownRefs.current[issueId]) {
+      dropdownRefs.current[issueId] = React.createRef();
+    }
+    return dropdownRefs.current[issueId];
+  };
 
   // Authentication and data fetching
   useEffect(() => {
@@ -356,7 +364,13 @@ const IssueManagement = () => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      let isOutside = true;
+      Object.values(dropdownRefs.current).forEach(ref => {
+        if (ref.current && ref.current.contains(event.target)) {
+          isOutside = false;
+        }
+      });
+      if (isOutside) {
         setShowActionsDropdown(null);
         setShowLecturersDropdown(false);
         setShowFilterDropdown(false);
@@ -381,7 +395,7 @@ const IssueManagement = () => {
 
   // Filter Dropdown Component
   const FilterDropdown = () => (
-    <div className="filter-dropdown" ref={dropdownRef}>
+    <div className="filter-dropdown" ref={dropdownRefs}>
       <button
         className="filter-button"
         onClick={() => setShowFilterDropdown(!showFilterDropdown)}
@@ -540,8 +554,8 @@ const IssueManagement = () => {
                               issue.status === 'rejected' ? 'Rejected' : issue.status}
                       </span>
                     </td>
-                    <td className="action-column" ref={dropdownRef}>
-                      <div className="dropdown-container">
+                    <td className="action-column">
+                      <div className="dropdown-container" ref={getDropdownRef(issue.id)}>
                         <button className="action-dropdown-btn" onClick={() => toggleActionsDropdown(issue.id)}>:</button>
                         {showActionsDropdown === issue.id && (
                           <div className="actions-dropdown">
