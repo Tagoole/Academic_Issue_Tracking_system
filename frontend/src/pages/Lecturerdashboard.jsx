@@ -334,6 +334,9 @@ const Lecturerdashboard = () => {
     // Store issue data in localStorage or sessionStorage to pass it to the next page
     sessionStorage.setItem('issueToResolve', JSON.stringify(issueData));
     
+    // Show toast notification for redirecting
+    toast.info(`Redirecting to resolve issue #${issue.id}`);
+    
     // Navigate to the LecturerIssueManagement page with the issue ID as a URL parameter
     navigate(`/LecturerIssueManagement?issueId=${issue.id}`);
   };
