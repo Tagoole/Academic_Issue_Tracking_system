@@ -116,7 +116,7 @@ class TestIssueViewSet:
         
         response = api_client.get(url)
         
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_200_OK  # Asserts that the response status is 200 (OK)
         assert len(response.data) >= 1
 
 # Tests for Lecturer_Issue_Manangement
@@ -134,7 +134,7 @@ class TestLecturerIssueManagement:
         
         response = api_client.get(f"{url}?status=in_progress")
         
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_200_OK  # Asserts that the response status is 200 (OK)
         assert len(response.data) >= 1
 
 # Tests for Student_Issue_ReadOnlyViewset
@@ -151,7 +151,7 @@ class TestStudentIssueReadOnlyViewset:
         
         response = api_client.get(url)
         
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_200_OK  # Asserts that the response status is 200 (OK)
         assert len(response.data) >= 1
         
     def test_filter_student_issues(self, api_client, create_user, create_issue):
@@ -165,7 +165,7 @@ class TestStudentIssueReadOnlyViewset:
         
         response = api_client.get(f"{url}?status=pending")
         
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_200_OK  # Asserts that the response status is 200 (OK)
         assert len(response.data) >= 1
 
 @pytest.mark.django_db
@@ -179,7 +179,7 @@ class TestModelViewSets:
         
         response = api_client.get(url)
         
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_200_OK  # Asserts that the response status is 200 (OK)
         assert len(response.data) >= 1
         
     def test_course_unit_list(self, api_client, create_user, create_course_unit):
@@ -191,7 +191,7 @@ class TestModelViewSets:
         
         response = api_client.get(url)
         
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_200_OK  # Asserts that the response status is 200 (OK)
         assert len(response.data) >= 1
         
     def test_program_list(self, api_client, create_program):
@@ -201,7 +201,7 @@ class TestModelViewSets:
         
         response = api_client.get(url)
         
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_200_OK  # Asserts that the response status is 200 (OK)
         assert len(response.data) >= 1
 
 
@@ -282,7 +282,7 @@ class TestEmailVerification:
         
         response = api_client.post(url, data, format='json')
         
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_200_OK  # Asserts that the response status is 200 (OK)
         assert 'Email verified successfully' in response.data['Message']
         
         # Check if user is verified now
@@ -302,7 +302,7 @@ class TestEmailVerification:
         
         response = api_client.post(url, data, format='json')
         
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_200_OK  # Asserts that the response status is 200 (OK)
         assert 'Successful' in response.data['Message']
         assert mock_resend.called
 
@@ -326,7 +326,7 @@ class TestPasswordReset:
         
         response = api_client.post(url, data, format='json')
         
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_200_OK  # Asserts that the response status is 200 (OK)
         assert 'Confirmed' in response.data['Message']
     
     def test_final_password_reset(self, api_client, create_user):
@@ -341,7 +341,7 @@ class TestPasswordReset:
         
         response = api_client.post(url, data, format='json')
         
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_200_OK  # Asserts that the response status is 200 (OK)
         assert 'Password reset successful' in response.data['message']
         
         # Verify password was changed
@@ -361,7 +361,7 @@ class TestPasswordReset:
         
         response = api_client.post(url, data, format='json')
         
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_200_OK  # Asserts that the response status is 200 (OK)
         assert 'Successfully Resent' in response.data['Message']
         assert mock_resend.called
 
@@ -392,7 +392,7 @@ class TestOtherAPIs:
         
         response = api_client.get(url)  # Sends a GET request to retrieve user email notifications
         
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_200_OK  # Asserts that the response status is 200 (OK)
         assert response.data['number'] == 1
         assert len(response.data['data']) == 1
     
@@ -404,7 +404,7 @@ class TestOtherAPIs:
         
         response = api_client.get(url)  # Sends a GET request to retrieve the list of registrars
         
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_200_OK  # Asserts that the response status is 200 (OK)
         assert len(response.data) == 2
     
     def test_get_lecturers(self, api_client, create_user):
@@ -415,7 +415,7 @@ class TestOtherAPIs:
         
         response = api_client.get(url)
         
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_200_OK  # Asserts that the response status is 200 (OK)
         assert len(response.data) == 2
     
     def test_delete_account(self, api_client, create_user):
