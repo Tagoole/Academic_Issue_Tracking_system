@@ -86,8 +86,9 @@ const Lecturerdashboard = () => {
               setFilteredIssues(retryResponse.data);
               setLoading(false);
             } else {
-              // No refresh token available, redirect to login
+              toast.error('Session expired. Please log in again.');
               navigate('/signin');
+              return;
             }
           } catch (refreshErr) {
             console.error('Error refreshing token:', refreshErr);
@@ -190,7 +191,9 @@ const Lecturerdashboard = () => {
             
             setLoading(false);
           } else {
+            toast.error('Session expired. Please log in again.');
             navigate('/signin');
+            return;
           }
         } catch (refreshErr) {
           console.error('Error refreshing token:', refreshErr);
@@ -319,7 +322,9 @@ const Lecturerdashboard = () => {
               setSelectedIssue(prev => ({ ...prev, status: newStatus }));
             }
           } else {
+            toast.error('Session expired. Please log in again.');
             navigate('/signin');
+            return;
           }
         } catch (refreshErr) {
           console.error('Error refreshing token during status update:', refreshErr);
