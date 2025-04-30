@@ -93,6 +93,7 @@ const Lecturerdashboard = () => {
           } catch (refreshErr) {
             console.error('Error refreshing token:', refreshErr);
             setError('Your session has expired. Please log in again.');
+            toast.error('Session expired. Please log in again.');
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
             navigate('/signin');
@@ -198,6 +199,7 @@ const Lecturerdashboard = () => {
         } catch (refreshErr) {
           console.error('Error refreshing token:', refreshErr);
           setError('Your session has expired. Please log in again.');
+          toast.error('Session expired. Please log in again.');
           localStorage.removeItem('accessToken');
           localStorage.removeItem('refreshToken');
           navigate('/signin');
@@ -329,6 +331,7 @@ const Lecturerdashboard = () => {
         } catch (refreshErr) {
           console.error('Error refreshing token during status update:', refreshErr);
           setError('Your session has expired. Please log in again.');
+          toast.error('Session expired. Please log in again.');
           localStorage.removeItem('accessToken');
           localStorage.removeItem('refreshToken');
           navigate('/signin');
