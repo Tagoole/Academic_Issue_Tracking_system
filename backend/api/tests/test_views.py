@@ -14,6 +14,7 @@ def api_client():
     return APIClient()
 
 
+
 @pytest.fixture
 def create_user():
     def _create_user(username='testuser', email=None, password='testpass123', role='student', is_email_verified=True, 
