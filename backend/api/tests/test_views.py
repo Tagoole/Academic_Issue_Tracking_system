@@ -433,7 +433,7 @@ class TestOtherAPIs:
         assert response.status_code == status.HTTP_204_NO_CONTENT
         # Check if user was deleted
         with pytest.raises(User.DoesNotExist):
-            User.objects.get(id=user.id)
+            User.objects.get(id=user.id)  # Verifies that the user no longer exists in the database
 
 
 
