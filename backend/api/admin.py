@@ -32,7 +32,7 @@ class ProgramAdmin(admin.ModelAdmin):
     filter_horizontal = ('course_units',)  
 
 admin.site.register(CustomUser,CustomUserAdmin)    
-admin.site.register(Issue)
+admin.site.register(Issue)  # Registers the Issue model with the admin site
 admin.site.register(Department)  # Registers the Department model with the admin site
 admin.site.register(Course_unit)  # Registers the Course_unit model with the admin site
 admin.site.register(Registration_Token)  # Registers the Registration_Token model with the admin site
