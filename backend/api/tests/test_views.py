@@ -143,7 +143,7 @@ class TestLecturerIssueManagement:
 # Tests for Student_Issue_ReadOnlyViewset
 @pytest.mark.django_db
 class TestStudentIssueReadOnlyViewset:  # Test cases for the Student_Issue_ReadOnlyViewset API
-    def test_list_student_issues(self, api_client, create_user, create_issue):
+    def test_list_student_issues(self, api_client, create_user, create_issue):  # Test case for listing student issues
         student = create_user(username='liststudent', role='student')
         issue = create_issue()
         issue.student = student  # Assigns the created user as the student associated with the issue
