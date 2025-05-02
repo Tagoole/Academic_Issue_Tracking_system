@@ -146,7 +146,7 @@ class TestStudentIssueReadOnlyViewset:
     def test_list_student_issues(self, api_client, create_user, create_issue):
         student = create_user(username='liststudent', role='student')
         issue = create_issue()
-        issue.student = student
+        issue.student = student  # Assigns the created user as the student associated with the issue
         issue.save()
         
         api_client.force_authenticate(user=student)
@@ -160,7 +160,7 @@ class TestStudentIssueReadOnlyViewset:
     def test_filter_student_issues(self, api_client, create_user, create_issue):
         student = create_user(username='filterstudent', role='student')
         issue = create_issue(status='pending')
-        issue.student = student
+        issue.student = student  # Assigns the created user as the student associated with the issue
         issue.save()
         
         api_client.force_authenticate(user=student)
@@ -377,7 +377,7 @@ class TestOtherAPIs:  # Test cases for miscellaneous APIs like notifications and
         issue = Issue.objects.create(  # Creates an issue object for testing email notifications
             issue_type='missing_marks', 
             status='pending', 
-            student=user,
+            student=user,  # Assigns the created user as the student associated with the issue
             course_unit=course_unit,
             description="Test notification description",
             year_of_study='1st_year',
