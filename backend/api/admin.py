@@ -4,7 +4,7 @@ from django.contrib.auth.admin import UserAdmin
 
 
 
-class IssueAdmin(admin.ModelAdmin):
+class IssueAdmin(admin.ModelAdmin):  # Custom admin configuration for the Issue model
     def get_fields(self, request, obj=None):
         fields = super().get_fields(request, obj)
         if request.user.role == 'student':
