@@ -11,6 +11,7 @@ class IssueAdmin(admin.ModelAdmin):  # Custom admin configuration for the Issue 
             fields = [field for field in fields if field != 'lecturer']
         return fields
     
+    
 
 class CustomUserAdmin(UserAdmin):
     list_display = ('username', 'email', 'role', 'is_active')  # Display user info
