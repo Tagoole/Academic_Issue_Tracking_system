@@ -417,7 +417,7 @@ class TestOtherAPIs:
         response = api_client.get(url)
         
         assert response.status_code == status.HTTP_200_OK  # Asserts that the response status is 200 (OK)
-        assert len(response.data) == 2
+        assert len(response.data) == 2  # Asserts that the response contains exactly 2 lecturers
     
     def test_delete_account(self, api_client, create_user):  # Test case for deleting a user account
         user = create_user(username='deleteuser')  # Creates a user with the username 'deleteuser' for testing account deletion
