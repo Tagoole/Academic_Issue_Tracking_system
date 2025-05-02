@@ -39,4 +39,4 @@ admin.site.register(Registration_Token)
 admin.site.register(Verification_code)
 admin.site.register(Email_Notification)
 admin.site.register(Message)
-admin.site.register(Conversation)
+admin.site.register(Conversation)  # Registers the Conversation model with the admin site
