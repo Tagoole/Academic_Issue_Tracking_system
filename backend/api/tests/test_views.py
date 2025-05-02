@@ -62,7 +62,7 @@ def create_issue(create_user, create_program, create_course_unit):
     def _create_issue(issue_type='missing_marks',  # Specifies the type of issue being created for testing
                       status='pending',  # Sets the initial status of the issue to 'pending'
                       year_of_study='1st_year', semester='one'):
-        student = create_user(username='issuestudent', role='student')
+        student = create_user(username='issuestudent', role='student')  # Creates a student user for the issue
         registrar = create_user(username='issueregistrar', role='academic_registrar')
         lecturer = create_user(username='issuelecturer', role='lecturer')
         course_unit = create_course_unit()  # Creates a course unit for testing purposes
