@@ -410,7 +410,7 @@ class TestOtherAPIs:
     
     def test_get_lecturers(self, api_client, create_user):
         create_user(username='lecturer1', role='lecturer')
-        create_user(username='lecturer2', role='lecturer', email='lecturer2@gmail.com')
+        create_user(username='lecturer2', role='lecturer', email='lecturer2@gmail.com')  # Creates a lecturer user with a specific email
         
         url = reverse('get_lecturers')  # Generates the URL for the get lecturers endpoint
         
