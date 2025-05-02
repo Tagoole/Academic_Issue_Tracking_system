@@ -112,7 +112,7 @@ class TestIssueViewSet:
         user = create_user(username='listviewer')
         issue = create_issue()
         
-        api_client.force_authenticate(user=user)
+        api_client.force_authenticate(user=user)  # Authenticates the API client with the specified user
         url = reverse('issues-list')
         
         response = api_client.get(url)
