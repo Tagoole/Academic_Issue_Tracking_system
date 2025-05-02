@@ -34,7 +34,7 @@ class ProgramAdmin(admin.ModelAdmin):
 admin.site.register(CustomUser,CustomUserAdmin)    
 admin.site.register(Issue)
 admin.site.register(Department)
-admin.site.register(Course_unit)
+admin.site.register(Course_unit)  # Registers the Course_unit model with the admin site
 admin.site.register(Registration_Token)  # Registers the Registration_Token model with the admin site
 admin.site.register(Verification_code)  # Registers the Verification_code model with the admin site
 admin.site.register(Email_Notification)  # Registers the Email_Notification model with the admin site
