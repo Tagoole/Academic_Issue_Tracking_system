@@ -42,7 +42,7 @@ def create_user():
 @pytest.fixture
 def create_program():
     def _create_program(program_name='Test Program'):
-        return Program.objects.create(program_name=program_name)
+        return Program.objects.create(program_name=program_name)  # Creates and returns a Program object with the specified program name
     return _create_program
 
 @pytest.fixture
