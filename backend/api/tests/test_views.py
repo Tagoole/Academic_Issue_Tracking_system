@@ -59,7 +59,8 @@ def create_department():
 
 @pytest.fixture
 def create_issue(create_user, create_program, create_course_unit):
-    def _create_issue(issue_type='missing_marks', status='pending', year_of_study='1st_year', semester='one'):
+    def _create_issue(issue_type='missing_marks',  # Specifies the type of issue being created for testing
+                      status='pending', year_of_study='1st_year', semester='one'):
         student = create_user(username='issuestudent', role='student')
         registrar = create_user(username='issueregistrar', role='academic_registrar')
         lecturer = create_user(username='issuelecturer', role='lecturer')
