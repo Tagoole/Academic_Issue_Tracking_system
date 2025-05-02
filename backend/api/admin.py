@@ -37,6 +37,6 @@ admin.site.register(Department)
 admin.site.register(Course_unit)
 admin.site.register(Registration_Token)
 admin.site.register(Verification_code)
-admin.site.register(Email_Notification)
+admin.site.register(Email_Notification)  # Registers the Email_Notification model with the admin site
 admin.site.register(Message)  # Registers the Message model with the admin site
 admin.site.register(Conversation)  # Registers the Conversation model with the admin site
