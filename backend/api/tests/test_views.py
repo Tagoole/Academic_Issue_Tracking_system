@@ -372,7 +372,7 @@ class TestOtherAPIs:  # Test cases for miscellaneous APIs like notifications and
     def test_get_user_email_notifications(self, api_client, create_user, create_course_unit):
         user = create_user(username='notifuser')  # Creates a user with the username 'notifuser' for testing email notifications
         course_unit = create_course_unit()
-        issue = Issue.objects.create(
+        issue = Issue.objects.create(  # Creates an issue object for testing email notifications
             issue_type='missing_marks', 
             status='pending', 
             student=user,
