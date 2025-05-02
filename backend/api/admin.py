@@ -29,7 +29,7 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(Program)
 class ProgramAdmin(admin.ModelAdmin):
-    filter_horizontal = ('course_units',)  
+    filter_horizontal = ('course_units',)  # Enables a horizontal filter widget for the course_units field in the admin interface
 
 admin.site.register(CustomUser, CustomUserAdmin)  # Registers the CustomUser model with the admin site using CustomUserAdmin
 admin.site.register(Issue)  # Registers the Issue model with the admin site
