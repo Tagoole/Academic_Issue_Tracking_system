@@ -419,7 +419,7 @@ class TestOtherAPIs:
         assert response.status_code == status.HTTP_200_OK  # Asserts that the response status is 200 (OK)
         assert len(response.data) == 2
     
-    def test_delete_account(self, api_client, create_user):
+    def test_delete_account(self, api_client, create_user):  # Test case for deleting a user account
         user = create_user(username='deleteuser')  # Creates a user with the username 'deleteuser' for testing account deletion
         
         api_client.force_authenticate(user=user)
