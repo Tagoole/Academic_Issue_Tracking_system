@@ -63,7 +63,7 @@ def create_issue(create_user, create_program, create_course_unit):
         student = create_user(username='issuestudent', role='student')
         registrar = create_user(username='issueregistrar', role='academic_registrar')
         lecturer = create_user(username='issuelecturer', role='lecturer')
-        course_unit = create_course_unit()
+        course_unit = create_course_unit()  # Creates a course unit for testing purposes
         
         issue = Issue.objects.create(
             issue_type=issue_type,
