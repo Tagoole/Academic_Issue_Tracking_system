@@ -299,18 +299,4 @@ submit-button::after {
     height: 200px;
   }
   
-  .content {
-    max-width: 90%;
-    width: auto;
-  }
-}
-
-@media (min-width: 993px) and (max-width: 1200px) {
-  .left-section {
-    padding: 30px 40px;
-  }
-  
-  .content {
-    width: 400px;
-  }
-}
+ 
