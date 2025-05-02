@@ -27,6 +27,7 @@ class CustomUserAdmin(UserAdmin):
     )
 
 
+
 @admin.register(Program)
 class ProgramAdmin(admin.ModelAdmin):
     filter_horizontal = ('course_units',)  # Enables a horizontal filter widget for the course_units field in the admin interface
