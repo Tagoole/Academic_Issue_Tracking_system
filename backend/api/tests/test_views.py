@@ -420,7 +420,7 @@ class TestOtherAPIs:
         assert len(response.data) == 2
     
     def test_delete_account(self, api_client, create_user):
-        user = create_user(username='deleteuser')
+        user = create_user(username='deleteuser')  # Creates a user with the username 'deleteuser' for testing account deletion
         
         api_client.force_authenticate(user=user)
         url = reverse('delete_account')  # Generates the URL for the delete account endpoint
