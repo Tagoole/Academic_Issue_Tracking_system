@@ -368,7 +368,7 @@ class TestPasswordReset:
 
 # Tests for Notification and User Listing APIs
 @pytest.mark.django_db
-class TestOtherAPIs:
+class TestOtherAPIs:  # Test cases for miscellaneous APIs like notifications and user listings
     def test_get_user_email_notifications(self, api_client, create_user, create_course_unit):
         user = create_user(username='notifuser')
         course_unit = create_course_unit()
