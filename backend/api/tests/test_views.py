@@ -409,7 +409,7 @@ class TestOtherAPIs:
         assert len(response.data) == 2  # Asserts that the response contains exactly 2 registrars
     
     def test_get_lecturers(self, api_client, create_user):
-        create_user(username='lecturer1', role='lecturer')
+        create_user(username='lecturer1', role='lecturer')  # Creates a lecturer user with the role of lecturer
         create_user(username='lecturer2', role='lecturer', email='lecturer2@gmail.com')  # Creates a lecturer user with a specific email
         
         url = reverse('get_lecturers')  # Generates the URL for the get lecturers endpoint
