@@ -423,7 +423,7 @@ class TestOtherAPIs:
         user = create_user(username='deleteuser')
         
         api_client.force_authenticate(user=user)
-        url = reverse('delete_account')
+        url = reverse('delete_account')  # Generates the URL for the delete account endpoint
         data = {
             'userId': user.id
         }
