@@ -48,7 +48,7 @@ def create_program():
 @pytest.fixture
 def create_course_unit():
     def _create_course_unit(course_unit_name='Test Course', course_unit_code='TC101'):
-        return Course_unit.objects.create(course_unit_name=course_unit_name, course_unit_code=course_unit_code)
+        return Course_unit.objects.create(course_unit_name=course_unit_name, course_unit_code=course_unit_code)  # Creates and returns a Course_unit object with the specified name and code
     return _create_course_unit
 
 @pytest.fixture
