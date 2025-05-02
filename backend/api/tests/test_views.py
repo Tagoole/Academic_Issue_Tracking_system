@@ -428,7 +428,7 @@ class TestOtherAPIs:
             'userId': user.id
         }
         
-        response = api_client.delete(url, data, format='json')
+        response = api_client.delete(url, data, format='json')  # Sends a DELETE request to delete the user account
         
         assert response.status_code == status.HTTP_204_NO_CONTENT  # Asserts that the response status is 204 (No Content) after deletion
         # Check if user was deleted
