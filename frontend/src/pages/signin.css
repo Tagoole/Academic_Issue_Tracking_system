@@ -263,40 +263,4 @@ submit-button::after {
   margin-bottom: 15px;
   font-size: 14px;
   width: 100%;
-  text-align: center;
-}
-
-/* Right section - Image */
-.right-section {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  background-color: transparent;
-}
-
-.graduate-image {
-  max-width: 200%; 
-  max-height: 100vh;
-  margin-left: 10px;
-}
-
-/* Responsive adjustments */
-@media (max-width: 992px) {
-  .split-layout {
-    flex-direction: column;
-  }
-  
-  .left-section {
-    order: 2;
-    padding: 30px 20px;
-    margin-left: 0;
-  }
-  
-  .right-section {
-    order: 1;
-    height: 200px;
-  }
-  
  
