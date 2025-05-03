@@ -664,3 +664,98 @@
     0 0 10px rgba(0, 123, 255, 0.8),
     0 0 20px rgba(0, 123, 255, 0.6);
 }
+
+
+/* Modal improvements */
+.modal-window {
+  max-width: 700px;
+  width: 90%;
+  max-height: 80vh;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.modal-body {
+  padding: 20px;
+  max-height: calc(80vh - 120px);
+  overflow-y: auto;
+}
+
+.detail-row {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid #eaeaea;
+  padding-bottom: 12px;
+}
+
+.detail-row strong {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #333;
+  font-size: 14px;
+}
+
+.detail-value {
+  word-break: break-word;
+  font-size: 14px;
+}
+
+/* Image styles for the modal */
+.detail-image-container {
+  margin-top: 8px;
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+}
+
+.detail-image {
+  width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  background-color: #f9f9f9;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.detail-image:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.image-caption {
+  text-align: center;
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
+}
+
+/* Special styling for image row */
+.issue-image-row {
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #eaeaea;
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+  .detail-row {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  
+  .detail-row strong {
+    width: 150px;
+    margin-right: 20px;
+    margin-bottom: 0;
+    padding-top: 2px;
+  }
+  
+  .detail-value {
+    flex: 1;
+  }
+}

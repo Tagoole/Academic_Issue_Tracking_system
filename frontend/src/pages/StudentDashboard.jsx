@@ -154,6 +154,90 @@ const StudentDashboard = () => {
     });
   };
 
+  // Helper function to determine if a string is a URL
+  const isValidURL = (string) => {
+    try {
+      new URL(string);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  };
+
+  // Helper function to check if a URL is an image
+  const isImageURL = (url) => {
+    if (!url || typeof url !== 'string') return false;
+    
+    // Check if the URL ends with common image extensions
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg'];
+    return imageExtensions.some(ext => url.toLowerCase().endsWith(ext)) || 
+           url.toLowerCase().includes('/image/') ||
+           url.toLowerCase().includes('media/images/');
+  };
+
+  // Format issue detail value for display
+  const formatValue = (key, value) => {
+    if (value === null || value === undefined) return 'N/A';
+    
+    // Handle image URLs
+    if ((key === 'image' || key.includes('image') || key.includes('photo') || key.includes('picture')) && 
+        isValidURL(value)) {
+      return (
+        <div className="detail-image-container">
+          <img 
+            src={value} 
+            alt={`Issue ${key}`} 
+            className="detail-image" 
+            onClick={() => window.open(value, '_blank')}
+          />
+          <div className="image-caption">Click to view full size</div>
+        </div>
+      );
+    }
+    
+    // Handle any URL that appears to be an image
+    if (typeof value === 'string' && isImageURL(value)) {
+      return (
+        <div className="detail-image-container">
+          <img 
+            src={value} 
+            alt="Issue attachment" 
+            className="detail-image" 
+            onClick={() => window.open(value, '_blank')}
+          />
+          <div className="image-caption">Click to view full size</div>
+        </div>
+      );
+    }
+    
+    // Handle other URLs
+    if (typeof value === 'string' && isValidURL(value)) {
+      return (
+        <a href={value} target="_blank" rel="noopener noreferrer">
+          {value}
+        </a>
+      );
+    }
+    
+    // Handle dates
+    if (key.includes('_at') || key.includes('date')) {
+      return formatDate(value);
+    }
+    
+    // Handle objects
+    if (typeof value === 'object' && value !== null) {
+      return JSON.stringify(value);
+    }
+    
+    // Handle boolean values
+    if (typeof value === 'boolean') {
+      return value ? 'Yes' : 'No';
+    }
+    
+    // Default: return as string
+    return String(value);
+  };
+
   return (
     <div className="student-main-container" style={{
       minHeight: '100vh',
@@ -299,14 +383,36 @@ const StudentDashboard = () => {
               <div className="detail-row">
                 <strong>ID:</strong> #{selectedIssue.id || 'N/A'}
               </div>
+              
+              {/* Display issue image prominently if it exists */}
+              {selectedIssue.image && (
+                <div className="detail-row issue-image-row">
+                  <strong>Image:</strong>
+                  <div className="detail-image-container">
+                    <img 
+                      src={selectedIssue.image} 
+                      alt="Issue attachment" 
+                      className="detail-image" 
+                      onClick={() => window.open(selectedIssue.image, '_blank')}
+                    />
+                    <div className="image-caption">Click to view full size</div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Display all other issue details */}
               {Object.entries(selectedIssue).map(([key, value]) => {
-                // Skip ID as we've already displayed it at the top
-                if (key === 'id') return null;
+                // Skip ID and image as we've already displayed them separately
+                if (key === 'id' || key === 'image') return null;
+                
+                const formattedKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
                 
                 return (
                   <div key={key} className="detail-row">
-                    <strong>{key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:</strong> 
-                    {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                    <strong>{formattedKey}:</strong> 
+                    <div className="detail-value">
+                      {formatValue(key, value)}
+                    </div>
                   </div>
                 );
               })}
