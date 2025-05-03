@@ -14,6 +14,7 @@ def api_client():
     return APIClient()
 
 
+
 @pytest.fixture
 def create_user():
     def _create_user(username='testuser', email=None, password='testpass123', role='student', is_email_verified=True, 
@@ -41,13 +42,13 @@ def create_user():
 @pytest.fixture
 def create_program():
     def _create_program(program_name='Test Program'):
-        return Program.objects.create(program_name=program_name)
+        return Program.objects.create(program_name=program_name)  # Creates and returns a Program object with the specified program name
     return _create_program
 
 @pytest.fixture
 def create_course_unit():
     def _create_course_unit(course_unit_name='Test Course', course_unit_code='TC101'):
-        return Course_unit.objects.create(course_unit_name=course_unit_name, course_unit_code=course_unit_code)
+        return Course_unit.objects.create(course_unit_name=course_unit_name, course_unit_code=course_unit_code)  # Creates and returns a Course_unit object with the specified name and code
     return _create_course_unit
 
 @pytest.fixture
@@ -58,11 +59,13 @@ def create_department():
 
 @pytest.fixture
 def create_issue(create_user, create_program, create_course_unit):
-    def _create_issue(issue_type='missing_marks', status='pending', year_of_study='1st_year', semester='one'):
-        student = create_user(username='issuestudent', role='student')
+    def _create_issue(issue_type='missing_marks',  # Specifies the type of issue being created for testing
+                      status='pending',  # Sets the initial status of the issue to 'pending'
+                      year_of_study='1st_year', semester='one'):
+        student = create_user(username='issuestudent', role='student')  # Creates a student user for the issue
         registrar = create_user(username='issueregistrar', role='academic_registrar')
         lecturer = create_user(username='issuelecturer', role='lecturer')
-        course_unit = create_course_unit()
+        course_unit = create_course_unit()  # Creates a course unit for testing purposes
         
         issue = Issue.objects.create(
             issue_type=issue_type,
@@ -111,7 +114,7 @@ class TestIssueViewSet:
         user = create_user(username='listviewer')
         issue = create_issue()
         
-        api_client.force_authenticate(user=user)
+        api_client.force_authenticate(user=user)  # Authenticates the API client with the specified user
         url = reverse('issues-list')
         
         response = api_client.get(url)
@@ -139,11 +142,11 @@ class TestLecturerIssueManagement:
 
 # Tests for Student_Issue_ReadOnlyViewset
 @pytest.mark.django_db
-class TestStudentIssueReadOnlyViewset:
-    def test_list_student_issues(self, api_client, create_user, create_issue):
-        student = create_user(username='liststudent', role='student')
+class TestStudentIssueReadOnlyViewset:  # Test cases for the Student_Issue_ReadOnlyViewset API
+    def test_list_student_issues(self, api_client, create_user, create_issue):  # Test case for listing student issues
+        student = create_user(username='liststudent', role='student')  # Creates a student user for testing
         issue = create_issue()
-        issue.student = student
+        issue.student = student  # Assigns the created user as the student associated with the issue
         issue.save()
         
         api_client.force_authenticate(user=student)
@@ -157,7 +160,7 @@ class TestStudentIssueReadOnlyViewset:
     def test_filter_student_issues(self, api_client, create_user, create_issue):
         student = create_user(username='filterstudent', role='student')
         issue = create_issue(status='pending')
-        issue.student = student
+        issue.student = student  # Assigns the created user as the student associated with the issue
         issue.save()
         
         api_client.force_authenticate(user=student)
@@ -367,14 +370,14 @@ class TestPasswordReset:
 
 # Tests for Notification and User Listing APIs
 @pytest.mark.django_db
-class TestOtherAPIs:
+class TestOtherAPIs:  # Test cases for miscellaneous APIs like notifications and user listings
     def test_get_user_email_notifications(self, api_client, create_user, create_course_unit):
-        user = create_user(username='notifuser')
+        user = create_user(username='notifuser')  # Creates a user with the username 'notifuser' for testing email notifications
         course_unit = create_course_unit()
-        issue = Issue.objects.create(
+        issue = Issue.objects.create(  # Creates an issue object for testing email notifications
             issue_type='missing_marks', 
             status='pending', 
-            student=user,
+            student=user,  # Assigns the created user as the student associated with the issue
             course_unit=course_unit,
             description="Test notification description",
             year_of_study='1st_year',
@@ -407,32 +410,33 @@ class TestOtherAPIs:
         assert response.status_code == status.HTTP_200_OK  # Asserts that the response status is 200 (OK)
         assert len(response.data) == 2  # Asserts that the response contains exactly 2 registrars
     
-    def test_get_lecturers(self, api_client, create_user):
-        create_user(username='lecturer1', role='lecturer')
-        create_user(username='lecturer2', role='lecturer', email='lecturer2@gmail.com')
+    def test_get_lecturers(self, api_client, create_user):  # Test case for retrieving a list of lecturers
+        create_user(username='lecturer1', role='lecturer')  # Creates a lecturer user with the role of lecturer
+        create_user(username='lecturer2', role='lecturer', email='lecturer2@gmail.com')  # Creates a lecturer user with a specific email
         
-        url = reverse('get_lecturers')
+        url = reverse('get_lecturers')  # Generates the URL for the get lecturers endpoint
         
         response = api_client.get(url)
         
         assert response.status_code == status.HTTP_200_OK  # Asserts that the response status is 200 (OK)
-        assert len(response.data) == 2
+        assert len(response.data) == 2  # Asserts that the response contains exactly 2 lecturers
     
-    def test_delete_account(self, api_client, create_user):
-        user = create_user(username='deleteuser')
+    
+    def test_delete_account(self, api_client, create_user):  # Test case for deleting a user account
+        user = create_user(username='deleteuser')  # Creates a user with the username 'deleteuser' for testing account deletion
         
         api_client.force_authenticate(user=user)
-        url = reverse('delete_account')
+        url = reverse('delete_account')  # Generates the URL for the delete account endpoint
         data = {
             'userId': user.id
         }
         
-        response = api_client.delete(url, data, format='json')
+        response = api_client.delete(url, data, format='json')  # Sends a DELETE request to delete the user account
         
-        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert response.status_code == status.HTTP_204_NO_CONTENT  # Asserts that the response status is 204 (No Content) after deletion
         # Check if user was deleted
-        with pytest.raises(User.DoesNotExist):
-            User.objects.get(id=user.id)
+        with pytest.raises(User.DoesNotExist):  # Ensures an exception is raised if the user no longer exists in the database
+            User.objects.get(id=user.id)  # Verifies that the user no longer exists in the database
 
 
 
