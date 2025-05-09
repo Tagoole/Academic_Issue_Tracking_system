@@ -1,4 +1,5 @@
 build:
-   docker:
+  docker:
      web: Dockerfile
-web: python manage.py runserver 0.0.0.0:{PORT}
+run:
+  web: python manage.py runserver 0.0.0.0:${PORT}
