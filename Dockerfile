@@ -29,20 +29,9 @@ RUN pip install --upgrade pip
 # run this command to install all dependencies 
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Collect static files
-# ...and move the built frontend
-RUN echo COLLECTING STATIC FILES...; \
-python manage.py collectstatic --noinput; \
-mv /app/frontend/dist /app/backend/staticfiles/reactapp
-
-# Make migrations
-RUN echo RUNNING MIGRATIONS...; \
-    python manage.py makemigrations && \
-    python manage.py migrate
-
 # Expose the Django port
 # EXPOSE 8000
 
-# RUN chmod +x /app/build.sh
+RUN chmod +x /app/build.sh
 
-# ENTRYPOINT ["bash", "/app/build.sh"]
+ENTRYPOINT ["bash", "/app/build.sh"]
