@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import NavBar from './NavBar';
-import SideBar1 from './Sidebar1';
+import SideBar from './Sidebar1';
 import './StudentDashboard.css'; 
 import API from '../api';
 
@@ -154,70 +154,150 @@ const StudentDashboard = () => {
     });
   };
 
+  // Helper function to determine if a string is a URL
+  const isValidURL = (string) => {
+    try {
+      new URL(string);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  };
+
+  // Helper function to check if a URL is an image
+  const isImageURL = (url) => {
+    if (!url || typeof url !== 'string') return false;
+    
+    // Check if the URL ends with common image extensions
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg'];
+    return imageExtensions.some(ext => url.toLowerCase().endsWith(ext)) || 
+           url.toLowerCase().includes('/image/') ||
+           url.toLowerCase().includes('media/images/');
+  };
+
+  // Format issue detail value for display
+  const formatValue = (key, value) => {
+    if (value === null || value === undefined) return 'N/A';
+    
+    // Handle image URLs
+    if ((key === 'image' || key.includes('image') || key.includes('photo') || key.includes('picture')) && 
+        isValidURL(value)) {
+      return (
+        <div className="detail-image-container">
+          <img 
+            src={value} 
+            alt={`Issue ${key}`} 
+            className="detail-image" 
+            onClick={() => window.open(value, '_blank')}
+          />
+          <div className="image-caption">Click to view full size</div>
+        </div>
+      );
+    }
+    
+    // Handle any URL that appears to be an image
+    if (typeof value === 'string' && isImageURL(value)) {
+      return (
+        <div className="detail-image-container">
+          <img 
+            src={value} 
+            alt="Issue attachment" 
+            className="detail-image" 
+            onClick={() => window.open(value, '_blank')}
+          />
+          <div className="image-caption">Click to view full size</div>
+        </div>
+      );
+    }
+    
+    // Handle other URLs
+    if (typeof value === 'string' && isValidURL(value)) {
+      return (
+        <a href={value} target="_blank" rel="noopener noreferrer">
+          {value}
+        </a>
+      );
+    }
+    
+    // Handle dates
+    if (key.includes('_at') || key.includes('date')) {
+      return formatDate(value);
+    }
+    
+    // Handle objects
+    if (typeof value === 'object' && value !== null) {
+      return JSON.stringify(value);
+    }
+    
+    // Handle boolean values
+    if (typeof value === 'boolean') {
+      return value ? 'Yes' : 'No';
+    }
+    
+    // Default: return as string
+    return String(value);
+  };
+
   return (
-    <div className="dashboard-container" style={{
+    <div className="student-main-container" style={{
       minHeight: '100vh',
-      width: '100%'
+      width: '100%' // Changed from fixed 1205px to be responsive
     }}>
-      <SideBar1 />
-      <div className="dashboard-wrapper">
+      <SideBar />
+      <div className="student-content-wrapper">
         <NavBar />
         
         {/* Dashboard Panels */}
-        <div className="dashboard-panels">
-          <div className="panel">
-            <div className="panel-title">Resolved Issues</div>
-            <div className="panel-count">{issueData.filter(issue => issue.status === 'resolved').length}</div>
+        <div className="stats-card-group">
+          <div className="stat-card">
+            <div className="stat-card-heading">Resolved Issues</div>
+            <div className="stat-card-value">{issueData.filter(issue => issue.status === 'resolved').length}</div>
           </div>
-          <div className="panel">
-            <div className="panel-title">Pending Issues</div>
-            <div className="panel-count">{issueData.filter(issue => issue.status === 'pending').length}</div>
+          <div className="stat-card">
+            <div className="stat-card-heading">Pending Issues</div>
+            <div className="stat-card-value">{issueData.filter(issue => issue.status === 'pending').length}</div>
           </div>
-          <div className="panel">
-            <div className="panel-title">In-progress Issues</div>
-            <div className="panel-count">{issueData.filter(issue => issue.status === 'in_progress').length}</div>
+          <div className="stat-card">
+            <div className="stat-card-heading">In-progress Issues</div>
+            <div className="stat-card-value">{issueData.filter(issue => issue.status === 'in_progress').length}</div>
           </div>
-          <div className="panel">
-            <div className="panel-title">Rejected Issues</div>
-            <div className="panel-count">{issueData.filter(issue => issue.status === 'rejected').length}</div>
+          <div className="stat-card">
+            <div className="stat-card-heading">Rejected Issues</div>
+            <div className="stat-card-value">{issueData.filter(issue => issue.status === 'rejected').length}</div>
           </div>
         </div>
         
-        <div className="search-container">
-          <input type="text" placeholder="Search for issues..." className="search-input" />
-          <button className="filter-button">
+        <div className="query-controls">
+          <input type="text" placeholder="Search for issues..." className="query-input" />
+          <button className="query-filter-btn">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 16v-4.414L3.293 6.707A1 1 0 013 6V3z" clipRule="evenodd" />
             </svg>
           </button>
           
-          {/* Standard button instead of holographic */}
-          <button 
-            className="new-issue-button" 
-            onClick={handleNewIssueClick}
-            style={{
-              backgroundColor: '#007bff',
-              padding: '10px 20px',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontWeight: 'bold',
-              boxShadow: '0 2px 4px rgba(0, 123, 255, 0.4)'
-            }}
-          >
-            + New Issue
-          </button>
+          {/* Advanced holographic button with multiple effects */}
+          <div className="holo-button-wrapper">
+            <div className="holo-button-effects">
+              <div className="holo-button-border">
+                <button 
+                  className="create-issue-btn holo-effect-btn holo-3d-effect" 
+                  onClick={handleNewIssueClick}
+                >
+                  + New Issue
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
         
         {/* Issues Container */}
-        <div className="issues-container">
-          <div className="issues-header">
-            <div className="tab-container">
+        <div className="issues-view-container">
+          <div className="issues-view-header">
+            <div className="status-filter-wrapper">
               {['Pending', 'In-progress', 'Resolved', 'Rejected'].map(tab => (
                 <button
                   key={tab}
-                  className={`tab-button ${activeTab === tab ? 'active' : 'inactive'}`}
+                  className={`status-filter-btn ${activeTab === tab ? 'selected-status' : 'unselected-status'}`}
                   onClick={() => setActiveTab(tab)}
                 >
                   {tab}
@@ -228,13 +308,13 @@ const StudentDashboard = () => {
         </div>
         
         {/* Table Container */}
-        <div className="table-container">
+        <div className="data-grid-wrapper">
           {loading ? (
-            <div className="loading-message">Loading issues...</div>
+            <div className="loader-text">Loading issues...</div>
           ) : error ? (
-            <div className="error-message">{error}</div>
+            <div className="error-notification">{error}</div>
           ) : (
-            <table className="issues-table">
+            <table className="data-grid">
               <thead>
                 <tr>
                   <th>ID</th>
@@ -253,7 +333,7 @@ const StudentDashboard = () => {
                     <tr key={issue.id || index}>
                       <td>#{issue.id || 'N/A'}</td>
                       <td>
-                        <span className={`status-tag status-${issue.status}`}>
+                        <span className={`status-indicator status-color-${issue.status}`}>
                           {issue.status === 'pending' ? 'Pending' : 
                            issue.status === 'in_progress' ? 'In-progress' : 
                            issue.status === 'resolved' ? 'Resolved' : 
@@ -266,12 +346,12 @@ const StudentDashboard = () => {
                       <td>{issue.is_commented ? '✓' : '✗'}</td>
                       <td>{issue.comment || 'No comment'}</td>
                       <td>
-                        <div className="action-buttons-container">
-                          <button className="view-details-btn" onClick={() => openIssueDetails(issue)}>
+                        <div className="row-actions-group">
+                          <button className="details-action-btn" onClick={() => openIssueDetails(issue)}>
                             Details
                           </button>
                           <button 
-                            className="delete-issue-btn" 
+                            className="remove-action-btn" 
                             onClick={() => handleDeleteIssue(issue.id)}
                           >
                             Delete
@@ -282,7 +362,7 @@ const StudentDashboard = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="8" className="no-issues-message">No {activeTab.toLowerCase()} issues found</td>
+                    <td colSpan="8" className="empty-state-message">No {activeTab.toLowerCase()} issues found</td>
                   </tr>
                 )}
               </tbody>
@@ -293,30 +373,52 @@ const StudentDashboard = () => {
 
       {/* Issue Details Modal */}
       {showModal && selectedIssue && (
-        <div className="issue-modal-overlay">
-          <div className="issue-modal">
-            <div className="issue-modal-header">
+        <div className="modal-backdrop">
+          <div className="modal-window">
+            <div className="modal-title-bar">
               <h2>Issue Details</h2>
-              <button className="close-modal-btn" onClick={closeModal}>×</button>
+              <button className="modal-close-icon" onClick={closeModal}>×</button>
             </div>
-            <div className="issue-modal-content">
-              <div className="issue-detail-item">
+            <div className="modal-body">
+              <div className="detail-row">
                 <strong>ID:</strong> #{selectedIssue.id || 'N/A'}
               </div>
+              
+              {/* Display issue image prominently if it exists */}
+              {selectedIssue.image && (
+                <div className="detail-row issue-image-row">
+                  <strong>Image:</strong>
+                  <div className="detail-image-container">
+                    <img 
+                      src={selectedIssue.image} 
+                      alt="Issue attachment" 
+                      className="detail-image" 
+                      onClick={() => window.open(selectedIssue.image, '_blank')}
+                    />
+                    <div className="image-caption">Click to view full size</div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Display all other issue details */}
               {Object.entries(selectedIssue).map(([key, value]) => {
-                // Skip ID as we've already displayed it at the top
-                if (key === 'id') return null;
+                // Skip ID and image as we've already displayed them separately
+                if (key === 'id' || key === 'image') return null;
+                
+                const formattedKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
                 
                 return (
-                  <div key={key} className="issue-detail-item">
-                    <strong>{key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:</strong> 
-                    {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                  <div key={key} className="detail-row">
+                    <strong>{formattedKey}:</strong> 
+                    <div className="detail-value">
+                      {formatValue(key, value)}
+                    </div>
                   </div>
                 );
               })}
             </div>
-            <div className="issue-modal-footer">
-              <button className="modal-close-btn" onClick={closeModal}>Close</button>
+            <div className="modal-actions">
+              <button className="modal-dismiss-btn" onClick={closeModal}>Close</button>
             </div>
           </div>
         </div>

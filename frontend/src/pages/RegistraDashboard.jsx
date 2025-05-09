@@ -15,12 +15,12 @@ const RegistrarDashboard = () => {
   const [pendingCount, setPendingCount] = useState(0);
   const [inProgressCount, setInProgressCount] = useState(0);
   const [resolvedCount, setResolvedCount] = useState(0);
+  const [rejectedCount, setRejectedCount] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
-  const [activeFilter, setActiveFilter] = useState('all'); // New state for filtering
+  const [activeFilter, setActiveFilter] = useState('all');
 
-  // Fetch issues when component mounts
   useEffect(() => {
     const checkAuth = () => {
       const accessToken = localStorage.getItem('accessToken');
@@ -36,15 +36,13 @@ const RegistrarDashboard = () => {
         setLoading(true);
         const accessToken = localStorage.getItem('accessToken');
         API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-        const response = await API.get('api/registrar_issue_management/');
+        const response = await API.get('/api/registrar_issue_management/');
         console.log("API Response:", response.data);
 
-        // Ensure data is processed properly
         const issuesData = Array.isArray(response.data) ? response.data : [];
         setIssues(issuesData);
         setFilteredIssues(issuesData);
 
-        // Count different issue types
         updateCounts(issuesData);
         setLoading(false);
       } catch (err) {
@@ -88,42 +86,37 @@ const RegistrarDashboard = () => {
     }
   }, [navigate]);
 
-  // Function to update counts
   const updateCounts = (data) => {
     const pending = data.filter(issue => issue.status === 'pending').length;
     const inProgress = data.filter(issue => issue.status === 'in_progress').length;
     const resolved = data.filter(issue => issue.status === 'resolved').length;
+    const rejected = data.filter(issue => issue.status === 'rejected').length;
 
     setPendingCount(pending);
     setInProgressCount(inProgress);
     setResolvedCount(resolved);
+    setRejectedCount(rejected);
   };
 
-  // Handle search functionality
   useEffect(() => {
-    // Debounce search requests by using a timer
     const debounceTimer = setTimeout(() => {
       if (searchTerm.trim() === '') {
-        // Reset to show all issues, but apply any active filter
         applyFilter(activeFilter, issues);
       } else {
         handleSearch();
       }
-    }, 500); // 500ms delay
+    }, 500);
 
     return () => clearTimeout(debounceTimer);
   }, [searchTerm, activeFilter, issues]);
 
-  // New function to handle filtering
   const applyFilter = (filter, dataToFilter) => {
     let filtered = [...dataToFilter];
     
-    // Apply status filter if not "all"
     if (filter !== 'all') {
       filtered = filtered.filter(issue => issue.status === filter);
     }
     
-    // Also apply any search term if present
     if (searchTerm.trim() !== '') {
       filtered = filtered.filter(issue =>
         issue.id?.toString().includes(searchTerm) ||
@@ -137,7 +130,6 @@ const RegistrarDashboard = () => {
     }
     
     setFilteredIssues(filtered);
-    // Don't update counts here to keep the cards showing total counts
   };
 
   const handleFilterClick = (filter) => {
@@ -153,14 +145,11 @@ const RegistrarDashboard = () => {
 
     try {
       setIsSearching(true);
-      // Use the filter_results endpoint for server-side filtering
       const response = await API.get(`api/registrar_issue_management/filter_results/?status=${searchTerm}`);
       
       if (response.data && Array.isArray(response.data)) {
-        // Apply active filter to search results
         applyFilter(activeFilter, response.data);
       } else {
-        // Fallback to client-side filtering
         const filtered = issues.filter(issue =>
           issue.id?.toString().includes(searchTerm) ||
           issue.status?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -174,7 +163,6 @@ const RegistrarDashboard = () => {
       }
     } catch (err) {
       console.error('Error searching issues:', err);
-      // Fallback to client-side filtering
       const filtered = issues.filter(issue =>
         issue.id?.toString().includes(searchTerm) ||
         issue.status?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -199,26 +187,60 @@ const RegistrarDashboard = () => {
     handleSearch();
   };
 
-  // Format date function
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
   };
 
-  // Open issue details modal
   const openIssueDetails = (issue) => {
     setSelectedIssue(issue);
     setShowModal(true);
   };
 
-  // Close modal
   const closeModal = () => {
     setShowModal(false);
     setSelectedIssue(null);
   };
 
-  // Filter dropdown component
+  const StatCard = ({ title, count, description, onClick, active }) => {
+    return (
+      <div 
+        className={`stat-card ${active ? 'active-card' : ''}`} 
+        onClick={onClick}
+        style={{ cursor: 'pointer' }}
+      >
+        <h3>{title}</h3>
+        <p className="stat-number">{count}</p>
+        <p>{description}</p>
+      </div>
+    );
+  };
+
+  const TabNavigation = () => {
+    const tabs = [
+      { id: 'all', label: 'All' },
+      { id: 'pending', label: 'Pending' },
+      { id: 'in_progress', label: 'In-progress' },
+      { id: 'resolved', label: 'Resolved' },
+      { id: 'rejected', label: 'Rejected' }
+    ];
+    
+    return (
+      <div className="issue-tabs">
+        {tabs.map(tab => (
+          <div
+            key={tab.id}
+            className={`tab ${activeFilter === tab.id ? 'active' : ''}`}
+            onClick={() => handleFilterClick(tab.id)}
+          >
+            {tab.label}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   const FilterDropdown = () => {
     const [isOpen, setIsOpen] = useState(false);
     
@@ -231,7 +253,8 @@ const RegistrarDashboard = () => {
           <span>Filter: {activeFilter === 'all' ? 'All' : 
                      activeFilter === 'pending' ? 'Pending' : 
                      activeFilter === 'in_progress' ? 'In Progress' : 
-                     activeFilter === 'resolved' ? 'Resolved' : 'All'}</span>
+                     activeFilter === 'resolved' ? 'Resolved' : 
+                     activeFilter === 'rejected' ? 'Rejected' : 'All'}</span>
           <span className="filter-icon">▼</span>
         </button>
         
@@ -273,8 +296,129 @@ const RegistrarDashboard = () => {
             >
               Resolved
             </button>
+            <button 
+              className={`filter-option ${activeFilter === 'rejected' ? 'active' : ''}`}
+              onClick={() => {
+                handleFilterClick('rejected');
+                setIsOpen(false);
+              }}
+            >
+              Rejected
+            </button>
           </div>
         )}
+      </div>
+    );
+  };
+
+  const SearchFilterBar = () => (
+    <div className="search-filter-row">
+      <form onSubmit={handleSearchSubmit} className="search-container">
+        <input
+          type="text"
+          placeholder="Search for issues (status, student, type)"
+          className="search-input"
+          value={searchTerm}
+          onChange={handleSearchChange}
+        />
+        <button type="submit" className="search-button">
+          <span className="search-icon"></span>
+        </button>
+      </form>
+      <div className="filter-controls">
+        <FilterDropdown />
+      </div>
+    </div>
+  );
+
+  const IssueTable = () => (
+    <div className="table-container">
+      {isSearching ? (
+        <div className="loading-message">Searching issues...</div>
+      ) : (
+        <table className="issues-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Issue</th>
+              <th>Status</th>
+              <th>Issue Type</th>
+              <th>Created</th>
+              <th>Updated</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredIssues.length > 0 ? (
+              filteredIssues.map((issue, index) => (
+                <tr key={issue.id || index} className={`status-row-${issue.status}`}>
+                  <td>#{issue.id || 'N/A'}</td>
+                  <td>{issue.description || issue.issue_description || 'N/A'}</td>
+                  <td>
+                    <span className={`status-tag status-${issue.status}`}>
+                      {issue.status === 'pending' ? 'Pending' :
+                       issue.status === 'in_progress' ? 'In-progress' :
+                       issue.status === 'resolved' ? 'Resolved' :
+                       issue.status === 'rejected' ? 'Rejected' : issue.status}
+                    </span>
+                  </td>
+                  <td>{issue.category || issue.issue_type || 'N/A'}</td>
+                  <td>{formatDate(issue.date || issue.created_at)}</td>
+                  <td>{formatDate(issue.updated_at || issue.date)}</td>
+                  <td>
+                    <button
+                      className="view-details-btn"
+                      onClick={() => openIssueDetails(issue)}
+                    >
+                      View Details
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="7" className="no-issues-message">
+                  {searchTerm || activeFilter !== 'all' ? 'No issues match your criteria' : 'No issues found'}
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
+
+  const StatsOverview = () => {
+    return (
+      <div className="stats-cards">
+        <StatCard
+          title="Pending Issues"
+          count={pendingCount}
+          description={`You currently have ${pendingCount} pending issue${pendingCount !== 1 ? 's' : ''}`}
+          onClick={() => handleFilterClick('pending')}
+          active={activeFilter === 'pending'}
+        />
+        <StatCard
+          title="In-progress Issues"
+          count={inProgressCount}
+          description={`You currently have ${inProgressCount} in-progress issue${inProgressCount !== 1 ? 's' : ''}`}
+          onClick={() => handleFilterClick('in_progress')}
+          active={activeFilter === 'in_progress'}
+        />
+        <StatCard
+          title="Resolved Issues"
+          count={resolvedCount}
+          description={`You currently have ${resolvedCount} resolved issue${resolvedCount !== 1 ? 's' : ''}`}
+          onClick={() => handleFilterClick('resolved')}
+          active={activeFilter === 'resolved'}
+        />
+        <StatCard
+          title="Rejected Issues"
+          count={rejectedCount}
+          description={`You currently have ${rejectedCount} rejected issue${rejectedCount !== 1 ? 's' : ''}`}
+          onClick={() => handleFilterClick('rejected')}
+          active={activeFilter === 'rejected'}
+        />
       </div>
     );
   };
@@ -283,11 +427,11 @@ const RegistrarDashboard = () => {
     return (
       <div className="app-container">
         <NavBar />
-        <div className="content-container">
+        <div className="content-wrapper">
           <Sidebar />
-          <main className="main-content">
+          <div className="dashboard-content">
             <div className="loading-message">Loading issues...</div>
-          </main>
+          </div>
         </div>
       </div>
     );
@@ -297,11 +441,11 @@ const RegistrarDashboard = () => {
     return (
       <div className="app-container">
         <NavBar />
-        <div className="content-container">
+        <div className="content-wrapper">
           <Sidebar />
-          <main className="main-content">
+          <div className="dashboard-content">
             <div className="error-message">{error}</div>
-          </main>
+          </div>
         </div>
       </div>
     );
@@ -310,163 +454,50 @@ const RegistrarDashboard = () => {
   return (
     <div className="app-container">
       <NavBar />
-      <div className="content-container">
+      <div className="content-wrapper">
         <Sidebar />
-        <main className="main-content">
-          <div className="main-content-wrapper">
-            <div className="dashboard-header">
-              <h1>Registrar Dashboard</h1>
-            </div>
-            <div className="dashboard-content">
-              <div className="dashboard-cards-container">
-                <div className="dashboard-cards">
-                  <DashboardCard
-                    title="Pending issues"
-                    count={pendingCount}
-                    description={`You currently have ${pendingCount} pending issue${pendingCount !== 1 ? 's' : ''}`}
-                    onClick={() => handleFilterClick('pending')}
-                    active={activeFilter === 'pending'}
-                  />
-                  <DashboardCard
-                    title="In-progress issues"
-                    count={inProgressCount}
-                    description={`You currently have ${inProgressCount} in-progress issue${inProgressCount !== 1 ? 's' : ''}`}
-                    onClick={() => handleFilterClick('in_progress')}
-                    active={activeFilter === 'in_progress'}
-                  />
-                  <DashboardCard
-                    title="Resolved issues"
-                    count={resolvedCount}
-                    description={`You currently have ${resolvedCount} resolved issue${resolvedCount !== 1 ? 's' : ''}`}
-                    onClick={() => handleFilterClick('resolved')}
-                    active={activeFilter === 'resolved'}
-                  />
-                </div>
-              </div>
-              <div className="issues-container">
-                <div className="issues-section">
-                  <div className="issues-header">
-                    <h2>My issues</h2>
-                    <div className="issues-controls">
-                      <form onSubmit={handleSearchSubmit} className="search-container">
-                        <input
-                          type="text"
-                          placeholder="Search for issues (status, student, type)"
-                          className="search-input"
-                          value={searchTerm}
-                          onChange={handleSearchChange}
-                        />
-                        <button type="submit" className="search-button">
-                          <span className="search-icon">🔍</span>
-                        </button>
-                      </form>
-                      <FilterDropdown />
-                    </div>
-                  </div>
-                  {/* Table Container */}
-                  <div className="table-container">
-                    {isSearching ? (
-                      <div className="loading-message">Searching issues...</div>
-                    ) : (
-                      <table className="issues-table">
-                        <thead>
-                          <tr>
-                            <th>ID</th>
-                            <th>Issue</th>
-                            <th>Status</th>
-                            <th>Issue Type</th>
-                            <th>Created</th>
-                            <th>Updated</th>
-                            <th>Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {filteredIssues.length > 0 ? (
-                            filteredIssues.map((issue, index) => (
-                              <tr key={issue.id || index} className={`status-row-${issue.status}`}>
-                                <td>#{issue.id || 'N/A'}</td>
-                                <td>{issue.description || issue.issue_description || 'N/A'}</td>
-                                <td>
-                                  <span className={`status-tag status-${issue.status}`}>
-                                    {issue.status === 'pending' ? 'Pending' :
-                                     issue.status === 'in_progress' ? 'In-progress' :
-                                     issue.status === 'resolved' ? 'Resolved' : issue.status}
-                                  </span>
-                                </td>
-                                <td>{issue.category || issue.issue_type || 'N/A'}</td>
-                                <td>{formatDate(issue.date || issue.created_at)}</td>
-                                <td>{formatDate(issue.updated_at || issue.date)}</td>
-                                <td>
-                                  <button
-                                    className="view-details-btn"
-                                    onClick={() => openIssueDetails(issue)}
-                                  >
-                                    View Details
-                                  </button>
-                                </td>
-                              </tr>
-                            ))
-                          ) : (
-                            <tr>
-                              <td colSpan="7" className="no-issues-message">
-                                {searchTerm || activeFilter !== 'all' ? 'No issues match your criteria' : 'No issues found'}
-                              </td>
-                            </tr>
-                          )}
-                        </tbody>
-                      </table>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Issue Details Modal */}
-              {showModal && selectedIssue && (
-                <div className="issue-modal-overlay">
-                  <div className="issue-modal">
-                    <div className="issue-modal-header">
-                      <h2>Issue Details</h2>
-                      <button className="close-modal-btn" onClick={closeModal}>×</button>
-                    </div>
-                    <div className="issue-modal-content">
-                      <div className="issue-detail-item">
-                        <strong>ID:</strong> #{selectedIssue.id || 'N/A'}
-                      </div>
-                      {Object.entries(selectedIssue).map(([key, value]) => {
-                        if (key === 'id') return null;
-                        return (
-                          <div key={key} className="issue-detail-item">
-                            <strong>{key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:</strong>{' '}
-                            {typeof value === 'object' ? JSON.stringify(value) : String(value)}
-                          </div>
-                        );
-                      })}
-                    </div>
-                    <div className="issue-modal-footer">
-                      <button className="modal-close-btn" onClick={closeModal}>Close</button>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+        <div className="dashboard-content">
+          <div className="dashboard-header">
+            <h1>Registrar Dashboard</h1>
           </div>
-        </main>
+          
+          <StatsOverview />
+          
+          <div className="issues-section">
+            <SearchFilterBar />
+            <TabNavigation />
+            <IssueTable />
+          </div>
+          
+          {showModal && selectedIssue && (
+            <div className="issue-modal-overlay">
+              <div className="issue-modal">
+                <div className="issue-modal-header">
+                  <h2>Issue Details</h2>
+                  <button className="close-modal-btn" onClick={closeModal}>×</button>
+                </div>
+                <div className="issue-modal-content">
+                  <div className="issue-detail-item">
+                    <strong>ID:</strong> #{selectedIssue.id || 'N/A'}
+                  </div>
+                  {Object.entries(selectedIssue).map(([key, value]) => {
+                    if (key === 'id') return null;
+                    return (
+                      <div key={key} className="issue-detail-item">
+                        <strong>{key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:</strong>{' '}
+                        {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="issue-modal-footer">
+                  <button className="modal-close-btn" onClick={closeModal}>Close</button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-  );
-};
-
-// Dashboard Card Component
-const DashboardCard = ({ title, count, description, onClick, active }) => {
-  return (
-    <div 
-      className={`dashboard-card ${active ? 'active-card' : ''}`} 
-      onClick={onClick}
-      style={{ cursor: 'pointer' }}
-    >
-      <h3>{title}</h3>
-      <div className="card-count">{count}</div>
-      <p>{description}</p>
     </div>
   );
 };

@@ -3,6 +3,8 @@ import Navbar from './NavBar';
 import Sidebar from './Sidebar1';
 import './StudentsProfile.css';
 import API from '../api';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const StudentsProfile = () => {
   const fileInputRef = useRef(null);
@@ -10,6 +12,7 @@ const StudentsProfile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editableField, setEditableField] = useState(null);
+  const [saveLoading, setSaveLoading] = useState(false);
 
   // Initialize profile state with default values
   const [profile, setProfile] = useState({
@@ -34,6 +37,9 @@ const StudentsProfile = () => {
   useEffect(() => {
     const loadUserData = async () => {
       try {
+        // Show toast notification for loading profile data
+        toast.info("Loading your profile data...");
+        
         // Get basic user data from localStorage
         const userData = {
           fullName: localStorage.getItem('userName') || 'Not available',
@@ -66,9 +72,12 @@ const StudentsProfile = () => {
           }));
         }
 
+        // Show success toast when profile is loaded
+        toast.success("Profile loaded successfully!");
       } catch (err) {
         console.error("Failed to load user data:", err);
         setError('Failed to load profile data. Please try again later.');
+        toast.error("Failed to load profile data. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -80,7 +89,6 @@ const StudentsProfile = () => {
   // Fetch program name from API
   const fetchProgramName = async (programId) => {
     try {
-      setLoading(true);
       const response = await API.get(`/api/program/${programId}`);
       
       if (response.data && (response.data.name || response.data.programName)) {
@@ -90,6 +98,9 @@ const StudentsProfile = () => {
           program: programName
         }));
         localStorage.setItem('userProgramName', programName);
+
+        // Show success toast when program information is loaded
+        toast.success("Program information loaded");
       } else {
         throw new Error('Invalid program data format');
       }
@@ -99,14 +110,16 @@ const StudentsProfile = () => {
         ...prev,
         program: 'Program info unavailable'
       }));
-    } finally {
-      setLoading(false);
+      toast.warning("Couldn't retrieve program information");
     }
   };
 
   const handleEditClick = (field) => {
     if (!readOnlyFields.includes(field)) {
       setEditableField(field);
+      toast.info(`Editing ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
+    } else {
+      toast.warning("This field cannot be edited");
     }
   };
 
@@ -115,10 +128,30 @@ const StudentsProfile = () => {
     setProfile(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = () => {
-    setEditableField(null);
-    // Here you would typically send the updated data to your API
-    console.log('Updated profile:', profile);
+  const handleSave = async () => {
+    try {
+      setSaveLoading(true); // Optional: Add a loading state for the save button
+      toast.info("Saving your changes...");
+      
+      // Simulate API call with a timeout
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      // Here you would typically send the updated data to your API
+      console.log('Updated profile:', profile);
+
+      setEditableField(null);
+      toast.success(`${editableField.replace(/([A-Z])/g, ' $1').toLowerCase()} updated successfully!`);
+    } catch (err) {
+      console.error('Error saving profile:', err);
+      toast.error("Failed to save changes. Please try again.");
+    } finally {
+      setSaveLoading(false); // Reset loading state
+    }
+  };
+
+  const handleCancel = () => {
+    setEditableField(null); // Reset the editable field
+    toast.info("Edit cancelled");
   };
 
   const handleImageClick = () => {
@@ -128,17 +161,43 @@ const StudentsProfile = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file && file.type.match('image.*')) {
+      if (file.size > 5 * 1024 * 1024) { // Check if file size exceeds 5MB
+        toast.error("Image is too large. Maximum size is 5MB.");
+        return;
+      }
+
+      // Show toast notification for uploading profile image
+      toast.info("Uploading profile image...");
+
       const reader = new FileReader();
       reader.onload = (event) => {
         setProfileImage(event.target.result);
+        toast.success("Profile image updated successfully!");
+      };
+      reader.onerror = () => {
+        // Show toast notification for image processing failure
+        toast.error("Failed to process the image. Please try another.");
       };
       reader.readAsDataURL(file);
+    } else if (file) {
+      toast.error("Selected file is not an image. Please select a valid image file.");
     }
   };
 
   if (loading) {
     return (
       <div className="app-container">
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
         <Navbar />
         <div className="content-wrapper">
           <Sidebar />
@@ -156,6 +215,17 @@ const StudentsProfile = () => {
   if (error) {
     return (
       <div className="app-container">
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
         <Navbar />
         <div className="content-wrapper">
           <Sidebar />
@@ -166,7 +236,10 @@ const StudentsProfile = () => {
               <p>{error}</p>
               <button 
                 className="retry-btn"
-                onClick={() => window.location.reload()}
+                onClick={() => {
+                  toast.info("Retrying...");
+                  window.location.reload();
+                }}
               >
                 Try Again
               </button>
@@ -179,6 +252,17 @@ const StudentsProfile = () => {
 
   return (
     <div className="app-container">
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <Navbar />
       <div className="content-wrapper">
         <Sidebar />
@@ -243,9 +327,22 @@ const StudentsProfile = () => {
                     )}
                     {!readOnlyFields.includes(field) && (
                       editableField === field ? (
-                        <button className="save-btn" onClick={handleSave}>
-                          Save
-                        </button>
+                        <>
+                          <button 
+                            className="save-btn" 
+                            onClick={handleSave}
+                            disabled={saveLoading} // Optional: Disable button while saving
+                          >
+                            {saveLoading ? 'Saving...' : 'Save'}
+                          </button>
+                          <button 
+                            className="cancel-btn" 
+                            onClick={handleCancel}
+                            disabled={saveLoading} // Optional: Disable button while saving
+                          >
+                            Cancel
+                          </button>
+                        </>
                       ) : (
                         <button 
                           className="edit-btn" 
@@ -274,6 +371,14 @@ const StudentsProfile = () => {
                     <span className="readonly-value">
                       {profile[field]}
                     </span>
+                    {field === 'program' && (
+                      <button 
+                        className="info-btn"
+                        onClick={() => toast.info("Program information is managed by administration")}
+                      >
+                        i
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}

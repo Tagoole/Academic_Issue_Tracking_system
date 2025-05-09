@@ -299,6 +299,20 @@ const LecturerIssueManagement = () => {
     }
   };
 
+  const handleLogout = () => {
+    // Clear tokens and user data from localStorage
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userEmail');
+  
+    // Show a toast notification for logout
+    toast.info('You have been logged out.');
+  
+    // Redirect to the landing page
+    window.location.href = '/';
+  };
+
   return (
     <div className="app-container">
       <Navbar />

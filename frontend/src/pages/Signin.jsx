@@ -7,64 +7,75 @@ import codeIcon from '../assets/code-icon.png';
 import graduateImage from '../assets/congragulation.png';
 import './signin.css';
 
-
 const SignIn = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [error, setError] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [errorType, setErrorType] = useState(''); // For styling different types of errors
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
+  const clearErrors = () => {
+    setErrorMessage('');
+    setErrorType('');
+  };
+
+  const handleInputChange = (setter) => (e) => {
+    setter(e.target.value);
+    clearErrors(); // Clear errors when user types
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    clearErrors();
+    
+    // Form validation
+    if (!username.trim()) {
+      setErrorMessage('Username is required');
+      setErrorType('validation');
+      return;
+    }
+
+    if (!password) {
+      setErrorMessage('Password is required');
+      setErrorType('validation');
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      // Make API call to authenticate user using your API instance
+      // Make API call to authenticate user
       const response = await API.post('/api/access_token/', {
         username,
         password
       });
 
-      // API response is automatically parsed by axios
+      // API response handling
       const data = response.data;
-      // Add this right after getting the response
-      console.log('API Response:', response.data);
-    
+      console.log('API Response:', data);
 
-      // Store tokens in localStorage
-      if (data.email) {
-        localStorage.setItem('userEmail', data.email);
-      }
-      if (data.gender) {
-        localStorage.setItem('userGender', data.gender);
-      }
-      if (data.username) {
-        localStorage.setItem('userName', data.username);
-      }
-      if (data.program) {
-        localStorage.setItem('userProgram', data.program);
-      }
-      if (data.id) {
-        localStorage.setItem('userId', data.id);
-      }
-      if (data.access) {
-        localStorage.setItem('accessToken', data.access);
-      } else {
-        console.warn('No access token in response');
-      }
+      // Store user data in localStorage
+      const userDataItems = [
+        { key: 'userEmail', value: data.email },
+        { key: 'userGender', value: data.gender },
+        { key: 'userName', value: data.username },
+        { key: 'userProgram', value: data.program },
+        { key: 'userId', value: data.id },
+        { key: 'accessToken', value: data.access },
+        { key: 'refreshToken', value: data.refresh },
+        { key: 'userRole', value: data.role }
+      ];
 
-      if (data.refresh) {
-        localStorage.setItem('refreshToken', data.refresh);
-      }
+      userDataItems.forEach(item => {
+        if (item.value) {
+          localStorage.setItem(item.key, item.value);
+        }
+      });
 
-      // Check the role directly from the response
+      // Handle navigation based on role
       if (data.role) {
-        // Store role in localStorage for future use if needed
-        localStorage.setItem('userRole', data.role);
-
         switch (data.role.toLowerCase()) {
           case 'student':
             navigate('/studentdashboard');
@@ -80,30 +91,71 @@ const SignIn = () => {
             break;
         }
       } else {
-        // If no role is provided, show warning and redirect to default dashboard
-        console.warn('No role found in response');
-        setError('Login successful but role information is missing. Contact administrator.');
+        setErrorMessage('Login successful but role information is missing. Please contact administrator.');
+        setErrorType('role');
         navigate('/landingpage');
       }
 
     } catch (err) {
-      // Axios error handling
+      // Enhanced error handling with specific messages
       if (err.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        setError(err.response.data.message || `Error: ${err.response.status}`);
+        const status = err.response.status;
+        
+        // Handle specific HTTP status codes
+        switch (status) {
+          case 400:
+            setErrorMessage('Invalid username or password format.');
+            break;
+          case 401:
+            setErrorMessage('Incorrect username or password. Please try again.');
+            break;
+          case 403:
+            setErrorMessage('Your account is inactive or suspended. Please contact administrator.');
+            break;
+          case 404:
+            setErrorMessage('User not found. Please check your username or sign up.');
+            break;
+          case 429:
+            setErrorMessage('Too many login attempts. Please try again later.');
+            break;
+          case 500:
+          case 502:
+          case 503:
+          case 504:
+            setErrorMessage('Server error. Please try again later or contact support.');
+            break;
+          default:
+            // Use server's error message if available
+            setErrorMessage(err.response.data.message || 
+              err.response.data.detail || 
+              err.response.data.error || 
+              `Login failed (Error: ${status})`);
+        }
+        
         console.error('Response error:', err.response.data);
       } else if (err.request) {
-        // The request was made but no response was received
-        setError('No response received from server. Please try again later.');
+        setErrorMessage('Unable to connect to the server. Please check your internet connection and try again.');
         console.error('Request error:', err.request);
       } else {
-        // Something happened in setting up the request
-        setError(err.message || 'An error occurred during sign in');
+        setErrorMessage('An unexpected error occurred. Please try again.');
         console.error('Sign in error:', err);
       }
+      
+      setErrorType('error');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const getErrorClass = () => {
+    switch (errorType) {
+      case 'validation':
+        return 'validation-error';
+      case 'role':
+        return 'role-error';
+      case 'error':
+      default:
+        return 'server-error';
     }
   };
 
@@ -118,12 +170,17 @@ const SignIn = () => {
         <div className="left-section">
           <div className="header">
             <h1 className="green-text">WELCOME TO THE ACADEMIC ISSUE TRACKING SYSTEM</h1>
-            
           </div>
 
           <div className="content">
             <h4 className="sign-in-heading">Sign in</h4>
-            {error && <div className="error-message">{error}</div>}
+            
+            {errorMessage && (
+              <div className={`error-message ${getErrorClass()}`}>
+                {errorMessage}
+              </div>
+            )}
+            
             <form className="sign-in-form" onSubmit={handleSubmit}>
               <div className="form-group">
                 <div className="input-container">
@@ -131,8 +188,9 @@ const SignIn = () => {
                     type="text"
                     id="username"
                     value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    onChange={handleInputChange(setUsername)}
                     placeholder="Enter your Username"
+                    aria-label="Username"
                     required
                   />
                   <img src={mail} alt="User Icon" className="icon" />
@@ -145,8 +203,9 @@ const SignIn = () => {
                     type={passwordVisible ? "text" : "password"}
                     id="password"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={handleInputChange(setPassword)}
                     placeholder="Enter your password"
+                    aria-label="Password"
                     required
                   />
                   <img

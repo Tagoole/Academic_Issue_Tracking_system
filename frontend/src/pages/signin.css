@@ -187,7 +187,8 @@ h2.green-text {
   animation: hologramShine 3s linear infinite;
   z-index: 1;
 }
-submit-button::after {
+
+.submit-button::after {
   content: '';
   position: absolute;
   top: 0;
@@ -229,7 +230,6 @@ submit-button::after {
   }
 }
 
-
 .submit-button:hover {
   background: linear-gradient(45deg, #009900, #005500);
   box-shadow: 0 2px 10px rgba(0, 173, 0, 0.3);
@@ -254,16 +254,40 @@ submit-button::after {
   text-decoration: none;
 }
 
-/* Error message */
+/* Enhanced Error message styling */
 .error-message {
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  width: 90%;
+  text-align: center;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-height: 60px;
+  overflow-y: auto;
+  transition: all 0.3s ease;
+}
+
+/* Error message by type */
+.validation-error {
+  background-color: #fff3cd;
+  color: #856404;
+  border-left: 3px solid #ffeeba;
+}
+
+.server-error {
   background-color: #f8d7da;
   color: #721c24;
-  padding: 10px;
-  border-radius: 5px;
-  margin-bottom: 15px;
-  font-size: 14px;
-  width: 100%;
-  text-align: center;
+  border-left: 3px solid #f5c6cb;
+}
+
+.role-error {
+  background-color: #d1ecf1;
+  color: #0c5460;
+  border-left: 3px solid #bee5eb;
 }
 
 /* Right section - Image */
@@ -302,6 +326,12 @@ submit-button::after {
   .content {
     max-width: 90%;
     width: auto;
+  }
+  
+  .error-message {
+    width: 95%;
+    font-size: 12px;
+    padding: 6px 8px;
   }
 }
 

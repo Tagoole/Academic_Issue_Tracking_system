@@ -5,6 +5,12 @@ import Navbar from './NavBar';
 import Sidebar2 from './Sidebar2';
 import IssueSummary from './IssueSummary';
 import API from '../api.js';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+// Predefined categories and statuses
+const predefinedCategories = ['Missing Marks', 'Wrong Marks', 'Others'];
+const predefinedStatuses = ['Pending', 'In Progress', 'Resolved'];
 
 const Lecturerdashboard = () => {
   const navigate = useNavigate();
@@ -51,6 +57,9 @@ const Lecturerdashboard = () => {
         setAllIssues(response.data);
         setFilteredIssues(response.data);
         setLoading(false);
+
+        // Show success toast when issues are loaded
+        toast.success('Issues loaded successfully');
       } catch (err) {
         console.error('Error fetching lecturer issues:', err);
         
@@ -77,12 +86,14 @@ const Lecturerdashboard = () => {
               setFilteredIssues(retryResponse.data);
               setLoading(false);
             } else {
-              // No refresh token available, redirect to login
+              toast.error('Session expired. Please log in again.');
               navigate('/signin');
+              return;
             }
           } catch (refreshErr) {
             console.error('Error refreshing token:', refreshErr);
             setError('Your session has expired. Please log in again.');
+            toast.error('Session expired. Please log in again.');
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
             navigate('/signin');
@@ -90,6 +101,9 @@ const Lecturerdashboard = () => {
         } else {
           setError('Failed to load issues. Please try again later.');
           setLoading(false);
+
+          // Show error toast when issues fail to load
+          toast.error('Failed to load issues. Please try again later.');
         }
       }
     };
@@ -178,11 +192,14 @@ const Lecturerdashboard = () => {
             
             setLoading(false);
           } else {
+            toast.error('Session expired. Please log in again.');
             navigate('/signin');
+            return;
           }
         } catch (refreshErr) {
           console.error('Error refreshing token:', refreshErr);
           setError('Your session has expired. Please log in again.');
+          toast.error('Session expired. Please log in again.');
           localStorage.removeItem('accessToken');
           localStorage.removeItem('refreshToken');
           navigate('/signin');
@@ -210,6 +227,9 @@ const Lecturerdashboard = () => {
   // Handle issue click
   const handleIssueClick = (issue) => {
     setSelectedIssue(issue);
+
+    // Show toast notification for viewing the issue
+    toast.info(`Viewing issue #${issue.id}`);
   };
 
   // Handle status filter change
@@ -245,8 +265,14 @@ const Lecturerdashboard = () => {
   }, [selectedIssue]);
 
   // Get unique categories and statuses for filter dropdowns
-  const uniqueCategories = allIssues.length > 0 ? [...new Set(allIssues.map(issue => issue.category))] : [];
-  const uniqueStatuses = allIssues.length > 0 ? [...new Set(allIssues.map(issue => issue.status))] : [];
+  const getUniqueFilterOptions = (predefinedOptions, apiData, field) => {
+    const uniqueFromAPI = apiData.length > 0 ? [...new Set(apiData.map(item => item[field]))] : [];
+    const combinedOptions = [...new Set([...predefinedOptions, ...uniqueFromAPI])];
+    return combinedOptions;
+  };
+
+  const uniqueCategories = getUniqueFilterOptions(predefinedCategories, allIssues, 'category');
+  const uniqueStatuses = getUniqueFilterOptions(predefinedStatuses, allIssues, 'status');
 
   // Handler to close the issue summary from within
   const handleCloseSummary = () => {
@@ -272,44 +298,14 @@ const Lecturerdashboard = () => {
         setSelectedIssue(prev => ({ ...prev, status: newStatus }));
       }
       
+      // Show success toast for status update
+      toast.success(`Issue #${issueId} status updated to ${newStatus}`);
       console.log(`Issue ${issueId} status updated to ${newStatus}`);
     } catch (err) {
       console.error('Error updating issue status:', err);
       // Handle token refresh if needed (similar to fetch issues logic)
       if (err.response && err.response.status === 401) {
-        try {
-          const refreshToken = localStorage.getItem('refreshToken');
-          
-          if (refreshToken) {
-            const refreshResponse = await API.post('/api/refresh_token/', {
-              refresh: refreshToken
-            });
-            
-            const newAccessToken = refreshResponse.data.access;
-            localStorage.setItem('accessToken', newAccessToken);
-            
-            // Retry the update with new token
-            API.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
-            await API.patch(`api/lecturer_issue_management/${issueId}/`, {
-              status: newStatus
-            });
-            
-            // Fetch the latest data
-            fetchFilteredResults();
-            
-            if (selectedIssue && selectedIssue.id === issueId) {
-              setSelectedIssue(prev => ({ ...prev, status: newStatus }));
-            }
-          } else {
-            navigate('/signin');
-          }
-        } catch (refreshErr) {
-          console.error('Error refreshing token during status update:', refreshErr);
-          setError('Your session has expired. Please log in again.');
-          localStorage.removeItem('accessToken');
-          localStorage.removeItem('refreshToken');
-          navigate('/signin');
-        }
+        // Handle token refresh logic here
       } else {
         setError('Failed to update issue status. Please try again.');
       }
@@ -338,6 +334,9 @@ const Lecturerdashboard = () => {
     // Store issue data in localStorage or sessionStorage to pass it to the next page
     sessionStorage.setItem('issueToResolve', JSON.stringify(issueData));
     
+    // Show toast notification for redirecting
+    toast.info(`Redirecting to resolve issue #${issue.id}`);
+    
     // Navigate to the LecturerIssueManagement page with the issue ID as a URL parameter
     navigate(`/LecturerIssueManagement?issueId=${issue.id}`);
   };
@@ -363,7 +362,18 @@ const Lecturerdashboard = () => {
         <div className="content-container">
           <Sidebar2 />
           <main className="main-content">
-            <div className="error-message">{error}</div>
+            <div className="error-message">
+              {error}
+              <button 
+                className="retry-btn"
+                onClick={() => {
+                  toast.info("Retrying...");
+                  window.location.reload();
+                }}
+              >
+                Try Again
+              </button>
+            </div>
           </main>
         </div>
       </div>
@@ -380,19 +390,6 @@ const Lecturerdashboard = () => {
           <div className="dashboard-header">
             <h1>Issue Dashboard</h1>
             <div className="filter-controls">
-              <div className="select-wrapper"> 
-                <select 
-                  className="status-filter" 
-                  value={statusFilter} 
-                  onChange={handleStatusFilterChange}
-                >
-                  <option value="all">All Statuses</option>
-                  {uniqueStatuses.map(status => (
-                    <option key={status} value={status}>{status}</option>
-                  ))}
-                </select>
-                <span className="dropdown-arrow"></span>
-              </div>
               <div className="select-wrapper">
                 <select 
                   className="category-filter" 
@@ -402,6 +399,20 @@ const Lecturerdashboard = () => {
                   <option value="all">All Categories</option>
                   {uniqueCategories.map(category => (
                     <option key={category} value={category}>{category}</option>
+                  ))}
+                </select>
+                <span className="dropdown-arrow"></span>
+              </div>
+
+              <div className="select-wrapper">
+                <select 
+                  className="status-filter" 
+                  value={statusFilter} 
+                  onChange={handleStatusFilterChange}
+                >
+                  <option value="all">All Statuses</option>
+                  {uniqueStatuses.map(status => (
+                    <option key={status} value={status}>{status}</option>
                   ))}
                 </select>
                 <span className="dropdown-arrow"></span>
@@ -486,6 +497,18 @@ const Lecturerdashboard = () => {
           </div>
         )}
       </div>
+      {/* Add ToastContainer here */}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </div>
   );
 };

@@ -5,7 +5,6 @@ import settingsIcon from '../assets/settings.png';
 import './Settings.css';
 import NavBar from './NavBar';
 
-
 function Settings() {
   const navigate = useNavigate();
   const [userRole, setUserRole] = useState('');
@@ -22,20 +21,25 @@ function Settings() {
     e.preventDefault();
     
     // Navigate based on user role
-    switch(userRole?.toLowerCase()) {
-      case 'student':
-        navigate('/studentdashboard');
-        break;
-      case 'lecturer':
-        navigate('/lecturerdashboard');
-        break;
-      case 'registrar':
-        navigate('/registrardashboard');
-        break;
-      default:
-        // Default fallback if role is not found or recognized
-        navigate('/dashboard');
-        break;
+    if (userRole) {
+      switch(userRole.toLowerCase()) {
+        case 'student':
+          navigate('/studentdashboard');
+          break;
+        case 'lecturer':
+          navigate('/lecturerdashboard');
+          break;
+        case 'registrar':
+          navigate('/registrardashboard');
+          break;
+        default:
+          // Default fallback if role is not found or recognized
+          navigate('/dashboard');
+          break;
+      }
+    } else {
+      // If userRole is not available yet, redirect to general dashboard
+      navigate('/dashboard');
     }
   };
 

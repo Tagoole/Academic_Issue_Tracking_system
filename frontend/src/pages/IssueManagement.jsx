@@ -17,31 +17,22 @@ const IssueManagement = () => {
   const [showLecturersDropdown, setShowLecturersDropdown] = useState(false);
   const [activeIssueId, setActiveIssueId] = useState(null);
   const [showActionsDropdown, setShowActionsDropdown] = useState(null);
-  const dropdownRef = useRef(null);
+  const dropdownRefs = useRef({});  // Use an object to store refs for each dropdown
   const [isSearching, setIsSearching] = useState(false);
-  
-  // Added state for issue details modal
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState(null);
-  
-  // New state for editing issue
   const [editingIssue, setEditingIssue] = useState({
     lecturer: '',
     status: ''
   });
-  
-  // Counters for different issue statuses
   const [pendingCount, setPendingCount] = useState(0);
   const [inProgressCount, setInProgressCount] = useState(0);
   const [resolvedCount, setResolvedCount] = useState(0);
-  const [rejectedCount, setRejectedCount] = useState(0); // Added rejected count
+  const [rejectedCount, setRejectedCount] = useState(0);
 
-  // Fetch issues when component mounts
   useEffect(() => {
-    // Check if user is authenticated when component mounts
     const checkAuth = () => {
       const accessToken = localStorage.getItem('accessToken');
-      // If no access token is available, redirect to login
       if (!accessToken) {
         navigate('/signin');
         return false;
@@ -53,9 +44,7 @@ const IssueManagement = () => {
       try {
         const accessToken = localStorage.getItem('accessToken');
         API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-        
         const response = await API.get('api/get_lecturers/');
-        console.log("Lecturers Response:", response.data);
         setLecturers(response.data);
       } catch (err) {
         console.error('Error fetching lecturers:', err);
@@ -65,70 +54,47 @@ const IssueManagement = () => {
     const fetchIssues = async () => {
       try {
         setLoading(true);
-        
-        // Get access token
         const accessToken = localStorage.getItem('accessToken');
-        
-        // Set authorization header with access token
         API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-        
         const response = await API.get('api/registrar_issue_management/');
-        console.log("API Response:", response.data); // Debug log
-        
         setIssues(response.data);
         setFilteredIssues(response.data.filter(issue => issue.status === issueStatus));
-        
-        // Calculate counts for each status
+
         const pending = response.data.filter(issue => issue.status === 'pending').length;
         const inProgress = response.data.filter(issue => issue.status === 'in_progress').length;
         const resolved = response.data.filter(issue => issue.status === 'resolved').length;
-        const rejected = response.data.filter(issue => issue.status === 'rejected').length; // Added rejected
-        
+        const rejected = response.data.filter(issue => issue.status === 'rejected').length;
+
         setPendingCount(pending);
         setInProgressCount(inProgress);
         setResolvedCount(resolved);
-        setRejectedCount(rejected); // Set rejected count
-        
+        setRejectedCount(rejected);
         setLoading(false);
       } catch (err) {
         console.error('Error fetching registrar issues:', err);
-        
-        // Check if error is due to unauthorized access (401)
         if (err.response && err.response.status === 401) {
-          // Try refreshing the token
           try {
             const refreshToken = localStorage.getItem('refreshToken');
-            
             if (refreshToken) {
-              const refreshResponse = await API.post('/api/refresh_token/', {
-                refresh: refreshToken
-              });
-              
-              // Store the new access token
+              const refreshResponse = await API.post('/api/refresh_token/', { refresh: refreshToken });
               const newAccessToken = refreshResponse.data.access;
               localStorage.setItem('accessToken', newAccessToken);
-              
-              // Retry the original request with new token
               API.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
               const retryResponse = await API.get('api/registrar_issue_management/');
-              
               setIssues(retryResponse.data);
               setFilteredIssues(retryResponse.data.filter(issue => issue.status === issueStatus));
-              
-              // Calculate counts for each status
+
               const pending = retryResponse.data.filter(issue => issue.status === 'pending').length;
               const inProgress = retryResponse.data.filter(issue => issue.status === 'in_progress').length;
               const resolved = retryResponse.data.filter(issue => issue.status === 'resolved').length;
-              const rejected = retryResponse.data.filter(issue => issue.status === 'rejected').length; // Added rejected
-              
+              const rejected = retryResponse.data.filter(issue => issue.status === 'rejected').length;
+
               setPendingCount(pending);
               setInProgressCount(inProgress);
               setResolvedCount(resolved);
-              setRejectedCount(rejected); // Set rejected count
-              
+              setRejectedCount(rejected);
               setLoading(false);
             } else {
-              // No refresh token available, redirect to login
               navigate('/signin');
             }
           } catch (refreshErr) {
@@ -145,17 +111,14 @@ const IssueManagement = () => {
       }
     };
 
-    // Only fetch data if authentication check passes
     if (checkAuth()) {
       fetchIssues();
       fetchLecturers();
     }
   }, [navigate, issueStatus]);
 
-  // New function to perform the search using the API endpoint
   const performSearch = async () => {
     if (!searchTerm.trim()) {
-      // If search term is empty, reset to filtered by status
       setFilteredIssues(issues.filter(issue => issue.status === issueStatus));
       setIsSearching(false);
       return;
@@ -165,23 +128,14 @@ const IssueManagement = () => {
       setIsSearching(true);
       const accessToken = localStorage.getItem('accessToken');
       API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-      
-      // Use the filter_results action endpoint with the search term
       const response = await API.get(`api/registrar_issue_management/filter_results/?status=${searchTerm}`);
-      console.log("Search Response:", response.data);
-      
-      // Further filter by current status tab
-      const statusFiltered = response.data.filter(
-        issue => issue.status === issueStatus
-      );
-      
+      const statusFiltered = response.data.filter(issue => issue.status === issueStatus);
       setFilteredIssues(statusFiltered);
       setIsSearching(false);
     } catch (err) {
       console.error('Error searching issues:', err);
       setIsSearching(false);
-      // If search fails, fallback to client-side filtering
-      const filtered = issues.filter(issue => 
+      const filtered = issues.filter(issue =>
         issue.status === issueStatus &&
         (issue.id.toString().includes(searchTerm) ||
         (issue.student?.username && issue.student.username.toLowerCase().includes(searchTerm.toLowerCase())) ||
@@ -192,28 +146,23 @@ const IssueManagement = () => {
     }
   };
 
-  // Handle search term changes
+  useEffect(() => {
+    const delaySearch = setTimeout(() => {
+      performSearch();
+    }, 500);
+    return () => clearTimeout(delaySearch);
+  }, [searchTerm]);
+
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
 
-  // Perform search when search term changes with a debounce
-  useEffect(() => {
-    const delaySearch = setTimeout(() => {
-      performSearch();
-    }, 500); // 500ms delay
-
-    return () => clearTimeout(delaySearch);
-  }, [searchTerm]);
-
-  // When status tab changes, reset search and update filtered issues
   const handleStatusChange = (status) => {
     setIssueStatus(status.toLowerCase());
-    setSearchTerm(''); // Clear search when changing tabs
+    setSearchTerm('');
     setFilteredIssues(issues.filter(issue => issue.status.toLowerCase() === status.toLowerCase()));
   };
 
-  // Modified handleViewDetails to display issue details in a modal
   const handleViewDetails = (issueId) => {
     const issue = issues.find(issue => issue.id === issueId);
     if (issue) {
@@ -223,7 +172,7 @@ const IssueManagement = () => {
         status: issue.status || 'pending'
       });
       setShowDetailsModal(true);
-      setShowActionsDropdown(null); // Close the actions dropdown
+      setShowActionsDropdown(null);
     }
   };
 
@@ -236,77 +185,54 @@ const IssueManagement = () => {
   const handleEscalateIssue = (issueId) => {
     setActiveIssueId(issueId);
     setShowLecturersDropdown(true);
-    setShowActionsDropdown(null); 
+    setShowActionsDropdown(null);
   };
 
   const handleLecturerSelect = async (lecturerId) => {
     try {
       const issue = issues.find((i) => i.id === activeIssueId);
       const lecturer = lecturers.find((l) => l.id === lecturerId);
-  
       if (!issue || !lecturer) return;
-  
-      // Data to send to the backend (for escalation)
+
       const escalationData = {
         status: 'in_progress',
         lecturer: lecturer.id
       };
-  
-      // Get access token for authorization
+
       const accessToken = localStorage.getItem('accessToken');
       API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-      
-      console.log('Sending escalation data:', escalationData);
-  
-      // Send PATCH request to escalate the issue
       const response = await API.patch(`api/registrar_issue_management/${issue.id}/`, escalationData);
-      console.log('Issue escalated successfully:', response.data);
-      
-      // Update the issue in state to reflect the change
+
       setIssues((prevIssues) =>
         prevIssues.map((i) =>
           i.id === issue.id ? { ...i, status: 'in_progress', lecturer: lecturer } : i
         )
       );
-      
-      // Close the dropdowns
+
       setShowLecturersDropdown(false);
       setActiveIssueId(null);
-      
-      // Update status counts
       setInProgressCount(prev => prev + 1);
       setPendingCount(prev => prev - 1);
-      
-      // Update filtered issues
+
       setFilteredIssues((prevFiltered) => {
         if (issueStatus === 'pending') {
-          // Remove from filtered list if we're on pending tab
           return prevFiltered.filter((i) => i.id !== issue.id);
         } else if (issueStatus === 'in_progress') {
-          // Update in filtered list if we're on in_progress tab
-          return prevFiltered.map((i) => 
+          return prevFiltered.map((i) =>
             i.id === issue.id ? { ...i, status: 'in_progress', lecturer: lecturer } : i
           );
         }
         return prevFiltered;
       });
-      
-      // Show success message or notification to user
+
       alert(`Issue #${issue.id} has been escalated to ${lecturer.username}`);
-      
     } catch (error) {
       console.error('Error escalating issue:', error);
-      if (error.response) {
-        console.error('Error response data:', error.response.data);
-        alert(`Failed to escalate issue: ${JSON.stringify(error.response.data)}`);
-      } else {
-        alert('Failed to escalate issue. Please try again.');
-      }
+      alert('Failed to escalate issue. Please try again.');
       setShowLecturersDropdown(false);
     }
   };
 
-  // Handle input changes in the modal form
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEditingIssue({
@@ -315,55 +241,38 @@ const IssueManagement = () => {
     });
   };
 
-  // Function to save the updated issue - Now using PATCH instead of PUT
   const handleUpdateIssue = async () => {
     try {
       if (!selectedIssue) return;
-      
-      // Get access token for authorization
       const accessToken = localStorage.getItem('accessToken');
       API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-      
-      // Get previous status for count updating
       const previousStatus = selectedIssue.status;
-      
-      // Data to send to the backend - Fixed field names to match serializer
+
       const updateData = {
-        lecturer: editingIssue.lecturer, // Changed from lecturer_id
+        lecturer: editingIssue.lecturer,
         status: editingIssue.status
       };
-      
-      console.log('Sending update data:', updateData);
-      
-      // Send PATCH request instead of PUT to update only specific fields
+
       const response = await API.patch(`api/registrar_issue_management/${selectedIssue.id}/`, updateData);
-      console.log('Issue updated successfully:', response.data);
-      
-      // Get the lecturer object for the updated issue
       const selectedLecturer = lecturers.find(l => l.id.toString() === editingIssue.lecturer.toString());
-      
-      // Update the issue in state to reflect the change
+
       setIssues((prevIssues) =>
         prevIssues.map((i) =>
-          i.id === selectedIssue.id ? { 
-            ...i, 
+          i.id === selectedIssue.id ? {
+            ...i,
             status: editingIssue.status,
             lecturer: selectedLecturer || i.lecturer
           } : i
         )
       );
-      
-      // Update filtered issues
+
       setFilteredIssues((prevFiltered) => {
-        // If the status changed to something other than current tab, remove from list
         if (previousStatus === issueStatus && editingIssue.status !== issueStatus) {
           return prevFiltered.filter((i) => i.id !== selectedIssue.id);
-        } 
-        // If status changed to match current tab, update the item
-        else if (editingIssue.status === issueStatus) {
+        } else if (editingIssue.status === issueStatus) {
           return prevFiltered.map((i) =>
-            i.id === selectedIssue.id ? { 
-              ...i, 
+            i.id === selectedIssue.id ? {
+              ...i,
               status: editingIssue.status,
               lecturer: selectedLecturer || i.lecturer
             } : i
@@ -371,124 +280,82 @@ const IssueManagement = () => {
         }
         return prevFiltered;
       });
-      
-      // Update status counts
+
       if (previousStatus !== editingIssue.status) {
-        // Decrement the previous status count
-        if (previousStatus === 'pending') {
-          setPendingCount(prev => prev - 1);
-        } else if (previousStatus === 'in_progress') {
-          setInProgressCount(prev => prev - 1);
-        } else if (previousStatus === 'resolved') {
-          setResolvedCount(prev => prev - 1);
-        } else if (previousStatus === 'rejected') {
-          setRejectedCount(prev => prev - 1);
-        }
-        
-        // Increment the new status count
-        if (editingIssue.status === 'pending') {
-          setPendingCount(prev => prev + 1);
-        } else if (editingIssue.status === 'in_progress') {
-          setInProgressCount(prev => prev + 1);
-        } else if (editingIssue.status === 'resolved') {
-          setResolvedCount(prev => prev + 1);
-        } else if (editingIssue.status === 'rejected') {
-          setRejectedCount(prev => prev + 1);
-        }
+        if (previousStatus === 'pending') setPendingCount(prev => prev - 1);
+        else if (previousStatus === 'in_progress') setInProgressCount(prev => prev - 1);
+        else if (previousStatus === 'resolved') setResolvedCount(prev => prev - 1);
+        else if (previousStatus === 'rejected') setRejectedCount(prev => prev - 1);
+
+        if (editingIssue.status === 'pending') setPendingCount(prev => prev + 1);
+        else if (editingIssue.status === 'in_progress') setInProgressCount(prev => prev + 1);
+        else if (editingIssue.status === 'resolved') setResolvedCount(prev => prev + 1);
+        else if (editingIssue.status === 'rejected') setRejectedCount(prev => prev + 1);
       }
-      
-      // Close the modal
+
       closeDetailsModal();
-      
-      // Show success message
       alert(`Issue #${selectedIssue.id} has been updated successfully`);
-      
     } catch (error) {
       console.error('Error updating issue:', error);
-      if (error.response) {
-        console.error('Error response data:', error.response.data);
-        alert(`Failed to update issue: ${JSON.stringify(error.response.data)}`);
-      } else {
-        alert('Failed to update issue. Please try again.');
-      }
+      alert('Failed to update issue. Please try again.');
     }
   };
 
-  // New function to handle rejecting an issue
   const handleRejectIssue = async (issueId) => {
     try {
       const issue = issues.find((i) => i.id === issueId);
       if (!issue) return;
-      
-      // Data to send to backend for rejection
+
       const rejectionData = {
         status: 'rejected',
-        lecturer: null // Optionally remove lecturer assignment on rejection
+        lecturer: null
       };
-      
-      // Get access token for authorization
+
       const accessToken = localStorage.getItem('accessToken');
       API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-      
-      // Send PATCH request to reject the issue
       const response = await API.patch(`api/registrar_issue_management/${issue.id}/`, rejectionData);
-      console.log('Issue rejected successfully:', response.data);
-      
-      // Update the issue in state to reflect the change
+
       setIssues((prevIssues) =>
         prevIssues.map((i) =>
           i.id === issue.id ? { ...i, status: 'rejected', lecturer: null } : i
         )
       );
-      
-      // Update filtered issues
+
       setFilteredIssues((prevFiltered) => {
         if (issueStatus !== 'rejected') {
-          // Remove from filtered list if we're not on rejected tab
           return prevFiltered.filter((i) => i.id !== issue.id);
         } else {
-          // Add to filtered list if we're on rejected tab
           return [...prevFiltered, { ...issue, status: 'rejected', lecturer: null }];
         }
       });
-      
-      // Update status counts
-      if (issue.status === 'pending') {
-        setPendingCount(prev => prev - 1);
-      } else if (issue.status === 'in_progress') {
-        setInProgressCount(prev => prev - 1);
-      }
-      
+
+      if (issue.status === 'pending') setPendingCount(prev => prev - 1);
+      else if (issue.status === 'in_progress') setInProgressCount(prev => prev - 1);
       setRejectedCount(prev => prev + 1);
-      
-      // Show success message
+
       alert(`Issue #${issue.id} has been rejected`);
-      
-      // Close any open dropdowns
       setShowActionsDropdown(null);
-      
     } catch (error) {
       console.error('Error rejecting issue:', error);
-      if (error.response) {
-        console.error('Error response data:', error.response.data);
-        alert(`Failed to reject issue: ${JSON.stringify(error.response.data)}`);
-      } else {
-        alert('Failed to reject issue. Please try again.');
-      }
+      alert('Failed to reject issue. Please try again.');
     }
   };
 
-  const toggleActionsDropdown = (issueId) => {
-    if (showActionsDropdown === issueId) {
-      setShowActionsDropdown(null);
-    } else {
-      setShowActionsDropdown(issueId);
+  const toggleActionsDropdown = (issueId, event) => {
+    // Stop event propagation to prevent immediate closing
+    if (event) {
+      event.stopPropagation();
+    }
+    
+    setShowActionsDropdown(prevState => prevState === issueId ? null : issueId);
+    
+    // Close any open lecturers dropdown
+    if (showLecturersDropdown) {
       setShowLecturersDropdown(false);
       setActiveIssueId(null);
     }
   };
 
-  // Format date to a user-friendly format
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
@@ -501,121 +368,46 @@ const IssueManagement = () => {
     }).format(date);
   };
 
-  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      // Check if clicked outside any dropdown
+      let clickedOutside = true;
+      
+      // Check each dropdown ref
+      Object.keys(dropdownRefs.current).forEach(key => {
+        const ref = dropdownRefs.current[key];
+        if (ref && ref.contains(event.target)) {
+          clickedOutside = false;
+        }
+      });
+      
+      if (clickedOutside) {
         setShowActionsDropdown(null);
         setShowLecturersDropdown(false);
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Handle search form submission - More explicit form submission
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     performSearch();
   };
 
-  // Clear search results
   const handleClearSearch = () => {
     setSearchTerm('');
     setFilteredIssues(issues.filter(issue => issue.status === issueStatus));
   };
 
-  // Render table rows
-  const renderIssueRows = () => {
-    if (filteredIssues.length === 0) {
-      return (
-        <tr>
-          <td colSpan="9" className="no-issues">
-            {searchTerm ? 'No issues match your search' : 'No issues found'}
-          </td>
-        </tr>
-      );
+  // Add a ref for each dropdown when it's rendered
+  const addDropdownRef = (id, element) => {
+    if (element) {
+      dropdownRefs.current[id] = element;
     }
-
-    return filteredIssues.map((issue) => (
-      <tr key={issue.id} className="issue-row">
-        <td>{issue.id}</td>
-        <td>{issue.student?.username || 'N/A'}</td>
-        <td>{issue.issue_type || 'N/A'}</td>
-        <td>{issue.lecturer?.username || 'Not Assigned'}</td>
-        <td>{issue.year_of_study?.replace('_', ' ') || 'N/A'}</td>
-        <td>{formatDate(issue.created_at)}</td>
-        <td>{formatDate(issue.updated_at)}</td>
-        <td>
-          <span className={`status-badge ${issue.status}`}>
-            {issue.status.replace('_', ' ')}
-          </span>
-        </td>
-        <td className="action-column" ref={dropdownRef}>
-          <div className="dropdown-container">
-            <button 
-              className="action-dropdown-btn"
-              onClick={() => toggleActionsDropdown(issue.id)}
-            >
-              :
-            </button>
-            
-            {showActionsDropdown === issue.id && (
-              <div className="actions-dropdown">
-                <button 
-                  className="dropdown-item"
-                  onClick={() => handleViewDetails(issue.id)}
-                >
-                  View Details
-                </button>
-                
-                {issue.status === 'pending' && (  // Only show these options for pending issues
-                  <>
-                    <button 
-                      className="dropdown-item"
-                      onClick={() => handleEscalateIssue(issue.id)}
-                    >
-                      Escalate Issue
-                    </button>
-                    <button 
-                      className="dropdown-item reject-btn"
-                      onClick={() => handleRejectIssue(issue.id)}
-                    >
-                      Reject Issue
-                    </button>
-                  </>
-                )}
-              </div>
-            )}
-            
-            {showLecturersDropdown && activeIssueId === issue.id && (
-              <div className="lecturers-dropdown">
-                <div className="dropdown-header">Select Lecturer:</div>
-                {lecturers.length > 0 ? (
-                  lecturers.map((lecturer) => (
-                    <button
-                      key={lecturer.id}
-                      className="dropdown-item lecturer-item"
-                      onClick={() => handleLecturerSelect(lecturer.id)}
-                    >
-                      {lecturer.username}
-                    </button>
-                  ))
-                ) : (
-                  <div className="no-lecturers">No lecturers available</div>
-                )}
-              </div>
-            )}
-          </div>
-        </td>
-      </tr>
-    ));
   };
 
-  // Loading state
   if (loading) {
     return (
       <div className="app-container">
@@ -630,7 +422,6 @@ const IssueManagement = () => {
     );
   }
 
-  // Error state
   if (error) {
     return (
       <div className="app-container">
@@ -651,124 +442,152 @@ const IssueManagement = () => {
       <div className="content-wrapper">
         <Sidebar />
         <div className="issue-content">
+          <h1 className="issues-title">Issues <span className="subtitle">(Kindly click on the issue to open it.)</span></h1>
           <div className="dashboard-cards">
-            <DashboardCard
-              title="Pending Issues"
-              count={pendingCount}
-              description={`You currently have ${pendingCount} pending issue${pendingCount !== 1 ? 's' : ''}`}
-            />
-            <DashboardCard
-              title="In-progress Issues"
-              count={inProgressCount}
-              description={`You currently have ${inProgressCount} in-progress issue${inProgressCount !== 1 ? 's' : ''}`}
-            />
-            <DashboardCard
-              title="Resolved Issues"
-              count={resolvedCount}
-              description={`You currently have ${resolvedCount} resolved issue${resolvedCount !== 1 ? 's' : ''}`}
-            />
-            <DashboardCard
-              title="Rejected Issues"
-              count={rejectedCount}
-              description={`You currently have ${rejectedCount} rejected issue${rejectedCount !== 1 ? 's' : ''}`}
-            />
+            <DashboardCard title="Pending Issues" count={pendingCount} description={`You currently have ${pendingCount} pending issue${pendingCount !== 1 ? 's' : ''}`} />
+            <DashboardCard title="In-progress Issues" count={inProgressCount} description={`You currently have ${inProgressCount} in-progress issue${inProgressCount !== 1 ? 's' : ''}`} />
+            <DashboardCard title="Resolved Issues" count={resolvedCount} description={`You currently have ${resolvedCount} resolved issue${resolvedCount !== 1 ? 's' : ''}`} />
+            <DashboardCard title="Rejected Issues" count={rejectedCount} description={`You currently have ${rejectedCount} rejected issue${rejectedCount !== 1 ? 's' : ''}`} />
           </div>
-
-          <div className="issues-container">
-            <h2 className="issues-title">
-              Issues <span className="subtitle">(Kindly click on the issue to open it.)</span>
-            </h2>
-
-            <div className="status-tabs">
-              <button
-                className={`status-tab ${issueStatus === 'pending' ? 'active' : ''}`}
-                onClick={() => handleStatusChange('pending')}
-              >
-                Pending
-              </button>
-              <button
-                className={`status-tab ${issueStatus === 'in_progress' ? 'active' : ''}`}
-                onClick={() => handleStatusChange('in_progress')}
-              >
-                In-progress
-              </button>
-              <button
-                className={`status-tab ${issueStatus === 'resolved' ? 'active' : ''}`}
-                onClick={() => handleStatusChange('resolved')}
-              >
-                Resolved
-              </button>
-              <button
-                className={`status-tab ${issueStatus === 'rejected' ? 'active' : ''}`}
-                onClick={() => handleStatusChange('rejected')}
-              >
-                Rejected
-              </button>
+          <div className="issues-tabs">
+            <button className={`issues-tab ${issueStatus === 'pending' ? 'active' : ''}`} onClick={() => handleStatusChange('pending')}>Pending</button>
+            <button className={`issues-tab ${issueStatus === 'in_progress' ? 'active' : ''}`} onClick={() => handleStatusChange('in_progress')}>In-progress</button>
+            <button className={`issues-tab ${issueStatus === 'resolved' ? 'active' : ''}`} onClick={() => handleStatusChange('resolved')}>Resolved</button>
+            <button className={`issues-tab ${issueStatus === 'rejected' ? 'active' : ''}`} onClick={() => handleStatusChange('rejected')}>Rejected</button>
+          </div>
+          <form onSubmit={handleSearchSubmit} className="search-filter-container">
+            <div className="search-container">
+              <input type="text" placeholder="Search by ID, student, issue type..." value={searchTerm} onChange={handleSearchChange} className="search-input" />
+              {searchTerm && <button type="button" className="clear-search" onClick={handleClearSearch}>×</button>}
             </div>
-
-            {/* Table Display Section - Now directly under status tabs */}
-            <div className="issues-data-container">
-              {/* Enhanced search section */}
-              <form onSubmit={handleSearchSubmit} className="search-filter-container">
-                <div className="search-container">
-                  <input
-                    type="text"
-                    placeholder="Search by ID, student, issue type..."
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                    className="search-input"
-                  />
-                  {searchTerm && (
-                    <button 
-                      type="button" 
-                      className="clear-search" 
-                      onClick={handleClearSearch}
+            <button type="submit" className="filter-btn">{isSearching ? 'Searching...' : 'Filter'}</button>
+          </form>
+          <div className="responsive-table-wrapper">
+            <table className="issues-table">
+              <thead>
+                <tr>
+                  <th>Issue ID</th>
+                  <th>Student</th>
+                  <th>Category</th>
+                  <th>Lecturer</th>
+                  <th>Year of Study</th>
+                  <th>Created</th>
+                  <th>Updated</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredIssues.length > 0 ? (
+                  filteredIssues.map((issue) => (
+                    <tr 
+                      key={issue.id} 
+                      className="issue-row"
+                      onClick={() => handleViewDetails(issue.id)}
                     >
-                      ×
-                    </button>
-                  )}
-                  <button type="submit" className="search-button">
-                    {isSearching ? 'Searching...' : 'Search'}
-                  </button>
-                </div>
-                <div className="filter-options">
-                  <button type="button" className="filter-button">
-                    <span>Filter</span>
-                    <span className="filter-icon">▼</span>
-                  </button>
-                </div>
-              </form>
-
-              {filteredIssues.length > 0 ? (
-                <div className="responsive-table-wrapper">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>ISSUE ID</th>
-                        <th>STUDENT</th>
-                        <th>ISSUE TYPE</th>
-                        <th>LECTURER</th>
-                        <th>YEAR OF STUDY</th>
-                        <th>SUBMITTED</th>
-                        <th>LAST UPDATED</th>
-                        <th>STATUS</th>
-                        <th>ACTION</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {renderIssueRows()}
-                    </tbody>
-                  </table>
-                </div>
-              ) : (
-                <div className="no-issues-message">
-                  {searchTerm ? 'No issues match your search' : `No ${issueStatus} issues found`}
-                </div>
-              )}
-            </div>
+                      <td>{issue.id || 'N/A'}</td>
+                      <td>{issue.student?.username || 'N/A'}</td>
+                      <td>{issue.issue_type || 'N/A'}</td>
+                      <td>{issue.lecturer?.username || 'Not Assigned'}</td>
+                      <td>{issue.year_of_study?.replace('_', ' ') || 'N/A'}</td>
+                      <td>{formatDate(issue.created_at)}</td>
+                      <td>{formatDate(issue.updated_at)}</td>
+                      <td>
+                        <span className={`status-pill status-${issue.status}`}>
+                          {issue.status === 'pending'
+                            ? 'Pending'
+                            : issue.status === 'in_progress'
+                            ? 'In-progress'
+                            : issue.status === 'resolved'
+                            ? 'Resolved'
+                            : issue.status === 'rejected'
+                            ? 'Rejected'
+                            : issue.status}
+                        </span>
+                      </td>
+                      <td className="action-column" onClick={(e) => e.stopPropagation()}>
+                        <div 
+                          className="dropdown-container" 
+                          ref={(el) => addDropdownRef(`dropdown-${issue.id}`, el)}
+                        >
+                          <button
+                            className="action-dropdown-btn"
+                            onClick={(e) => toggleActionsDropdown(issue.id, e)}
+                          >
+                            ⋮
+                          </button>
+                          {showActionsDropdown === issue.id && (
+                            <div className="actions-dropdown">
+                              <button
+                                className="dropdown-item view-details-btn"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleViewDetails(issue.id);
+                                }}
+                              >
+                                View Details
+                              </button>
+                              {issue.status === 'pending' && (
+                                <>
+                                  <button
+                                    className="dropdown-item escalate-btn"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleEscalateIssue(issue.id);
+                                    }}
+                                  >
+                                    Escalate Issue
+                                  </button>
+                                  <button
+                                    className="dropdown-item reject-btn"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleRejectIssue(issue.id);
+                                    }}
+                                  >
+                                    Reject Issue
+                                  </button>
+                                </>
+                              )}
+                            </div>
+                          )}
+                          {showLecturersDropdown && activeIssueId === issue.id && (
+                            <div className="lecturers-dropdown">
+                              <div className="dropdown-header">Select Lecturer:</div>
+                              {lecturers.length > 0 ? (
+                                lecturers.map((lecturer) => (
+                                  <button
+                                    key={lecturer.id}
+                                    className="dropdown-item lecturer-item"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleLecturerSelect(lecturer.id);
+                                    }}
+                                  >
+                                    {lecturer.username}
+                                  </button>
+                                ))
+                              ) : (
+                                <div className="no-lecturers">No lecturers available</div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="9" className="no-issues-message">
+                      {searchTerm
+                        ? 'No issues match your search'
+                        : `No ${issueStatus} issues found`}
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
-          
-          {/* Issue Details Modal - Updated to allow editing lecturer and status */}
           {showDetailsModal && selectedIssue && (
             <div className="issue-details-modal">
               <div className="modal-content">
@@ -777,7 +596,6 @@ const IssueManagement = () => {
                   <button className="close-modal-btn" onClick={closeDetailsModal}>×</button>
                 </div>
                 <div className="modal-body">
-                  {/* Read-only fields */}
                   <div className="issue-detail-row">
                     <span className="detail-label">Student:</span>
                     <span className="detail-value">{selectedIssue.student?.username || 'N/A'}</span>
@@ -798,37 +616,21 @@ const IssueManagement = () => {
                     <span className="detail-label">Last Updated:</span>
                     <span className="detail-value">{formatDate(selectedIssue.updated_at)}</span>
                   </div>
-                  
-                  {/* Editable fields */}
                   <div className="issue-detail-row">
                     <span className="detail-label">Assigned To:</span>
                     <div className="detail-input">
-                      <select
-                        name="lecturer"
-                        value={editingIssue.lecturer}
-                        onChange={handleInputChange}
-                        className="form-select"
-                      >
+                      <select name="lecturer" value={editingIssue.lecturer} onChange={handleInputChange} className="form-select">
                         <option value="">Select Lecturer</option>
                         {lecturers.map(lecturer => (
-                          <option key={lecturer.id} value={lecturer.id}>
-                            {lecturer.username}
-                          </option>
+                          <option key={lecturer.id} value={lecturer.id}>{lecturer.username}</option>
                         ))}
                       </select>
                     </div>
                   </div>
-                  
-                  
                   <div className="issue-detail-row">
                     <span className="detail-label">Status:</span>
                     <div className="detail-input">
-                      <select
-                        name="status"
-                        value={editingIssue.status}
-                        onChange={handleInputChange}
-                        className="form-select"
-                      >
+                      <select name="status" value={editingIssue.status} onChange={handleInputChange} className="form-select">
                         <option value="pending">Pending</option>
                         <option value="in_progress">In Progress</option>
                         <option value="resolved">Resolved</option>
@@ -836,12 +638,9 @@ const IssueManagement = () => {
                       </select>
                     </div>
                   </div>
-                  
                   <div className="issue-detail-row">
                     <span className="detail-label">Description:</span>
-                    <div className="detail-value description-box">
-                      {selectedIssue.description || 'No description provided'}
-                    </div>
+                    <div className="detail-value description-box">{selectedIssue.description || 'No description provided'}</div>
                   </div>
                 </div>
                 <div className="modal-footer">
@@ -857,7 +656,6 @@ const IssueManagement = () => {
   );
 };
 
-// Dashboard Card Component
 const DashboardCard = ({ title, count, description }) => {
   return (
     <div className="dashboard-card">

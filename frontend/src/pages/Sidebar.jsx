@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,Link } from 'react-router-dom';
 import './Sidebar.css';
 import makerereLogo from '../assets/makererelogo.png';
 
@@ -18,6 +18,7 @@ function Sidebar() {
     navigate('/');
   };
 
+
   return (
     <div className="sidebar-container">
       <div className="university-logo-sidebar">
@@ -25,60 +26,60 @@ function Sidebar() {
       </div>
 
       {/* Registrar Dashboard Link */}
-      <a href="/RegistraDashboard" className="menu-item">
+      <Link to="/RegistraDashboard" className="menu-item">
         Registrar Dashboard
         <svg viewBox="0 0 24 24" className="arrow-icon">
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
-      </a>
+      </Link>
 
       {/* Issue Management Link */}
-      <a href="/IssueManagement" className="menu-item">
+      <Link to="/IssueManagement" className="menu-item">
         Issue Management
         <svg viewBox="0 0 24 24" className="arrow-icon">
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
-      </a>
+      </Link>
 
       {/* Registrar Profile Link */}
-      <a href="/Registraprofile" className="menu-item">
+      <Link to="/Registraprofile" className="menu-item">
         Registrar Profile
         <svg viewBox="0 0 24 24" className="arrow-icon">
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
-      </a>
+      </Link >
 
       {/* Settings Link */}
-      <a href="/settings" className="menu-item">
+      <Link to="/settings" className="menu-item">
         Settings
         <svg viewBox="0 0 24 24" className="arrow-icon">
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
-      </a>
+      </Link>
 
       {/* Help and Support Link */}
-      <a href="/help" className="menu-item">
+      <Link to="/help" className="menu-item">
         Help and Support
         <svg viewBox="0 0 24 24" className="arrow-icon">
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
-      </a>
+      </Link>
 
       {/* Generate Token Link */}
-      <a href="/GenerateToken" className="menu-item">
+      <Link to="/GenerateToken" className="menu-item">
         Generate Token
         <svg viewBox="0 0 24 24" className="arrow-icon">
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
-      </a>
+      </Link>
 
-      {/* Logout Link */}
-      <a href="/logout" className="menu-item delete-account" onClick={handleLogout}>
+      {/* Logout link */}
+      <Link to="/logout" className="menu-item delete-account" onClick={handleLogout}>
         Logout
         <svg viewBox="0 0 24 24" className="arrow-icon">
           <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
         </svg>
-      </a>
+      </Link>
     </div>
   );
 }
