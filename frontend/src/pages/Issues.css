@@ -283,6 +283,25 @@
   }
 }
 
+/* Hover state enhancements */
+.holo-effect-btn:hover {
+  background: linear-gradient(135deg, 
+    rgba(0, 86, 179, 1) 0%, 
+    rgba(0, 123, 255, 1) 50%, 
+    rgba(102, 176, 255, 1) 100%);
+  transform: scale(1.1);
+  box-shadow: 
+    0 0 20px rgba(0, 123, 255, 0.8),
+    0 0 40px rgba(0, 123, 255, 0.6),
+    0 0 80px rgba(0, 123, 255, 0.4);
+  letter-spacing: 1.2px;
+  text-shadow: 
+    0 0 5px #fff,
+    0 0 10px #fff,
+    0 0 15px #0ff,
+    0 0 20px #0ff;
+}
+
 
 
 /* Search and Filter Section */
