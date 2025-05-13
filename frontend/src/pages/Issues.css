@@ -302,7 +302,13 @@
     0 0 20px #0ff;
 }
 
-
+/* Active state for when the button is clicked */
+.holo-effect-btn:active {
+  transform: scale(0.95);
+  box-shadow: 
+    0 0 10px rgba(0, 123, 255, 0.8),
+    0 0 20px rgba(0, 123, 255, 0.6);
+}
 
 /* Search and Filter Section */
 .search-filter-container {
