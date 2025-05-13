@@ -226,6 +226,24 @@
   position: relative;
 }
 
+.holo-button-border::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  background: linear-gradient(45deg, 
+    #0ff, #f0f, #0ff, #f0f, #0ff);
+  background-size: 400% 400%;
+  border-radius: 8px;
+  z-index: -1;
+  animation: borderGlow 3s infinite linear;
+  opacity: 0.7;
+  filter: blur(5px);
+}
+
+
 
 /* Search and Filter Section */
 .search-filter-container {
