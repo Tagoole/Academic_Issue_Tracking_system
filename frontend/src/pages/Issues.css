@@ -94,6 +94,16 @@
   margin-left: auto;
 }
 
+/* Hologram class to apply to the button */
+.holo-effect-btn {
+  background: linear-gradient(135deg, 
+    rgba(0, 86, 179, 0.8) 0%, 
+    rgba(0, 123, 255, 0.9) 50%, 
+    rgba(102, 176, 255, 0.8) 100%);
+  animation: buttonPulse 3s infinite ease-in-out;
+}
+
+
 
 /* Search and Filter Section */
 .search-filter-container {
