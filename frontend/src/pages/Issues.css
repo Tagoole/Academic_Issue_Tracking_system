@@ -1,3 +1,5 @@
+/* Issues.css - Updated with holographic button styles */
+
 /* Base Container */
 .issues-container {
   display: flex;
@@ -16,7 +18,7 @@
   margin-left: 120px;
   margin-right: 20px;
   width: calc(100% - 140px);
-  background:rgba(255, 255, 255, 0.667) ;
+  background:rgba(255, 255, 255, 0.667);
 }
 
 /* Issues Panel */
@@ -45,6 +47,7 @@
   border-bottom: 1px solid #e0e0e0;
   padding-bottom: 10px;
   flex-wrap: wrap; 
+  align-items: center;
 }
 
 .issues-tab {
@@ -70,21 +73,8 @@
   background-color: #e1f0fa;
   border-bottom: 2px solid #3498db;
 }
-.new-issue-btn {
-  margin-left: auto;
-  padding: 8px 16px;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px; 
-  transition: background-color 0.3s;
-  white-space: nowrap; 
-}
-.new-issue-btn:hover {
-  background-color: #2980b9;
-}
+
+
 
 /* Search and Filter Section */
 .search-filter-container {
@@ -229,19 +219,20 @@
   }
 }
 
+@media (max-width: 992px) {
+  .dashboard-content {
+    margin-left: 40px;
+    margin-right: 10px;
+  }
 
-.dashboard-content {
-  margin-left: 40px;
-  margin-right: 10px;
-}
+  .issues-table {
+    font-size: 15px; 
+  }
 
-.issues-table {
-  font-size: 15px; 
-}
-
-.issues-table th,
-.issues-table td {
-  padding: 12px 14px;
+  .issues-table th,
+  .issues-table td {
+    padding: 12px 14px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -261,6 +252,15 @@
     padding-bottom: 5px;
   }
   
+  .holo-button-wrapper {
+    margin: 10px auto 0;
+    width: 100%;
+  }
+  
+  .create-issue-btn {
+    width: 100%;
+  }
+  
   .search-filter-container {
     flex-direction: column;
   }
@@ -269,4 +269,4 @@
     max-width: 100%;
     margin-bottom: 10px;
   }
-  }
+}
