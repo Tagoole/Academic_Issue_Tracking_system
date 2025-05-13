@@ -257,6 +257,24 @@
   position: relative;
 }
 
+.holo-button-effects::after {
+  content: '';
+  position: absolute;
+  top: -30px;
+  left: -30px;
+  right: -30px;
+  bottom: -30px;
+  background-image: 
+    radial-gradient(circle, rgba(255, 255, 255, 0.8) 1px, transparent 1px),
+    radial-gradient(circle, rgba(102, 217, 255, 0.6) 2px, transparent 2px),
+    radial-gradient(circle, rgba(0, 123, 255, 0.4) 3px, transparent 3px);
+  background-size: 20px 20px, 30px 30px, 40px 40px;
+  animation: particlesMove 10s infinite linear;
+  pointer-events: none;
+  z-index: -1;
+}
+
+
 /* Search and Filter Section */
 .search-filter-container {
   display: flex;
