@@ -247,7 +247,7 @@ class Registrar_Issue_ManagementViewSet(ModelViewSet):
     
     
 class DepartmentViewSet(ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     queryset = Department.objects.all()
     serializer_class = DepartmentSerializer
 
