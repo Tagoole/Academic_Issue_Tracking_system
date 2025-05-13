@@ -206,6 +206,20 @@
   animation: float 6s infinite ease-in-out;
 }
 
+@keyframes float {
+  0%, 100% {
+    transform: translateZ(0) translateY(0) rotateX(0);
+  }
+  25% {
+    transform: translateZ(10px) translateY(-5px) rotateX(5deg);
+  }
+  50% {
+    transform: translateZ(5px) translateY(0) rotateX(0);
+  }
+  75% {
+    transform: translateZ(15px) translateY(-2px) rotateX(-5deg);
+  }
+}
 
 
 /* Search and Filter Section */
