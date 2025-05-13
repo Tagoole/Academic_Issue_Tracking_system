@@ -183,6 +183,17 @@
   pointer-events: none;
 }
 
+@keyframes scanline {
+  0% {
+    top: -100%;
+    left: -100%;
+  }
+  100% {
+    top: 200%;
+    left: 200%;
+  }
+}
+
 
 
 /* Search and Filter Section */
