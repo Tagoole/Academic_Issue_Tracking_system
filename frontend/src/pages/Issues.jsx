@@ -213,9 +213,20 @@ const Issues = () => {
                 {tab}
               </button>
             ))}
-            <button className="new-issue-btn" onClick={handleNewIssueClick}>
-              + New Issue
-            </button>
+            
+            {/* Replace regular button with holographic button */}
+            <div className="holo-button-wrapper">
+              <div className="holo-button-effects">
+                <div className="holo-button-border">
+                  <button 
+                    className="create-issue-btn holo-effect-btn holo-3d-effect" 
+                    onClick={handleNewIssueClick}
+                  >
+                    + New Issue
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="search-filter-container">
