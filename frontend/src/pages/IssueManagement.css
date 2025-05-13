@@ -1,0 +1,458 @@
+/* General container styling */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  font-family: Arial, sans-serif;
+  background-color: #f5f7fa;
+}
+
+/* Content wrapper with sidebar and main content */
+.content-wrapper {
+  display: flex;
+  flex: 1;
+}
+
+/* Sidebar styles */
+.sidebar {
+  width: 250px;
+  background-color: #ffffff;
+  border-right: 1px solid #e1e4e8;
+}
+
+/* Main content area */
+.issue-content {
+  flex: 1;
+  width:1400px;
+  padding: 24px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+}
+
+/* Dashboard cards */
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.dashboard-card {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.dashboard-card h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  color: #333;
+}
+
+.card-count {
+  font-size: 24px;
+  font-weight: bold;
+  color: #2563eb;
+  margin: 8px 0;
+}
+
+.dashboard-card p {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+}
+
+/* Issues container */
+.issues-container {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.issues-title {
+  margin: 0 0 16px;
+  font-size: 20px;
+  color: #333;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #666;
+  font-weight: normal;
+}
+
+/* Status tabs - Updated to match JSX class names */
+.issues-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.issues-tab {
+  padding: 10px 20px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  background-color: #e5e7eb;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.issues-tab.active {
+  background-color: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+}
+
+.issues-tab:hover {
+  background-color: #d1d5db;
+  color: #4c75f2;
+}
+
+/* Search and filter */
+.search-filter-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.search-container {
+  position: relative;
+  flex: 1;
+  max-width: 300px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px 12px 8px 36px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>') no-repeat;
+  background-size: contain;
+}
+
+/* Updated to match JSX class name */
+.filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.filter-icon {
+  font-size: 12px;
+}
+
+/* Table styling */
+.issues-data-container {
+  margin-top: 380px;
+  margin-right: 1000px;
+  background-color: hsl(149, 92%, 43%);
+  width:600px
+}
+
+.responsive-table-wrapper {
+  overflow-x: auto;
+  margin-top: 20px;
+}
+
+.issues-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.issues-table th,
+.issues-table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+.issues-table th {
+  background-color: #f4f4f4;
+}
+
+.status-pill {
+  padding: 5px 10px;
+  border-radius: 15px;
+  color: #fff;
+  font-size: 0.9em;
+  text-transform: capitalize;
+}
+
+.status-pending {
+  background-color: #f0ad4e;
+}
+
+.status-in_progress {
+  background-color: #5bc0de;
+}
+
+.status-resolved {
+  background-color: #5cb85c;
+}
+
+.status-rejected {
+  background-color: #d9534f;
+}
+
+.action-column {
+  position: relative;
+  min-width: 80px; /* Ensure enough width for dropdown */
+}
+
+/* Ensure dropdown container is positioned properly */
+.dropdown-container {
+  position: relative;
+  display: inline-block;
+}
+
+/* Make sure action dropdown button is visible */
+.action-dropdown-btn {
+  background: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  transition: background-color 0.2s;
+}
+
+.action-dropdown-btn:hover {
+  background: #3a7bc8;
+}
+
+/* Style for the dropdown menus */
+.actions-dropdown,
+.lecturers-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  min-width: 150px;
+  z-index: 1000; /* Ensure it's on top of other content */
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* Style for dropdown items */
+.dropdown-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: #f5f5f5;
+}
+
+/* Clear search button - Add this as it's used in JSX but missing in CSS */
+.clear-search {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #666;
+}
+
+/* Modal styles - Add these as they're used in JSX but missing in CSS */
+.issue-details-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e1e4e8;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.close-modal-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+}
+
+.modal-body {
+  padding: 24px;
+}
+
+.issue-detail-row {
+  display: flex;
+  margin-bottom: 16px;
+}
+
+.detail-label {
+  min-width: 120px;
+  font-weight: bold;
+  color: #333;
+}
+
+.detail-value {
+  flex: 1;
+}
+
+.description-box {
+  padding: 12px;
+  border: 1px solid #e1e4e8;
+  border-radius: 4px;
+  background-color: #f8f9fa;
+  min-height: 100px;
+  white-space: pre-wrap;
+}
+
+.detail-input {
+  flex: 1;
+}
+
+.form-select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid #e1e4e8;
+}
+
+.cancel-btn, .save-btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background-color: #f1f5f9;
+  border: 1px solid #d1d5db;
+  color: #374151;
+}
+
+.save-btn {
+  background-color: #2563eb;
+  border: none;
+  color: white;
+}
+
+/* Additional classes used in JSX but missing in CSS */
+.loading-message, .error-message {
+  padding: 20px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.error-message {
+  color: #d9534f;
+}
+
+.no-issues-message {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+.dropdown-header {
+  padding: 8px 12px;
+  font-weight: bold;
+  border-bottom: 1px solid #e1e4e8;
+}
+
+.no-lecturers {
+  padding: 8px 12px;
+  color: #666;
+  font-style: italic;
+}
+
+.issue-row {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.issue-row:hover {
+  background-color: #f5f7fa;
+}
+
+/* Card header styling for dashboard cards */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.card-description {
+  color: #666;
+  font-size: 14px;
+}
