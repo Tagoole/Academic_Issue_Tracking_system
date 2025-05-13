@@ -202,6 +202,10 @@
   margin-left: auto;
 }
 
+.holo-3d-effect {
+  animation: float 6s infinite ease-in-out;
+}
+
 
 
 /* Search and Filter Section */
