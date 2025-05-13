@@ -149,6 +149,7 @@
   width: 100%;
   overflow-x: auto; /* Enable horizontal scrolling for wide tables */
   margin-bottom: 20px;
+  overflow-y: auto;
 }
 
 .issues-table {
