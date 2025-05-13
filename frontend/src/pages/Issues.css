@@ -1,3 +1,5 @@
+/* Issues.css - Updated with holographic button styles */
+
 /* Base Container */
 .issues-container {
   display: flex;
@@ -16,7 +18,7 @@
   margin-left: 120px;
   margin-right: 20px;
   width: calc(100% - 140px);
-  background:rgba(255, 255, 255, 0.667) ;
+  background:rgba(255, 255, 255, 0.667);
 }
 
 /* Issues Panel */
@@ -45,6 +47,7 @@
   border-bottom: 1px solid #e0e0e0;
   padding-bottom: 10px;
   flex-wrap: wrap; 
+  align-items: center;
 }
 
 .issues-tab {
@@ -70,20 +73,241 @@
   background-color: #e1f0fa;
   border-bottom: 2px solid #3498db;
 }
-.new-issue-btn {
-  margin-left: auto;
-  padding: 8px 16px;
-  background-color: #3498db;
-  color: white;
+
+/* Base button styling update */
+.create-issue-btn {
+  position: relative;
+  padding: 10px 20px;
+  background-color: transparent;
+  color: #fff;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 16px; 
-  transition: background-color 0.3s;
-  white-space: nowrap; 
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  z-index: 10;
+  box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+  margin-left: auto;
 }
-.new-issue-btn:hover {
-  background-color: #2980b9;
+
+/* Hologram class to apply to the button */
+.holo-effect-btn {
+  background: linear-gradient(135deg, 
+    rgba(0, 86, 179, 0.8) 0%, 
+    rgba(0, 123, 255, 0.9) 50%, 
+    rgba(102, 176, 255, 0.8) 100%);
+  animation: buttonPulse 3s infinite ease-in-out;
+}
+
+/* Main pulsing animation */
+@keyframes buttonPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 
+      0 0 0 rgba(0, 123, 255, 0),
+      0 0 0 rgba(255, 255, 255, 0),
+      0 0 0 rgba(102, 176, 255, 0);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 
+      0 0 30px rgba(0, 123, 255, 0.8),
+      0 0 60px rgba(255, 255, 255, 0.4),
+      0 0 100px rgba(102, 176, 255, 0.6);
+  }
+}
+
+/* Holographic glitch effect */
+.holo-effect-btn::before {
+  content: "+ New Issue";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.8);
+  text-shadow: 
+    0 0 5px #fff,
+    0 0 10px #0ff;
+  animation: glitchText 2s infinite alternate-reverse;
+  z-index: 2;
+  pointer-events: none;
+}
+
+@keyframes glitchText {
+  0%, 100% {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    transform: translate(0);
+    opacity: 1;
+  }
+  20% {
+    clip-path: polygon(0 25%, 100% 25%, 100% 30%, 0 30%);
+    transform: translate(-4px, 0);
+    opacity: 0.8;
+  }
+  40% {
+    clip-path: polygon(0 50%, 100% 50%, 100% 55%, 0 55%);
+    transform: translate(4px, 0);
+    opacity: 0.8;
+  }
+  60% {
+    clip-path: polygon(0 75%, 100% 75%, 100% 80%, 0 80%);
+    transform: translate(-4px, 0);
+    opacity: 0.8;
+  }
+}
+
+/* Holographic scanline effect */
+.holo-effect-btn::after {
+  content: '';
+  position: absolute;
+  top: -100%;
+  left: 0;
+  height: 50%;
+  width: 150%;
+  background: linear-gradient(to bottom,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.8) 50%,
+    rgba(255, 255, 255, 0) 100%);
+  transform: rotate(25deg);
+  animation: scanline 3s infinite ease-in-out;
+  z-index: 3;
+  pointer-events: none;
+}
+
+@keyframes scanline {
+  0% {
+    top: -100%;
+    left: -100%;
+  }
+  100% {
+    top: 200%;
+    left: 200%;
+  }
+}
+
+/* Add 3D floating effect */
+.holo-button-wrapper {
+  position: relative;
+  perspective: 800px;
+  transform-style: preserve-3d;
+  margin-left: auto;
+}
+
+.holo-3d-effect {
+  animation: float 6s infinite ease-in-out;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateZ(0) translateY(0) rotateX(0);
+  }
+  25% {
+    transform: translateZ(10px) translateY(-5px) rotateX(5deg);
+  }
+  50% {
+    transform: translateZ(5px) translateY(0) rotateX(0);
+  }
+  75% {
+    transform: translateZ(15px) translateY(-2px) rotateX(-5deg);
+  }
+}
+
+/* Neon glow border */
+.holo-button-border {
+  position: relative;
+}
+
+.holo-button-border::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  background: linear-gradient(45deg, 
+    #0ff, #f0f, #0ff, #f0f, #0ff);
+  background-size: 400% 400%;
+  border-radius: 8px;
+  z-index: -1;
+  animation: borderGlow 3s infinite linear;
+  opacity: 0.7;
+  filter: blur(5px);
+}
+
+@keyframes borderGlow {
+  0%, 100% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+}
+
+/* Add particles floating around the button */
+.holo-button-effects {
+  position: relative;
+}
+
+.holo-button-effects::after {
+  content: '';
+  position: absolute;
+  top: -30px;
+  left: -30px;
+  right: -30px;
+  bottom: -30px;
+  background-image: 
+    radial-gradient(circle, rgba(255, 255, 255, 0.8) 1px, transparent 1px),
+    radial-gradient(circle, rgba(102, 217, 255, 0.6) 2px, transparent 2px),
+    radial-gradient(circle, rgba(0, 123, 255, 0.4) 3px, transparent 3px);
+  background-size: 20px 20px, 30px 30px, 40px 40px;
+  animation: particlesMove 10s infinite linear;
+  pointer-events: none;
+  z-index: -1;
+}
+
+@keyframes particlesMove {
+  0% {
+    background-position: 0 0, 0 0, 0 0;
+  }
+  100% {
+    background-position: 50px 50px, -50px 50px, 50px -50px;
+  }
+}
+
+/* Hover state enhancements */
+.holo-effect-btn:hover {
+  background: linear-gradient(135deg, 
+    rgba(0, 86, 179, 1) 0%, 
+    rgba(0, 123, 255, 1) 50%, 
+    rgba(102, 176, 255, 1) 100%);
+  transform: scale(1.1);
+  box-shadow: 
+    0 0 20px rgba(0, 123, 255, 0.8),
+    0 0 40px rgba(0, 123, 255, 0.6),
+    0 0 80px rgba(0, 123, 255, 0.4);
+  letter-spacing: 1.2px;
+  text-shadow: 
+    0 0 5px #fff,
+    0 0 10px #fff,
+    0 0 15px #0ff,
+    0 0 20px #0ff;
+}
+
+/* Active state for when the button is clicked */
+.holo-effect-btn:active {
+  transform: scale(0.95);
+  box-shadow: 
+    0 0 10px rgba(0, 123, 255, 0.8),
+    0 0 20px rgba(0, 123, 255, 0.6);
 }
 
 /* Search and Filter Section */
@@ -229,19 +453,20 @@
   }
 }
 
+@media (max-width: 992px) {
+  .dashboard-content {
+    margin-left: 40px;
+    margin-right: 10px;
+  }
 
-.dashboard-content {
-  margin-left: 40px;
-  margin-right: 10px;
-}
+  .issues-table {
+    font-size: 15px; 
+  }
 
-.issues-table {
-  font-size: 15px; 
-}
-
-.issues-table th,
-.issues-table td {
-  padding: 12px 14px;
+  .issues-table th,
+  .issues-table td {
+    padding: 12px 14px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -261,6 +486,15 @@
     padding-bottom: 5px;
   }
   
+  .holo-button-wrapper {
+    margin: 10px auto 0;
+    width: 100%;
+  }
+  
+  .create-issue-btn {
+    width: 100%;
+  }
+  
   .search-filter-container {
     flex-direction: column;
   }
@@ -269,4 +503,4 @@
     max-width: 100%;
     margin-bottom: 10px;
   }
-  }
+}
