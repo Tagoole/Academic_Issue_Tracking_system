@@ -221,6 +221,11 @@
   }
 }
 
+/* Neon glow border */
+.holo-button-border {
+  position: relative;
+}
+
 
 /* Search and Filter Section */
 .search-filter-container {
