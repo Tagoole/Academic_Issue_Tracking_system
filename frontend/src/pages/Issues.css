@@ -252,6 +252,10 @@
   }
 }
 
+/* Add particles floating around the button */
+.holo-button-effects {
+  position: relative;
+}
 
 /* Search and Filter Section */
 .search-filter-container {
