@@ -58,14 +58,18 @@ const NavBar = () => {
         </form>
       </div>
       
-      {/* Right Section: Icons and Title */}
-      <div className="navbar-right">
+      {/* Icons Section: After Search */}
+      <div className="icon-section">
         <div className="icon-container" onClick={handleNotificationClick}>
           <img src={notificationIcon} alt="Notifications" className="icon" />
         </div>
         <div className="icon-container" onClick={handleMailClick}>
           <img src={messageIcon} alt="Messages" className="icon" />
         </div>
+      </div>
+      
+      {/* Right Section: Title and Logo */}
+      <div className="navbar-right">
         <div className="app-title">Academic Issue Tracking System</div>
         <img src={logo} alt="Logo" className="logo-image" />
       </div>
