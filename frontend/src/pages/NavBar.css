@@ -33,18 +33,23 @@
 
 /* Search container in the center */
 .search-container {
+  display: flex;
+  justify-content: center;
   flex: 1;
   max-width: 500px;
-  margin: 0 20px;
+  margin: 0 auto; /* Center the search container */
 }
 
 .search-form {
   width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .search-wrapper {
   position: relative;
   width: 100%;
+  max-width: 400px; /* Limit the width for better appearance */
 }
 
 .search-input {
@@ -55,27 +60,35 @@
   font-size: 14px;
   outline: none;
   transition: border-color 0.2s;
+  text-align: center; /* Center the text inside input */
 }
 
 .search-input:focus {
   border-color: #4285f4;
 }
 
-/* Right side section with icons and title */
-.navbar-right {
+/* Icon containers moved to the center right after search */
+.icon-section {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  margin-left: 20px;
 }
 
 .icon-container {
-  margin-left: 15px;
+  margin-right: 15px;
   cursor: pointer;
 }
 
 .icon {
   width: 24px;
   height: 24px;
+}
+
+/* Right side section with title and logo */
+.navbar-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 .app-title {
@@ -92,6 +105,16 @@
 }
 
 /* Responsive adjustments */
+@media (max-width: 992px) {
+  .search-container {
+    max-width: 40%;
+  }
+  
+  .search-wrapper {
+    max-width: 100%;
+  }
+}
+
 @media (max-width: 768px) {
   .app-title {
     display: none;
