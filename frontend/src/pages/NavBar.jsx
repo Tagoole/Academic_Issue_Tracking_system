@@ -7,17 +7,45 @@ import { useNavigate } from 'react-router-dom';
 
 const NavBar = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [userName, setUserName] = useState('');
+  const [userName, setUserName] = useState('User'); // Initialize with a default value
   const navigate = useNavigate();
   
   useEffect(() => {
-    // Fetch username from localStorage when component mounts
-    const storedUserName = localStorage.getItem('userName');
-    if (storedUserName) {
-      const capitalizedName = storedUserName.charAt(0).toUpperCase() + storedUserName.slice(1);
+    // Check all possible localStorage keys that might contain the username
+    console.log("Checking localStorage for username...");
+    
+    // Try common variations of the key name
+    const possibleKeys = ['userName', 'username', 'user', 'name', 'userInfo', 'user_name'];
+    let foundUserName = null;
+    
+    possibleKeys.forEach(key => {
+      const value = localStorage.getItem(key);
+      console.log(`Checking localStorage key: ${key} = ${value}`);
+      if (value && !foundUserName) {
+        foundUserName = value;
+      }
+    });
+    
+    // Check if there's any user data stored as JSON
+    try {
+      const userJSON = localStorage.getItem('user');
+      if (userJSON) {
+        const userData = JSON.parse(userJSON);
+        console.log("Found user JSON data:", userData);
+        if (userData.name || userData.userName || userData.username) {
+          foundUserName = userData.name || userData.userName || userData.username;
+        }
+      }
+    } catch (error) {
+      console.log("Error parsing user JSON:", error);
+    }
+    
+    if (foundUserName) {
+      const capitalizedName = foundUserName.charAt(0).toUpperCase() + foundUserName.slice(1);
+      console.log(`Setting username to: ${capitalizedName}`);
       setUserName(capitalizedName);
     } else {
-      setUserName('User'); // Fallback value if userName is not found
+      console.log("No username found in localStorage, using default 'User'");
     }
   }, []);
   
@@ -43,7 +71,9 @@ const NavBar = () => {
       {/* Left Section: Profile */}
       <div className="navbar-left">
         <div className="profile-container">
-          <span className="profile-name">Hello, {userName}</span>
+          <span className="profile-name" style={{ display: 'inline-block', visibility: 'visible' }}>
+            Hello, {userName || 'User'}
+          </span>
         </div>
       </div>
       
