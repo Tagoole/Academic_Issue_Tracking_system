@@ -27,7 +27,7 @@ const NavBar = () => {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    navigate(/search?query=${searchQuery});
+    navigate(`/search?query=${searchQuery}`);
   };
 
   const handleMailClick = () => {
