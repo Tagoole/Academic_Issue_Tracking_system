@@ -324,14 +324,17 @@ const LecturerIssueManagement = () => {
               
               {selectedIssue.image && (
                 <div className="issue-field issue-image-field">
-                  <strong>Attached Image:</strong>
-                  <img 
-                    src={selectedIssue.image} 
-                    alt="Issue attachment" 
-                    className="issue-attachment-image"
-                    onError={() => toast.error('Failed to load attachment image')}
-                    style={{ maxWidth: '200px', display: 'block', marginBottom: '0.5rem' }}
-                  />
+                  <strong>Attachment:</strong>
+                  {/* Show image preview if it's an image */}
+                  {selectedIssue.image.match(/\.(jpeg|jpg|gif|png)$/) ? (
+                    <img 
+                      src={selectedIssue.image} 
+                      alt="Issue attachment" 
+                      className="issue-attachment-image"
+                      onError={() => toast.error('Failed to load attachment image')}
+                      style={{ maxWidth: '200px', display: 'block', marginBottom: '0.5rem' }}
+                    />
+                  ) : null}
                   <button
                     className="open-file-button"
                     onClick={() => window.open(selectedIssue.image, '_blank')}
