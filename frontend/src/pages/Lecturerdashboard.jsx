@@ -33,8 +33,8 @@ const Lecturerdashboard = () => {
     // Check if user is authenticated when component mounts
     const checkAuth = () => {
       const accessToken = localStorage.getItem('accessToken');
-      // If no access token is available, redirect to login
       if (!accessToken) {
+        toast.error('Authentication required. Please sign in.');
         navigate('/signin');
         return false;
       }
