@@ -330,7 +330,15 @@ const LecturerIssueManagement = () => {
                     alt="Issue attachment" 
                     className="issue-attachment-image"
                     onError={() => toast.error('Failed to load attachment image')}
+                    style={{ maxWidth: '200px', display: 'block', marginBottom: '0.5rem' }}
                   />
+                  <button
+                    className="open-file-button"
+                    onClick={() => window.open(selectedIssue.image, '_blank')}
+                    style={{ marginTop: '0.5rem' }}
+                  >
+                    Open Attachment
+                  </button>
                 </div>
               )}
             </div>
