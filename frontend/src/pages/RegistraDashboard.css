@@ -6,7 +6,7 @@
 }
 
 .app-container {
-  margin-bottom:30px;
+  margin-bottom: 30px;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -20,9 +20,6 @@
   position: relative;
   margin-bottom: 50px; /* Space for footer */
 }
-
-
-
 
 /* Main content area */
 .dashboard-content {
@@ -79,6 +76,7 @@
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  overflow: auto; /* Enable scrolling for the section if needed */
 }
 
 .search-filter-row {
@@ -86,6 +84,7 @@
   align-items: center;
   margin-bottom: 20px;
   gap: 10px;
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
 }
 
 .search-input {
@@ -94,6 +93,7 @@
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 14px;
+  min-width: 200px; /* Ensure minimum width on small screens */
 }
 
 .filter-button button {
@@ -124,6 +124,7 @@
   display: flex;
   border-bottom: 1px solid #ddd;
   margin-bottom: 20px;
+  flex-wrap: wrap; /* Allow tabs to wrap on smaller screens */
 }
 
 .tab {
@@ -144,30 +145,95 @@
 }
 
 /* Issues table */
+.issues-table-container {
+  width: 100%;
+  overflow-x: auto; /* Enable horizontal scrolling for wide tables */
+  margin-bottom: 20px;
+  overflow-y: auto;
+}
+
 .issues-table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 650px; /* Ensure minimum width for readability */
 }
 
 .table-header {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  display: table-header-group;
   background-color: #f8f9fa;
-  padding: 12px 15px;
   font-weight: 600;
-  border-radius: 4px;
+}
+
+.table-header-row {
+  display: table-row;
+}
+
+.table-header-cell {
+  display: table-cell;
+  padding: 12px 15px;
+  text-align: left;
+}
+
+.table-body {
+  display: table-row-group;
 }
 
 .table-row {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
-  padding: 12px 15px;
+  display: table-row;
   border-bottom: 1px solid #eee;
-  align-items: center;
 }
 
 .table-row:hover {
   background-color: #f8f9fa;
+}
+
+.table-cell {
+  display: table-cell;
+  padding: 12px 15px;
+  vertical-align: middle;
+}
+
+/* Pagination controls */
+.pagination-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.page-info {
+  color: #666;
+}
+
+.page-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.page-button {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.page-button:hover:not(:disabled) {
+  background-color: #f8f9fa;
+  border-color: #4361ee;
+  color: #4361ee;
+}
+
+.page-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.page-button.active {
+  background-color: #4361ee;
+  color: white;
+  border-color: #4361ee;
 }
 
 .status-badge {
@@ -208,6 +274,13 @@
   color: white;
 }
 
+/* No issues message */
+.no-issues-message {
+  padding: 40px 0;
+  text-align: center;
+  color: #666;
+}
+
 /* Dashboard footer */
 .dashboard-footer {
   margin-top: 30px;
@@ -217,7 +290,21 @@
   font-size: 14px;
 }
 
+/* Loading state */
+.loading-indicator {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+  color: #666;
+}
+
 /* Responsive adjustments */
+@media (max-width: 992px) {
+  .stats-cards {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
 @media (max-width: 768px) {
   .sidebar {
     width: 0;
@@ -234,11 +321,36 @@
     margin-left: 0;
   }
   
-  .table-header, .table-row {
-    grid-template-columns: 2fr 1fr 1fr;
+  .search-filter-row {
+    flex-direction: column;
+    align-items: flex-start;
   }
   
-  .date-header, .date-cell, .actions-header, .actions-cell {
-    display: none;
+  .search-input {
+    width: 100%;
+  }
+  
+  .table-header-cell.optional,
+  .table-cell.optional {
+    display: none; /* Hide less important columns on mobile */
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-cards {
+    grid-template-columns: 1fr;
+  }
+  
+  .issue-tabs {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .tab {
+    border-bottom: 1px solid #eee;
+  }
+  
+  .tab.active {
+    border-bottom: 2px solid #4361ee;
   }
 }

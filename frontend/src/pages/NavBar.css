@@ -1,127 +1,82 @@
-/* Navbar container */
+/* NavBar.css */
+
+/* Main navbar container */
 .navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #ffffff;
-  padding: 10px 20px;
+  background-color: #fff;
+  height: 70px;
+  padding: 0 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-}
-
-/* Left section: Profile */
-.navbar-left {
-  display: flex;
-  align-items: center;
-}
-
-.profile-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-/* Profile image container with hover effect */
-.profile-image-container {
-  position: relative;
-  cursor: pointer;
-}
-
-.profile-image {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #eee;
-}
-
-.profile-image-overlay {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  border-radius: 50%;
+  z-index: 1000;
+}
+
+/* Username greeting on the left side */
+.username-greeting {
   display: flex;
-  justify-content: center;
   align-items: center;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  min-width: 150px;
+  margin-right: 20px;
 }
 
-.profile-image-container:hover .profile-image-overlay {
-  opacity: 1;
-}
-
-.change-text {
-  color: white;
-  font-size: 12px;
-  font-weight: bold;
-}
-
-.profile-name {
+.username-greeting span {
   font-size: 16px;
-  font-weight: bold;
-  color: #333333;
+  font-weight: 500;
+  color: #333;
+  white-space: nowrap;
 }
 
-/* Center section: Search bar */
+/* Search container in the center */
 .search-container {
-  flex: 1;
   display: flex;
   justify-content: center;
+  flex: 1;
+  max-width: 500px;
+  margin: 0 auto; /* Center the search container */
 }
 
 .search-form {
   width: 100%;
-  max-width: 400px;
-  margin: 0 20px;
+  display: flex;
+  justify-content: center;
 }
 
 .search-wrapper {
   position: relative;
+  width: 100%;
+  max-width: 400px; /* Limit the width for better appearance */
 }
 
 .search-input {
   width: 100%;
   padding: 10px 15px;
-  border: 1px solid #cccccc;
+  border: 1px solid #ddd;
   border-radius: 20px;
   font-size: 14px;
   outline: none;
-  transition: border-color 0.3s;
-  background-color: #f5f5f5;
+  transition: border-color 0.2s;
+  text-align: center; /* Center the text inside input */
 }
 
 .search-input:focus {
-  border-color: #e4e5e7;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+  border-color: #4285f4;
 }
 
-/* Right section: Icons */
-.navbar-right {
+/* Icon containers moved to the center right after search */
+.icon-section {
   display: flex;
   align-items: center;
-  gap: 15px;
+  margin-left: 20px;
 }
 
 .icon-container {
+  margin-right: 15px;
   cursor: pointer;
-  position: relative;
-}
-
-.icon-container:not(:last-child) {
-  margin-right: 20px;
-}
-
-.icon-container:hover .icon {
-  transform: scale(1.1);
-  transition: transform 0.2s;
 }
 
 .icon {
@@ -129,93 +84,67 @@
   height: 24px;
 }
 
+/* Right side section with title and logo */
+.navbar-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
 .app-title {
+  margin-left: 20px;
   font-size: 18px;
-  font-weight: bold;
-  color: #333333;
-  margin-right: 20px;
+  font-weight: 600;
+  color: #333;
+  white-space: nowrap;
 }
 
 .logo-image {
-  width: 50px;
-  height: auto;
+  height: 40px;
+  margin-left: 15px;
 }
 
-/* Profile Modal */
-.profile-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
-}
-
-.profile-modal-content {
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  width: 300px;
-  text-align: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.modal-profile-preview {
-  margin: 20px 0;
-}
-
-.modal-profile-preview img {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid #eee;
-}
-
-.upload-btn, .cancel-btn {
-  padding: 10px 20px;
-  margin: 5px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.upload-btn {
-  background-color: #4a86e8;
-  color: white;
-}
-
-.cancel-btn {
-  background-color: #f1f1f1;
-  color: #333;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
+/* Responsive adjustments */
+@media (max-width: 992px) {
   .search-container {
-    display: none;
-  }
-
-  .app-title {
-    font-size: 16px;
-  }
-
-  .profile-name {
-    display: none;
-  }
-
-  .logo-image {
-    width: 40px;
-    height: 40px;
+    max-width: 40%;
   }
   
-  .profile-modal-content {
-    width: 90%;
-    max-width: 300px;
+  .search-wrapper {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-title {
+    display: none;
+  }
+  
+  .search-container {
+    max-width: 40%;
+  }
+}
+
+@media (max-width: 576px) {
+  .username-greeting {
+    min-width: auto;
+    margin-right: 10px;
+  }
+  
+  .username-greeting span {
+    font-size: 14px;
+  }
+  
+  .search-input {
+    padding: 8px 12px;
+  }
+  
+  .icon {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .logo-image {
+    height: 30px;
   }
 }
