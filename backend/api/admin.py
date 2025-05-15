@@ -3,13 +3,6 @@ from .models import *
 from django.contrib.auth.admin import UserAdmin
 
 
-
-class IssueAdmin(admin.ModelAdmin):  # Custom admin configuration for the Issue model
-    def get_fields(self, request, obj=None):  # Customizes the fields displayed in the admin interface based on the user's role
-        fields = super().get_fields(request, obj)  # Retrieves the default fields for the admin interface
-        if request.user.role == 'student':  # Checks if the logged-in user has the role of 'student'
-            fields = [field for field in fields if field != 'lecturer']  # Removes the 'lecturer' field if the user is a student
-        return fields
     
     
 

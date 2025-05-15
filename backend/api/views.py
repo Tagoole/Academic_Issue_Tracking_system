@@ -522,7 +522,6 @@ def get_user_email_notifications(request):
     return Response ({'number':number,
                       'data':serializer.data})
 
-
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def get_registrars(request):
