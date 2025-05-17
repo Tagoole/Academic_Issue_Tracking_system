@@ -35,6 +35,7 @@ const Lecturerdashboard = () => {
       const accessToken = localStorage.getItem('accessToken');
       // If no access token is available, redirect to login
       if (!accessToken) {
+        toast.error('Authentication required. Please sign in.');
         navigate('/signin');
         return false;
       }
@@ -44,6 +45,7 @@ const Lecturerdashboard = () => {
     const fetchIssues = async () => {
       try {
         setLoading(true);
+        toast.info('Loading issues...'); // Add loading toast
         
         // Get access token
         const accessToken = localStorage.getItem('accessToken');
@@ -59,7 +61,7 @@ const Lecturerdashboard = () => {
         setLoading(false);
 
         // Show success toast when issues are loaded
-        toast.success('Issues loaded successfully');
+        toast.success(`${response.data.length} issues loaded successfully`);
       } catch (err) {
         console.error('Error fetching lecturer issues:', err);
         
@@ -67,6 +69,7 @@ const Lecturerdashboard = () => {
         if (err.response && err.response.status === 401) {
           // Try refreshing the token
           try {
+            toast.info('Session expired. Attempting to refresh...'); // Add refresh attempt toast
             const refreshToken = localStorage.getItem('refreshToken');
             
             if (refreshToken) {
@@ -85,6 +88,7 @@ const Lecturerdashboard = () => {
               setAllIssues(retryResponse.data);
               setFilteredIssues(retryResponse.data);
               setLoading(false);
+              toast.success('Session refreshed successfully'); // Add successful refresh toast
             } else {
               toast.error('Session expired. Please log in again.');
               navigate('/signin');
@@ -134,6 +138,7 @@ const Lecturerdashboard = () => {
         const response = await API.get(`api/lecturer_issue_management/filter_results/?${queryParams}`);
         console.log("Filtered API Response:", response.data);
         setFilteredIssues(response.data);
+        toast.info(`Found ${response.data.length} issues matching "${searchTerm}"`); // Add search results toast
       } else {
         // If no search term, use the basic fetch and apply client-side filtering
         const response = await API.get('api/lecturer_issue_management/');
@@ -148,6 +153,11 @@ const Lecturerdashboard = () => {
         
         setAllIssues(issues);
         setFilteredIssues(filtered);
+        
+        // Add filter results toast when filters are applied
+        if (statusFilter !== 'all' || categoryFilter !== 'all') {
+          toast.info(`Filtered: ${filtered.length} issues found`);
+        }
       }
       
       setLoading(false);
@@ -157,6 +167,7 @@ const Lecturerdashboard = () => {
       // Handle token refresh similar to fetchIssues
       if (err.response && err.response.status === 401) {
         try {
+          toast.info('Session expired. Attempting to refresh...'); // Add refresh attempt toast
           const refreshToken = localStorage.getItem('refreshToken');
           
           if (refreshToken) {
@@ -176,6 +187,7 @@ const Lecturerdashboard = () => {
               queryParams = `status=${encodeURIComponent(searchTerm)}`;
               const response = await API.get(`api/lecturer_issue_management/filter_results/?${queryParams}`);
               setFilteredIssues(response.data);
+              toast.info(`Found ${response.data.length} issues matching "${searchTerm}"`);
             } else {
               const response = await API.get('api/lecturer_issue_management/');
               const issues = response.data;
@@ -188,9 +200,14 @@ const Lecturerdashboard = () => {
               
               setAllIssues(issues);
               setFilteredIssues(filtered);
+              
+              if (statusFilter !== 'all' || categoryFilter !== 'all') {
+                toast.info(`Filtered: ${filtered.length} issues found`);
+              }
             }
             
             setLoading(false);
+            toast.success('Session refreshed successfully');
           } else {
             toast.error('Session expired. Please log in again.');
             navigate('/signin');
@@ -207,6 +224,7 @@ const Lecturerdashboard = () => {
       } else {
         setError('Failed to fetch filtered issues. Please try again later.');
         setLoading(false);
+        toast.error('Failed to filter issues. Please try again later.');
       }
     }
   };
@@ -235,11 +253,13 @@ const Lecturerdashboard = () => {
   // Handle status filter change
   const handleStatusFilterChange = (e) => {
     setStatusFilter(e.target.value);
+    toast.info(`Filtering by status: ${e.target.value === 'all' ? 'All' : e.target.value}`); // Add status filter toast
   };
 
   // Handle category filter change
   const handleCategoryFilterChange = (e) => {
     setCategoryFilter(e.target.value);
+    toast.info(`Filtering by category: ${e.target.value === 'all' ? 'All' : e.target.value}`); // Add category filter toast
   };
 
   // Handle search input change
@@ -277,11 +297,13 @@ const Lecturerdashboard = () => {
   // Handler to close the issue summary from within
   const handleCloseSummary = () => {
     setSelectedIssue(null);
+    toast.info('Issue view closed'); // Add close summary toast
   };
 
   // Update issue status in the dashboard
   const updateIssueStatus = async (issueId, newStatus) => {
     try {
+      toast.info(`Updating issue #${issueId} status...`); // Add update in progress toast
       const accessToken = localStorage.getItem('accessToken');
       API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
       
@@ -306,8 +328,10 @@ const Lecturerdashboard = () => {
       // Handle token refresh if needed (similar to fetch issues logic)
       if (err.response && err.response.status === 401) {
         // Handle token refresh logic here
+        toast.error('Authentication error while updating status');
       } else {
         setError('Failed to update issue status. Please try again.');
+        toast.error(`Failed to update issue #${issueId} status`);
       }
     }
   };
@@ -351,6 +375,18 @@ const Lecturerdashboard = () => {
             <div className="loading-message">Loading issues...</div>
           </main>
         </div>
+        {/* Add ToastContainer here too for loading state */}
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
       </div>
     );
   }
@@ -376,6 +412,18 @@ const Lecturerdashboard = () => {
             </div>
           </main>
         </div>
+        {/* Add ToastContainer here too for error state */}
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
       </div>
     );
   }
@@ -497,7 +545,7 @@ const Lecturerdashboard = () => {
           </div>
         )}
       </div>
-      {/* Add ToastContainer here */}
+      {/* Enhanced ToastContainer with better positioning and styling */}
       <ToastContainer
         position="top-right"
         autoClose={3000}
@@ -508,6 +556,7 @@ const Lecturerdashboard = () => {
         pauseOnFocusLoss
         draggable
         pauseOnHover
+        limit={5} // Limit the number of toasts displayed at once
       />
     </div>
   );
