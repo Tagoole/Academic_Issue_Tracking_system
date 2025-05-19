@@ -55,6 +55,17 @@ const RegistrarDashboard = () => {
 
         updateCounts(issuesData);
         setLoading(false);
+
+        // Show success toast for data loading
+        toast.success("Issues loaded successfully", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       } catch (err) {
         console.error('Error fetching registrar issues:', err);
         if (err.response && err.response.status === 401) {
