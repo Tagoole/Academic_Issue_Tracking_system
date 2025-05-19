@@ -214,6 +214,15 @@ const RegistrarDashboard = () => {
       
       if (response.data && Array.isArray(response.data)) {
         applyFilter(activeFilter, response.data);
+        toast.success(`Search completed. Found ${response.data.length} issues.`, {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       } else {
         const filtered = issues.filter(issue =>
           issue.id?.toString().includes(searchTerm) ||
@@ -225,6 +234,15 @@ const RegistrarDashboard = () => {
           issue.issue_description?.toLowerCase().includes(searchTerm.toLowerCase())
         );
         applyFilter(activeFilter, filtered);
+        toast.success(`Search completed. Found ${filtered.length} issues.`, {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       }
     } catch (err) {
       console.error('Error searching issues:', err);
