@@ -319,7 +319,20 @@ const RegistrarDashboard = () => {
       const response = await API.put(`/api/registrar_issue_management/${issueId}/`, {
         status: newStatus
       });
-      // ...rest of your code
+
+      // Update local data...
+      // (your existing code for updating state)
+
+      toast.success(`Issue #${issueId} marked as ${newStatus.replace('_', ' ')}`, {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      closeModal();
     } catch (error) {
       console.error('Error updating issue status:', error);
       toast.error("Failed to update issue status. Please try again.", {
