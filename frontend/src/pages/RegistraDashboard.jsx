@@ -4,6 +4,7 @@ import './RegistraDashboard.css';
 import NavBar from './NavBar';
 import Sidebar from './Sidebar';
 import API from '../api.js';
+import { toast } from 'react-toastify';
 
 const RegistrarDashboard = () => {
   const navigate = useNavigate();
@@ -25,6 +26,15 @@ const RegistrarDashboard = () => {
     const checkAuth = () => {
       const accessToken = localStorage.getItem('accessToken');
       if (!accessToken) {
+        toast.error("Session expired. Please log in again.", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
         navigate('/signin');
         return false;
       }
