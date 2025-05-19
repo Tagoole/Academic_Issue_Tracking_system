@@ -72,6 +72,16 @@ const RegistrarDashboard = () => {
           try {
             const refreshToken = localStorage.getItem('refreshToken');
             if (refreshToken) {
+              toast.info("Refreshing your session...", {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+              });
+
               const refreshResponse = await API.post('/api/refresh_token/', {
                 refresh: refreshToken,
               });
