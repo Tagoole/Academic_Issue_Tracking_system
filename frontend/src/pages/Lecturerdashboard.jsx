@@ -10,7 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 // Predefined categories and statuses
 const predefinedCategories = ['Missing Marks', 'Wrong Marks', 'Others'];
-const predefinedStatuses = ['Pending', 'In Progress', 'Resolved'];
+const predefinedStatuses = ['pending', 'in_progress', 'resolved', 'rejected'];
 
 const Lecturerdashboard = () => {
   const navigate = useNavigate();
@@ -18,6 +18,7 @@ const Lecturerdashboard = () => {
   const summaryRef = useRef(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   // Filter states
   const [statusFilter, setStatusFilter] = useState('all');
@@ -245,7 +246,7 @@ const Lecturerdashboard = () => {
   // Handle issue click
   const handleIssueClick = (issue) => {
     setSelectedIssue(issue);
-
+    setShowModal(true);
     // Show toast notification for viewing the issue
     toast.info(`Viewing issue #${issue.id}`);
   };
@@ -336,6 +337,17 @@ const Lecturerdashboard = () => {
     }
   };
 
+  // Format date for display
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
   // Handle resolving an issue
   const handleResolveIssue = (issue) => {
     // Extract only the necessary data (exclude created_at, updated_at, id, and registrar email)
@@ -363,6 +375,121 @@ const Lecturerdashboard = () => {
     
     // Navigate to the LecturerIssueManagement page with the issue ID as a URL parameter
     navigate(`/LecturerIssueManagement?issueId=${issue.id}`);
+  };
+
+  // Helper function to determine if a string is a URL
+  const isValidURL = (string) => {
+    try {
+      new URL(string);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  };
+
+  // Helper function to check if a URL is an image
+  const isImageURL = (url) => {
+    if (!url || typeof url !== 'string') return false;
+    
+    // Check if the URL ends with common image extensions
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg'];
+    return imageExtensions.some(ext => url.toLowerCase().endsWith(ext)) || 
+           url.toLowerCase().includes('/image/') ||
+           url.toLowerCase().includes('media/images/');
+  };
+
+  // Format issue detail value for display
+  const formatValue = (key, value) => {
+    if (value === null || value === undefined) return 'N/A';
+    
+    // Handle image URLs
+    if ((key === 'image' || key.includes('image') || key.includes('photo') || key.includes('picture')) && 
+        isValidURL(value)) {
+      return (
+        <div className="detail-image-container">
+          <img 
+            src={value} 
+            alt={`Issue ${key}`} 
+            className="detail-image" 
+            onClick={() => window.open(value, '_blank')}
+          />
+          <div className="image-caption">Click to view full size</div>
+        </div>
+      );
+    }
+    
+    // Handle any URL that appears to be an image
+    if (typeof value === 'string' && isImageURL(value)) {
+      return (
+        <div className="detail-image-container">
+          <img 
+            src={value} 
+            alt="Issue attachment" 
+            className="detail-image" 
+            onClick={() => window.open(value, '_blank')}
+          />
+          <div className="image-caption">Click to view full size</div>
+        </div>
+      );
+    }
+    
+    // Handle other URLs
+    if (typeof value === 'string' && isValidURL(value)) {
+      return (
+        <a href={value} target="_blank" rel="noopener noreferrer">
+          {value}
+        </a>
+      );
+    }
+    
+    // Handle dates
+    if (key.includes('_at') || key.includes('date')) {
+      return formatDate(value);
+    }
+    
+    // Handle objects
+    if (typeof value === 'object' && value !== null) {
+      return JSON.stringify(value);
+    }
+    
+    // Handle boolean values
+    if (typeof value === 'boolean') {
+      return value ? 'Yes' : 'No';
+    }
+    
+    // Default: return as string
+    return String(value);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setSelectedIssue(null);
+  };
+
+  // Handle deleting an issue
+  const handleDeleteIssue = async (issueId) => {
+    if (window.confirm('Are you sure you want to delete this issue? This action cannot be undone.')) {
+      try {
+        // Get access token
+        const accessToken = localStorage.getItem('accessToken');
+        
+        // Set authorization header with access token
+        API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+        
+        // Send delete request to API
+        await API.delete(`api/lecturer_issue_management/${issueId}/`);
+        
+        // Update the state by removing the deleted issue
+        setAllIssues(prevIssues => prevIssues.filter(issue => issue.id !== issueId));
+        setFilteredIssues(prevIssues => prevIssues.filter(issue => issue.id !== issueId));
+        
+        // Show success message
+        toast.success('Issue deleted successfully');
+      } catch (err) {
+        console.error('Error deleting issue:', err);
+        toast.error('Failed to delete issue. Please try again.');
+      }
+    }
   };
 
   if (loading) {
@@ -434,113 +561,226 @@ const Lecturerdashboard = () => {
       <div className="content-container">
         <Sidebar2 />
         <main className="main-content">
-          {/* Dashboard header with search and filter options */}
-          <div className="dashboard-header">
-            <h1>Issue Dashboard</h1>
-            <div className="filter-controls">
-              <div className="select-wrapper">
-                <select 
-                  className="category-filter" 
-                  value={categoryFilter} 
-                  onChange={handleCategoryFilterChange}
-                >
-                  <option value="all">All Categories</option>
-                  {uniqueCategories.map(category => (
-                    <option key={category} value={category}>{category}</option>
-                  ))}
-                </select>
-                <span className="dropdown-arrow"></span>
-              </div>
-
-              <div className="select-wrapper">
-                <select 
-                  className="status-filter" 
-                  value={statusFilter} 
-                  onChange={handleStatusFilterChange}
-                >
-                  <option value="all">All Statuses</option>
-                  {uniqueStatuses.map(status => (
-                    <option key={status} value={status}>{status}</option>
-                  ))}
-                </select>
-                <span className="dropdown-arrow"></span>
-              </div>
-
-              <input 
-                type="text" 
-                placeholder="Search issues by status, student, or issue type..." 
-                className="search-input" 
-                value={searchTerm}
-                onChange={handleSearchChange}
-              />
+          {/* Dashboard Stats */}
+          <div className="stats-card-group">
+            <div className="stat-card">
+              <div className="stat-card-heading">Resolved Issues</div>
+              <div className="stat-card-value">{allIssues.filter(issue => issue.status === 'resolved').length}</div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-card-heading">Pending Issues</div>
+              <div className="stat-card-value">{allIssues.filter(issue => issue.status === 'pending').length}</div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-card-heading">In-progress Issues</div>
+              <div className="stat-card-value">{allIssues.filter(issue => issue.status === 'in_progress').length}</div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-card-heading">Rejected Issues</div>
+              <div className="stat-card-value">{allIssues.filter(issue => issue.status === 'rejected').length}</div>
             </div>
           </div>
 
-          {/* Issues table section */}
-          <div className="issues-section">
-            <div className="issues-table">
-              <table>
+          {/* Dashboard header with search and filter options */}
+          <div className="query-controls">
+            <input 
+              type="text" 
+              placeholder="Search issues..." 
+              className="query-input" 
+              value={searchTerm}
+              onChange={handleSearchChange}
+            />
+            <button className="query-filter-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 16v-4.414L3.293 6.707A1 1 0 013 6V3z" clipRule="evenodd" />
+              </svg>
+            </button>
+            
+            <div className="select-wrapper mr-4">
+              <select 
+                className="category-filter" 
+                value={categoryFilter} 
+                onChange={handleCategoryFilterChange}
+              >
+                <option value="all">All Categories</option>
+                {uniqueCategories.map(category => (
+                  <option key={category} value={category}>{category}</option>
+                ))}
+              </select>
+              <span className="dropdown-arrow"></span>
+            </div>
+
+            <div className="select-wrapper">
+              <select 
+                className="status-filter" 
+                value={statusFilter} 
+                onChange={handleStatusFilterChange}
+              >
+                <option value="all">All Statuses</option>
+                {uniqueStatuses.map(status => (
+                  <option key={status} value={status}>{status}</option>
+                ))}
+              </select>
+              <span className="dropdown-arrow"></span>
+            </div>
+          </div>
+
+          {/* Issues view container - similar to student dashboard */}
+          <div className="issues-view-container">
+            <div className="issues-view-header">
+              <div className="status-filter-wrapper">
+                {['Pending', 'In-progress', 'Resolved', 'Rejected'].map(tab => (
+                  <button
+                    key={tab}
+                    className={`status-filter-btn ${statusFilter === tab.toLowerCase() ? 'selected-status' : 'unselected-status'}`}
+                    onClick={() => setStatusFilter(tab.toLowerCase())}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Data grid like in StudentDashboard */}
+          <div className="data-grid-wrapper">
+            {loading ? (
+              <div className="loader-text">Loading issues...</div>
+            ) : error ? (
+              <div className="error-notification">{error}</div>
+            ) : (
+              <table className="data-grid">
                 <thead>
                   <tr>
-                    <th>Issue ID</th>
+                    <th>ID</th>
                     <th>Status</th>
-                    <th>Student No</th>
-                    <th>Category</th>
-                    <th>Date</th>
+                    <th>Student</th>
+                    <th>Issue Type</th>
+                    <th>Course Unit</th>
+                    <th>Created</th>
+                    <th>Updated</th>
+                    <th>Is Commented</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredIssues.length > 0 ? (
-                    filteredIssues.map(issue => (
-                      <tr 
-                        key={issue.id} 
-                        className={selectedIssue && selectedIssue.id === issue.id ? 'selected-row' : ''}
-                      >
-                        <td onClick={() => handleIssueClick(issue)}>{issue.id}</td>
-                        <td onClick={() => handleIssueClick(issue)}>
-                          <span className={`status-badge ${issue.status.toLowerCase().replace(' ', '-')}`}>
-                            {issue.status}
+                    filteredIssues.map((issue, index) => (
+                      <tr key={issue.id || index}>
+                        <td>#{issue.id || 'N/A'}</td>
+                        <td>
+                          <span className={`status-indicator status-color-${issue.status}`}>
+                            {issue.status === 'pending' ? 'Pending' : 
+                             issue.status === 'in_progress' ? 'In-progress' : 
+                             issue.status === 'resolved' ? 'Resolved' : 
+                             issue.status === 'rejected' ? 'Rejected' : issue.status}
                           </span>
                         </td>
-                        <td onClick={() => handleIssueClick(issue)}>{issue.studentNo}</td>
-                        <td onClick={() => handleIssueClick(issue)}>{issue.category}</td>
-                        <td onClick={() => handleIssueClick(issue)}>{issue.date}</td>
+                        <td>{issue.student?.username || issue.studentNo || 'Unknown Student'}</td>
+                        <td>{issue.issue_type || issue.category || 'N/A'}</td>
+                        <td>{issue.course_unit || 'N/A'}</td>
+                        <td>{formatDate(issue.created_at || issue.date)}</td>
+                        <td>{formatDate(issue.updated_at)}</td>
+                        <td>{issue.is_commented ? '✓' : '✗'}</td>
                         <td>
-                          {issue.status !== 'Resolved' && (
+                          <div className="row-actions-group">
                             <button 
-                              className="resolve-btn"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleResolveIssue(issue);
-                              }}
+                              className="details-action-btn" 
+                              onClick={() => handleIssueClick(issue)}
                             >
-                              Resolve Issue
+                              Details
                             </button>
-                          )}
+                            {issue.status !== 'resolved' && (
+                              <button 
+                                className="resolve-btn" 
+                                onClick={() => handleResolveIssue(issue)}
+                              >
+                                Resolve
+                              </button>
+                            )}
+                            <button 
+                              className="remove-action-btn" 
+                              onClick={() => handleDeleteIssue(issue.id)}
+                            >
+                              Delete
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="6" className="no-issues">No issues match the current filters. Please try another search term</td>
+                      <td colSpan="9" className="empty-state-message">
+                        No {statusFilter !== 'all' ? statusFilter : ''} issues found
+                      </td>
                     </tr>
                   )}
                 </tbody>
               </table>
-            </div>
+            )}
           </div>
         </main>
 
-        {/* Issue Summary with ref for click outside detection */}
-        {selectedIssue && (
-          <div className="issue-summary-overlay">
-            <div ref={summaryRef} className="issue-summary-container">
-              <IssueSummary 
-                issue={selectedIssue} 
-                onClose={handleCloseSummary}
-                onUpdateStatus={updateIssueStatus}
-              />
+        {/* Issue Details Modal - Similar to the one in StudentDashboard */}
+        {showModal && selectedIssue && (
+          <div className="modal-backdrop">
+            <div className="modal-window">
+              <div className="modal-title-bar">
+                <h2>Issue Details</h2>
+                <button className="modal-close-icon" onClick={closeModal}>×</button>
+              </div>
+              <div className="modal-body">
+                <div className="detail-row">
+                  <strong>ID:</strong> #{selectedIssue.id || 'N/A'}
+                </div>
+                
+                {/* Display issue image prominently if it exists */}
+                {selectedIssue.image && (
+                  <div className="detail-row issue-image-row">
+                    <strong>Image:</strong>
+                    <div className="detail-image-container">
+                      <img 
+                        src={selectedIssue.image} 
+                        alt="Issue attachment" 
+                        className="detail-image" 
+                        onClick={() => window.open(selectedIssue.image, '_blank')}
+                      />
+                      <div className="image-caption">Click to view full size</div>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Display all other issue details */}
+                {Object.entries(selectedIssue).map(([key, value]) => {
+                  // Skip ID and image as we've already displayed them separately
+                  if (key === 'id' || key === 'image') return null;
+                  
+                  const formattedKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                  
+                  return (
+                    <div key={key} className="detail-row">
+                      <strong>{formattedKey}:</strong> 
+                      <div className="detail-value">
+                        {formatValue(key, value)}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="modal-actions">
+                {selectedIssue.status !== 'resolved' && (
+                  <button 
+                    className="resolve-btn" 
+                    onClick={() => {
+                      handleResolveIssue(selectedIssue);
+                      closeModal();
+                    }}
+                  >
+                    Resolve Issue
+                  </button>
+                )}
+                <button className="modal-dismiss-btn" onClick={closeModal}>Close</button>
+              </div>
             </div>
           </div>
         )}

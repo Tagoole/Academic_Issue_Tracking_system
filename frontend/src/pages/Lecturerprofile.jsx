@@ -12,7 +12,7 @@ const LecturerProfile = () => {
   // Initialize state with localStorage data
   const [profile, setProfile] = useState({
     fullName: '[Full Name]',
-    role: '[Role]',
+    role: 'Lecturer',
     phoneNumber: '0761 567698',
     email: '[Email Address]',
     gender: '[Gender]',
