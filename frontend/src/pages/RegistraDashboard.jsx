@@ -644,6 +644,7 @@ const RegistrarDashboard = () => {
           )}
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };
