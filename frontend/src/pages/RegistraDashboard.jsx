@@ -246,6 +246,15 @@ const RegistrarDashboard = () => {
       }
     } catch (err) {
       console.error('Error searching issues:', err);
+      toast.warning("Search using server failed. Showing local results.", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       const filtered = issues.filter(issue =>
         issue.id?.toString().includes(searchTerm) ||
         issue.status?.toLowerCase().includes(searchTerm.toLowerCase()) ||
