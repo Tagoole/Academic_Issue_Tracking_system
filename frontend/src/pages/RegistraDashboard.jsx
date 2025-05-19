@@ -172,6 +172,19 @@ const RegistrarDashboard = () => {
     }
     
     setFilteredIssues(filtered);
+
+    // Show info toast when a filter is applied (not for "all")
+    if (filter !== 'all') {
+      toast.info(`Showing ${filter.replace('_', '-')} issues`, {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
   };
 
   const handleFilterClick = (filter) => {
