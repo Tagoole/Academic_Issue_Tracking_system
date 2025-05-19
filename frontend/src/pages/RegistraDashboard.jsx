@@ -304,6 +304,36 @@ const RegistrarDashboard = () => {
     setSelectedIssue(null);
   };
 
+  const updateIssueStatus = async (issueId, newStatus) => {
+    try {
+      toast.info("Updating issue status...", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+
+      const response = await API.put(`/api/registrar_issue_management/${issueId}/`, {
+        status: newStatus
+      });
+      // ...rest of your code
+    } catch (error) {
+      console.error('Error updating issue status:', error);
+      toast.error("Failed to update issue status. Please try again.", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+  };
+
   const StatCard = ({ title, count, description, onClick, active }) => {
     return (
       <div 
