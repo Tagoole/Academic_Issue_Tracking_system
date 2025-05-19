@@ -288,6 +288,15 @@ const RegistrarDashboard = () => {
   const openIssueDetails = (issue) => {
     setSelectedIssue(issue);
     setShowModal(true);
+    toast.info(`Viewing details for issue #${issue.id}`, {
+      position: "top-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
   };
 
   const closeModal = () => {
