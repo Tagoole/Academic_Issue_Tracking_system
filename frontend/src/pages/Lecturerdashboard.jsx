@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Lecturerdashboard.css';
+import './LecturerDashboard.css';
 import Navbar from './NavBar';
 import Sidebar2 from './Sidebar2';
 import IssueSummary from './IssueSummary';
@@ -406,14 +406,14 @@ const Lecturerdashboard = () => {
     if ((key === 'image' || key.includes('image') || key.includes('photo') || key.includes('picture')) && 
         isValidURL(value)) {
       return (
-        <div className="detail-image-container">
+        <div className="lecturer-detail-image-wrapper">
           <img 
             src={value} 
             alt={`Issue ${key}`} 
-            className="detail-image" 
+            className="lecturer-detail-image" 
             onClick={() => window.open(value, '_blank')}
           />
-          <div className="image-caption">Click to view full size</div>
+          <div className="lecturer-image-caption">Click to view full size</div>
         </div>
       );
     }
@@ -421,14 +421,14 @@ const Lecturerdashboard = () => {
     // Handle any URL that appears to be an image
     if (typeof value === 'string' && isImageURL(value)) {
       return (
-        <div className="detail-image-container">
+        <div className="lecturer-detail-image-wrapper">
           <img 
             src={value} 
             alt="Issue attachment" 
-            className="detail-image" 
+            className="lecturer-detail-image" 
             onClick={() => window.open(value, '_blank')}
           />
-          <div className="image-caption">Click to view full size</div>
+          <div className="lecturer-image-caption">Click to view full size</div>
         </div>
       );
     }
@@ -466,40 +466,14 @@ const Lecturerdashboard = () => {
     setSelectedIssue(null);
   };
 
-  // Handle deleting an issue
-  const handleDeleteIssue = async (issueId) => {
-    if (window.confirm('Are you sure you want to delete this issue? This action cannot be undone.')) {
-      try {
-        // Get access token
-        const accessToken = localStorage.getItem('accessToken');
-        
-        // Set authorization header with access token
-        API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-        
-        // Send delete request to API
-        await API.delete(`api/lecturer_issue_management/${issueId}/`);
-        
-        // Update the state by removing the deleted issue
-        setAllIssues(prevIssues => prevIssues.filter(issue => issue.id !== issueId));
-        setFilteredIssues(prevIssues => prevIssues.filter(issue => issue.id !== issueId));
-        
-        // Show success message
-        toast.success('Issue deleted successfully');
-      } catch (err) {
-        console.error('Error deleting issue:', err);
-        toast.error('Failed to delete issue. Please try again.');
-      }
-    }
-  };
-
   if (loading) {
     return (
-      <div className="app-container">
+      <div className="lecturer-container">
         <Navbar />
-        <div className="content-container">
+        <div className="lecturer-content-wrapper">
           <Sidebar2 />
-          <main className="main-content">
-            <div className="loading-message">Loading issues...</div>
+          <main className="lecturer-main-content">
+            <div className="lecturer-loading-state">Loading issues...</div>
           </main>
         </div>
         {/* Add ToastContainer here too for loading state */}
@@ -520,15 +494,15 @@ const Lecturerdashboard = () => {
 
   if (error) {
     return (
-      <div className="app-container">
+      <div className="lecturer-container">
         <Navbar />
-        <div className="content-container">
+        <div className="lecturer-content-wrapper">
           <Sidebar2 />
-          <main className="main-content">
-            <div className="error-message">
+          <main className="lecturer-main-content">
+            <div className="lecturer-error-state">
               {error}
               <button 
-                className="retry-btn"
+                className="lecturer-retry-button"
                 onClick={() => {
                   toast.info("Retrying...");
                   window.location.reload();
@@ -556,49 +530,49 @@ const Lecturerdashboard = () => {
   }
 
   return (
-    <div className="app-container">
+    <div className="lecturer-container">
       <Navbar />
-      <div className="content-container">
+      <div className="lecturer-content-wrapper">
         <Sidebar2 />
-        <main className="main-content">
+        <main className="lecturer-main-content">
           {/* Dashboard Stats */}
-          <div className="stats-card-group">
-            <div className="stat-card">
-              <div className="stat-card-heading">Resolved Issues</div>
-              <div className="stat-card-value">{allIssues.filter(issue => issue.status === 'resolved').length}</div>
+          <div className="lecturer-stats-row">
+            <div className="lecturer-stat-card">
+              <div className="lecturer-stat-title">Resolved Issues</div>
+              <div className="lecturer-stat-count">{allIssues.filter(issue => issue.status === 'resolved').length}</div>
             </div>
-            <div className="stat-card">
-              <div className="stat-card-heading">Pending Issues</div>
-              <div className="stat-card-value">{allIssues.filter(issue => issue.status === 'pending').length}</div>
+            <div className="lecturer-stat-card">
+              <div className="lecturer-stat-title">Pending Issues</div>
+              <div className="lecturer-stat-count">{allIssues.filter(issue => issue.status === 'pending').length}</div>
             </div>
-            <div className="stat-card">
-              <div className="stat-card-heading">In-progress Issues</div>
-              <div className="stat-card-value">{allIssues.filter(issue => issue.status === 'in_progress').length}</div>
+            <div className="lecturer-stat-card">
+              <div className="lecturer-stat-title">In-progress Issues</div>
+              <div className="lecturer-stat-count">{allIssues.filter(issue => issue.status === 'in_progress').length}</div>
             </div>
-            <div className="stat-card">
-              <div className="stat-card-heading">Rejected Issues</div>
-              <div className="stat-card-value">{allIssues.filter(issue => issue.status === 'rejected').length}</div>
+            <div className="lecturer-stat-card">
+              <div className="lecturer-stat-title">Rejected Issues</div>
+              <div className="lecturer-stat-count">{allIssues.filter(issue => issue.status === 'rejected').length}</div>
             </div>
           </div>
 
           {/* Dashboard header with search and filter options */}
-          <div className="query-controls">
+          <div className="lecturer-search-controls">
             <input 
               type="text" 
               placeholder="Search issues..." 
-              className="query-input" 
+              className="lecturer-search-input" 
               value={searchTerm}
               onChange={handleSearchChange}
             />
-            <button className="query-filter-btn">
+            <button className="lecturer-filter-button">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 16v-4.414L3.293 6.707A1 1 0 013 6V3z" clipRule="evenodd" />
               </svg>
             </button>
             
-            <div className="select-wrapper mr-4">
+            <div className="lecturer-select-container mr-4">
               <select 
-                className="category-filter" 
+                className="lecturer-category-dropdown" 
                 value={categoryFilter} 
                 onChange={handleCategoryFilterChange}
               >
@@ -607,12 +581,12 @@ const Lecturerdashboard = () => {
                   <option key={category} value={category}>{category}</option>
                 ))}
               </select>
-              <span className="dropdown-arrow"></span>
+              <span className="lecturer-dropdown-arrow"></span>
             </div>
 
-            <div className="select-wrapper">
+            <div className="lecturer-select-container">
               <select 
-                className="status-filter" 
+                className="lecturer-status-dropdown" 
                 value={statusFilter} 
                 onChange={handleStatusFilterChange}
               >
@@ -621,18 +595,18 @@ const Lecturerdashboard = () => {
                   <option key={status} value={status}>{status}</option>
                 ))}
               </select>
-              <span className="dropdown-arrow"></span>
+              <span className="lecturer-dropdown-arrow"></span>
             </div>
           </div>
 
-          {/* Issues view container - similar to student dashboard */}
-          <div className="issues-view-container">
-            <div className="issues-view-header">
-              <div className="status-filter-wrapper">
+          {/* Issues view container */}
+          <div className="lecturer-issues-container">
+            <div className="lecturer-issues-header">
+              <div className="lecturer-status-tabs">
                 {['Pending', 'In-progress', 'Resolved', 'Rejected'].map(tab => (
                   <button
                     key={tab}
-                    className={`status-filter-btn ${statusFilter === tab.toLowerCase() ? 'selected-status' : 'unselected-status'}`}
+                    className={`lecturer-status-tab ${statusFilter === tab.toLowerCase() ? 'lecturer-active-tab' : ''}`}
                     onClick={() => setStatusFilter(tab.toLowerCase())}
                   >
                     {tab}
@@ -642,15 +616,15 @@ const Lecturerdashboard = () => {
             </div>
           </div>
 
-          {/* Data grid like in StudentDashboard */}
-          <div className="data-grid-wrapper">
+          {/* Data grid for issues */}
+          <div className="lecturer-table-container">
             {loading ? (
-              <div className="loader-text">Loading issues...</div>
+              <div className="lecturer-loading-text">Loading issues...</div>
             ) : error ? (
-              <div className="error-notification">{error}</div>
+              <div className="lecturer-error-message">{error}</div>
             ) : (
-              <table className="data-grid">
-                <thead>
+              <table className="lecturer-issues-table">
+                <thead className="lecturer-table-header">
                   <tr>
                     <th>ID</th>
                     <th>Status</th>
@@ -663,13 +637,13 @@ const Lecturerdashboard = () => {
                     <th>Actions</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="lecturer-table-body">
                   {filteredIssues.length > 0 ? (
                     filteredIssues.map((issue, index) => (
                       <tr key={issue.id || index}>
                         <td>#{issue.id || 'N/A'}</td>
                         <td>
-                          <span className={`status-indicator status-color-${issue.status}`}>
+                          <span className={`lecturer-status-badge lecturer-status-${issue.status}`}>
                             {issue.status === 'pending' ? 'Pending' : 
                              issue.status === 'in_progress' ? 'In-progress' : 
                              issue.status === 'resolved' ? 'Resolved' : 
@@ -683,34 +657,28 @@ const Lecturerdashboard = () => {
                         <td>{formatDate(issue.updated_at)}</td>
                         <td>{issue.is_commented ? '✓' : '✗'}</td>
                         <td>
-                          <div className="row-actions-group">
+                          <div className="lecturer-action-buttons">
                             <button 
-                              className="details-action-btn" 
+                              className="lecturer-details-button" 
                               onClick={() => handleIssueClick(issue)}
                             >
                               Details
                             </button>
                             {issue.status !== 'resolved' && (
                               <button 
-                                className="resolve-btn" 
+                                className="lecturer-resolve-button" 
                                 onClick={() => handleResolveIssue(issue)}
                               >
                                 Resolve
                               </button>
                             )}
-                            <button 
-                              className="remove-action-btn" 
-                              onClick={() => handleDeleteIssue(issue.id)}
-                            >
-                              Delete
-                            </button>
                           </div>
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="9" className="empty-state-message">
+                      <td colSpan="9" className="lecturer-empty-state">
                         No {statusFilter !== 'all' ? statusFilter : ''} issues found
                       </td>
                     </tr>
@@ -721,31 +689,31 @@ const Lecturerdashboard = () => {
           </div>
         </main>
 
-        {/* Issue Details Modal - Similar to the one in StudentDashboard */}
+        {/* Issue Details Modal */}
         {showModal && selectedIssue && (
-          <div className="modal-backdrop">
-            <div className="modal-window">
-              <div className="modal-title-bar">
+          <div className="lecturer-modal-backdrop">
+            <div className="lecturer-modal-content">
+              <div className="lecturer-modal-header">
                 <h2>Issue Details</h2>
-                <button className="modal-close-icon" onClick={closeModal}>×</button>
+                <button className="lecturer-modal-close" onClick={closeModal}>×</button>
               </div>
-              <div className="modal-body">
-                <div className="detail-row">
+              <div className="lecturer-modal-body">
+                <div className="lecturer-detail-row">
                   <strong>ID:</strong> #{selectedIssue.id || 'N/A'}
                 </div>
                 
                 {/* Display issue image prominently if it exists */}
                 {selectedIssue.image && (
-                  <div className="detail-row issue-image-row">
+                  <div className="lecturer-detail-row lecturer-image-row">
                     <strong>Image:</strong>
-                    <div className="detail-image-container">
+                    <div className="lecturer-detail-image-wrapper">
                       <img 
                         src={selectedIssue.image} 
                         alt="Issue attachment" 
-                        className="detail-image" 
+                        className="lecturer-detail-image" 
                         onClick={() => window.open(selectedIssue.image, '_blank')}
                       />
-                      <div className="image-caption">Click to view full size</div>
+                      <div className="lecturer-image-caption">Click to view full size</div>
                     </div>
                   </div>
                 )}
@@ -758,19 +726,19 @@ const Lecturerdashboard = () => {
                   const formattedKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
                   
                   return (
-                    <div key={key} className="detail-row">
+                    <div key={key} className="lecturer-detail-row">
                       <strong>{formattedKey}:</strong> 
-                      <div className="detail-value">
+                      <div className="lecturer-detail-value">
                         {formatValue(key, value)}
                       </div>
                     </div>
                   );
                 })}
               </div>
-              <div className="modal-actions">
+              <div className="lecturer-modal-footer">
                 {selectedIssue.status !== 'resolved' && (
                   <button 
-                    className="resolve-btn" 
+                    className="lecturer-resolve-button" 
                     onClick={() => {
                       handleResolveIssue(selectedIssue);
                       closeModal();
@@ -779,13 +747,13 @@ const Lecturerdashboard = () => {
                     Resolve Issue
                   </button>
                 )}
-                <button className="modal-dismiss-btn" onClick={closeModal}>Close</button>
+                <button className="lecturer-close-button" onClick={closeModal}>Close</button>
               </div>
             </div>
           </div>
         )}
       </div>
-      {/* Enhanced ToastContainer with better positioning and styling */}
+      {/* Enhanced ToastContainer */}
       <ToastContainer
         position="top-right"
         autoClose={3000}
