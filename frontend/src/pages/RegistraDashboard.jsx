@@ -5,6 +5,8 @@ import NavBar from './NavBar';
 import Sidebar from './Sidebar';
 import API from '../api.js';
 import { toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const RegistrarDashboard = () => {
   const navigate = useNavigate();
