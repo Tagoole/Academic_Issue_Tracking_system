@@ -95,6 +95,17 @@ const RegistrarDashboard = () => {
               setFilteredIssues(retryData);
               updateCounts(retryData);
               setLoading(false);
+
+              // Show success toast for session refresh
+              toast.success("Session refreshed successfully", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+              });
             } else {
               navigate('/signin');
             }
