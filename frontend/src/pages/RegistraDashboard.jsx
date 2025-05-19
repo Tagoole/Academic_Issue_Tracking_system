@@ -200,6 +200,16 @@ const RegistrarDashboard = () => {
 
     try {
       setIsSearching(true);
+      toast.info("Searching issues...", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+
       const response = await API.get(`api/registrar_issue_management/filter_results/?status=${searchTerm}`);
       
       if (response.data && Array.isArray(response.data)) {
