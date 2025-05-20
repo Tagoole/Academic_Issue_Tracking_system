@@ -313,12 +313,6 @@ const NewIssue = () => {
         submissionData.append('image', formData.attachment);
       }
 
-      // Log the actual data being sent for debugging
-      console.log('Submitting form data:');
-      for (let pair of submissionData.entries()) {
-        console.log(pair[0] + ': ' + pair[1]);
-      }
-
       // Make request
       const response = await makeAuthRequest(async (token) => {
         return API.post('/api/issues/', submissionData, {
@@ -355,9 +349,9 @@ const NewIssue = () => {
     } catch (err) {
       console.error('Submission error:', err);
       setSubmitStatus('error');
-      // Improved error handling to show more details
+      
+      // Simple error handling
       if (err.response?.data) {
-        console.log('Error response data:', err.response.data);
         let errorMessage = 'Failed to submit issue';
         if (typeof err.response.data === 'string') {
           errorMessage = err.response.data;
@@ -392,23 +386,23 @@ const NewIssue = () => {
                      accessToken && formData.courseUnitId;
 
   return (
-    <div className="create-issue-page">
+    <div className="academic-issue-page">
       <NavBar />
-      <div className="page-content">
+      <div className="academic-content-wrapper">
         <Sidebar />
-        <div className="issue-form-container">
+        <div className="academic-form-card">
           <h1>Create New Issue</h1>
           
           {/* Error messages */}
           {!accessToken && (
-            <div className="error-banner">
+            <div className="academic-error-banner">
               <p>Please sign in to continue</p>
               <button onClick={() => navigate('/signin')}>Sign In</button>
             </div>
           )}
           
           {errors.general && (
-            <div className="error-banner">
+            <div className="academic-error-banner">
               <p>{errors.general}</p>
               <button onClick={() => setErrors(prev => ({ ...prev, general: null }))}>×</button>
             </div>
@@ -416,11 +410,11 @@ const NewIssue = () => {
           
           <form onSubmit={handleSubmit}>
             {/* Student Information Section */}
-            <div className="form-section">
+            <div className="academic-form-section">
               <h2>Student Information</h2>
               
-              <div className="form-row">
-                <div className="form-group">
+              <div className="academic-flex-row">
+                <div className="academic-field-wrapper">
                   <label>Student's Name</label>
                   <input 
                     type="text" 
@@ -430,7 +424,7 @@ const NewIssue = () => {
                   />
                 </div>
                 
-                <div className="form-group">
+                <div className="academic-field-wrapper">
                   <label>Registration Number</label>
                   <input 
                     type="text" 
@@ -441,11 +435,11 @@ const NewIssue = () => {
                 </div>
               </div>
 
-              <div className="form-row">
-                <div className="form-group">
+              <div className="academic-flex-row">
+                <div className="academic-field-wrapper">
                   <label>Program</label>
                   {isLoading.programs ? (
-                    <div className="loading-field">
+                    <div className="academic-loading-field">
                       <input
                         type="text"
                         value="Loading..."
@@ -454,7 +448,7 @@ const NewIssue = () => {
                       />
                     </div>
                   ) : errors.programs ? (
-                    <div className="error-field">
+                    <div className="academic-error-field">
                       <input
                         type="text"
                         value="Error loading program"
@@ -473,7 +467,7 @@ const NewIssue = () => {
                   )}
                 </div>
                 
-                <div className="form-group">
+                <div className="academic-field-wrapper">
                   <label>Year of Study</label>
                   <select
                     name="yearOfStudy"
@@ -491,20 +485,20 @@ const NewIssue = () => {
             </div>
 
             {/* Issue Details Section */}
-            <div className="form-section">
+            <div className="academic-form-section">
               <h2>Issue Details</h2>
               
-              <div className="form-row">
-                <div className="form-group">
+              <div className="academic-flex-row">
+                <div className="academic-field-wrapper">
                   <label>Registrar's Name</label>
                   {isLoading.registrars ? (
-                    <div className="loading-field">
+                    <div className="academic-loading-field">
                       <select disabled>
                         <option>Loading...</option>
                       </select>
                     </div>
                   ) : errors.registrars ? (
-                    <div className="error-field">
+                    <div className="academic-error-field">
                       <select disabled>
                         <option>Error loading registrars</option>
                       </select>
@@ -530,16 +524,16 @@ const NewIssue = () => {
                   )}
                 </div>
                 
-                <div className="form-group">
+                <div className="academic-field-wrapper">
                   <label>Course Unit</label>
                   {isLoading.courseUnits ? (
-                    <div className="loading-field">
+                    <div className="academic-loading-field">
                       <select disabled>
                         <option>Loading...</option>
                       </select>
                     </div>
                   ) : errors.courseUnits ? (
-                    <div className="error-field">
+                    <div className="academic-error-field">
                       <select disabled>
                         <option>Error loading course units</option>
                       </select>
@@ -566,8 +560,8 @@ const NewIssue = () => {
                 </div>
               </div>
 
-              <div className="form-row">
-                <div className="form-group">
+              <div className="academic-flex-row">
+                <div className="academic-field-wrapper">
                   <label>Issue Type</label>
                   <select
                     name="issueType"
@@ -582,7 +576,7 @@ const NewIssue = () => {
                   </select>
                 </div>
                 
-                <div className="form-group">
+                <div className="academic-field-wrapper">
                   <label>Semester</label>
                   <select
                     name="semester"
@@ -598,31 +592,31 @@ const NewIssue = () => {
                 </div>
               </div>
 
-              <div className="form-row">
-                <div className="form-group">
+              <div className="academic-flex-row">
+                <div className="academic-field-wrapper">
                   <label>Status</label>
                   <input type="text" value="Pending" readOnly disabled />
                 </div>
                 
-                <div className="form-group">
+                <div className="academic-field-wrapper">
                   <label>Attachments</label>
-                  <div className="attachment-area">
+                  <div className="academic-file-upload-area">
                     {formData.attachment ? (
-                      <div className="attachment-preview">
+                      <div className="academic-file-preview">
                         <img 
                           src={URL.createObjectURL(formData.attachment)} 
                           alt="Attachment preview" 
                         />
                         <button 
                           type="button" 
-                          className="clear-icon" 
+                          className="academic-remove-button" 
                           onClick={removeAttachment}
                         >
                           ×
                         </button>
                       </div>
                     ) : (
-                      <div className="attachment-placeholder">
+                      <div className="academic-file-placeholder">
                         <input
                           type="file"
                           accept="image/*"
@@ -634,8 +628,8 @@ const NewIssue = () => {
                 </div>
               </div>
 
-              <div className="form-row">
-                <div className="form-group full-width">
+              <div className="academic-flex-row">
+                <div className="academic-field-wrapper full-width">
                   <label>Description</label>
                   <textarea
                     name="description"
@@ -649,22 +643,22 @@ const NewIssue = () => {
               </div>
             </div>
 
-            <div className="form-row submit-row">
+            <div className="academic-flex-row academic-submit-row">
               <button
                 type="submit"
-                className="submit-button"
+                className="academic-submit-button"
                 disabled={isSubmitting || !isFormReady}
               >
                 {isSubmitting ? 'Submitting...' : 'Submit Issue'}
               </button>
 
               {submitStatus === 'success' && (
-                <div className="submit-status success">
+                <div className="academic-status-message academic-status-success">
                   Issue submitted successfully!
                 </div>
               )}
               {submitStatus === 'error' && (
-                <div className="submit-status error">
+                <div className="academic-status-message academic-status-error">
                   Submission failed. Please try again.
                 </div>
               )}
