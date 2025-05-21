@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    "whitenoise.runserver_nostatic",
     'django.contrib.staticfiles',
     
     'api.apps.ApiConfig',
@@ -55,6 +56,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -94,7 +96,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'backend.wsgi.application'
-tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
+DATABASE_URL = "postgresql://neondb_owner:npg_2S6ipfcoVyht@ep-dark-voice-a4lyuqjm-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require"
+tmpPostgres = urlparse(DATABASE_URL)
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -102,7 +105,7 @@ tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': tmpPostgres.path.replace('/',''),
+        'NAME': tmpPostgres.path[1:],
         'USER':tmpPostgres.username,
         'PASSWORD':tmpPostgres.password,
         'HOST':tmpPostgres.hostname,

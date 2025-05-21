@@ -9,7 +9,7 @@ const ResetPassword = () => {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
-  const [error, setError] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -17,21 +17,18 @@ const ResetPassword = () => {
     
     // Validate email
     if (!email.trim()) {
-      setError('Please enter your email address');
+      setErrorMessage('Please enter your email address');
       return;
     }
 
     try {
       setIsSubmitting(true);
       setSubmitStatus(null);
-      setError(null);
+      setErrorMessage(null);
 
       // Create form data
       const formData = new FormData();
       formData.append('email', email);
-
-      // Log the data being sent for debugging
-      console.log('Submitting password reset request for:', email);
       
       // Make API request
       const response = await API.post('/api/password_reset_code/', formData, {
@@ -42,51 +39,32 @@ const ResetPassword = () => {
 
       // Handle success
       setSubmitStatus('success');
-      console.log('Password reset response:', response.data);
       
-      // Navigate to verification page or show success message
+      // Navigate to verification page
       setTimeout(() => {
         navigate('/reset-verification', {
-          state: {
-            email: email
-          }
+          state: { email }
         });
       }, 1500);
       
     } catch (err) {
-      console.error('Password reset error:', err);
       setSubmitStatus('error');
       
-      // Enhanced error handling
-      if (err.response?.data) {
-        console.log('Error response data:', err.response.data);
-        let errorMessage = 'Failed to request password reset';
-        
-        if (typeof err.response.data === 'string') {
-          errorMessage = err.response.data;
-        } else if (err.response.data.message) {
-          errorMessage = err.response.data.message;
-        } else if (err.response.data.detail) {
-          errorMessage = err.response.data.detail;
-        } else if (err.response.data.email) {
-          // Handle field-specific error for email
-          errorMessage = Array.isArray(err.response.data.email) 
-            ? err.response.data.email.join(', ') 
-            : err.response.data.email;
-        } else {
-          // Try to extract field-specific errors
-          const fieldErrors = Object.entries(err.response.data)
-            .map(([field, msgs]) => `${field}: ${Array.isArray(msgs) ? msgs.join(', ') : msgs}`)
-            .join('; ');
-          
-          if (fieldErrors) {
-            errorMessage = `Validation errors: ${fieldErrors}`;
-          }
-        }
-        
-        setError(errorMessage);
+      // Simple error handling
+      if (err.response?.status === 404) {
+        setErrorMessage('Email not found. Please check your email address.');
+      } else if (err.response?.data?.Error) {
+        setErrorMessage('Account not found with this email address.');
+      } else if (err.response?.data?.message) {
+        setErrorMessage(err.response.data.message);
+      } else if (err.response?.data?.detail) {
+        setErrorMessage(err.response.data.detail);
+      } else if (err.response?.data?.email) {
+        setErrorMessage(Array.isArray(err.response.data.email) 
+          ? err.response.data.email[0] 
+          : err.response.data.email);
       } else {
-        setError('Network error or server unavailable');
+        setErrorMessage('Unable to send reset code. Please try again later.');
       }
     } finally {
       setIsSubmitting(false);
@@ -119,17 +97,17 @@ const ResetPassword = () => {
         </p>
         
         {/* Error message display */}
-        {error && (
+        {errorMessage && (
           <div className="error-banner">
-            <p>{error}</p>
-            <button onClick={() => setError(null)}>×</button>
+            <p>{errorMessage}</p>
+            <button onClick={() => setErrorMessage(null)}>×</button>
           </div>
         )}
         
         {/* Success message display */}
         {submitStatus === 'success' && (
           <div className="success-banner">
-            <p>Password reset link has been sent to your email!</p>
+            <p>Password reset code has been sent to your email!</p>
           </div>
         )}
         
@@ -169,8 +147,3 @@ const ResetPassword = () => {
 };
 
 export default ResetPassword;
-
-
-
-
-

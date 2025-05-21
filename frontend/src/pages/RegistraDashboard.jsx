@@ -4,6 +4,9 @@ import './RegistraDashboard.css';
 import NavBar from './NavBar';
 import Sidebar from './Sidebar';
 import API from '../api.js';
+import { toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const RegistrarDashboard = () => {
   const navigate = useNavigate();
@@ -25,6 +28,15 @@ const RegistrarDashboard = () => {
     const checkAuth = () => {
       const accessToken = localStorage.getItem('accessToken');
       if (!accessToken) {
+        toast.error("Session expired. Please log in again.", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
         navigate('/signin');
         return false;
       }
@@ -45,12 +57,33 @@ const RegistrarDashboard = () => {
 
         updateCounts(issuesData);
         setLoading(false);
+
+        // Show success toast for data loading
+        toast.success("Issues loaded successfully", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       } catch (err) {
         console.error('Error fetching registrar issues:', err);
         if (err.response && err.response.status === 401) {
           try {
             const refreshToken = localStorage.getItem('refreshToken');
             if (refreshToken) {
+              toast.info("Refreshing your session...", {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+              });
+
               const refreshResponse = await API.post('/api/refresh_token/', {
                 refresh: refreshToken,
               });
@@ -64,6 +97,17 @@ const RegistrarDashboard = () => {
               setFilteredIssues(retryData);
               updateCounts(retryData);
               setLoading(false);
+
+              // Show success toast for session refresh
+              toast.success("Session refreshed successfully", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+              });
             } else {
               navigate('/signin');
             }
@@ -130,6 +174,19 @@ const RegistrarDashboard = () => {
     }
     
     setFilteredIssues(filtered);
+
+    // Show info toast when a filter is applied (not for "all")
+    if (filter !== 'all') {
+      toast.info(`Showing ${filter.replace('_', '-')} issues`, {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
   };
 
   const handleFilterClick = (filter) => {
@@ -145,10 +202,29 @@ const RegistrarDashboard = () => {
 
     try {
       setIsSearching(true);
+      toast.info("Searching issues...", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+
       const response = await API.get(`api/registrar_issue_management/filter_results/?status=${searchTerm}`);
       
       if (response.data && Array.isArray(response.data)) {
         applyFilter(activeFilter, response.data);
+        toast.success(`Search completed. Found ${response.data.length} issues.`, {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       } else {
         const filtered = issues.filter(issue =>
           issue.id?.toString().includes(searchTerm) ||
@@ -160,9 +236,27 @@ const RegistrarDashboard = () => {
           issue.issue_description?.toLowerCase().includes(searchTerm.toLowerCase())
         );
         applyFilter(activeFilter, filtered);
+        toast.success(`Search completed. Found ${filtered.length} issues.`, {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       }
     } catch (err) {
       console.error('Error searching issues:', err);
+      toast.warning("Search using server failed. Showing local results.", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
       const filtered = issues.filter(issue =>
         issue.id?.toString().includes(searchTerm) ||
         issue.status?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -196,11 +290,63 @@ const RegistrarDashboard = () => {
   const openIssueDetails = (issue) => {
     setSelectedIssue(issue);
     setShowModal(true);
+    toast.info(`Viewing details for issue #${issue.id}`, {
+      position: "top-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
   };
 
   const closeModal = () => {
     setShowModal(false);
     setSelectedIssue(null);
+  };
+
+  const updateIssueStatus = async (issueId, newStatus) => {
+    try {
+      toast.info("Updating issue status...", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+
+      const response = await API.put(`/api/registrar_issue_management/${issueId}/`, {
+        status: newStatus
+      });
+
+      // Update local data...
+      // (your existing code for updating state)
+
+      toast.success(`Issue #${issueId} marked as ${newStatus.replace('_', ' ')}`, {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      closeModal();
+    } catch (error) {
+      console.error('Error updating issue status:', error);
+      toast.error("Failed to update issue status. Please try again.", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
   };
 
   const StatCard = ({ title, count, description, onClick, active }) => {
@@ -498,6 +644,7 @@ const RegistrarDashboard = () => {
           )}
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

@@ -87,14 +87,14 @@
   font-weight: normal;
 }
 
-/* Status tabs */
-.status-tabs {
+/* Status tabs - Updated to match JSX class names */
+.issues-tabs {
   display: flex;
   gap: 10px;
   margin-bottom: 20px;
 }
 
-.status-tab {
+.issues-tab {
   padding: 10px 20px;
   border: 1px solid #ddd;
   border-radius: 20px;
@@ -104,13 +104,13 @@
   transition: all 0.3s ease;
 }
 
-.status-tab.active {
+.issues-tab.active {
   background-color: #2563eb;
   color: #ffffff;
   border-color: #2563eb;
 }
 
-.status-tab:hover {
+.issues-tab:hover {
   background-color: #d1d5db;
   color: #4c75f2;
 }
@@ -148,7 +148,8 @@
   background-size: contain;
 }
 
-.filter-button {
+/* Updated to match JSX class name */
+.filter-btn {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -281,5 +282,177 @@
   background-color: #f5f5f5;
 }
 
+/* Clear search button - Add this as it's used in JSX but missing in CSS */
+.clear-search {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #666;
+}
 
+/* Modal styles - Add these as they're used in JSX but missing in CSS */
+.issue-details-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
 
+.modal-content {
+  background-color: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e1e4e8;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.close-modal-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+}
+
+.modal-body {
+  padding: 24px;
+}
+
+.issue-detail-row {
+  display: flex;
+  margin-bottom: 16px;
+}
+
+.detail-label {
+  min-width: 120px;
+  font-weight: bold;
+  color: #333;
+}
+
+.detail-value {
+  flex: 1;
+}
+
+.description-box {
+  padding: 12px;
+  border: 1px solid #e1e4e8;
+  border-radius: 4px;
+  background-color: #f8f9fa;
+  min-height: 100px;
+  white-space: pre-wrap;
+}
+
+.detail-input {
+  flex: 1;
+}
+
+.form-select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid #e1e4e8;
+}
+
+.cancel-btn, .save-btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background-color: #f1f5f9;
+  border: 1px solid #d1d5db;
+  color: #374151;
+}
+
+.save-btn {
+  background-color: #2563eb;
+  border: none;
+  color: white;
+}
+
+/* Additional classes used in JSX but missing in CSS */
+.loading-message, .error-message {
+  padding: 20px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.error-message {
+  color: #d9534f;
+}
+
+.no-issues-message {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+.dropdown-header {
+  padding: 8px 12px;
+  font-weight: bold;
+  border-bottom: 1px solid #e1e4e8;
+}
+
+.no-lecturers {
+  padding: 8px 12px;
+  color: #666;
+  font-style: italic;
+}
+
+.issue-row {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.issue-row:hover {
+  background-color: #f5f7fa;
+}
+
+/* Card header styling for dashboard cards */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.card-description {
+  color: #666;
+  font-size: 14px;
+}

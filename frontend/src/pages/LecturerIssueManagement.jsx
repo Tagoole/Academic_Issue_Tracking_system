@@ -48,7 +48,7 @@ const LecturerIssueManagement = () => {
   const [statusUpdateMessage, setStatusUpdateMessage] = useState('');
   const [selectedNewStatus, setSelectedNewStatus] = useState('');
   const [loading, setLoading] = useState(false);
-  const [file, setFile] = useState(null);
+  
 
   // Fetch issue data from sessionStorage when component mounts
   useEffect(() => {
@@ -214,16 +214,7 @@ const LecturerIssueManagement = () => {
     });
   };
 
-  const handleFileChange = (event) => {
-    const selectedFile = event.target.files[0];
-    setFile(selectedFile);
-  
-    if (selectedFile) {
-      toast.success(`File "${selectedFile.name}" selected successfully.`, {
-        autoClose: 3000,
-      });
-    }
-  };
+ 
 
   const handleConfirmSave = async () => {
     try {
@@ -234,9 +225,7 @@ const LecturerIssueManagement = () => {
       formData.append('status', selectedNewStatus.toLowerCase());
       formData.append('comment', selectedIssue.comment); // Changed from "comments" to "comment"
       formData.append('is_commented', true);
-      if (file) {
-        formData.append('attachment', file); // Add the file to the request
-      }
+     
 
       // Send PATCH request to update the issue
       const response = await API.patch(
@@ -335,13 +324,24 @@ const LecturerIssueManagement = () => {
               
               {selectedIssue.image && (
                 <div className="issue-field issue-image-field">
-                  <strong>Attached Image:</strong>
-                  <img 
-                    src={selectedIssue.image} 
-                    alt="Issue attachment" 
-                    className="issue-attachment-image"
-                    onError={() => toast.error('Failed to load attachment image')}
-                  />
+                  <strong>Attachment:</strong>
+                  {/* Show image preview if it's an image */}
+                  {selectedIssue.image.match(/\.(jpeg|jpg|gif|png)$/) ? (
+                    <img 
+                      src={selectedIssue.image} 
+                      alt="Issue attachment" 
+                      className="issue-attachment-image"
+                      onError={() => toast.error('Failed to load attachment image')}
+                      style={{ maxWidth: '200px', display: 'block', marginBottom: '0.5rem' }}
+                    />
+                  ) : null}
+                  <button
+                    className="open-file-button"
+                    onClick={() => window.open(selectedIssue.image, '_blank')}
+                    style={{ marginTop: '0.5rem' }}
+                  >
+                    Open Attachment
+                  </button>
                 </div>
               )}
             </div>
@@ -365,16 +365,7 @@ const LecturerIssueManagement = () => {
               </div>
             </div>
 
-            <div className="file-attachment-section">
-              <strong>Attach File</strong>
-              <input
-                type="file"
-                onChange={handleFileChange}
-                accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
-              />
-              {file && <p>Selected File: {file.name}</p>}
-            </div>
-
+            
             <div className="save-button-container">
               <button className="save-button" onClick={handleSave} disabled={loading}>
                 {loading ? 'Saving...' : 'Save Comment and Update Status'}

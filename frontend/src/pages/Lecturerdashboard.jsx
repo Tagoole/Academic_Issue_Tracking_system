@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Lecturerdashboard.css';
+import './LecturerDashboard.css';
 import Navbar from './NavBar';
 import Sidebar2 from './Sidebar2';
 import IssueSummary from './IssueSummary';
@@ -10,7 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 // Predefined categories and statuses
 const predefinedCategories = ['Missing Marks', 'Wrong Marks', 'Others'];
-const predefinedStatuses = ['Pending', 'In Progress', 'Resolved'];
+const predefinedStatuses = ['pending', 'in_progress', 'resolved', 'rejected'];
 
 const Lecturerdashboard = () => {
   const navigate = useNavigate();
@@ -18,6 +18,7 @@ const Lecturerdashboard = () => {
   const summaryRef = useRef(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   // Filter states
   const [statusFilter, setStatusFilter] = useState('all');
@@ -35,6 +36,7 @@ const Lecturerdashboard = () => {
       const accessToken = localStorage.getItem('accessToken');
       // If no access token is available, redirect to login
       if (!accessToken) {
+        toast.error('Authentication required. Please sign in.');
         navigate('/signin');
         return false;
       }
@@ -44,6 +46,7 @@ const Lecturerdashboard = () => {
     const fetchIssues = async () => {
       try {
         setLoading(true);
+        toast.info('Loading issues...'); // Add loading toast
         
         // Get access token
         const accessToken = localStorage.getItem('accessToken');
@@ -59,7 +62,7 @@ const Lecturerdashboard = () => {
         setLoading(false);
 
         // Show success toast when issues are loaded
-        toast.success('Issues loaded successfully');
+        toast.success(`${response.data.length} issues loaded successfully`);
       } catch (err) {
         console.error('Error fetching lecturer issues:', err);
         
@@ -67,6 +70,7 @@ const Lecturerdashboard = () => {
         if (err.response && err.response.status === 401) {
           // Try refreshing the token
           try {
+            toast.info('Session expired. Attempting to refresh...'); // Add refresh attempt toast
             const refreshToken = localStorage.getItem('refreshToken');
             
             if (refreshToken) {
@@ -85,6 +89,7 @@ const Lecturerdashboard = () => {
               setAllIssues(retryResponse.data);
               setFilteredIssues(retryResponse.data);
               setLoading(false);
+              toast.success('Session refreshed successfully'); // Add successful refresh toast
             } else {
               toast.error('Session expired. Please log in again.');
               navigate('/signin');
@@ -134,6 +139,7 @@ const Lecturerdashboard = () => {
         const response = await API.get(`api/lecturer_issue_management/filter_results/?${queryParams}`);
         console.log("Filtered API Response:", response.data);
         setFilteredIssues(response.data);
+        toast.info(`Found ${response.data.length} issues matching "${searchTerm}"`); // Add search results toast
       } else {
         // If no search term, use the basic fetch and apply client-side filtering
         const response = await API.get('api/lecturer_issue_management/');
@@ -148,6 +154,11 @@ const Lecturerdashboard = () => {
         
         setAllIssues(issues);
         setFilteredIssues(filtered);
+        
+        // Add filter results toast when filters are applied
+        if (statusFilter !== 'all' || categoryFilter !== 'all') {
+          toast.info(`Filtered: ${filtered.length} issues found`);
+        }
       }
       
       setLoading(false);
@@ -157,6 +168,7 @@ const Lecturerdashboard = () => {
       // Handle token refresh similar to fetchIssues
       if (err.response && err.response.status === 401) {
         try {
+          toast.info('Session expired. Attempting to refresh...'); // Add refresh attempt toast
           const refreshToken = localStorage.getItem('refreshToken');
           
           if (refreshToken) {
@@ -176,6 +188,7 @@ const Lecturerdashboard = () => {
               queryParams = `status=${encodeURIComponent(searchTerm)}`;
               const response = await API.get(`api/lecturer_issue_management/filter_results/?${queryParams}`);
               setFilteredIssues(response.data);
+              toast.info(`Found ${response.data.length} issues matching "${searchTerm}"`);
             } else {
               const response = await API.get('api/lecturer_issue_management/');
               const issues = response.data;
@@ -188,9 +201,14 @@ const Lecturerdashboard = () => {
               
               setAllIssues(issues);
               setFilteredIssues(filtered);
+              
+              if (statusFilter !== 'all' || categoryFilter !== 'all') {
+                toast.info(`Filtered: ${filtered.length} issues found`);
+              }
             }
             
             setLoading(false);
+            toast.success('Session refreshed successfully');
           } else {
             toast.error('Session expired. Please log in again.');
             navigate('/signin');
@@ -207,6 +225,7 @@ const Lecturerdashboard = () => {
       } else {
         setError('Failed to fetch filtered issues. Please try again later.');
         setLoading(false);
+        toast.error('Failed to filter issues. Please try again later.');
       }
     }
   };
@@ -227,7 +246,7 @@ const Lecturerdashboard = () => {
   // Handle issue click
   const handleIssueClick = (issue) => {
     setSelectedIssue(issue);
-
+    setShowModal(true);
     // Show toast notification for viewing the issue
     toast.info(`Viewing issue #${issue.id}`);
   };
@@ -235,11 +254,13 @@ const Lecturerdashboard = () => {
   // Handle status filter change
   const handleStatusFilterChange = (e) => {
     setStatusFilter(e.target.value);
+    toast.info(`Filtering by status: ${e.target.value === 'all' ? 'All' : e.target.value}`); // Add status filter toast
   };
 
   // Handle category filter change
   const handleCategoryFilterChange = (e) => {
     setCategoryFilter(e.target.value);
+    toast.info(`Filtering by category: ${e.target.value === 'all' ? 'All' : e.target.value}`); // Add category filter toast
   };
 
   // Handle search input change
@@ -277,11 +298,13 @@ const Lecturerdashboard = () => {
   // Handler to close the issue summary from within
   const handleCloseSummary = () => {
     setSelectedIssue(null);
+    toast.info('Issue view closed'); // Add close summary toast
   };
 
   // Update issue status in the dashboard
   const updateIssueStatus = async (issueId, newStatus) => {
     try {
+      toast.info(`Updating issue #${issueId} status...`); // Add update in progress toast
       const accessToken = localStorage.getItem('accessToken');
       API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
       
@@ -306,10 +329,23 @@ const Lecturerdashboard = () => {
       // Handle token refresh if needed (similar to fetch issues logic)
       if (err.response && err.response.status === 401) {
         // Handle token refresh logic here
+        toast.error('Authentication error while updating status');
       } else {
         setError('Failed to update issue status. Please try again.');
+        toast.error(`Failed to update issue #${issueId} status`);
       }
     }
+  };
+
+  // Format date for display
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
   };
 
   // Handle resolving an issue
@@ -341,31 +377,132 @@ const Lecturerdashboard = () => {
     navigate(`/LecturerIssueManagement?issueId=${issue.id}`);
   };
 
+  // Helper function to determine if a string is a URL
+  const isValidURL = (string) => {
+    try {
+      new URL(string);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  };
+
+  // Helper function to check if a URL is an image
+  const isImageURL = (url) => {
+    if (!url || typeof url !== 'string') return false;
+    
+    // Check if the URL ends with common image extensions
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg'];
+    return imageExtensions.some(ext => url.toLowerCase().endsWith(ext)) || 
+           url.toLowerCase().includes('/image/') ||
+           url.toLowerCase().includes('media/images/');
+  };
+
+  // Format issue detail value for display
+  const formatValue = (key, value) => {
+    if (value === null || value === undefined) return 'N/A';
+    
+    // Handle image URLs
+    if ((key === 'image' || key.includes('image') || key.includes('photo') || key.includes('picture')) && 
+        isValidURL(value)) {
+      return (
+        <div className="lecturer-detail-image-wrapper">
+          <img 
+            src={value} 
+            alt={`Issue ${key}`} 
+            className="lecturer-detail-image" 
+            onClick={() => window.open(value, '_blank')}
+          />
+          <div className="lecturer-image-caption">Click to view full size</div>
+        </div>
+      );
+    }
+    
+    // Handle any URL that appears to be an image
+    if (typeof value === 'string' && isImageURL(value)) {
+      return (
+        <div className="lecturer-detail-image-wrapper">
+          <img 
+            src={value} 
+            alt="Issue attachment" 
+            className="lecturer-detail-image" 
+            onClick={() => window.open(value, '_blank')}
+          />
+          <div className="lecturer-image-caption">Click to view full size</div>
+        </div>
+      );
+    }
+    
+    // Handle other URLs
+    if (typeof value === 'string' && isValidURL(value)) {
+      return (
+        <a href={value} target="_blank" rel="noopener noreferrer">
+          {value}
+        </a>
+      );
+    }
+    
+    // Handle dates
+    if (key.includes('_at') || key.includes('date')) {
+      return formatDate(value);
+    }
+    
+    // Handle objects
+    if (typeof value === 'object' && value !== null) {
+      return JSON.stringify(value);
+    }
+    
+    // Handle boolean values
+    if (typeof value === 'boolean') {
+      return value ? 'Yes' : 'No';
+    }
+    
+    // Default: return as string
+    return String(value);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setSelectedIssue(null);
+  };
+
   if (loading) {
     return (
-      <div className="app-container">
+      <div className="lecturer-container">
         <Navbar />
-        <div className="content-container">
+        <div className="lecturer-content-wrapper">
           <Sidebar2 />
-          <main className="main-content">
-            <div className="loading-message">Loading issues...</div>
+          <main className="lecturer-main-content">
+            <div className="lecturer-loading-state">Loading issues...</div>
           </main>
         </div>
+        {/* Add ToastContainer here too for loading state */}
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="app-container">
+      <div className="lecturer-container">
         <Navbar />
-        <div className="content-container">
+        <div className="lecturer-content-wrapper">
           <Sidebar2 />
-          <main className="main-content">
-            <div className="error-message">
+          <main className="lecturer-main-content">
+            <div className="lecturer-error-state">
               {error}
               <button 
-                className="retry-btn"
+                className="lecturer-retry-button"
                 onClick={() => {
                   toast.info("Retrying...");
                   window.location.reload();
@@ -376,128 +513,247 @@ const Lecturerdashboard = () => {
             </div>
           </main>
         </div>
+        {/* Add ToastContainer here too for error state */}
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
       </div>
     );
   }
 
   return (
-    <div className="app-container">
+    <div className="lecturer-container">
       <Navbar />
-      <div className="content-container">
+      <div className="lecturer-content-wrapper">
         <Sidebar2 />
-        <main className="main-content">
-          {/* Dashboard header with search and filter options */}
-          <div className="dashboard-header">
-            <h1>Issue Dashboard</h1>
-            <div className="filter-controls">
-              <div className="select-wrapper">
-                <select 
-                  className="category-filter" 
-                  value={categoryFilter} 
-                  onChange={handleCategoryFilterChange}
-                >
-                  <option value="all">All Categories</option>
-                  {uniqueCategories.map(category => (
-                    <option key={category} value={category}>{category}</option>
-                  ))}
-                </select>
-                <span className="dropdown-arrow"></span>
-              </div>
-
-              <div className="select-wrapper">
-                <select 
-                  className="status-filter" 
-                  value={statusFilter} 
-                  onChange={handleStatusFilterChange}
-                >
-                  <option value="all">All Statuses</option>
-                  {uniqueStatuses.map(status => (
-                    <option key={status} value={status}>{status}</option>
-                  ))}
-                </select>
-                <span className="dropdown-arrow"></span>
-              </div>
-
-              <input 
-                type="text" 
-                placeholder="Search issues by status, student, or issue type..." 
-                className="search-input" 
-                value={searchTerm}
-                onChange={handleSearchChange}
-              />
+        <main className="lecturer-main-content">
+          {/* Dashboard Stats */}
+          <div className="lecturer-stats-row">
+            <div className="lecturer-stat-card">
+              <div className="lecturer-stat-title">Resolved Issues</div>
+              <div className="lecturer-stat-count">{allIssues.filter(issue => issue.status === 'resolved').length}</div>
+            </div>
+            <div className="lecturer-stat-card">
+              <div className="lecturer-stat-title">Pending Issues</div>
+              <div className="lecturer-stat-count">{allIssues.filter(issue => issue.status === 'pending').length}</div>
+            </div>
+            <div className="lecturer-stat-card">
+              <div className="lecturer-stat-title">In-progress Issues</div>
+              <div className="lecturer-stat-count">{allIssues.filter(issue => issue.status === 'in_progress').length}</div>
+            </div>
+            <div className="lecturer-stat-card">
+              <div className="lecturer-stat-title">Rejected Issues</div>
+              <div className="lecturer-stat-count">{allIssues.filter(issue => issue.status === 'rejected').length}</div>
             </div>
           </div>
 
-          {/* Issues table section */}
-          <div className="issues-section">
-            <div className="issues-table">
-              <table>
-                <thead>
+          {/* Dashboard header with search and filter options */}
+          <div className="lecturer-search-controls">
+            <input 
+              type="text" 
+              placeholder="Search issues..." 
+              className="lecturer-search-input" 
+              value={searchTerm}
+              onChange={handleSearchChange}
+            />
+            <button className="lecturer-filter-button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 16v-4.414L3.293 6.707A1 1 0 013 6V3z" clipRule="evenodd" />
+              </svg>
+            </button>
+            
+            <div className="lecturer-select-container mr-4">
+              <select 
+                className="lecturer-category-dropdown" 
+                value={categoryFilter} 
+                onChange={handleCategoryFilterChange}
+              >
+                <option value="all">All Categories</option>
+                {uniqueCategories.map(category => (
+                  <option key={category} value={category}>{category}</option>
+                ))}
+              </select>
+              <span className="lecturer-dropdown-arrow"></span>
+            </div>
+
+            <div className="lecturer-select-container">
+              <select 
+                className="lecturer-status-dropdown" 
+                value={statusFilter} 
+                onChange={handleStatusFilterChange}
+              >
+                <option value="all">All Statuses</option>
+                {uniqueStatuses.map(status => (
+                  <option key={status} value={status}>{status}</option>
+                ))}
+              </select>
+              <span className="lecturer-dropdown-arrow"></span>
+            </div>
+          </div>
+
+          {/* Issues view container */}
+          <div className="lecturer-issues-container">
+            <div className="lecturer-issues-header">
+              <div className="lecturer-status-tabs">
+                {['Pending', 'In-progress', 'Resolved', 'Rejected'].map(tab => (
+                  <button
+                    key={tab}
+                    className={`lecturer-status-tab ${statusFilter === tab.toLowerCase() ? 'lecturer-active-tab' : ''}`}
+                    onClick={() => setStatusFilter(tab.toLowerCase())}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Data grid for issues */}
+          <div className="lecturer-table-container">
+            {loading ? (
+              <div className="lecturer-loading-text">Loading issues...</div>
+            ) : error ? (
+              <div className="lecturer-error-message">{error}</div>
+            ) : (
+              <table className="lecturer-issues-table">
+                <thead className="lecturer-table-header">
                   <tr>
-                    <th>Issue ID</th>
+                    <th>ID</th>
                     <th>Status</th>
-                    <th>Student No</th>
-                    <th>Category</th>
-                    <th>Date</th>
+                    <th>Student</th>
+                    <th>Issue Type</th>
+                    <th>Course Unit</th>
+                    <th>Created</th>
+                    <th>Updated</th>
+                    <th>Is Commented</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="lecturer-table-body">
                   {filteredIssues.length > 0 ? (
-                    filteredIssues.map(issue => (
-                      <tr 
-                        key={issue.id} 
-                        className={selectedIssue && selectedIssue.id === issue.id ? 'selected-row' : ''}
-                      >
-                        <td onClick={() => handleIssueClick(issue)}>{issue.id}</td>
-                        <td onClick={() => handleIssueClick(issue)}>
-                          <span className={`status-badge ${issue.status.toLowerCase().replace(' ', '-')}`}>
-                            {issue.status}
+                    filteredIssues.map((issue, index) => (
+                      <tr key={issue.id || index}>
+                        <td>#{issue.id || 'N/A'}</td>
+                        <td>
+                          <span className={`lecturer-status-badge lecturer-status-${issue.status}`}>
+                            {issue.status === 'pending' ? 'Pending' : 
+                             issue.status === 'in_progress' ? 'In-progress' : 
+                             issue.status === 'resolved' ? 'Resolved' : 
+                             issue.status === 'rejected' ? 'Rejected' : issue.status}
                           </span>
                         </td>
-                        <td onClick={() => handleIssueClick(issue)}>{issue.studentNo}</td>
-                        <td onClick={() => handleIssueClick(issue)}>{issue.category}</td>
-                        <td onClick={() => handleIssueClick(issue)}>{issue.date}</td>
+                        <td>{issue.student?.username || issue.studentNo || 'Unknown Student'}</td>
+                        <td>{issue.issue_type || issue.category || 'N/A'}</td>
+                        <td>{issue.course_unit || 'N/A'}</td>
+                        <td>{formatDate(issue.created_at || issue.date)}</td>
+                        <td>{formatDate(issue.updated_at)}</td>
+                        <td>{issue.is_commented ? '✓' : '✗'}</td>
                         <td>
-                          {issue.status !== 'Resolved' && (
+                          <div className="lecturer-action-buttons">
                             <button 
-                              className="resolve-btn"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleResolveIssue(issue);
-                              }}
+                              className="lecturer-details-button" 
+                              onClick={() => handleIssueClick(issue)}
                             >
-                              Resolve Issue
+                              Details
                             </button>
-                          )}
+                            {issue.status !== 'resolved' && (
+                              <button 
+                                className="lecturer-resolve-button" 
+                                onClick={() => handleResolveIssue(issue)}
+                              >
+                                Resolve
+                              </button>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="6" className="no-issues">No issues match the current filters. Please try another search term</td>
+                      <td colSpan="9" className="lecturer-empty-state">
+                        No {statusFilter !== 'all' ? statusFilter : ''} issues found
+                      </td>
                     </tr>
                   )}
                 </tbody>
               </table>
-            </div>
+            )}
           </div>
         </main>
 
-        {/* Issue Summary with ref for click outside detection */}
-        {selectedIssue && (
-          <div className="issue-summary-overlay">
-            <div ref={summaryRef} className="issue-summary-container">
-              <IssueSummary 
-                issue={selectedIssue} 
-                onClose={handleCloseSummary}
-                onUpdateStatus={updateIssueStatus}
-              />
+        {/* Issue Details Modal */}
+        {showModal && selectedIssue && (
+          <div className="lecturer-modal-backdrop">
+            <div className="lecturer-modal-content">
+              <div className="lecturer-modal-header">
+                <h2>Issue Details</h2>
+                <button className="lecturer-modal-close" onClick={closeModal}>×</button>
+              </div>
+              <div className="lecturer-modal-body">
+                <div className="lecturer-detail-row">
+                  <strong>ID:</strong> #{selectedIssue.id || 'N/A'}
+                </div>
+                
+                {/* Display issue image prominently if it exists */}
+                {selectedIssue.image && (
+                  <div className="lecturer-detail-row lecturer-image-row">
+                    <strong>Image:</strong>
+                    <div className="lecturer-detail-image-wrapper">
+                      <img 
+                        src={selectedIssue.image} 
+                        alt="Issue attachment" 
+                        className="lecturer-detail-image" 
+                        onClick={() => window.open(selectedIssue.image, '_blank')}
+                      />
+                      <div className="lecturer-image-caption">Click to view full size</div>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Display all other issue details */}
+                {Object.entries(selectedIssue).map(([key, value]) => {
+                  // Skip ID and image as we've already displayed them separately
+                  if (key === 'id' || key === 'image') return null;
+                  
+                  const formattedKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                  
+                  return (
+                    <div key={key} className="lecturer-detail-row">
+                      <strong>{formattedKey}:</strong> 
+                      <div className="lecturer-detail-value">
+                        {formatValue(key, value)}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="lecturer-modal-footer">
+                {selectedIssue.status !== 'resolved' && (
+                  <button 
+                    className="lecturer-resolve-button" 
+                    onClick={() => {
+                      handleResolveIssue(selectedIssue);
+                      closeModal();
+                    }}
+                  >
+                    Resolve Issue
+                  </button>
+                )}
+                <button className="lecturer-close-button" onClick={closeModal}>Close</button>
+              </div>
             </div>
           </div>
         )}
       </div>
-      {/* Add ToastContainer here */}
+      {/* Enhanced ToastContainer */}
       <ToastContainer
         position="top-right"
         autoClose={3000}
@@ -508,6 +764,7 @@ const Lecturerdashboard = () => {
         pauseOnFocusLoss
         draggable
         pauseOnHover
+        limit={5} // Limit the number of toasts displayed at once
       />
     </div>
   );

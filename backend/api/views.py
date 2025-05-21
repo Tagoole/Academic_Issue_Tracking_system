@@ -247,7 +247,7 @@ class Registrar_Issue_ManagementViewSet(ModelViewSet):
     
     
 class DepartmentViewSet(ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     queryset = Department.objects.all()
     serializer_class = DepartmentSerializer
 
@@ -521,7 +521,6 @@ def get_user_email_notifications(request):
     serializer = Email_notificationSerializer(notifications,many = True)
     return Response ({'number':number,
                       'data':serializer.data})
-
 
 @api_view(['GET'])
 @permission_classes([AllowAny])

@@ -161,11 +161,7 @@ const SignIn = () => {
 
   return (
     <div className="signin-container">
-      <div className="top-navigation">
-        <a href="/forgot-password" className="forgot-password-link">FORGOT PASSWORD</a>
-        <img src={codeIcon} alt="Code Icon" className="code-icon" />
-      </div>
-
+      
       <div className="split-layout">
         <div className="left-section">
           <div className="header">

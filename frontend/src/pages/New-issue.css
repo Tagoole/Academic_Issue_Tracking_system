@@ -1,7 +1,7 @@
-/* New-issue.css */
+/* Academic Issue Form Styles */
 
 /* Main container for the page */
-.create-issue-page {
+.academic-issue-page {
   min-height: 800px;
   width: 100%;
   position: relative;
@@ -11,8 +11,8 @@
   justify-content: center; 
 }
 
-/* Page content (below navbar, contains sidebar and form) */
-.page-content {
+/* Page content area containing sidebar and main form */
+.academic-content-wrapper {
   display: flex;
   justify-content: center; 
   padding-top: 0;
@@ -20,8 +20,8 @@
   width: 100%;
 }
 
-/* Form container */
-.issue-form-container {
+/* Form container with card-like appearance */
+.academic-form-card {
   flex: 0 1 900px; 
   padding: 30px;
   margin-top: 50px;
@@ -32,39 +32,53 @@
   max-height: 80vh;
   overflow-y: auto;
 }
-.issue-form-container h1 {
+
+.academic-form-card h1 {
   text-align: center;
   margin-bottom: 30px;
   color: #333;
 }
 
-/* Form row for side-by-side fields */
-.form-row {
+/* Section divider */
+.academic-form-section {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.academic-form-section h2 {
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+  color: #444;
+}
+
+/* Flex row for two-column layout */
+.academic-flex-row {
   display: flex;
   margin-bottom: 20px;
   gap: 20px;
 }
 
-/* Form group for individual fields */
-.form-group {
+/* Field wrapper */
+.academic-field-wrapper {
   flex: 1;
   position: relative;
 }
 
-.form-group.full-width {
+.academic-field-wrapper.full-width {
   width: 100%;
 }
 
-.form-group label {
+.academic-field-wrapper label {
   display: block;
   margin-bottom: 8px;
   font-weight: bold;
   color: #444;
 }
 
-.form-group input,
-.form-group select,
-.form-group textarea {
+.academic-field-wrapper input,
+.academic-field-wrapper select,
+.academic-field-wrapper textarea {
   width: 100%;
   padding: 12px;
   border: 1px solid #ddd;
@@ -72,13 +86,13 @@
   font-size: 16px;
 }
 
-.form-group textarea {
+.academic-field-wrapper textarea {
   height: 150px;
   resize: vertical;
 }
 
-/* Attachment area */
-.attachment-area {
+/* File upload area */
+.academic-file-upload-area {
   border: 2px dashed #ccc;
   padding: 15px;
   text-align: center;
@@ -89,22 +103,22 @@
   justify-content: center;
 }
 
-.attachment-placeholder {
+.academic-file-placeholder {
   width: 100%;
 }
 
-.attachment-preview {
+.academic-file-preview {
   position: relative;
   display: inline-block;
 }
 
-.attachment-preview img {
+.academic-file-preview img {
   max-width: 100%;
   max-height: 150px;
   border-radius: 5px;
 }
 
-.attachment-preview .clear-icon {
+.academic-remove-button {
   position: absolute;
   top: 5px;
   right: 5px;
@@ -116,23 +130,34 @@
   font-size: 18px;
 }
 
-/* Clear icon for other fields */
-.clear-icon {
-  position: absolute;
-  right: 12px;
-  top: 40px;
-  cursor: pointer;
-  color: #777;
-  font-size: 18px;
+/* Loading and error states */
+.academic-loading-field {
+  position: relative;
 }
 
-/* Submit button section */
-.submit-row {
+.academic-error-field {
+  position: relative;
+}
+
+.academic-error-field button {
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  background: #f8f8f8;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  padding: 2px 8px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* Submit button area */
+.academic-submit-row {
   justify-content: center;
   margin-top: 30px;
 }
 
-.submit-button {
+.academic-submit-button {
   background-color: #4caf50;
   color: white;
   border: none;
@@ -143,49 +168,77 @@
   transition: background-color 0.3s;
 }
 
-.submit-button:hover {
+.academic-submit-button:hover {
   background-color: #3e8e41;
 }
 
-.submit-button:disabled {
+.academic-submit-button:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
 }
 
-/* Success and error messages for submission */
-.submit-status {
+/* Status messages */
+.academic-status-message {
   margin-left: 20px;
   padding: 12px 20px;
   border-radius: 5px;
   font-weight: bold;
 }
 
-.submit-status.success {
+.academic-status-success {
   background-color: #d4edda;
   color: #155724;
   border: 1px solid #c3e6cb;
 }
 
+.academic-status-error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* Error notification */
+.academic-error-banner {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.academic-error-banner button {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #856404;
+}
+
 /* Responsive adjustments */
 @media (max-width: 1200px) {
-  .form-row {
+  .academic-flex-row {
     flex-direction: column;
   }
 
-  .issue-form-container {
+  .academic-form-card {
     margin-left: 200px;
     width: calc(100% - 230px);
   }
 }
 
 @media (max-width: 768px) {
-  .issue-form-container {
+  .academic-form-card {
     margin-left: 0;
     width: 100%;
     padding: 15px;
   }
 
-  .page-content {
+  .academic-content-wrapper {
     flex-direction: column;
   }
 }
