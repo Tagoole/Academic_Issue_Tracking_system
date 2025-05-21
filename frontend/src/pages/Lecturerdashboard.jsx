@@ -31,7 +31,6 @@ const Lecturerdashboard = () => {
 
   // Fetch issues from API when component mounts
   useEffect(() => {
-    // Check if user is authenticated when component mounts
     const checkAuth = () => {
       const accessToken = localStorage.getItem('accessToken');
       // If no access token is available, redirect to login
@@ -92,6 +91,7 @@ const Lecturerdashboard = () => {
               toast.success('Session refreshed successfully'); // Add successful refresh toast
             } else {
               toast.error('Session expired. Please log in again.');
+              setLoading(false);
               navigate('/signin');
               return;
             }
@@ -101,6 +101,7 @@ const Lecturerdashboard = () => {
             toast.error('Session expired. Please log in again.');
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
+            setLoading(false);
             navigate('/signin');
           }
         } else {
@@ -133,11 +134,10 @@ const Lecturerdashboard = () => {
       // Build the search query based on filters
       let queryParams = '';
       
-      // If we have a search term, use the filter_results endpoint
+      // Use a general search param if supported by your backend
       if (searchTerm) {
-        queryParams = `status=${encodeURIComponent(searchTerm)}`;
+        queryParams = `search=${encodeURIComponent(searchTerm)}`;
         const response = await API.get(`api/lecturer_issue_management/filter_results/?${queryParams}`);
-        console.log("Filtered API Response:", response.data);
         setFilteredIssues(response.data);
         toast.info(`Found ${response.data.length} issues matching "${searchTerm}"`); // Add search results toast
       } else {
@@ -185,7 +185,7 @@ const Lecturerdashboard = () => {
             // Repeat the same query logic as above
             let queryParams = '';
             if (searchTerm) {
-              queryParams = `status=${encodeURIComponent(searchTerm)}`;
+              queryParams = `search=${encodeURIComponent(searchTerm)}`;
               const response = await API.get(`api/lecturer_issue_management/filter_results/?${queryParams}`);
               setFilteredIssues(response.data);
               toast.info(`Found ${response.data.length} issues matching "${searchTerm}"`);
@@ -211,6 +211,7 @@ const Lecturerdashboard = () => {
             toast.success('Session refreshed successfully');
           } else {
             toast.error('Session expired. Please log in again.');
+            setLoading(false);
             navigate('/signin');
             return;
           }
@@ -220,6 +221,7 @@ const Lecturerdashboard = () => {
           toast.error('Session expired. Please log in again.');
           localStorage.removeItem('accessToken');
           localStorage.removeItem('refreshToken');
+          setLoading(false);
           navigate('/signin');
         }
       } else {
@@ -644,7 +646,7 @@ const Lecturerdashboard = () => {
                         <td>#{issue.id || 'N/A'}</td>
                         <td>
                           <span className={`lecturer-status-badge lecturer-status-${issue.status}`}>
-                            {issue.status === 'pending' ? 'Pending' : 
+                            {issue.status === 'pending' ? '`Pending`' : 
                              issue.status === 'in_progress' ? 'In-progress' : 
                              issue.status === 'resolved' ? 'Resolved' : 
                              issue.status === 'rejected' ? 'Rejected' : issue.status}

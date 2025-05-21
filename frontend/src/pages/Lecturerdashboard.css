@@ -6,6 +6,7 @@
   flex-direction: column;
   min-height: 100vh;
   background-color: #f5f7fa5e;
+  
 }
 
 .lecturer-content-wrapper {
@@ -15,36 +16,50 @@
 }
 
 .lecturer-main-content {
+
   flex: 1;
-  padding: 1.5rem;
-  padding-top: 4rem; /* Reduced top padding from 5rem */
+  padding: 1rem; /* Reduced top padding from 5rem */
   transition: margin-left 0.3s ease;
   background-color: #f5f7fa5e;
-  overflow-x: hidden;
+  margin: 0 auto;
+  max-width: 1200px;
+  margin-top: 60px; 
+  margin-left: 240px; /* Added left margin for sidebar */
+  
+  /* Added left padding for better alignment */
+  /* Added max-width for better layout */
+
+
 }
 
 /* Dashboard stats - REDUCED SIZE */
 .lecturer-stats-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem; /* Reduced gap from 1rem */
-  margin-bottom: 1.5rem; /* Reduced from 2rem */
+  gap: 1.7rem; /* Reduced gap from 1rem */
+  margin-bottom: 3rem; /* Reduced from 2rem */
+  width: 88%;
+  margin-left: 24px;
+  margin-top: 5px;
 }
 
 .lecturer-stat-card {
-  flex: 1;
-  min-width: 100px; /* Reduced min-width from 200px */
+  flex: 1 1 200px;
+  min-width: 200px; /* Reduced min-width from 200px */
   background-color: white;
   border-radius: 3px; /* Reduced from 8px */
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08); /* Made shadow more subtle */
   padding: 1.25rem; /* Reduced padding from 1.5rem */
   text-align: center;
+  margin-right: 10px;
+  margin-left: 24px;
 }
 
 .lecturer-stat-title {
   color: #6c757d;
   font-size: 0.8rem; /* Reduced from 0.9rem */
   margin-bottom: 0.4rem; /* Reduced from 0.5rem */
+  margin-right: 100px;
 }
 
 .lecturer-stat-count {
@@ -60,6 +75,8 @@
   gap: 0.75rem; /* Reduced from 1rem */
   margin-bottom: 1.25rem; /* Reduced from 1.5rem */
   align-items: center;
+  margin-left: 24px;
+  margin-right: 24px;
 }
 
 .lecturer-search-input {
@@ -136,6 +153,11 @@
   border-radius: 6px; /* Reduced from 8px */
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08); /* Made shadow more subtle */
   margin-bottom: 1.25rem; /* Reduced from 1.5rem */
+  margin-left: 240px;
+  word-spacing: 10rem;
+  text-align: center;
+  letter-spacing: 10rem;
+  margin-right: 240px;
 }
 
 .lecturer-issues-header {
@@ -157,6 +179,7 @@
   font-size: 0.9rem; /* Reduced from 0.95rem */
   color: #6c757d;
   border-bottom: 2px solid transparent;
+  margin-left: 24px;
 }
 
 .lecturer-status-tab:hover {
@@ -170,11 +193,13 @@
 }
 
 /* Add performance optimizations */
+
 .lecturer-issues-table {
-  width: 100%;
+  width: 90%;
   border-collapse: collapse;
   table-layout: fixed; /* Improves rendering performance */
   will-change: transform; /* GPU acceleration hint */
+  margin-left: 24px;
 }
 
 /* Optimize image loading */
