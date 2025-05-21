@@ -344,3 +344,10 @@ h2.green-text {
     width: 400px;
   }
 }
+
+.signin-container{   
+  transform: scale(0.8);   
+  transform-origin: center top;   
+  height: 125%;   width: 125%;    
+  margin: -10% -12.5%;  
+}
