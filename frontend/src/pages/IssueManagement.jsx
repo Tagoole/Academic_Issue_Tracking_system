@@ -520,7 +520,13 @@ const IssueManagement = () => {
                       <td>{issue.id || 'N/A'}</td>
                       <td>{issue.student?.username || 'N/A'}</td>
                       <td>{issue.issue_type || 'N/A'}</td>
-                      <td>{issue.lecturer?.username || 'Assign issue'}</td>
+                      <td>
+                        {issue.lecturer?.username ? (
+                          issue.lecturer.username
+                        ) : (
+                          <span className="assign-issue-highlight">Assign issue</span>
+                        )}
+                      </td>
                       <td>{issue.year_of_study?.replace('_', ' ') || 'N/A'}</td>
                       <td>{formatDate(issue.created_at)}</td>
                       <td>{formatDate(issue.updated_at)}</td>
