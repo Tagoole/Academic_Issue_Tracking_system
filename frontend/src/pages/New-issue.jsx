@@ -4,6 +4,8 @@ import NavBar from './NavBar';
 import Sidebar from './Sidebar1';
 import './New-issue.css';
 import API from '../api';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const NewIssue = () => {
   const navigate = useNavigate();
