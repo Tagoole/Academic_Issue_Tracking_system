@@ -24,7 +24,7 @@ function Settings() {
     if (userRole) {
       switch(userRole.toLowerCase()) {
         case 'student':
-          navigate('/studentDashboard');
+          navigate('/StudentDashboard');
           break;
         case 'lecturer':
           navigate('/lecturerdashboard');
