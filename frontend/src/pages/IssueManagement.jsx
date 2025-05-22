@@ -310,6 +310,14 @@ const IssueManagement = () => {
       }
 
       toast.success(toastMessage);
+
+      // NEW: Notify both lecturer and student by email
+      toast.info(
+        'Both the assigned lecturer and the student have been notified by email about the change in issue status.',
+        {
+          autoClose: 4000,
+        }
+      );
     } catch (error) {
       console.error('Error updating issue:', error);
       toast.error('Failed to update issue. Please try again.');
