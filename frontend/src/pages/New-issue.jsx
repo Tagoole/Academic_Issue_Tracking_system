@@ -348,6 +348,19 @@ const NewIssue = () => {
       const registrarName = registrarDisplayNames[formData.registrar] || formData.registrar;
       const issueTypeLabel = issueTypes.find(t => t.value === formData.issueType)?.label || formData.issueType;
 
+      toast.success(
+        "Issue submitted successfully! An email has been sent to the registrar to inform them of the new issue you created.",
+        {
+          position: "top-right",
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        }
+      );
+
       // Navigate to success page
       setTimeout(() => {
         navigate('/notification-success', {
