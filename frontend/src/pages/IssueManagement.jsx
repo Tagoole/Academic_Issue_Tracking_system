@@ -442,7 +442,7 @@ const IssueManagement = () => {
       <div className="content-wrapper">
         <Sidebar />
         <div className="issue-content">
-          <h1 className="issues-title">Issues <span className="subtitle">(Kindly click on the issue to open it.)</span></h1>
+          <h1 className="issues-title">Issues <span className="subtitle">(Click on Assign issue to escalate it to a lecturer )</span></h1>
           <div className="dashboard-cards">
             <DashboardCard title="Pending Issues" count={pendingCount} description={`You currently have ${pendingCount} pending issue${pendingCount !== 1 ? 's' : ''}`} />
             <DashboardCard title="In-progress Issues" count={inProgressCount} description={`You currently have ${inProgressCount} in-progress issue${inProgressCount !== 1 ? 's' : ''}`} />
