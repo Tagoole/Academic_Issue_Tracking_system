@@ -457,3 +457,12 @@
   color: #666;
   font-size: 14px;
 }
+
+/* Add to IssueManagement.css */
+.assign-issue-highlight {
+  color: #2563eb;
+  font-weight: bold;
+  background: #e0e7ff;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
