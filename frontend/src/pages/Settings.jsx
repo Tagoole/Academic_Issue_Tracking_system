@@ -16,33 +16,6 @@ function Settings() {
     setUserRole(role);
   }, []);
 
-  // Function to handle dashboard navigation based on user role
-  const handleDashboardNavigation = (e) => {
-    e.preventDefault();
-    
-    // Navigate based on user role
-    if (userRole) {
-      switch(userRole.toLowerCase()) {
-        case 'student':
-          navigate('/studentdashboard');
-          break;
-        case 'lecturer':
-          navigate('/lecturerdashboard');
-          break;
-        case 'registrar':
-          navigate('/registrardashboard');
-          break;
-        default:
-          // Default fallback if role is not found or recognized
-          navigate('/dashboard');
-          break;
-      }
-    } else {
-      // If userRole is not available yet, redirect to general dashboard
-      navigate('/dashboard');
-    }
-  };
-
   return (
     <div
       style={{
@@ -98,13 +71,6 @@ function Settings() {
           </div>
 
           {/* Sidebar menu items */}
-          <a href="#" className="menu-item" onClick={handleDashboardNavigation}>
-            Back to Dashboard
-            <svg viewBox="0 0 24 24" className="arrow-icon">
-              <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
-            </svg>
-          </a>
-
           <a href="/changepassword" className="menu-item">
             Change Password
             <svg viewBox="0 0 24 24" className="arrow-icon">

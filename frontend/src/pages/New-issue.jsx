@@ -4,6 +4,8 @@ import NavBar from './NavBar';
 import Sidebar from './Sidebar1';
 import './New-issue.css';
 import API from '../api';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const NewIssue = () => {
   const navigate = useNavigate();
@@ -297,6 +299,16 @@ const NewIssue = () => {
       setSubmitStatus(null);
       setErrors(prev => ({ ...prev, general: null }));
 
+      toast.info('Submitting your issue...', {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+
       // Prepare form data
       const submissionData = new FormData();
       submissionData.append('registrar', formData.registrar);
@@ -335,6 +347,19 @@ const NewIssue = () => {
       const courseUnitName = selectedUnit?.name || selectedUnit?.course_unit_name || 'Selected Course';
       const registrarName = registrarDisplayNames[formData.registrar] || formData.registrar;
       const issueTypeLabel = issueTypes.find(t => t.value === formData.issueType)?.label || formData.issueType;
+
+      toast.success(
+        "Issue submitted successfully! An email has been sent to the registrar to inform them of the new issue you created.",
+        {
+          position: "top-right",
+          autoClose: 4000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        }
+      );
 
       // Navigate to success page
       setTimeout(() => {
@@ -387,6 +412,7 @@ const NewIssue = () => {
 
   return (
     <div className="academic-issue-page">
+      <ToastContainer />
       <NavBar />
       <div className="academic-content-wrapper">
         <Sidebar />
