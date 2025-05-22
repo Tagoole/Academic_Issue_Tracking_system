@@ -412,6 +412,7 @@ const NewIssue = () => {
 
   return (
     <div className="academic-issue-page">
+      <ToastContainer />
       <NavBar />
       <div className="academic-content-wrapper">
         <Sidebar />
