@@ -28,14 +28,14 @@ const Preferences = () => {
     
     // Navigate based on user role
     switch(userRole?.toLowerCase()) {
-      case 'student':
-        navigate('/studentdashboard');
+      case 'Student':
+        navigate('/StudentDashboard');
         break;
       case 'lecturer':
         navigate('/lecturerdashboard');
         break;
-      case 'registrar':
-        navigate('/registrardashboard');
+      case 'Registrar':
+        navigate('/RegistraDashboard');
         break;
       default:
         // Default fallback if role is not found or recognized

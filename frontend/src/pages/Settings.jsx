@@ -24,13 +24,13 @@ function Settings() {
     if (userRole) {
       switch(userRole.toLowerCase()) {
         case 'student':
-          navigate('/studentdashboard');
+          navigate('/StudentDashboard');
           break;
         case 'lecturer':
           navigate('/lecturerdashboard');
           break;
         case 'registrar':
-          navigate('/registrardashboard');
+          navigate('/RegistraDashboard');
           break;
         default:
           // Default fallback if role is not found or recognized
