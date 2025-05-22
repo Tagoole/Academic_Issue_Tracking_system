@@ -228,6 +228,14 @@ const IssueManagement = () => {
       });
 
       toast.success(`Issue #${issue.id} has been escalated to ${lecturer.username}`);
+
+      // NEW: Notify lecturer by email
+      toast.info(
+        `An email has been sent to ${lecturer.username} to notify them that a new issue has been assigned to them.`,
+        {
+          autoClose: 4000,
+        }
+      );
     } catch (error) {
       console.error('Error escalating issue:', error);
       toast.error('Failed to escalate issue. Please try again.');
