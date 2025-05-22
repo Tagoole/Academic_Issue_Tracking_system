@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './NavBar.css';
-import logo from '../assets/makererelogo.png';
-import notificationIcon from '../assets/notification.png';
-import messageIcon from '../assets/mail.png';
+import logo from '../assets/makererelogo.png'
+
 import { useNavigate } from 'react-router-dom';
 
 const NavBar = () => {
