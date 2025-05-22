@@ -30,7 +30,7 @@ function Settings() {
           navigate('/lecturerdashboard');
           break;
         case 'registrar':
-          navigate('/registrarDashboard');
+          navigate('/RegistraDashboard');
           break;
         default:
           // Default fallback if role is not found or recognized
