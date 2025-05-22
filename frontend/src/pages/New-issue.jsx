@@ -299,6 +299,16 @@ const NewIssue = () => {
       setSubmitStatus(null);
       setErrors(prev => ({ ...prev, general: null }));
 
+      toast.info('Submitting your issue...', {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+
       // Prepare form data
       const submissionData = new FormData();
       submissionData.append('registrar', formData.registrar);
