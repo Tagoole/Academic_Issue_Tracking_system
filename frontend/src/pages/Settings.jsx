@@ -27,10 +27,10 @@ function Settings() {
           navigate('/studentdashboard');
           break;
         case 'lecturer':
-          navigate('/lecturerdashboard');
+          navigate('/Lecturerdashboard');
           break;
-        case 'registrar':
-          navigate('/registrardashboard');
+        case 'academic_registrar':
+          navigate('/Registradashboard');
           break;
         default:
           // Default fallback if role is not found or recognized
