@@ -14,7 +14,6 @@ body {
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
-  margin-top: 100px;
 }
 
 /* Navbar positioning */
@@ -101,9 +100,11 @@ body {
 
 .preferences-container {
   width: 100%;
-  display: flex;
+  display: center;
   flex-direction: column;
   gap: 25px;
+  max-width: 1000px;
+  margin-top: -1px
 }
 
 .preferences-title {

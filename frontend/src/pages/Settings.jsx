@@ -30,7 +30,7 @@ function Settings() {
           navigate('/Lecturerdashboard');
           break;
         case 'academic_registrar':
-          navigate('/Registradashboard');
+          navigate('/Registrardashboard');
           break;
         default:
           // Default fallback if role is not found or recognized
@@ -119,8 +119,8 @@ function Settings() {
             </svg>
           </a>
 
-          <a href="/support" className="menu-item">
-            Support/Help
+          <a href="/help" className="menu-item">
+            Help
             <svg viewBox="0 0 24 24" className="arrow-icon">
               <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
             </svg>
