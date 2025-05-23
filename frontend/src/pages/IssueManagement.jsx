@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Navbar from './NavBar';
 import Sidebar from './Sidebar';
 import './IssueManagement.css';
@@ -17,7 +19,7 @@ const IssueManagement = () => {
   const [showLecturersDropdown, setShowLecturersDropdown] = useState(false);
   const [activeIssueId, setActiveIssueId] = useState(null);
   const [showActionsDropdown, setShowActionsDropdown] = useState(null);
-  const dropdownRefs = useRef({});  // Use an object to store refs for each dropdown
+  const dropdownRefs = useRef({});
   const [isSearching, setIsSearching] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState(null);
@@ -225,10 +227,18 @@ const IssueManagement = () => {
         return prevFiltered;
       });
 
-      alert(`Issue #${issue.id} has been escalated to ${lecturer.username}`);
+      toast.success(`Issue #${issue.id} has been escalated to ${lecturer.username}`);
+
+      // NEW: Notify lecturer by email
+      toast.info(
+        `An email has been sent to ${lecturer.username} to notify them that a new issue has been assigned to them.`,
+        {
+          autoClose: 4000,
+        }
+      );
     } catch (error) {
       console.error('Error escalating issue:', error);
-      alert('Failed to escalate issue. Please try again.');
+      toast.error('Failed to escalate issue. Please try again.');
       setShowLecturersDropdown(false);
     }
   };
@@ -247,6 +257,7 @@ const IssueManagement = () => {
       const accessToken = localStorage.getItem('accessToken');
       API.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
       const previousStatus = selectedIssue.status;
+      const previousLecturer = selectedIssue.lecturer;
 
       const updateData = {
         lecturer: editingIssue.lecturer,
@@ -294,10 +305,30 @@ const IssueManagement = () => {
       }
 
       closeDetailsModal();
-      alert(`Issue #${selectedIssue.id} has been updated successfully`);
+      
+      let toastMessage = `Issue #${selectedIssue.id} has been updated successfully`;
+      if (selectedLecturer && (!previousLecturer || previousLecturer.id !== selectedLecturer.id)) {
+        toastMessage = `Issue #${selectedIssue.id} has been assigned to ${selectedLecturer.username}`;
+      }
+      if (editingIssue.status === 'resolved' && previousStatus !== 'resolved') {
+        toastMessage = `Issue #${selectedIssue.id} has been marked as resolved`;
+      }
+      if (editingIssue.status === 'rejected' && previousStatus !== 'rejected') {
+        toastMessage = `Issue #${selectedIssue.id} has been rejected`;
+      }
+
+      toast.success(toastMessage);
+
+      // NEW: Notify both lecturer and student by email
+      toast.info(
+        'Both the assigned lecturer and the student have been notified by email about the change in issue status.',
+        {
+          autoClose: 4000,
+        }
+      );
     } catch (error) {
       console.error('Error updating issue:', error);
-      alert('Failed to update issue. Please try again.');
+      toast.error('Failed to update issue. Please try again.');
     }
   };
 
@@ -333,23 +364,21 @@ const IssueManagement = () => {
       else if (issue.status === 'in_progress') setInProgressCount(prev => prev - 1);
       setRejectedCount(prev => prev + 1);
 
-      alert(`Issue #${issue.id} has been rejected`);
+      toast.success(`Issue #${issue.id} has been rejected`);
       setShowActionsDropdown(null);
     } catch (error) {
       console.error('Error rejecting issue:', error);
-      alert('Failed to reject issue. Please try again.');
+      toast.error('Failed to reject issue. Please try again.');
     }
   };
 
   const toggleActionsDropdown = (issueId, event) => {
-    // Stop event propagation to prevent immediate closing
     if (event) {
       event.stopPropagation();
     }
     
     setShowActionsDropdown(prevState => prevState === issueId ? null : issueId);
     
-    // Close any open lecturers dropdown
     if (showLecturersDropdown) {
       setShowLecturersDropdown(false);
       setActiveIssueId(null);
@@ -370,10 +399,8 @@ const IssueManagement = () => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      // Check if clicked outside any dropdown
       let clickedOutside = true;
       
-      // Check each dropdown ref
       Object.keys(dropdownRefs.current).forEach(key => {
         const ref = dropdownRefs.current[key];
         if (ref && ref.contains(event.target)) {
@@ -401,7 +428,6 @@ const IssueManagement = () => {
     setFilteredIssues(issues.filter(issue => issue.status === issueStatus));
   };
 
-  // Add a ref for each dropdown when it's rendered
   const addDropdownRef = (id, element) => {
     if (element) {
       dropdownRefs.current[id] = element;
@@ -418,6 +444,17 @@ const IssueManagement = () => {
             <div className="loading-message">Loading issues...</div>
           </div>
         </div>
+        <ToastContainer 
+          position="top-right"
+          autoClose={4000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
       </div>
     );
   }
@@ -432,6 +469,17 @@ const IssueManagement = () => {
             <div className="error-message">{error}</div>
           </div>
         </div>
+        <ToastContainer 
+          position="top-right"
+          autoClose={4000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
       </div>
     );
   }
@@ -442,7 +490,7 @@ const IssueManagement = () => {
       <div className="content-wrapper">
         <Sidebar />
         <div className="issue-content">
-          <h1 className="issues-title">Issues <span className="subtitle">(Kindly click on the issue to open it.)</span></h1>
+          <h1 className="issues-title">Issues <span className="subtitle">(Click on Assign issue to escalate it to a lecturer )</span></h1>
           <div className="dashboard-cards">
             <DashboardCard title="Pending Issues" count={pendingCount} description={`You currently have ${pendingCount} pending issue${pendingCount !== 1 ? 's' : ''}`} />
             <DashboardCard title="In-progress Issues" count={inProgressCount} description={`You currently have ${inProgressCount} in-progress issue${inProgressCount !== 1 ? 's' : ''}`} />
@@ -488,7 +536,13 @@ const IssueManagement = () => {
                       <td>{issue.id || 'N/A'}</td>
                       <td>{issue.student?.username || 'N/A'}</td>
                       <td>{issue.issue_type || 'N/A'}</td>
-                      <td>{issue.lecturer?.username || 'Not Assigned'}</td>
+                      <td>
+                        {issue.lecturer?.username ? (
+                          issue.lecturer.username
+                        ) : (
+                          <span className="assign-issue-highlight">Assign issue</span>
+                        )}
+                      </td>
                       <td>{issue.year_of_study?.replace('_', ' ') || 'N/A'}</td>
                       <td>{formatDate(issue.created_at)}</td>
                       <td>{formatDate(issue.updated_at)}</td>
@@ -652,6 +706,17 @@ const IssueManagement = () => {
           )}
         </div>
       </div>
+      <ToastContainer 
+        position="top-right"
+        autoClose={4000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </div>
   );
 };

@@ -6,7 +6,6 @@ import './Changepassword.css';
 import NavBar from './NavBar';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
- 
 
 function ChangePassword() {
   const [oldPassword, setOldPassword] = useState('');
@@ -134,7 +133,6 @@ function ChangePassword() {
         <NavBar />
       </div>
 
-
       {/* Main content container */}
       <div className="settings-container">
         {/* Glassmorphism applied to sidebar - moved to left margin with more intense effect */}
@@ -160,13 +158,6 @@ function ChangePassword() {
           </div>
 
           {/* Sidebar menu items */}
-          <a href="/dashboard" className="menu-item">
-            Back to Dashboard
-            <svg viewBox="0 0 24 24" className="arrow-icon">
-              <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
-            </svg>
-          </a>
-
           <a href="/changepassword" className="menu-item active">
             Change Password
             <svg viewBox="0 0 24 24" className="arrow-icon">
@@ -181,8 +172,8 @@ function ChangePassword() {
             </svg>
           </a>
 
-          <a href="/support" className="menu-item">
-            Support/Help
+          <a href="/help " className="menu-item">
+            Help and Support
             <svg viewBox="0 0 24 24" className="arrow-icon">
               <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
             </svg>
@@ -494,6 +485,3 @@ function ChangePassword() {
 }
 
 export default ChangePassword;
-
-
-
