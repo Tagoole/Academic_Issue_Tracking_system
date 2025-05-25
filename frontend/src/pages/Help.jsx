@@ -40,11 +40,11 @@ const Help = () => {
   const getDashboardUrl = () => {
     switch (userRole.toLowerCase()) {
       case 'lecturer':
-        return '/lecturerdashboard';
+        return '/Lecturerdashboard';
       case 'student':
         return '/studentdashboard';
-      case 'registrar':
-        return '/registradashboard';
+      case 'academic_registrar':
+        return '/Registradashboard';
       default:
         // Default fallback if role is unknown
         return '/dashboard';
@@ -117,7 +117,7 @@ const Help = () => {
         </a>
 
         <a href="/help" className="menu-item active">
-          Support/Help
+          Help
           <svg viewBox="0 0 24 24" className="arrow-icon">
             <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z" />
           </svg>
@@ -148,7 +148,7 @@ const Help = () => {
           zIndex: 5, 
         }}
       >
-        <div className="support-help-title">Support/Help</div>
+        <div className="help-title">Help</div>
 
         <div className="support-description">
           Kindly reach us via Email or Phone for any help.

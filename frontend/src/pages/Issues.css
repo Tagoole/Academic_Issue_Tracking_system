@@ -12,7 +12,6 @@
   background: rgba(255, 255, 255, 0.358);
 }
 
-
 /* Main Content Area */
 .dashboard-content {
   flex-grow: 1;
@@ -517,3 +516,4 @@ html, body {
     margin-bottom: 10px;
   }
 }
+
