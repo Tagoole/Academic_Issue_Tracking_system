@@ -104,6 +104,11 @@
   margin-left: 15px;
 }
 
+/* Mail icon alignment */
+.mail-icon {
+  vertical-align: middle;
+}
+
 /* Responsive adjustments */
 @media (max-width: 992px) {
   .search-container {
