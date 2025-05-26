@@ -104,6 +104,24 @@
   margin-left: 15px;
 }
 
+/* Mail icon alignment */
+.mail-icon {
+  vertical-align: middle;
+  margin-right: 10px;
+  width: 28px;
+  height: 24px;
+  cursor: pointer;
+  transition: filter 0.2s, transform 0.2s;
+  filter: grayscale(0%);
+}
+
+.mail-icon:hover,
+.mail-icon:focus {
+  filter: brightness(1.2) drop-shadow(0 2px 6px #4285f4aa);
+  transform: scale(1.08) rotate(-8deg);
+  outline: none;
+}
+
 /* Responsive adjustments */
 @media (max-width: 992px) {
   .search-container {

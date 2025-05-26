@@ -43,6 +43,7 @@ const Messages = () => {
 
     if (checkAuth()) {
       // Get current username from localStorage
+
       const userName = localStorage.getItem('userName');
       if (userName) {
         setCurrentUsername(userName);
@@ -72,6 +73,7 @@ const Messages = () => {
       setLoading(false);
     }
   };
+
 
   // Fetch students from API
   const fetchStudents = async () => {
@@ -156,6 +158,10 @@ const Messages = () => {
         // Only refresh conversations if there are new messages
         fetchConversations();
       }
+     
+      
+      
+      
     } catch (err) {
       console.error('Error fetching unread counts:', err);
       handleApiError(err);
@@ -176,6 +182,7 @@ const Messages = () => {
         // Make sure we have a valid other_user object
         const otherUser = conversation.other_user || {};
         
+        // If other_user is not valid, skip this conversation
         return {
           id: conversation.id,
           name: otherUser.name || otherUser.username || 'Unknown User',

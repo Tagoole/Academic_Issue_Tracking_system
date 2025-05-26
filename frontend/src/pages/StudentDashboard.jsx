@@ -4,6 +4,7 @@ import NavBar from './NavBar';
 import SideBar from './Sidebar1';
 import './StudentDashboard.css'; 
 import API from '../api';
+import notificationIcon from '../assets/notification.png'; // Import notification icon
 
 const StudentDashboard = () => {
   const [activeTab, setActiveTab] = useState('Pending');
@@ -275,7 +276,7 @@ const StudentDashboard = () => {
             </svg>
           </button>
           
-          {/* Advanced holographic button with multiple effects */}
+          {/* Holographic New Issue Button */}
           <div className="holo-button-wrapper">
             <div className="holo-button-effects">
               <div className="holo-button-border">
@@ -288,6 +289,16 @@ const StudentDashboard = () => {
               </div>
             </div>
           </div>
+
+          {/* Notification Icon next to New Issue Button */}
+          <button
+            className="notification-btn"
+            style={{ background: 'none', border: 'none', marginLeft: '10px', cursor: 'pointer', padding: 0 }}
+            onClick={() => navigate('/notifications')}
+            title="View Notifications"
+          >
+            <img src={notificationIcon} alt="Notifications" style={{ width: 28, height: 28 }} />
+          </button>
         </div>
         
         {/* Issues Container */}
