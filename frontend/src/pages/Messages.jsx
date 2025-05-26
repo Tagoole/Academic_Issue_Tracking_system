@@ -43,7 +43,7 @@ const Messages = () => {
 
     if (checkAuth()) {
       // Get current username from localStorage
-      
+
       const userName = localStorage.getItem('userName');
       if (userName) {
         setCurrentUsername(userName);
@@ -73,6 +73,7 @@ const Messages = () => {
       setLoading(false);
     }
   };
+  
 
   // Fetch students from API
   const fetchStudents = async () => {
