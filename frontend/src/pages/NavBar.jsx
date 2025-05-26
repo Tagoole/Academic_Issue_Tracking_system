@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './NavBar.css';
 import logo from '../assets/makererelogo.png'
 import { useNavigate } from 'react-router-dom';
+import  MailIcon from  '../assets/mail.png'; // Adjust the path as necessary
 
 const NavBar = () => {
   const [userName, setUserName] = useState('User'); // Initialize with a default value
