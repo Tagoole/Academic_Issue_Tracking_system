@@ -109,7 +109,7 @@
   vertical-align: middle;
   margin-right: 10px;
   width: 28px;
-  height: 28px;
+  height: 24px;
   cursor: pointer;
   transition: filter 0.2s, transform 0.2s;
   filter: grayscale(0%);
