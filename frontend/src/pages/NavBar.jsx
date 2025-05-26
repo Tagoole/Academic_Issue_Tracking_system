@@ -26,6 +26,15 @@ const NavBar = () => {
       
       {/* Right Section: Title and Logo */}
       <div className="navbar-right">
+        {/* Mail icon before the title */}
+        <img
+          src={MailIcon}
+          alt="Mail"
+          className="mail-icon"
+          style={{ cursor: 'pointer', marginRight: '10px', width: '28px', height: '28px' }}
+          onClick={() => navigate('/messages')}
+          title="Go to Messages"
+        />
         <div className="app-title">Academic Issue Tracking System</div>
         <img src={logo} alt="Logo" className="logo-image" />
       </div>
