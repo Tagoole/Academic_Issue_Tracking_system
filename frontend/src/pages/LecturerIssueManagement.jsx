@@ -223,9 +223,8 @@ const LecturerIssueManagement = () => {
       // Create a FormData object to handle file upload
       const formData = new FormData();
       formData.append('status', selectedNewStatus.toLowerCase());
-      formData.append('comment', selectedIssue.comment); // Changed from "comments" to "comment"
+      formData.append('comment', selectedIssue.comment);
       formData.append('is_commented', true);
-     
 
       // Send PATCH request to update the issue
       const response = await API.patch(
@@ -240,13 +239,21 @@ const LecturerIssueManagement = () => {
 
       setLoading(false);
 
-      // Success toast notification
-      toast.success(`Issue updated successfully.`, {
+      // Success toast notification for status update
+      toast.success('Issue status updated successfully.', {
         autoClose: 3000,
-        onClose: () => {
-          window.location.href = '/Lecturerdashboard';
-        },
       });
+
+      // Info toast notification for email sent to student
+      toast.info(
+        'An email has been sent to the student to inform them that the issue status has been changed by the lecturer.',
+        {
+          autoClose: 4000,
+          onClose: () => {
+            window.location.href = '/Lecturerdashboard';
+          },
+        }
+      );
     } catch (err) {
       setLoading(false);
       console.error('Error updating issue:', err);
