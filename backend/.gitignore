@@ -25,7 +25,5 @@ __pycache__/
 **/migrations/*.py
 
 # Build files
-dist/
-build/
 
 db.sqlite3
