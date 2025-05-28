@@ -8,7 +8,6 @@ FRONTEND_EXCLUDES = "|".join([
     "api/",
     "admin/",
     "static/",
-    "media/",
 ])
 
 urlpatterns = [

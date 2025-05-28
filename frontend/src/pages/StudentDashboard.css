@@ -3,7 +3,6 @@
 /* General container for the dashboard */
 .student-main-container {
   display: flex;
-  background-color: #e83434;
   background-color: rgba(255, 255, 255, 0.7); 
   width: 100%;
 }
@@ -15,8 +14,8 @@
   margin-left: 250px;
   width: 1250px;
   margin-top: 70px;
-  font-size: 24px;
-  background-color:#eaeef3e6; 
+  font-size: 14px; /* Reduced from 24px */
+  background-color: #eaeef3e6; 
 }
 
 /* Dashboard panels for resolved, pending, and in-progress issues */
@@ -36,13 +35,13 @@
 }
 
 .stat-card-heading {
-  font-size: 24px;
+  font-size: 16px; /* Reduced from 24px */
   color: #333;
   margin-bottom: 10px;
 }
 
 .stat-card-value {
-  font-size: 24px;
+  font-size: 18px; /* Reduced from 24px */
   font-weight: bold;
   color: #007bff; 
 }
@@ -62,7 +61,7 @@
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: 13px; /* Reduced from 14px */
 }
 
 .query-filter-btn {
@@ -84,7 +83,7 @@
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13px; /* Reduced from 14px */
 }
 
 .create-issue-btn:hover {
@@ -116,7 +115,7 @@
   padding: 6px 12px; 
   border: none;
   border-radius: 4px;
-  font-size: 12px; 
+  font-size: 11px; /* Reduced from 12px */
   cursor: pointer;
   transition: background-color 0.2s;
   white-space: nowrap; 
@@ -152,19 +151,19 @@
   table-layout: fixed;
 }
 
-/* Updated table column spacing */
+/* Table column spacing with reduced font size */
 .data-grid th,
 .data-grid td {
-  padding: 8px 4px; /* Further reduced horizontal padding */
+  padding: 8px 4px;
   text-align: left;
   border-bottom: 1px solid #ddd;
-  font-size: 17px; /* Smaller font size */
+  font-size: 13px; /* Reduced from 17px */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* Optimized column widths for better space utilization */
+/* Column widths */
 .data-grid th:nth-child(1), /* ID column */
 .data-grid td:nth-child(1) {
   width: 4%;
@@ -209,12 +208,13 @@
   background-color: #f8f9fa;
   font-weight: bold;
   color: #333;
+  font-size: 12px; /* Reduced header font size */
 }
 
 .status-indicator {
   padding: 3px 6px;
   border-radius: 10px;
-  font-size: 11px;
+  font-size: 10px; /* Reduced from 11px */
   text-transform: capitalize;
   display: inline-block;
 }
@@ -241,9 +241,9 @@
 
 .row-actions-group {
   display: flex;
-  flex-direction: column; /* Changed to column for vertical layout */
+  flex-direction: column;
   justify-content: center;
-  gap: 5px; /* Space between buttons */
+  gap: 5px;
 }
 
 .details-action-btn {
@@ -253,9 +253,10 @@
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 11px;
+  font-size: 10px; /* Reduced from 11px */
   width: 100%;
 }
+
 .details-action-btn:hover {
   background-color: #0056b3;
 }
@@ -267,9 +268,10 @@
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 11px;
+  font-size: 10px; /* Reduced from 11px */
   width: 100%;
 }
+
 .remove-action-btn:hover {
   background-color: #ff7875;
 }
@@ -278,6 +280,7 @@
   text-align: center;
   padding: 20px;
   color: #666;
+  font-size: 14px;
 }
 
 /* Loading and error messages */
@@ -286,6 +289,7 @@
   text-align: center;
   padding: 20px;
   color: #666;
+  font-size: 14px;
 }
 
 .error-notification {
@@ -326,13 +330,13 @@
 
 .modal-title-bar h2 {
   margin: 0;
-  font-size: 18px;
+  font-size: 16px; /* Reduced from 18px */
 }
 
 .modal-close-icon {
   background: none;
   border: none;
-  font-size: 20px;
+  font-size: 18px; /* Reduced from 20px */
   cursor: pointer;
   color: #666;
 }
@@ -343,6 +347,7 @@
 
 .modal-body {
   padding: 15px;
+  font-size: 13px; /* Added explicit font size */
 }
 
 .detail-row {
@@ -353,6 +358,7 @@
   display: inline-block;
   width: 150px;
   color: #333;
+  font-size: 13px;
 }
 
 .modal-actions {
@@ -368,6 +374,7 @@
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 13px;
 }
 
 .modal-dismiss-btn:hover {
@@ -395,11 +402,20 @@
   .student-content-wrapper {
     margin-left: 0;
     padding: 15px;
+    font-size: 13px;
   }
   
   .stats-card-group {
     flex-direction: column;
     gap: 10px;
+  }
+
+  .stat-card-heading {
+    font-size: 14px;
+  }
+
+  .stat-card-value {
+    font-size: 16px;
   }
 
   .query-controls {
@@ -414,6 +430,7 @@
   .create-issue-btn {
     width: 100%;
     margin-bottom: 5px;
+    font-size: 12px;
   }
 
   .issues-view-container {
@@ -428,11 +445,17 @@
 
   .status-filter-btn {
     padding: 5px 10px;
+    font-size: 10px;
+  }
+
+  .data-grid th,
+  .data-grid td {
     font-size: 11px;
+    padding: 6px 2px;
   }
 }
 
-/* Base button styling update */
+/* Holographic button effects - updated with smaller font */
 .create-issue-btn {
   position: relative;
   padding: 10px 20px;
@@ -441,7 +464,7 @@
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13px; /* Reduced from 14px */
   font-weight: 600;
   letter-spacing: 0.8px;
   transition: all 0.3s ease;
@@ -451,7 +474,6 @@
   text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
 }
 
-/* Hologram class to apply to the button */
 .holo-effect-btn {
   background: linear-gradient(135deg, 
     rgba(0, 86, 179, 0.8) 0%, 
@@ -460,7 +482,6 @@
   animation: buttonPulse 3s infinite ease-in-out;
 }
 
-/* Main pulsing animation */
 @keyframes buttonPulse {
   0%, 100% {
     transform: scale(1);
@@ -478,7 +499,6 @@
   }
 }
 
-/* Holographic glitch effect */
 .holo-effect-btn::before {
   content: "+ New Issue";
   position: absolute;
@@ -497,6 +517,7 @@
   animation: glitchText 2s infinite alternate-reverse;
   z-index: 2;
   pointer-events: none;
+  font-size: 13px;
 }
 
 @keyframes glitchText {
@@ -522,7 +543,6 @@
   }
 }
 
-/* Holographic scanline effect */
 .holo-effect-btn::after {
   content: '';
   position: absolute;
@@ -551,7 +571,6 @@
   }
 }
 
-/* Add 3D floating effect */
 .holo-button-wrapper {
   position: relative;
   perspective: 800px;
@@ -577,7 +596,6 @@
   }
 }
 
-/* Neon glow border */
 .holo-button-border {
   position: relative;
 }
@@ -608,7 +626,6 @@
   }
 }
 
-/* Add particles floating around the button */
 .holo-button-effects {
   position: relative;
 }
@@ -639,7 +656,6 @@
   }
 }
 
-/* Hover state enhancements */
 .holo-effect-btn:hover {
   background: linear-gradient(135deg, 
     rgba(0, 86, 179, 1) 0%, 
@@ -658,7 +674,6 @@
     0 0 20px #0ff;
 }
 
-/* Active state for when the button is clicked */
 .holo-effect-btn:active {
   transform: scale(0.95);
   box-shadow: 
@@ -666,8 +681,7 @@
     0 0 20px rgba(0, 123, 255, 0.6);
 }
 
-
-/* Modal improvements */
+/* Enhanced modal styling with smaller fonts */
 .modal-window {
   max-width: 700px;
   width: 90%;
@@ -682,6 +696,7 @@
   padding: 20px;
   max-height: calc(80vh - 120px);
   overflow-y: auto;
+  font-size: 13px;
 }
 
 .detail-row {
@@ -696,15 +711,14 @@
   font-weight: 600;
   margin-bottom: 6px;
   color: #333;
-  font-size: 14px;
+  font-size: 12px; /* Reduced font size */
 }
 
 .detail-value {
   word-break: break-word;
-  font-size: 14px;
+  font-size: 12px; /* Reduced font size */
 }
 
-/* Image styles for the modal */
 .detail-image-container {
   margin-top: 8px;
   position: relative;
@@ -730,19 +744,18 @@
 
 .image-caption {
   text-align: center;
-  font-size: 12px;
+  font-size: 11px; /* Reduced from 12px */
   color: #666;
   margin-top: 4px;
 }
 
-/* Special styling for image row */
 .issue-image-row {
   margin-bottom: 20px;
   padding-bottom: 20px;
   border-bottom: 2px solid #eaeaea;
 }
 
-/* Responsive adjustments */
+/* Responsive modal adjustments */
 @media (min-width: 768px) {
   .detail-row {
     flex-direction: row;
@@ -760,4 +773,3 @@
     flex: 1;
   }
 }
-
