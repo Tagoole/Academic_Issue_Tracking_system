@@ -162,7 +162,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "https://fluffy-biscuit-9cbf4f.netlify.app",
-    "https://academic-issue-tracking-system-sodo.vercel.app"
+    "https://academic-issue-tracking-system-sodo.vercel.app",
+    "https://698e2c8aa3ad2ec7469228a7--aitstest.netlify.app"
     
 ]
 CORS_ALLOWS_CREDENTIALS = True
