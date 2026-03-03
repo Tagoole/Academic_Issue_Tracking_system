@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: aits_backend
+    command: gunicorn backend.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - ./backend:/app
+      - ./backend/media:/app/media
+      - ./backend/staticfiles:/app/staticfiles
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=1
+      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
+   expose:
+    - "8000"
+
+networks:
+   app-network:
+     driver: bridge
+
