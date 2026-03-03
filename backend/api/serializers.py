@@ -193,7 +193,7 @@ class Registration_Token_Serializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Only Gmail accounts are allowed...')
         
         if CustomUser.objects.filter(email = data.get('email')).exists():
-            raise serializers.ValidationError(f'The email {data.get('email')} is already taken')
+            raise serializers.ValidationError(f'The email is already taken')
         return data
 
 

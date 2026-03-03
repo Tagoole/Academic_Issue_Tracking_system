@@ -1,26 +1,78 @@
 version: '3.8'
 
 services:
-  backend:
+  nginx:
     build: 
-      context: ./backend
+      context: ./nginx
       dockerfile: Dockerfile
-    container_name: aits_backend
+    container_name: nginx
+    ports:
+      - "80:80"
+    networks:
+      - app-network
+    restart: always
+    depends_on:
+      - app_one
+      - app_two
+      - app_three
+      - app_four
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf  # Mount config if local
+      # - ./Academic_Issue_Tracking_system/backend/staticfiles:/app/staticfiles # Ensure Nginx can read static files
+
+  app_one:
+    build: 
+      context: ./app-one
+      dockerfile: Dockerfile
+    container_name: one_app
+    networks:
+      - app-network
+    restart: always
+    expose:
+      - "8000"
+
+  app_two:
+    build: 
+      context: ./two-app
+      dockerfile: Dockerfile
+    container_name: two_app
+    networks:
+      - app-network
+    restart: always
+    expose:
+      - "8000"
+
+  app_three:
+    build: 
+      context: ./three-app
+      dockerfile: Dockerfile
+    container_name: three_app
+    networks:
+      - app-network
+    restart: always
+    expose:
+      - "8000"
+
+  app_four:
+    build: 
+      context: ./Academic_Issue_Tracking_system/backend
+      dockerfile: Dockerfile
+    container_name: four_app
     command: gunicorn backend.wsgi:application --bind 0.0.0.0:8000
     volumes:
-      - ./backend:/app
-      - ./backend/media:/app/media
-      - ./backend/staticfiles:/app/staticfiles
-    ports:
-      - "8000:8000"
+      - ./Academic_Issue_Tracking_system/backend:/app
+      - ./Academic_Issue_Tracking_system/backend/media:/app/media
+      - ./Academic_Issue_Tracking_system/backend/staticfiles:/app/staticfiles
+    networks:
+      - app-network
+    restart: always
+    expose:
+      - "8000"
     environment:
       - DEBUG=True
       - DJANGO_ALLOWED_HOSTS=*
 
-    expose:
-     - "8000"
-
 networks:
-   app-network:
-     driver: bridge
+  app-network:
+    driver: bridge
 
