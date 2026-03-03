@@ -2,7 +2,7 @@ import axios from "axios";
 
 const baseURLs = [
   "http://127.0.0.1:8000", // Local
-  "https://deployappd-947412c051a5.herokuapp.com" // Online
+  "http://31.220.86.124/app_four" // Online
 ];
 
 // Choose base URL dynamically
