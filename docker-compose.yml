@@ -14,10 +14,11 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DEBUG=1
-      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
-   expose:
-    - "8000"
+      - DEBUG=True
+      - DJANGO_ALLOWED_HOSTS=*
+
+    expose:
+     - "8000"
 
 networks:
    app-network:
