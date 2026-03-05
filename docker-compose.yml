@@ -1,43 +1,11 @@
-version: '3.8'
+
 
 services:
-  nginx:
-    build: 
-      context: ./nginx
-      dockerfile: Dockerfile
-    container_name: nginx
-    ports:
-      - "80:80"
-      - 443:443
-    networks:
-      - app-network
-    restart: always
-    depends_on:
-      - app_one
-      - app_four
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf  # Mount config if local
-      - ./nginx/letsencrypt:/etc/letsencrypt
-      - ./nginx/certbot-www:/var/www/certbot
-    command: ["/bin/sh", "-c", "while :; do sleep 6h & wait $${!}; nginx -s reload; done & exec nginx -g 'daemon off;'"]  # Add this for auto-reload
-
-  certbot:
-    image: certbot/certbot:latest
-    volumes:
-      - ./nginx/letsencrypt:/etc/letsencrypt
-      - ./nginx/certbot-www:/var/www/certbot
-    networks:
-      - app-network
-    command: ["/bin/sh", "-c", "trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot; sleep 12h & wait $${!}; done;"]  # Updated: No nginx reload here
-
-
   app_one:
     build: 
       context: ./app-one
       dockerfile: Dockerfile
     container_name: one_app
-    networks:
-      - app-network
     restart: always
     expose:
       - "8000"
@@ -53,16 +21,10 @@ services:
       - ./Academic_Issue_Tracking_system/backend:/app
       - ./Academic_Issue_Tracking_system/backend/media:/app/media
       - ./Academic_Issue_Tracking_system/backend/staticfiles:/app/staticfiles
-    networks:
-      - app-network
     restart: always
     expose:
       - "8000"
     environment:
       - DEBUG=True
       - DJANGO_ALLOWED_HOSTS=*
-
-networks:
-  app-network:
-    driver: bridge
 
